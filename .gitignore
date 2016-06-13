@@ -1,0 +1,10 @@
+*.idea
+out/
+*.iml
+*.properties
+*.jar
+*.xml
+*.txt
+savedGames/
+*.bat
+maps/
