@@ -239,6 +239,10 @@ public class Player extends Entity {
                     incStat("duelWins");
                     duelPlayer.incStat("duelLosses");
 
+                    duelChallengedBy = null;
+
+                    duelPlayer.duelChallengedBy = null;
+
                     duelPlayer.duelPlayer = null;
                     duelPlayer = null;
                     
