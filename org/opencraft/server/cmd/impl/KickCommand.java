@@ -75,18 +75,34 @@ public class KickCommand implements Command {
 		// Player using command is OP?
 		if ((player.isOp()) || player.isVIP()) {
 			if (params.getArgumentCount() == 1) {
-                                Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-                                if(other != null) {
-                                    other.getSession().close();
-                                    Server.log(player.getName()+" kicked "+other.getName());
-                                    World.getWorld().broadcast("- "+other.parseName() + " has been kicked!");
-                                    return;
-                                }
+				Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+				if(other != null) {
+					other.getSession().close();
+					Server.log(player.getName()+" kicked "+other.getName());
+					World.getWorld().broadcast("- "+other.parseName() + " has been kicked!");
+					return;
+				}
 				// Player not found
 				player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
+			} else if (params.getArgumentCount() > 1)
+			{
+				Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+				if (other != null)
+				{
+					String message = "";
+					for (int i = 1; i < params.getArgumentCount(); i++)
+					{
+						message += " "+params.getStringArgument(i);
+					}
+					other.getActionSender().sendLoginFailure(message);
+					other.getSession().close();
+					Server.log(player.getName()+" kicked "+other.getName() + " :reason: " + message);
+					World.getWorld().broadcast("- "+other.parseName() + " has been kicked! "+message);
+					return;
+				}
 			} else
 				player.getActionSender().sendChatMessage("Wrong number of arguments");
-			player.getActionSender().sendChatMessage("/kick <name>");
+			player.getActionSender().sendChatMessage("/kick <name> <message>");
 		} else
 			player.getActionSender().sendChatMessage("You must be OP to do that");
 	}
