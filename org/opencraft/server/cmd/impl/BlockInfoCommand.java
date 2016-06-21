@@ -41,21 +41,23 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.BuildMode;
 import org.opencraft.server.model.Player;
 
-public class BlockInfoCommand implements Command{
+public class BlockInfoCommand implements Command {
 
-    private static final BlockInfoCommand INSTANCE = new BlockInfoCommand();
+  private static final BlockInfoCommand INSTANCE = new BlockInfoCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static BlockInfoCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static BlockInfoCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        player.buildMode = BuildMode.BLOCK_INFO;
-        player.getActionSender().sendChatMessage("- &aDestroy or place a block to see who changed it last.");
-    }
+  public void execute(Player player, CommandParameters params) {
+    player.buildMode = BuildMode.BLOCK_INFO;
+    player.getActionSender().sendChatMessage("- &aDestroy or place a block to see who changed it " +
+        "last.");
+  }
 
 }

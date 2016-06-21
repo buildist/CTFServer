@@ -36,60 +36,62 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class QuoteCommand implements Command {
-    private static final QuoteCommand INSTANCE = new QuoteCommand();
-    private static final ArrayList<String> quotes = new ArrayList<String>();
-    public static QuoteCommand getCommand() {
-            return INSTANCE;
+  private static final QuoteCommand INSTANCE = new QuoteCommand();
+  private static final ArrayList<String> quotes = new ArrayList<String>();
+
+  static {
+    try {
+      String[] array = Server.readFileAsString("quotes.txt").split("\n");
+      for (String q : array) {
+        quotes.add(q);
+      }
+    } catch (IOException ex) {
+      Logger.getLogger(QuoteCommand.class.getName()).log(Level.SEVERE, null, ex);
     }
+  }
 
+  public static QuoteCommand getCommand() {
+    return INSTANCE;
+  }
 
-    @Override
-    public void execute(Player player, CommandParameters params) {
-        if(params.getArgumentCount() == 0) {
-            String quote = quotes.get((int)(Math.random()*quotes.size()));
-            World.getWorld().broadcast(">> &3"+quote);
-        } else {
-            if(params.getStringArgument(0).equals("add") && params.getArgumentCount() >= 2) {
-                String text = "";
-                for(int i = 1; i < params.getArgumentCount(); i++) {
-                    text += " "+params.getStringArgument(i);
-                }
-                text = text.substring(1);
-                quotes.add(text);
-                try {
-                    FileOutputStream out = new FileOutputStream("quotes.txt", true);
-                    out.write((text+"\n").getBytes());
-                    out.close();
-                } catch(IOException ex) {
-                    ex.printStackTrace();
-                }
-                World.getWorld().broadcast("- &3Quote \""+text+"\" added by "+player.getColoredName());
-            } else {
-                player.getActionSender().sendChatMessage("- &3Use /quote add [message] to add a quote.");
-            }
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (params.getArgumentCount() == 0) {
+      String quote = quotes.get((int) (Math.random() * quotes.size()));
+      World.getWorld().broadcast(">> &3" + quote);
+    } else {
+      if (params.getStringArgument(0).equals("add") && params.getArgumentCount() >= 2) {
+        String text = "";
+        for (int i = 1; i < params.getArgumentCount(); i++) {
+          text += " " + params.getStringArgument(i);
         }
-    }
-    
-    static {
+        text = text.substring(1);
+        quotes.add(text);
         try {
-            String[] array = Server.readFileAsString("quotes.txt").split("\n");
-            for(String q : array) {
-                quotes.add(q);
-            }
+          FileOutputStream out = new FileOutputStream("quotes.txt", true);
+          out.write((text + "\n").getBytes());
+          out.close();
         } catch (IOException ex) {
-            Logger.getLogger(QuoteCommand.class.getName()).log(Level.SEVERE, null, ex);
+          ex.printStackTrace();
         }
+        World.getWorld().broadcast("- &3Quote \"" + text + "\" added by " + player.getColoredName
+            ());
+      } else {
+        player.getActionSender().sendChatMessage("- &3Use /quote add [message] to add a quote.");
+      }
     }
+  }
 }

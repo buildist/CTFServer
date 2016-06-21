@@ -37,10 +37,6 @@
 package org.opencraft.server.task.impl;
 
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
@@ -50,66 +46,72 @@ import org.opencraft.server.heartbeat.HeartbeatManager;
 import org.opencraft.server.model.World;
 import org.opencraft.server.task.ScheduledTask;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * A task which sends a heartbeat periodically to the master server.
+ *
  * @author Graham Edgecombe
  */
 public class HeartbeatTask extends ScheduledTask {
 
-    /**
-     * The delay.
-     */
-    private static final long DELAY = 30000;
+  /**
+   * The delay.
+   */
+  private static final long DELAY = 30000;
 
-    /**
-     * Creates the heartbeat task with a 45s delay.
-     */
-    public HeartbeatTask() {
-            super(0);
+  /**
+   * Creates the heartbeat task with a 45s delay.
+   */
+  public HeartbeatTask() {
+    super(0);
+  }
+
+  @Override
+  public void execute() {
+    if (getDelay() == 0) {
+      setDelay(DELAY);
     }
-
-    @Override
-    public void execute() {
-        if (getDelay() == 0) {
-                setDelay(DELAY);
-        }
-        final int players;
-        if(PlayerCommand.playerCount == 0 || PlayerCommand.playerCount < World.getWorld().getPlayerList().size())
-            players = World.getWorld().getPlayerList().size();
-        else 
-            players = PlayerCommand.playerCount;
-        final Map<String, String> parameters = new HashMap<String, String>();
-        parameters.put("users", String.valueOf(players));
-        parameters.put("max", String.valueOf(Configuration.getConfiguration().getMaximumPlayers()));
-        parameters.put("public", String.valueOf(Configuration.getConfiguration().isPublicServer()));
-        parameters.put("port", String.valueOf(Constants.PORT));
-        parameters.put("salt", String.valueOf(HeartbeatManager.getHeartbeatManager().getSalt()));
-        parameters.put("version", String.valueOf(Constants.PROTOCOL_VERSION));
-        parameters.put("software", Constants.VERSION);
-        new Thread(new Runnable()
-        {
-            public void run()
-            {
-                String name = Configuration.getConfiguration().getLongName().replace("_m", World.getWorld().getLevel().id);
-                HeartbeatManager.getHeartbeatManager().sendHeartbeat("http://www.classicube.net/server/heartbeat", parameters, name);
-            }
-        }).start();
+    final int players;
+    if (PlayerCommand.playerCount == 0 || PlayerCommand.playerCount < World.getWorld()
+        .getPlayerList().size())
+      players = World.getWorld().getPlayerList().size();
+    else
+      players = PlayerCommand.playerCount;
+    final Map<String, String> parameters = new HashMap<String, String>();
+    parameters.put("users", String.valueOf(players));
+    parameters.put("max", String.valueOf(Configuration.getConfiguration().getMaximumPlayers()));
+    parameters.put("public", String.valueOf(Configuration.getConfiguration().isPublicServer()));
+    parameters.put("port", String.valueOf(Constants.PORT));
+    parameters.put("salt", String.valueOf(HeartbeatManager.getHeartbeatManager().getSalt()));
+    parameters.put("version", String.valueOf(Constants.PROTOCOL_VERSION));
+    parameters.put("software", Constants.VERSION);
+    new Thread(new Runnable() {
+      public void run() {
+        String name = Configuration.getConfiguration().getLongName().replace("_m", World.getWorld
+            ().getLevel().id);
+        HeartbeatManager.getHeartbeatManager().sendHeartbeat("http://www.classicube" +
+            ".net/server/heartbeat", parameters, name);
+      }
+    }).start();
         /*new Thread(new Runnable()
         {
             public void run()
             {
                 Date d = new Date();
-                String name = Configuration.getConfiguration().getName().replace("_d", "(Online "+(d.getMonth()+1)+"/"+d.getDate()+"/"+(d.getYear()-100)+")");
-                HeartbeatManager.getHeartbeatManager().sendHeartbeat("https://minecraft.net/heartbeat.jsp", parameters, name);
+                String name = Configuration.getConfiguration().getName().replace("_d", "(Online
+                "+(d.getMonth()+1)+"/"+d.getDate()+"/"+(d.getYear()-100)+")");
+                HeartbeatManager.getHeartbeatManager().sendHeartbeat("https://minecraft
+                .net/heartbeat.jsp", parameters, name);
             }
         }).start();*/
-        new Thread(new Runnable()
-        {
-            public void run()
-            {
-                if( !GameSettings.getBoolean("Tournament"))
-                    Server.httpGet(Constants.URL_SERVER_STATUS+"?status[players]="+World.getWorld().getPlayerList().size()+"&status[map]="+World.getWorld().getLevel().id);
-            }
-        }).start();
-    }
+    new Thread(new Runnable() {
+      public void run() {
+        if (!GameSettings.getBoolean("Tournament"))
+          Server.httpGet(Constants.URL_SERVER_STATUS + "?status[players]=" + World.getWorld()
+              .getPlayerList().size() + "&status[map]=" + World.getWorld().getLevel().id);
+      }
+    }).start();
+  }
 }

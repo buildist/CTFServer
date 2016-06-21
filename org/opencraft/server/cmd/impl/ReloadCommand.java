@@ -36,35 +36,36 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 
-public class ReloadCommand implements Command{
-    private static final ReloadCommand INSTANCE = new ReloadCommand();
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static ReloadCommand getCommand() {
-            return INSTANCE;
-    }
-    public void execute(Player player, CommandParameters params) {
-            if (player.isOp())
-            {
-                try {
-                    Configuration.readConfiguration();
-                } catch (FileNotFoundException ex) {
-                } catch (IOException ex) {
-                }
-                MapController.create();
-            }
-            else
-                player.getActionSender().sendChatMessage("You need to be op to do that!");
-    }
+public class ReloadCommand implements Command {
+  private static final ReloadCommand INSTANCE = new ReloadCommand();
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static ReloadCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      try {
+        Configuration.readConfiguration();
+      } catch (FileNotFoundException ex) {
+      } catch (IOException ex) {
+      }
+      MapController.create();
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

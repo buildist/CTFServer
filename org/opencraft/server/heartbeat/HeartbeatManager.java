@@ -36,17 +36,19 @@
  */
 package org.opencraft.server.heartbeat;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Map;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.model.World;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Map;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * A class which manages heartbeats.
@@ -54,75 +56,74 @@ import org.opencraft.server.model.World;
  * @author Graham Edgecombe
  */
 public class HeartbeatManager {
-    /**
-     * The singleton instance.
-     */
-    private static final HeartbeatManager INSTANCE = new HeartbeatManager();
+  /**
+   * The singleton instance.
+   */
+  private static final HeartbeatManager INSTANCE = new HeartbeatManager();
 
-    /**
-     * Gets the heartbeat manager instance.
-     *
-     * @return The heartbeat manager instance.
-     */
-    public static HeartbeatManager getHeartbeatManager() {
-        return INSTANCE;
-    }
-
-    /**
-     * Default private constructor.
-     */
-    private HeartbeatManager() {
+  /**
+   * Default private constructor.
+   */
+  private HeartbeatManager() {
         /* empty */
-        TrustManager[] trustAllCerts = new TrustManager[]{
-            new X509TrustManager() {
-                public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                    return null;
-                }
+    TrustManager[] trustAllCerts = new TrustManager[]{
+        new X509TrustManager() {
+          public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+            return null;
+          }
 
-                public void checkClientTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
+          public void checkClientTrusted(
+              java.security.cert.X509Certificate[] certs, String authType) {
+          }
 
-                public void checkServerTrusted(
-                        java.security.cert.X509Certificate[] certs, String authType) {
-                }
-            }
-        };
-        try {
-            SSLContext sc = SSLContext.getInstance("SSL");
-            sc.init(null, trustAllCerts, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-        } catch (Exception e) {
-            e.printStackTrace();
+          public void checkServerTrusted(
+              java.security.cert.X509Certificate[] certs, String authType) {
+          }
         }
+    };
+    try {
+      SSLContext sc = SSLContext.getInstance("SSL");
+      sc.init(null, trustAllCerts, new java.security.SecureRandom());
+      HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    /**
-     * Sends a heartbeat with the specified parameters. This method does not
-     * block.
-     *
-     * @param parameters The parameters.
-     */
-    public String sendHeartbeat(String url, final Map<String, String> parameters, String name) {
-        parameters.put("name", name);
-        final StringBuilder bldr = new StringBuilder();
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            bldr.append(entry.getKey());
-            bldr.append('=');
-            try {
-                bldr.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-            bldr.append('&');
-        }
-        if (bldr.length() > 0) {
-            bldr.deleteCharAt(bldr.length() - 1);
-        }
-        // send it off
-        boolean success = false;
-        while (!success) {
-            try {
+  /**
+   * Gets the heartbeat manager instance.
+   *
+   * @return The heartbeat manager instance.
+   */
+  public static HeartbeatManager getHeartbeatManager() {
+    return INSTANCE;
+  }
+
+  /**
+   * Sends a heartbeat with the specified parameters. This method does not block.
+   *
+   * @param parameters The parameters.
+   */
+  public String sendHeartbeat(String url, final Map<String, String> parameters, String name) {
+    parameters.put("name", name);
+    final StringBuilder bldr = new StringBuilder();
+    for (Map.Entry<String, String> entry : parameters.entrySet()) {
+      bldr.append(entry.getKey());
+      bldr.append('=');
+      try {
+        bldr.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+      } catch (UnsupportedEncodingException e) {
+        throw new RuntimeException(e);
+      }
+      bldr.append('&');
+    }
+    if (bldr.length() > 0) {
+      bldr.deleteCharAt(bldr.length() - 1);
+    }
+    // send it off
+    boolean success = false;
+    while (!success) {
+      try {
                 /*URL url2 = new URL(url + "?" + bldr.toString());
                 HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
                 conn.setConnectTimeout(5000);
@@ -138,7 +139,8 @@ public class HeartbeatManager {
                 conn.connect();
                 try {
                     String link;
-                    BufferedReader rdr = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    BufferedReader rdr = new BufferedReader(new InputStreamReader(conn
+                    .getInputStream()));
                     try {
                         link = rdr.readLine();
                         System.out.println("To connect to this server, use : " + link + ".");
@@ -149,35 +151,35 @@ public class HeartbeatManager {
                 } finally {
                     conn.disconnect();
                 }*/
-                String paramString = bldr.toString();
-                String response = Server.httpGet(url+ "?" + paramString);
-                if (Configuration.getConfiguration().isTest()) {
-                    Server.log("URL: "+response.trim());
-                    Server.log("Players: " + World.getWorld().getPlayerList().size());
-                }
-                success = true;
-            } catch (Exception ex) {
-                if (!success) {
-                    System.out.println("Error sending hearbeat: " + ex.toString());
-                }
-            }
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException ex1) {
-            }
-            if (!success) {
-                
-            }
+        String paramString = bldr.toString();
+        String response = Server.httpGet(url + "?" + paramString);
+        if (Configuration.getConfiguration().isTest()) {
+          Server.log("URL: " + response.trim());
+          Server.log("Players: " + World.getWorld().getPlayerList().size());
         }
-        return "";
-    }
+        success = true;
+      } catch (Exception ex) {
+        if (!success) {
+          System.out.println("Error sending hearbeat: " + ex.toString());
+        }
+      }
+      try {
+        Thread.sleep(5000);
+      } catch (InterruptedException ex1) {
+      }
+      if (!success) {
 
-    /**
-     * Gets the salt.
-     *
-     * @return The salt.
-     */
-    public long getSalt() {
-        return Constants.SECRET;
+      }
     }
+    return "";
+  }
+
+  /**
+   * Gets the salt.
+   *
+   * @return The salt.
+   */
+  public long getSalt() {
+    return Constants.SECRET;
+  }
 }

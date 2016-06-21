@@ -38,33 +38,30 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class BrushCommand implements Command{
+public class BrushCommand implements Command {
 
-    private static final BrushCommand INSTANCE = new BrushCommand();
+  private static final BrushCommand INSTANCE = new BrushCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static BrushCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static BrushCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (player.brush) {
+      player.brush = false;
+      player.getActionSender().sendChatMessage("- &eBrush mode cancelled.");
+    } else {
+      player.brush = true;
+      player.getActionSender().sendChatMessage("- &eBrush mode enabled, say the command again to " +
+          "disable it");
     }
-
-    public void execute(Player player, CommandParameters params) {
-        if(player.brush)
-        {
-            player.brush = false;
-            player.getActionSender().sendChatMessage("- &eBrush mode cancelled.");
-        }
-        else
-        {
-            player.brush = true;
-            player.getActionSender().sendChatMessage("- &eBrush mode enabled, say the command again to disable it");
-        }
-    }
+  }
 
 }

@@ -40,29 +40,27 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class WaterCommand implements Command{
+public class WaterCommand implements Command {
 
-    private static final WaterCommand INSTANCE = new WaterCommand();
+  private static final WaterCommand INSTANCE = new WaterCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static WaterCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static WaterCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (player.placeBlock == -1) {
+      player.placeBlock = 9;
+      player.getActionSender().sendChatMessage("&e*&fNow placing water.");
+    } else {
+      player.placeBlock = -1;
+      player.getActionSender().sendChatMessage("&e*&fNo longer placing water.");
     }
-
-    public void execute(Player player, CommandParameters params) {
-        if(player.placeBlock == -1)
-        {
-            player.placeBlock = 9;
-            player.getActionSender().sendChatMessage("&e*&fNow placing water.");
-        }
-        else
-        {
-            player.placeBlock = -1;
-            player.getActionSender().sendChatMessage("&e*&fNo longer placing water.");
-        }
-    }
+  }
 
 }

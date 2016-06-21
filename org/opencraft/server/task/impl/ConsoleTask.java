@@ -36,12 +36,6 @@
  */
 package org.opencraft.server.task.impl;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.lang.String;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
@@ -49,58 +43,57 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.ConsoleActionSender;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 public class ConsoleTask implements Runnable {
-    private static final BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
-    private Player consolePlayer = new Player(null, "Console");
-    public void run()
-    {
-        consolePlayer.setActionSender(new ConsoleActionSender());
-        consolePlayer.setAttribute("IsOperator", "true");
-        consolePlayer.setAttribute("IsOwner", "true");
-        while(true)
-        {
-            try
-            {
-                while(r.ready())
-                {
-                    String message = r.readLine();
-                    if(message.equals("stop"))
-                    {
-                        Server.stop();
-                    }
-                    else if (message.startsWith("/")) {
-                            // interpret as command
-                            String tokens = message.substring(1);
-                            String[] parts = tokens.split(" ");
-                            final Map<String, Command> commands = World.getWorld().getGameMode().getCommands();
-                            Command c = commands.get(parts[0]);
-                            if (c != null) {
-                                    parts[0] = null;
-                                    List<String> partsList = new ArrayList<String>();
-                                    for (String s : parts) {
-                                            if (s != null) {
-                                                    partsList.add(s);
-                                            }
-                                    }
-                                    parts = partsList.toArray(new String[0]);
-                                    c.execute(consolePlayer, new CommandParameters(parts));
-                            } else {
-                                System.out.println("Invalid command.");
-                            }
-                    } else {
-                            World.getWorld().broadcast("(Console) &e"+message);
-                            System.out.println(message);
-                    }
+  private static final BufferedReader r = new BufferedReader(new InputStreamReader(System.in));
+  private Player consolePlayer = new Player(null, "Console");
+
+  public void run() {
+    consolePlayer.setActionSender(new ConsoleActionSender());
+    consolePlayer.setAttribute("IsOperator", "true");
+    consolePlayer.setAttribute("IsOwner", "true");
+    while (true) {
+      try {
+        while (r.ready()) {
+          String message = r.readLine();
+          if (message.equals("stop")) {
+            Server.stop();
+          } else if (message.startsWith("/")) {
+            // interpret as command
+            String tokens = message.substring(1);
+            String[] parts = tokens.split(" ");
+            final Map<String, Command> commands = World.getWorld().getGameMode().getCommands();
+            Command c = commands.get(parts[0]);
+            if (c != null) {
+              parts[0] = null;
+              List<String> partsList = new ArrayList<String>();
+              for (String s : parts) {
+                if (s != null) {
+                  partsList.add(s);
                 }
+              }
+              parts = partsList.toArray(new String[0]);
+              c.execute(consolePlayer, new CommandParameters(parts));
+            } else {
+              System.out.println("Invalid command.");
             }
-            catch(Exception e)
-            {
-                e.printStackTrace();
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-            }
+          } else {
+            World.getWorld().broadcast("(Console) &e" + message);
+            System.out.println(message);
+          }
         }
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException ex) {
+      }
     }
+  }
 }

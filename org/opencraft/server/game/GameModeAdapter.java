@@ -37,9 +37,6 @@
 package org.opencraft.server.game;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.impl.DeOperatorCommand;
 import org.opencraft.server.cmd.impl.KickCommand;
@@ -51,68 +48,72 @@ import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * An implementation of a game mode that does the majority of the work for the
- * game mode developer.
+ * An implementation of a game mode that does the majority of the work for the game mode developer.
+ *
  * @author Graham Edgecombe
  */
 public abstract class GameModeAdapter<P extends Player> implements GameMode<P> {
-	
-	/**
-	 * The command map.
-	 */
-	private final Map<String, Command> commands = new HashMap<String, Command>();
-	
-	/**
-	 * Creates the game mode adapter with default settings.
-	 */
-	public GameModeAdapter() {
-		// these commands are standard to every game mode
-		registerCommand("op", OperatorCommand.getCommand());
-		registerCommand("deop", DeOperatorCommand.getCommand());
-		registerCommand("say", SayCommand.getCommand());
-		registerCommand("kick", KickCommand.getCommand());
-		registerCommand("tp", TeleportCommand.getCommand());
-		registerCommand("setspawn", SetspawnCommand.getCommand());
-	}
-	
-	/**
-	 * Adds a command
-	 * @param name The command name.
-	 * @param command The command.
-	 */
-	public void registerCommand(String name, Command command) {
-		commands.put(name, command);
-	}
-	
-	@Override
-	public Map<String, Command> getCommands() {
-		return commands;
-	}
-	
-	// Default implementation
-	public void tick() {
-		
-	}
-	
-	// Default implementation
-	public void playerConnected(Player player) {
-		World.getWorld().broadcast("Welcome " + player.getName());
-	}
-	
-	// Default implementation
-	public void setBlock(Player player, Level level, int x, int y, int z, int mode, int type) {
-		level.setBlock(x, y, z, (byte) (mode == 1 ? type : 0));
-	}
-	
-	// Default implementation
-	public void playerDisconnected(Player player) {
-		World.getWorld().broadcast(player.getName() + " disconnected.");
-	}
-	
-	// Default implementation
-	public void broadcastChatMessage(Player player, String message) {
-		World.getWorld().broadcast(player, player.getName() + ": " + message);
-	}
-	
+
+  /**
+   * The command map.
+   */
+  private final Map<String, Command> commands = new HashMap<String, Command>();
+
+  /**
+   * Creates the game mode adapter with default settings.
+   */
+  public GameModeAdapter() {
+    // these commands are standard to every game mode
+    registerCommand("op", OperatorCommand.getCommand());
+    registerCommand("deop", DeOperatorCommand.getCommand());
+    registerCommand("say", SayCommand.getCommand());
+    registerCommand("kick", KickCommand.getCommand());
+    registerCommand("tp", TeleportCommand.getCommand());
+    registerCommand("setspawn", SetspawnCommand.getCommand());
+  }
+
+  /**
+   * Adds a command
+   *
+   * @param name    The command name.
+   * @param command The command.
+   */
+  public void registerCommand(String name, Command command) {
+    commands.put(name, command);
+  }
+
+  @Override
+  public Map<String, Command> getCommands() {
+    return commands;
+  }
+
+  // Default implementation
+  public void tick() {
+
+  }
+
+  // Default implementation
+  public void playerConnected(Player player) {
+    World.getWorld().broadcast("Welcome " + player.getName());
+  }
+
+  // Default implementation
+  public void setBlock(Player player, Level level, int x, int y, int z, int mode, int type) {
+    level.setBlock(x, y, z, (byte) (mode == 1 ? type : 0));
+  }
+
+  // Default implementation
+  public void playerDisconnected(Player player) {
+    World.getWorld().broadcast(player.getName() + " disconnected.");
+  }
+
+  // Default implementation
+  public void broadcastChatMessage(Player player, String message) {
+    World.getWorld().broadcast(player, player.getName() + ": " + message);
+  }
+
 }

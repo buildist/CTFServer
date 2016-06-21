@@ -41,27 +41,27 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 
-public class MapListCommand implements Command{
-    private static final MapListCommand INSTANCE = new MapListCommand();
+public class MapListCommand implements Command {
+  private static final MapListCommand INSTANCE = new MapListCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static MapListCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static MapListCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        String msg = "&eAvailable maps: &a";
-        int i = 0;
-        for(String map : MapController.levelNames)
-        {
-            if(i > 0)
-                msg += ", ";
-            msg += map;
-            i++;
-        }
-        player.getActionSender().sendChatMessage(msg);
+  public void execute(Player player, CommandParameters params) {
+    String msg = "&eAvailable maps: &a";
+    int i = 0;
+    for (String map : MapController.levelNames) {
+      if (i > 0)
+        msg += ", ";
+      msg += map;
+      i++;
     }
+    player.getActionSender().sendChatMessage(msg);
+  }
 }

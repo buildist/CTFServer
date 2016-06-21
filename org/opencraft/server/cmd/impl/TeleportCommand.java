@@ -40,53 +40,54 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
 /**
  * Official /tp command
+ *
  * @author S�ren Enevoldsen
  */
 
 public class TeleportCommand implements Command {
-	
-	/**
-	 * The instance of this command.
-	 */
-	private static final TeleportCommand INSTANCE = new TeleportCommand();
-	
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static TeleportCommand getCommand() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * Default private constructor.
-	 */
-	private TeleportCommand() {
-		/* empty */
-	}
-	
-	@Override
-	public void execute(Player player, CommandParameters params) {
-		// Player using command is OP?
-		if (player.isOp()) {
-			if (params.getArgumentCount() == 1) {
-				Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-                                if(other != null) {
-                                    player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
-                                    player.setPosition(other.getPosition());
-                                    player.setRotation(other.getRotation());
-                                    return;
-				}
-				// Player not found
-				player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
-			} else
-				player.getActionSender().sendChatMessage("Wrong number of arguments");
-			player.getActionSender().sendChatMessage("/tp <name>");
-		} else
-			player.getActionSender().sendChatMessage("You must be OP to do that");
-	}
+
+  /**
+   * The instance of this command.
+   */
+  private static final TeleportCommand INSTANCE = new TeleportCommand();
+
+  /**
+   * Default private constructor.
+   */
+  private TeleportCommand() {
+        /* empty */
+  }
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static TeleportCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    // Player using command is OP?
+    if (player.isOp()) {
+      if (params.getArgumentCount() == 1) {
+        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+        if (other != null) {
+          player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
+          player.setPosition(other.getPosition());
+          player.setRotation(other.getRotation());
+          return;
+        }
+        // Player not found
+        player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
+      } else
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/tp <name>");
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

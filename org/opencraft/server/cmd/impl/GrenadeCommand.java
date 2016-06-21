@@ -45,86 +45,84 @@ import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.World;
 
-public class GrenadeCommand implements Command{
-    private static final GrenadeCommand INSTANCE = new GrenadeCommand();
-    Thread rocketThread;
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static GrenadeCommand getCommand() {
-            return INSTANCE;
-    }
+public class GrenadeCommand implements Command {
+  private static final GrenadeCommand INSTANCE = new GrenadeCommand();
+  Thread rocketThread;
 
-    void stop()
-    {
-        rocketThread.stop();
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static GrenadeCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(final Player player, CommandParameters params) {
-        rocketThread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                Position pos = player.getPosition().toBlockPos();
-                Rotation r = player.getRotation();
+  void stop() {
+    rocketThread.stop();
+  }
 
-                int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float)360/256)) - 90;
-                int pitch = 360 - (int) (Server.getUnsigned(r.getLook()) * ((float)360/256));
+  public void execute(final Player player, CommandParameters params) {
+    rocketThread = new Thread(new Runnable() {
+      public void run() {
+        Position pos = player.getPosition().toBlockPos();
+        Rotation r = player.getRotation();
 
-                double px = pos.getX();
-                double py = pos.getY();
-                double pz = pos.getZ();
+        int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256)) - 90;
+        int pitch = 360 - (int) (Server.getUnsigned(r.getLook()) * ((float) 360 / 256));
 
-                double vx = Math.cos(Math.toRadians(heading));
-                double vz = Math.tan(Math.toRadians(pitch));
-                double vy = Math.sin(Math.toRadians(heading));
-                double length = Math.sqrt(vx*vx+vy*vy+vz*vz)/1.25;
-                vx /= length;
-                vz /= length;
-                vy /= length;
-                double x = px;
-                double y = py;
-                double z = pz;
-                double lastX = px;
-                double lastY = py;
-                double lastZ = pz;
-                for(int i = 0; i < 256; i++)
-                {
-                    x += vx;
-                    y += vy;
-                    z += vz;
-                    int bx = (int) Math.round(x);
-                    int by = (int) Math.round(y);
-                    int bz = (int) Math.round(z);
-                    int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                    if(block != 0 && block != 46)
-                    {
-                        World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY), (int) Math.round(lastZ), 0);
-                        ((CTFGameMode)World.getWorld().getGameMode()).explodeTNT(player, World.getWorld().getLevel(), bx, by, bz, 2, true, false, false, "grenade");
-                        break;
-                    }
-                    else
-                    {
-                        World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY), (int) Math.round(lastZ), 0);
-                        if(block == 0)
-                            World.getWorld().getLevel().setBlock(bx, by, bz, 46);
-                    }
-                    lastX = x;
-                    lastY = y;
-                    lastZ = z;
-                    i++;
-                    if(vz > (double) -2)
-                        vz -= 0.15;
-                    vx *= 0.95;
-                    vy *= 0.95;
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                    }
-                }
-            }
-        });
-        rocketThread.start();
-    }
+        double px = pos.getX();
+        double py = pos.getY();
+        double pz = pos.getZ();
+
+        double vx = Math.cos(Math.toRadians(heading));
+        double vz = Math.tan(Math.toRadians(pitch));
+        double vy = Math.sin(Math.toRadians(heading));
+        double length = Math.sqrt(vx * vx + vy * vy + vz * vz) / 1.25;
+        vx /= length;
+        vz /= length;
+        vy /= length;
+        double x = px;
+        double y = py;
+        double z = pz;
+        double lastX = px;
+        double lastY = py;
+        double lastZ = pz;
+        for (int i = 0; i < 256; i++) {
+          x += vx;
+          y += vy;
+          z += vz;
+          int bx = (int) Math.round(x);
+          int by = (int) Math.round(y);
+          int bz = (int) Math.round(z);
+          int block = World.getWorld().getLevel().getBlock(bx, by, bz);
+          if (block != 0 && block != 46) {
+            World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY)
+                , (int) Math.round(lastZ), 0);
+            ((CTFGameMode) World.getWorld().getGameMode()).explodeTNT(player, World.getWorld()
+                .getLevel(), bx, by, bz, 2, true, false, false, "grenade");
+            break;
+          } else {
+            World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY)
+                , (int) Math.round(lastZ), 0);
+            if (block == 0)
+              World.getWorld().getLevel().setBlock(bx, by, bz, 46);
+          }
+          lastX = x;
+          lastY = y;
+          lastZ = z;
+          i++;
+          if (vz > (double) -2)
+            vz -= 0.15;
+          vx *= 0.95;
+          vy *= 0.95;
+          try {
+            Thread.sleep(100);
+          } catch (InterruptedException ex) {
+          }
+        }
+      }
+    });
+    rocketThread.start();
+  }
 }

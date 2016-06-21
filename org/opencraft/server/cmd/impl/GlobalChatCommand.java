@@ -41,27 +41,27 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class GlobalChatCommand implements Command{
+public class GlobalChatCommand implements Command {
 
-    private static final GlobalChatCommand INSTANCE = new GlobalChatCommand();
+  private static final GlobalChatCommand INSTANCE = new GlobalChatCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static GlobalChatCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static GlobalChatCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (params.getArgumentCount() == 0)
+      return;
+    String text = "";
+    for (int i = 0; i < params.getArgumentCount(); i++) {
+      text += " " + params.getStringArgument(i);
     }
-
-    public void execute(Player player, CommandParameters params) {
-        if(params.getArgumentCount() == 0)
-            return;
-        String text = "";
-        for(int i = 0; i < params.getArgumentCount(); i++)
-        {
-            text += " "+params.getStringArgument(i);
-        }
-        World.getWorld().sendChat(player, text);
-    }
+    World.getWorld().sendChat(player, text);
+  }
 
 }

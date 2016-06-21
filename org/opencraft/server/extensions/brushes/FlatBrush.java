@@ -42,24 +42,26 @@ import org.opencraft.server.model.Player;
 
 /**
  * A brush that creates a flat area (1 in height)
+ *
  * @author S�ren Enevoldsen
  */
 
 public class FlatBrush extends BrushAdapter {
-	
-	public FlatBrush() {
-	}
-	
-	public FlatBrush(int radius) {
-		setRadius(radius);
-	}
-	
-	@Override
-	protected void paintBlocks(Player player, Level level, int x, int y, int z, boolean adding, int type) {
-		for (int offsetY = -radius; offsetY <= radius; offsetY++)
-			for (int offsetX = -radius; offsetX <= radius; offsetX++)
-				if (positionIsBuildable(offsetX + x, offsetY + y, z) == adding)
-					level.setBlock(offsetX + x, offsetY + y, z, type);
-	}
-	
+
+  public FlatBrush() {
+  }
+
+  public FlatBrush(int radius) {
+    setRadius(radius);
+  }
+
+  @Override
+  protected void paintBlocks(Player player, Level level, int x, int y, int z, boolean adding, int
+      type) {
+    for (int offsetY = -radius; offsetY <= radius; offsetY++)
+      for (int offsetX = -radius; offsetX <= radius; offsetX++)
+        if (positionIsBuildable(offsetX + x, offsetY + y, z) == adding)
+          level.setBlock(offsetX + x, offsetY + y, z, type);
+  }
+
 }

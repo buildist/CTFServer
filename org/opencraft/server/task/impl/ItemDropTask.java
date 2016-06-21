@@ -42,29 +42,28 @@ import org.opencraft.server.model.DropItem;
 import org.opencraft.server.model.World;
 
 
-public class ItemDropTask implements Runnable{
-    private void dropItem()
-    {
-        int points;
-        double r = Math.random();
-        if(r < 0.1)
-            points = 100;
-        else if(r < 0.3)
-            points = 75;
-        else
-            points = 50;
-        if(((CTFGameMode)World.getWorld().getGameMode()).ready  && World.getWorld().getPlayerList().size() >= 2 && !GameSettings.getBoolean("Tournament"))
-            new DropItem(points);
+public class ItemDropTask implements Runnable {
+  private void dropItem() {
+    int points;
+    double r = Math.random();
+    if (r < 0.1)
+      points = 100;
+    else if (r < 0.3)
+      points = 75;
+    else
+      points = 50;
+    if (((CTFGameMode) World.getWorld().getGameMode()).ready && World.getWorld().getPlayerList()
+        .size() >= 2 && !GameSettings.getBoolean("Tournament"))
+      new DropItem(points);
+  }
+
+  public void run() {
+    while (true) {
+      try {
+        Thread.sleep(5 * 60 * 1000);
+        dropItem();
+      } catch (InterruptedException ex) {
+      }
     }
-    public void run()
-    {
-        while(true)
-        {
-            try {
-                Thread.sleep(5 * 60 * 1000);
-                dropItem();
-            } catch (InterruptedException ex) {
-            }
-        }
-    }
+  }
 }

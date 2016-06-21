@@ -36,62 +36,56 @@
  */
 package org.opencraft.server.model;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opencraft.server.game.impl.CTFGameMode;
 
 
-public class DropItem implements Runnable{
-    public int points;
-    public int posX;
-    public int posY;
-    public int posZ;
-    private Thread t;
-    public DropItem(int p)
-    {
-        points = p;
-        t = new Thread(this);
-        t.start();
-        World.getWorld().broadcast("- &bA crate of points has been dropped somewhere on the map!");
+public class DropItem implements Runnable {
+  public int points;
+  public int posX;
+  public int posY;
+  public int posZ;
+  private Thread t;
+
+  public DropItem(int p) {
+    points = p;
+    t = new Thread(this);
+    t.start();
+    World.getWorld().broadcast("- &bA crate of points has been dropped somewhere on the map!");
+  }
+
+  public void pickUp(Player p) {
+    if (p.team == -1) {
+      p.getActionSender().sendBlock(posX, posY, posZ, (byte) 64);
+    } else {
+      World.getWorld().broadcast("- " + p.parseName() + " has found " + points + " points!");
+      p.addStorePoints(points);
+      World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
+      ((CTFGameMode) World.getWorld().getGameMode()).removeDropItem(this);
     }
-    public void pickUp(Player p)
-    {
-        if(p.team == -1) {
-            p.getActionSender().sendBlock(posX, posY, posZ, (byte) 64);
-        }
-        else {
-            World.getWorld().broadcast("- "+p.parseName()+" has found "+points+" points!");
-            p.addStorePoints(points);
-            World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
-            ((CTFGameMode)World.getWorld().getGameMode()).removeDropItem(this);
-        }
+  }
+
+  public void run() {
+    posX = (int) (4 + Math.random() * (World.getWorld().getLevel().getWidth() - 8));
+    posY = (int) (4 + Math.random() * (World.getWorld().getLevel().getHeight() - 8));
+    posZ = World.getWorld().getLevel().ceiling - 8;
+    ((CTFGameMode) World.getWorld().getGameMode()).addDropItem(this);
+    boolean done = false;
+    while (!done) {
+      if (World.getWorld().getLevel().getBlock(posX, posY, posZ) != 7)
+        World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
+      posZ--;
+      if (World.getWorld().getLevel().getBlock(posX, posY, posZ) != 0 && World.getWorld()
+          .getLevel().getBlock(posX, posY, posZ) != 11 || posZ < 0) {
+        done = true;
+        posZ++;
+        World.getWorld().getLevel().setBlock(posX, posY, posZ, 64);
+      } else {
+        World.getWorld().getLevel().setBlock(posX, posY, posZ, 64);
+      }
+      try {
+        Thread.sleep(200);
+      } catch (InterruptedException ex) {
+      }
     }
-    public void run()
-    {
-        posX = (int) (4 + Math.random() * (World.getWorld().getLevel().getWidth() - 8));
-        posY = (int) (4 + Math.random() * (World.getWorld().getLevel().getHeight() - 8));
-        posZ = World.getWorld().getLevel().ceiling - 8;
-        ((CTFGameMode)World.getWorld().getGameMode()).addDropItem(this);
-        boolean done = false;
-        while(!done)
-        {
-            if(World.getWorld().getLevel().getBlock(posX, posY, posZ) != 7)
-                World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
-            posZ--;
-            if(World.getWorld().getLevel().getBlock(posX, posY, posZ) != 0 && World.getWorld().getLevel().getBlock(posX, posY, posZ) != 11 || posZ < 0)
-            {
-                done = true;
-                posZ++;
-                World.getWorld().getLevel().setBlock(posX, posY, posZ, 64);
-            }
-            else
-            {
-                World.getWorld().getLevel().setBlock(posX, posY, posZ, 64);
-            }
-            try {
-                Thread.sleep(200);
-            } catch (InterruptedException ex) {
-            }
-        }
-    }
+  }
 }

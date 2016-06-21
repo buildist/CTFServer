@@ -37,9 +37,6 @@
 package org.opencraft.server.net;
 
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
@@ -50,38 +47,41 @@ import org.opencraft.server.task.impl.SessionClosedTask;
 import org.opencraft.server.task.impl.SessionMessageTask;
 import org.opencraft.server.task.impl.SessionOpenedTask;
 
+import java.util.logging.Logger;
+
 /**
- * An implementation of an <code>IoHandler</code> which manages incoming events
- * from MINA and passes them onto the necessary subsystem in the OpenCraft
- * server.
+ * An implementation of an <code>IoHandler</code> which manages incoming events from MINA and passes
+ * them onto the necessary subsystem in the OpenCraft server.
+ *
  * @author Graham Edgecombe
  */
 public final class SessionHandler extends IoHandlerAdapter {
-	
-	/**
-	 * Logger instance.
-	 */
-	private static final Logger logger = Logger.getLogger(SessionHandler.class.getName());
-	
-	@Override
-	public void exceptionCaught(IoSession session, Throwable throwable) throws Exception {
-		session.close(false);
-	}
-	
-	@Override
-	public void messageReceived(IoSession session, Object message) throws Exception {
-		TaskQueue.getTaskQueue().push(new SessionMessageTask(session, (Packet) message));
-	}
-	
-	@Override
-	public void sessionClosed(IoSession session) throws Exception {
-		TaskQueue.getTaskQueue().push(new SessionClosedTask(session));
-	}
-	
-	@Override
-	public void sessionOpened(IoSession session) throws Exception {
-		session.getFilterChain().addFirst("protocol", new ProtocolCodecFilter(new MinecraftCodecFactory(PersistingPacketManager.getPacketManager())));
-		TaskQueue.getTaskQueue().push(new SessionOpenedTask(session));
-	}
-	
+
+  /**
+   * Logger instance.
+   */
+  private static final Logger logger = Logger.getLogger(SessionHandler.class.getName());
+
+  @Override
+  public void exceptionCaught(IoSession session, Throwable throwable) throws Exception {
+    session.close(false);
+  }
+
+  @Override
+  public void messageReceived(IoSession session, Object message) throws Exception {
+    TaskQueue.getTaskQueue().push(new SessionMessageTask(session, (Packet) message));
+  }
+
+  @Override
+  public void sessionClosed(IoSession session) throws Exception {
+    TaskQueue.getTaskQueue().push(new SessionClosedTask(session));
+  }
+
+  @Override
+  public void sessionOpened(IoSession session) throws Exception {
+    session.getFilterChain().addFirst("protocol", new ProtocolCodecFilter(new
+        MinecraftCodecFactory(PersistingPacketManager.getPacketManager())));
+    TaskQueue.getTaskQueue().push(new SessionOpenedTask(session));
+  }
+
 }

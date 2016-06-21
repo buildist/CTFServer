@@ -41,32 +41,31 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class PmCommand implements Command{
-    private static final PmCommand INSTANCE = new PmCommand();
+public class PmCommand implements Command {
+  private static final PmCommand INSTANCE = new PmCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static PmCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static PmCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (params.getArgumentCount() == 0) {
+      player.getActionSender().sendChatMessage("- &e/pm [name] [message]");
     }
 
-    public void execute(Player player, CommandParameters params) {
-        if(params.getArgumentCount() == 0)
-        {
-            player.getActionSender().sendChatMessage("- &e/pm [name] [message]");
-        }
-
-        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-        String text = "";
-        for(int i = 1; i < params.getArgumentCount(); i++)
-        {
-            text += " "+params.getStringArgument(i);
-        }
-
-        if(other != null) {
-            World.getWorld().sendPM(player, other, text);
-        }
+    Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+    String text = "";
+    for (int i = 1; i < params.getArgumentCount(); i++) {
+      text += " " + params.getStringArgument(i);
     }
+
+    if (other != null) {
+      World.getWorld().sendPM(player, other, text);
+    }
+  }
 }

@@ -1,4 +1,3 @@
-
 /*
  * Jacob_'s Capture the Flag for Minecraft Classic and ClassiCube
  * Copyright (c) 2010-2014 Jacob Morgan
@@ -40,20 +39,19 @@ package org.opencraft.server.model.impl;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
 
-public class BigTNTItem extends StoreItem{
-    public BigTNTItem(String n, int p)
-    {
-        super(n, p);
-        description = "Get 7 TNTs with a 7x7 explosion";
-    }
-    public StoreItem getCopy()
-    {
-        return new BigTNTItem(name, price);
-    }
-    @Override
-    public void activate(Player player)
-    {
-        player.tntRadius = 3;
-        player.bigTNTRemaining = 7;
-    }
+public class BigTNTItem extends StoreItem {
+  public BigTNTItem(String n, int p) {
+    super(n, p);
+    description = "Get 7 TNTs with a 7x7 explosion";
+  }
+
+  public StoreItem getCopy() {
+    return new BigTNTItem(name, price);
+  }
+
+  @Override
+  public void activate(Player player) {
+    player.tntRadius = 3;
+    player.bigTNTRemaining = 7;
+  }
 }

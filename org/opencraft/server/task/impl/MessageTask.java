@@ -36,43 +36,42 @@
  */
 package org.opencraft.server.task.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.opencraft.server.Server;
 import org.opencraft.server.model.World;
 import org.opencraft.server.task.ScheduledTask;
 
-public class MessageTask extends ScheduledTask{
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
-    private static final long DELAY = 90 * 1000;
+public class MessageTask extends ScheduledTask {
 
-    private Random r = new Random();
-    private ArrayList<String> messages = new ArrayList<String>();
+  private static final long DELAY = 90 * 1000;
 
-    public MessageTask() {
-            super(0);
-        try {
-            String text = Server.readFileAsString("messages.txt");
-            String[] lines = text.split("\n");
-            for(int i = 0; i < lines.length; i++) {
-                if(!lines[i].isEmpty())
-                    messages.add(lines[i].trim());
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+  private Random r = new Random();
+  private ArrayList<String> messages = new ArrayList<String>();
+
+  public MessageTask() {
+    super(0);
+    try {
+      String text = Server.readFileAsString("messages.txt");
+      String[] lines = text.split("\n");
+      for (int i = 0; i < lines.length; i++) {
+        if (!lines[i].isEmpty())
+          messages.add(lines[i].trim());
+      }
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
+  }
 
-    public void execute() {
-        if (this.getDelay() == 0) {
-                this.setDelay(DELAY);
-        }
-        int id = r.nextInt(messages.size());
-        String msg = messages.get(id);
-        World.getWorld().broadcast("- &e"+msg);
+  public void execute() {
+    if (this.getDelay() == 0) {
+      this.setDelay(DELAY);
     }
+    int id = r.nextInt(messages.size());
+    String msg = messages.get(id);
+    World.getWorld().broadcast("- &e" + msg);
+  }
 
 }

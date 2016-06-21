@@ -46,32 +46,34 @@ import org.opencraft.server.net.packet.handler.PacketHandler;
 
 /**
  * A class which handles message and comamnd packets.
+ *
  * @author Graham Edgecombe
  */
 public class ExtEntryPacketHandler implements PacketHandler<MinecraftSession> {
-	@Override
-	public void handlePacket(final MinecraftSession session, Packet packet) {
-            String extName = packet.getStringField("ext_name");
-            int extVersion = packet.getNumericField("ext_version").intValue();
-            for(int i = 0; i < Constants.NUM_CPE_EXTENSIONS; i++) {
-                if(Constants.CPE_EXT_NAMES[i].equals(extName) && Constants.CPE_EXT_VERSIONS[i] == extVersion) {
-                    session.addExtension(extName);
-                    //Server.log(session.getIP()+" supports "+extName+" v"+extVersion);
-                    break;
-                }
-            }
-            synchronized(session) {
-                session.receivedExtEntries++;
-                Server.d(session.receivedExtEntries+" "+session.numExtEntries);
-                if(session.receivedExtEntries == session.numExtEntries && !session.receivedAllExtEntries) {
-                    session.receivedAllExtEntries = true;
-                    if(session.isExtensionSupported("CustomBlocks")) {
-                        session.getActionSender().sendCustomBlockSupport();
-                    }
-                    Server.d("Registering session");
-                    World.getWorld().register(session, session.username, session.verificationKey);
-                }
-            }
-	}
-	
+  @Override
+  public void handlePacket(final MinecraftSession session, Packet packet) {
+    String extName = packet.getStringField("ext_name");
+    int extVersion = packet.getNumericField("ext_version").intValue();
+    for (int i = 0; i < Constants.NUM_CPE_EXTENSIONS; i++) {
+      if (Constants.CPE_EXT_NAMES[i].equals(extName) && Constants.CPE_EXT_VERSIONS[i] ==
+          extVersion) {
+        session.addExtension(extName);
+        //Server.log(session.getIP()+" supports "+extName+" v"+extVersion);
+        break;
+      }
+    }
+    synchronized (session) {
+      session.receivedExtEntries++;
+      Server.d(session.receivedExtEntries + " " + session.numExtEntries);
+      if (session.receivedExtEntries == session.numExtEntries && !session.receivedAllExtEntries) {
+        session.receivedAllExtEntries = true;
+        if (session.isExtensionSupported("CustomBlocks")) {
+          session.getActionSender().sendCustomBlockSupport();
+        }
+        Server.d("Registering session");
+        World.getWorld().register(session, session.username, session.verificationKey);
+      }
+    }
+  }
+
 }

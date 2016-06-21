@@ -37,122 +37,124 @@
 package org.opencraft.server.net;
 
 
-
-import java.net.InetSocketAddress;
-import java.util.HashMap;
-
 import org.apache.mina.core.session.IoSession;
 import org.opencraft.server.Constants;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.packet.Packet;
 
+import java.net.InetSocketAddress;
+import java.util.HashMap;
+
 /**
  * Manages a connected Minecraft session.
+ *
  * @author Graham Edgecombe
  */
-public final class MinecraftSession extends OCSession{
-	
-	
-	/**
-	 * The action sender associated with this session.
-	 */
-        public boolean levelSent = false;
-        public boolean isEmailUser = false;
-        public boolean ccUser = false;
-        public boolean ccAuthenticated = false;
-        public String client = "Minecraft.net";
-        public String username;
-        public String verificationKey;
-        public HashMap<String, Boolean> supportedCPEExtensions = new HashMap<String, Boolean>(Constants.NUM_CPE_EXTENSIONS);
-        public int numExtEntries = 0;
-        public int receivedExtEntries = 0;
-        public boolean receivedAllExtEntries = false;
-        public int customBlockLevel = 0;
-	private final ActionSender actionSender = new ActionSender(this);
-        private String ip;
-	
-	
-	/**
-	 * The player associated with this session.
-	 */
-	private Player player;
-	
-	
-	public MinecraftSession(IoSession sess) {
-		super(sess);
-                sess.getConfig().setBothIdleTime(10);
-                sess.getConfig().setWriteTimeout(5);
-                ip = ((InetSocketAddress)sess.getRemoteAddress()).getAddress().getHostAddress();
-	}
-	/**
-	 * Gets the action sender associated with this session.
-	 * @return The action sender.
-	 */
-	public ActionSender getActionSender() {
-		return actionSender;
-	}
-        public String getIP()
-        {
-            return ip;
-        }
-	
-	/**
-	 * Sets the player associated with this session.
-	 * @param player The player.
-	 */
-	public void setPlayer(Player player) {
-		this.player = player;
-	}
-	
-	/**
-	 * Gets the player associated with this session.
-	 * @return The player.
-	 */
-	public Player getPlayer() {
-		return player;
-	}
+public final class MinecraftSession extends OCSession {
 
-	
-	/**
-	 * Handles a packet.
-	 * @param packet The packet to handle.
-	 */
-	@Override
-	public void handle(Packet packet) {
-		PersistingHandlerManager.getPacketHandlerManager().handlePacket(this, packet);
-	}
 
-	
-	/**
-	 * Called when this session is to be destroyed, should release any
-	 * resources.
-	 */
-	@Override
-	public void destroy() {
-		World.getWorld().unregister(this);
-	}
-	
-	
-	public boolean isAuthenticated() {
-		if(player == null)
-		{
-			return false;
-		}
-		else
-		{
-			return true;
-		}
-	}
-        
-        public boolean isExtensionSupported(String name) {
-            if(!ccUser)
-                return false;
-            else
-                return supportedCPEExtensions.containsKey(name);
-        }
-        public void addExtension(String name) {
-            supportedCPEExtensions.put(name, true);
-        }
-	
+  private final ActionSender actionSender = new ActionSender(this);
+  /**
+   * The action sender associated with this session.
+   */
+  public boolean levelSent = false;
+  public boolean isEmailUser = false;
+  public boolean ccUser = false;
+  public boolean ccAuthenticated = false;
+  public String client = "Minecraft.net";
+  public String username;
+  public String verificationKey;
+  public HashMap<String, Boolean> supportedCPEExtensions = new HashMap<String, Boolean>(Constants
+      .NUM_CPE_EXTENSIONS);
+  public int numExtEntries = 0;
+  public int receivedExtEntries = 0;
+  public boolean receivedAllExtEntries = false;
+  public int customBlockLevel = 0;
+  private String ip;
+
+
+  /**
+   * The player associated with this session.
+   */
+  private Player player;
+
+
+  public MinecraftSession(IoSession sess) {
+    super(sess);
+    sess.getConfig().setBothIdleTime(10);
+    sess.getConfig().setWriteTimeout(5);
+    ip = ((InetSocketAddress) sess.getRemoteAddress()).getAddress().getHostAddress();
+  }
+
+  /**
+   * Gets the action sender associated with this session.
+   *
+   * @return The action sender.
+   */
+  public ActionSender getActionSender() {
+    return actionSender;
+  }
+
+  public String getIP() {
+    return ip;
+  }
+
+  /**
+   * Gets the player associated with this session.
+   *
+   * @return The player.
+   */
+  public Player getPlayer() {
+    return player;
+  }
+
+  /**
+   * Sets the player associated with this session.
+   *
+   * @param player The player.
+   */
+  public void setPlayer(Player player) {
+    this.player = player;
+  }
+
+  /**
+   * Handles a packet.
+   *
+   * @param packet The packet to handle.
+   */
+  @Override
+  public void handle(Packet packet) {
+    PersistingHandlerManager.getPacketHandlerManager().handlePacket(this, packet);
+  }
+
+
+  /**
+   * Called when this session is to be destroyed, should release any resources.
+   */
+  @Override
+  public void destroy() {
+    World.getWorld().unregister(this);
+  }
+
+
+  public boolean isAuthenticated() {
+    if (player == null) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  public boolean isExtensionSupported(String name) {
+    if (!ccUser)
+      return false;
+    else
+      return supportedCPEExtensions.containsKey(name);
+  }
+
+  public void addExtension(String name) {
+    supportedCPEExtensions.put(name, true);
+  }
+
 }

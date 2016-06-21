@@ -45,65 +45,64 @@ import org.opencraft.server.model.World;
 
 /**
  * Official /deop command **NEEDS PERSISTENCE**
+ *
  * @author S�ren Enevoldsen
  */
 
 public class KickCommand implements Command {
-	
-	/**
-	 * The instance of this command.
-	 */
-	private static final KickCommand INSTANCE = new KickCommand();
-	
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static KickCommand getCommand() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * Default private constructor.
-	 */
-	private KickCommand() {
-		/* empty */
-	}
-	
-	@Override
-	public void execute(Player player, CommandParameters params) {
-		// Player using command is OP?
-		if ((player.isOp()) || player.isVIP()) {
-			if (params.getArgumentCount() == 1) {
-				Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-				if(other != null) {
-					other.getSession().close();
-					Server.log(player.getName()+" kicked "+other.getName());
-					World.getWorld().broadcast("- "+other.parseName() + " has been kicked!");
-					return;
-				}
-				// Player not found
-				player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
-			} else if (params.getArgumentCount() > 1)
-			{
-				Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-				if (other != null)
-				{
-					String message = "";
-					for (int i = 1; i < params.getArgumentCount(); i++)
-					{
-						message += " "+params.getStringArgument(i);
-					}
-					other.getActionSender().sendLoginFailure(message);
-					other.getSession().close();
-					Server.log(player.getName()+" kicked "+other.getName() + " :reason: " + message);
-					World.getWorld().broadcast("- "+other.parseName() + " has been kicked! "+message);
-					return;
-				}
-			} else
-				player.getActionSender().sendChatMessage("Wrong number of arguments");
-			player.getActionSender().sendChatMessage("/kick <name> <message>");
-		} else
-			player.getActionSender().sendChatMessage("You must be OP to do that");
-	}
+
+  /**
+   * The instance of this command.
+   */
+  private static final KickCommand INSTANCE = new KickCommand();
+
+  /**
+   * Default private constructor.
+   */
+  private KickCommand() {
+        /* empty */
+  }
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static KickCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    // Player using command is OP?
+    if ((player.isOp()) || player.isVIP()) {
+      if (params.getArgumentCount() == 1) {
+        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+        if (other != null) {
+          other.getSession().close();
+          Server.log(player.getName() + " kicked " + other.getName());
+          World.getWorld().broadcast("- " + other.parseName() + " has been kicked!");
+          return;
+        }
+        // Player not found
+        player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
+      } else if (params.getArgumentCount() > 1) {
+        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+        if (other != null) {
+          String message = "";
+          for (int i = 1; i < params.getArgumentCount(); i++) {
+            message += " " + params.getStringArgument(i);
+          }
+          other.getActionSender().sendLoginFailure(message);
+          other.getSession().close();
+          Server.log(player.getName() + " kicked " + other.getName() + " :reason: " + message);
+          World.getWorld().broadcast("- " + other.parseName() + " has been kicked! " + message);
+          return;
+        }
+      } else
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/kick <name> <message>");
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

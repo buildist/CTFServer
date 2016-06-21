@@ -40,18 +40,18 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class GhostCommand implements Command{
+public class GhostCommand implements Command {
 
-    private static final GhostCommand INSTANCE = new GhostCommand();
+  private static final GhostCommand INSTANCE = new GhostCommand();
 
-    public static GhostCommand getCommand() {
-            return INSTANCE;
-    }
+  public static GhostCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        if(player.hasGhost == false)
-            player.getActionSender().sendChatMessage("- &eYou need to buy ghost mode from the store!");
-        else
-            player.activateGhost();
-    }
+  public void execute(Player player, CommandParameters params) {
+    if (player.hasGhost == false)
+      player.getActionSender().sendChatMessage("- &eYou need to buy ghost mode from the store!");
+    else
+      player.activateGhost();
+  }
 }

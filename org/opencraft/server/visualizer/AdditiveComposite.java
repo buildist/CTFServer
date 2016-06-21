@@ -35,16 +35,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.visualizer;
-import java.awt.*;
-import java.awt.image.*;
-public class AdditiveComposite implements Composite
-{
-  public AdditiveComposite()
-  {
+
+public class AdditiveComposite implements Composite {
+  public AdditiveComposite() {
     super();
   }
-  public CompositeContext createContext(ColorModel srcColorModel, ColorModel dstColorModel, RenderingHints hints)
-  {
+
+  public CompositeContext createContext(ColorModel srcColorModel, ColorModel dstColorModel,
+                                        RenderingHints hints) {
     return new AdditiveCompositeContext();
   }
 }

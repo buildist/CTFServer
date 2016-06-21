@@ -43,26 +43,26 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
 public class TntCommand implements Command {
-    private static final TntCommand INSTANCE = new TntCommand();
+  private static final TntCommand INSTANCE = new TntCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static TntCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static TntCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-            if(player.hasTNT)
-            {
-                ((CTFGameMode)World.getWorld().getGameMode()).explodeTNT(player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, 2);
-                player.hasTNT = false;
-                player.tntX = 0;
-                player.tntY = 0;
-                player.tntZ = 0;
-            }
-            else
-                player.getActionSender().sendChatMessage("- &eYou haven't placed any TNT.");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if (player.hasTNT) {
+      ((CTFGameMode) World.getWorld().getGameMode()).explodeTNT(player, World.getWorld().getLevel
+          (), player.tntX, player.tntY, player.tntZ, 2);
+      player.hasTNT = false;
+      player.tntX = 0;
+      player.tntY = 0;
+      player.tntZ = 0;
+    } else
+      player.getActionSender().sendChatMessage("- &eYou haven't placed any TNT.");
+  }
 }

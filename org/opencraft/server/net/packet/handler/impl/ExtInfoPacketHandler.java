@@ -43,14 +43,15 @@ import org.opencraft.server.net.packet.handler.PacketHandler;
 
 /**
  * A class which handles message and comamnd packets.
+ *
  * @author Graham Edgecombe
  */
 public class ExtInfoPacketHandler implements PacketHandler<MinecraftSession> {
-	
-	@Override
-	public void handlePacket(MinecraftSession session, Packet packet) {
-            session.numExtEntries = packet.getNumericField("extension_count").intValue();
-            session.client = packet.getStringField("app_name");
-	}
-	
+
+  @Override
+  public void handlePacket(MinecraftSession session, Packet packet) {
+    session.numExtEntries = packet.getNumericField("extension_count").intValue();
+    session.client = packet.getStringField("app_name");
+  }
+
 }

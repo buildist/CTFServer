@@ -43,40 +43,35 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
 public class FreezeCommand implements Command {
-    
-    private static final FreezeCommand INSTANCE = new FreezeCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static FreezeCommand getCommand() {
-            return INSTANCE;
-    }
+  private static final FreezeCommand INSTANCE = new FreezeCommand();
 
-    public void execute(Player player, CommandParameters params) {
-        if (player.isOp())
-        {
-            Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-            if(other != null) {
-                if(!other.frozen)
-                {
-                    other.frozen = true;
-                    Server.log(player.getName()+" froze "+other.getName());
-                    World.getWorld().broadcast("- "+other.parseName()+" has been frozen!");
-                    player.getActionSender().sendChatMessage("- &eSay /freeze [name] again to unmute them");
-                }
-                else
-                {
-                    other.frozen = false;
-                    Server.log(player.getName()+" unfroze "+other.getName());
-                }      
-            }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static FreezeCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+      if (other != null) {
+        if (!other.frozen) {
+          other.frozen = true;
+          Server.log(player.getName() + " froze " + other.getName());
+          World.getWorld().broadcast("- " + other.parseName() + " has been frozen!");
+          player.getActionSender().sendChatMessage("- &eSay /freeze [name] again to unmute them");
+        } else {
+          other.frozen = false;
+          Server.log(player.getName() + " unfroze " + other.getName());
         }
-        else
-        {
-            player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
-        }
+      }
+    } else {
+      player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
     }
+  }
 
 }

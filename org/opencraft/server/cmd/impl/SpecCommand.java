@@ -40,20 +40,21 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class SpecCommand implements Command{
+public class SpecCommand implements Command {
 
-    private static final SpecCommand INSTANCE = new SpecCommand();
+  private static final SpecCommand INSTANCE = new SpecCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static SpecCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static SpecCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        player.joinTeam("spec");
-    }
+  public void execute(Player player, CommandParameters params) {
+    player.joinTeam("spec");
+  }
 
 }

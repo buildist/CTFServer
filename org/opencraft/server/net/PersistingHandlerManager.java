@@ -1,4 +1,3 @@
-
 /*
  * Jacob_'s Capture the Flag for Minecraft Classic and ClassiCube
  * Copyright (c) 2010-2014 Jacob Morgan
@@ -37,27 +36,27 @@
  */
 package org.opencraft.server.net;
 
-import java.util.Map;
 import org.opencraft.server.Constants;
-
 import org.opencraft.server.io.PersistenceManager;
 import org.opencraft.server.net.packet.handler.PacketHandlerManager;
 
+import java.util.Map;
+
 /**
- * @author Mark Farrell
- * The persisting packet handler manager for opencraft.
+ * @author Mark Farrell The persisting packet handler manager for opencraft.
  */
-public final class PersistingHandlerManager extends PacketHandlerManager{
+public final class PersistingHandlerManager extends PacketHandlerManager {
 
-	private static final PacketHandlerManager INSTANCE = new PersistingHandlerManager();
+  private static final PacketHandlerManager INSTANCE = new PersistingHandlerManager();
 
-	@SuppressWarnings("unchecked")
-	private PersistingHandlerManager() {
-		super((Map<Integer, String>) PersistenceManager.getPersistenceManager().load(Constants.ROOT_PATH+"/packetHandlers.xml"));
-	}
+  @SuppressWarnings("unchecked")
+  private PersistingHandlerManager() {
+    super((Map<Integer, String>) PersistenceManager.getPersistenceManager().load(Constants
+        .ROOT_PATH + "/packetHandlers.xml"));
+  }
 
-	public static PacketHandlerManager getPacketHandlerManager() {
-		return INSTANCE;
-	}
-	
+  public static PacketHandlerManager getPacketHandlerManager() {
+    return INSTANCE;
+  }
+
 }

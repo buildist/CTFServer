@@ -39,18 +39,17 @@ package org.opencraft.server.model.impl;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
 
-public class GhostItem extends StoreItem{
-    public GhostItem(String n, int p)
-    {
-        super(n, p);
-        description = "Make yourself invisible";
-    }
-    public StoreItem getCopy()
-    {
-        return new GhostItem(name, price);
-    }
+public class GhostItem extends StoreItem {
+  public GhostItem(String n, int p) {
+    super(n, p);
+    description = "Make yourself invisible";
+  }
 
-    public void activate(Player player) {
-        player.activateGhost();
-    }
+  public StoreItem getCopy() {
+    return new GhostItem(name, price);
+  }
+
+  public void activate(Player player) {
+    player.activateGhost();
+  }
 }

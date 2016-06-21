@@ -36,26 +36,26 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Constants;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 
-public class RedCommand implements Command{
+public class RedCommand implements Command {
 
-    private static final RedCommand INSTANCE = new RedCommand();
+  private static final RedCommand INSTANCE = new RedCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static RedCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static RedCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        if(!GameSettings.getBoolean("Tournament"))
-            player.joinTeam("red");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if (!GameSettings.getBoolean("Tournament"))
+      player.joinTeam("red");
+  }
 }

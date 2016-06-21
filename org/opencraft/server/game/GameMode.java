@@ -37,56 +37,61 @@
 package org.opencraft.server.game;
 
 
-import java.util.Map;
-
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 
+import java.util.Map;
+
 /**
  * An interface which represents a specific type of game mode.
+ *
  * @author Graham Edgecombe
  * @author S�ren Enevoldsen
  */
 public interface GameMode<P extends Player> {
-	
-	/**
-	 * Gets a map of commands that are supported in this game mode.
-	 * @return The map of commands.
-	 */
-	public Map<String, Command> getCommands();
-	
-	/**
-	 * Called every 100ms BEFORE each tick.
-	 */
-	public void tick();
-	
-	/**
-	 * Notification of player connected
-	 * @param player The connected player
-	 */
-	public void playerConnected(P player);
-	
-	/**
-	 * Event handler for a player disconnect Remember player has already
-	 * disconnected!
-	 * @param player The disconnected player
-	 */
-	public void playerDisconnected(P player);
-	
-	/**
-	 * Handles block adding and removing
-	 * @param player The player setting the block
-	 * @param level The level
-	 * @param mode 1/0 adding/removing
-	 * @param type typeId of the block
-	 */
-	public void setBlock(P player, Level level, int x, int y, int z, int mode, int type);
-	
-	/**
-	 * Broadcasts a chat message.
-	 * @param player The sending player.
-	 * @param message The chat message.
-	 */
-	public void broadcastChatMessage(P player, String message);
+
+  /**
+   * Gets a map of commands that are supported in this game mode.
+   *
+   * @return The map of commands.
+   */
+  public Map<String, Command> getCommands();
+
+  /**
+   * Called every 100ms BEFORE each tick.
+   */
+  public void tick();
+
+  /**
+   * Notification of player connected
+   *
+   * @param player The connected player
+   */
+  public void playerConnected(P player);
+
+  /**
+   * Event handler for a player disconnect Remember player has already disconnected!
+   *
+   * @param player The disconnected player
+   */
+  public void playerDisconnected(P player);
+
+  /**
+   * Handles block adding and removing
+   *
+   * @param player The player setting the block
+   * @param level  The level
+   * @param mode   1/0 adding/removing
+   * @param type   typeId of the block
+   */
+  public void setBlock(P player, Level level, int x, int y, int z, int mode, int type);
+
+  /**
+   * Broadcasts a chat message.
+   *
+   * @param player  The sending player.
+   * @param message The chat message.
+   */
+  public void broadcastChatMessage(P player, String message);
 }

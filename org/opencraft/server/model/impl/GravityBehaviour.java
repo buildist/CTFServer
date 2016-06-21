@@ -43,38 +43,40 @@ import org.opencraft.server.model.BlockManager;
 import org.opencraft.server.model.Level;
 
 /**
- * A block behaviour that applies gravity to a block. Lets a block fall to the
- * lowest possible unoccupied square (z-axis).
+ * A block behaviour that applies gravity to a block. Lets a block fall to the lowest possible
+ * unoccupied square (z-axis).
+ *
  * @author Graham Edgecombe
  * @author Brett Russell
  */
 public class GravityBehaviour implements BlockBehaviour {
-	
-	@Override
-	public void handlePassive(Level level, int x, int y, int z, int type) {
-		if (z == 0 || BlockManager.getBlockManager().getBlock(level.getBlock(x, y, z - 1)).isSolid())
-			return;
-		for (int i = z - 1; i >= 0; i--) {
-			// find the first solid block below our gravity-affected block, or
-			// the bottom of the map if none
-			if (i == 0 || BlockManager.getBlockManager().getBlock(level.getBlock(x, y, i)).isSolid()) {
-				// drop it on top of that block
-				level.setBlock(x, y, z, BlockConstants.AIR);
-				level.setBlock(x, y, i + (i == 0 && !BlockManager.getBlockManager().getBlock(level.getBlock(x, y, i)).isSolid() ? 0 : 1), type);
-				return;
-			}
-		}
-		
-	}
-	
-	@Override
-	public void handleDestroy(Level level, int x, int y, int z, int type) {
-		
-	}
-	
-	@Override
-	public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
-		
-	}
-	
+
+  @Override
+  public void handlePassive(Level level, int x, int y, int z, int type) {
+    if (z == 0 || BlockManager.getBlockManager().getBlock(level.getBlock(x, y, z - 1)).isSolid())
+      return;
+    for (int i = z - 1; i >= 0; i--) {
+      // find the first solid block below our gravity-affected block, or
+      // the bottom of the map if none
+      if (i == 0 || BlockManager.getBlockManager().getBlock(level.getBlock(x, y, i)).isSolid()) {
+        // drop it on top of that block
+        level.setBlock(x, y, z, BlockConstants.AIR);
+        level.setBlock(x, y, i + (i == 0 && !BlockManager.getBlockManager().getBlock(level
+            .getBlock(x, y, i)).isSolid() ? 0 : 1), type);
+        return;
+      }
+    }
+
+  }
+
+  @Override
+  public void handleDestroy(Level level, int x, int y, int z, int type) {
+
+  }
+
+  @Override
+  public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
+
+  }
+
 }

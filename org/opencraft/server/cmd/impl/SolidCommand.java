@@ -39,34 +39,29 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class SolidCommand implements Command{
-    private static final SolidCommand INSTANCE = new SolidCommand();
+public class SolidCommand implements Command {
+  private static final SolidCommand INSTANCE = new SolidCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static SolidCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static SolidCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-		if (player.isOp())
-                {
-                    if(player.placeSolid)
-                    {
-                        player.placeSolid = false;
-                        player.getActionSender().sendChatMessage("- &eNo longer placing adminium");
-                    }
-                    else
-                    {
-                        player.placeSolid = true;
-                        player.getActionSender().sendChatMessage("- &eNow placing adminium");
-                    }
-                }
-                else
-                    player.getActionSender().sendChatMessage("You need to be op to do that!");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      if (player.placeSolid) {
+        player.placeSolid = false;
+        player.getActionSender().sendChatMessage("- &eNo longer placing adminium");
+      } else {
+        player.placeSolid = true;
+        player.getActionSender().sendChatMessage("- &eNow placing adminium");
+      }
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

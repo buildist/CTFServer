@@ -45,49 +45,50 @@ import org.opencraft.server.model.World;
 
 /**
  * Official /say command
+ *
  * @author S�ren Enevoldsen
  */
 
 public class SayCommand implements Command {
-	
-	/**
-	 * The instance of this command.
-	 */
-	private static final SayCommand INSTANCE = new SayCommand();
-	
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static SayCommand getCommand() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * Default private constructor.
-	 */
-	private SayCommand() {
-		/* empty */
-	}
-	
-	@Override
-	public void execute(Player player, CommandParameters params) {
-		// Player using command is OP?
-		if (player.isOp()) {
-			if (params.getArgumentCount() == 0) {
-				player.getActionSender().sendChatMessage("No message to send");
-				player.getActionSender().sendChatMessage("/say <message>");
-				return;
-			}
-                        String text = "";
-                        for(int i = 0; i < params.getArgumentCount(); i++)
-                        {
-                            text += " "+params.getStringArgument(i);
-                        }
-                        Server.log(player.getName()+" /said "+text);
-                        if(!text.equals(""))
-                            World.getWorld().broadcast("* &e" + text);
-		} else
-			player.getActionSender().sendChatMessage("You must be OP to do that");
-	}
+
+  /**
+   * The instance of this command.
+   */
+  private static final SayCommand INSTANCE = new SayCommand();
+
+  /**
+   * Default private constructor.
+   */
+  private SayCommand() {
+        /* empty */
+  }
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static SayCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    // Player using command is OP?
+    if (player.isOp()) {
+      if (params.getArgumentCount() == 0) {
+        player.getActionSender().sendChatMessage("No message to send");
+        player.getActionSender().sendChatMessage("/say <message>");
+        return;
+      }
+      String text = "";
+      for (int i = 0; i < params.getArgumentCount(); i++) {
+        text += " " + params.getStringArgument(i);
+      }
+      Server.log(player.getName() + " /said " + text);
+      if (!text.equals(""))
+        World.getWorld().broadcast("* &e" + text);
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

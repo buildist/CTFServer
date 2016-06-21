@@ -44,51 +44,52 @@ import org.opencraft.server.model.Player;
 /**
  * Official /deop command **NEEDS PERSISTENCE
  *
- **
+ * *
+ *
  * @author S�ren Enevoldsen
  */
 public class DuelCommand implements Command {
 
-    /**
-     * The instance of this command.
-     */
-    private static final DuelCommand INSTANCE = new DuelCommand();
+  /**
+   * The instance of this command.
+   */
+  private static final DuelCommand INSTANCE = new DuelCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     *
-     * @return The singleton instance of this command.
-     */
-    public static DuelCommand getCommand() {
-        return INSTANCE;
-    }
-
-    /**
-     * Default private constructor.
-     */
-    private DuelCommand() {
+  /**
+   * Default private constructor.
+   */
+  private DuelCommand() {
         /* empty */
-    }
+  }
 
-    @Override
-    public void execute(final Player player, CommandParameters params) {
-        if(!GameSettings.getBoolean("Tournament")) {
-            if(params.getArgumentCount() == 0)
-                player.getActionSender().sendChatMessage("/duel [name]");
-            else {
-                Player p = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-                if(p == null) {
-                    player.getActionSender().sendChatMessage("- &ePlayer not found.");
-                }
-                else if(p.team == player.team || p.team == -1 || player.team == -1) {
-                    player.getActionSender().sendChatMessage("- &eYou must be on opposite teams to duel.");
-                }
-                else {
-                    p.duelChallengedBy = player;
-                    p.getActionSender().sendChatMessage("- "+player.getColoredName()+" &bhas challenged you to a duel!");
-                    p.getActionSender().sendChatMessage("- &bSay /accept if you would like to accept their challenge");
-                 }
-            }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static DuelCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(final Player player, CommandParameters params) {
+    if (!GameSettings.getBoolean("Tournament")) {
+      if (params.getArgumentCount() == 0)
+        player.getActionSender().sendChatMessage("/duel [name]");
+      else {
+        Player p = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+        if (p == null) {
+          player.getActionSender().sendChatMessage("- &ePlayer not found.");
+        } else if (p.team == player.team || p.team == -1 || player.team == -1) {
+          player.getActionSender().sendChatMessage("- &eYou must be on opposite teams to duel.");
+        } else {
+          p.duelChallengedBy = player;
+          p.getActionSender().sendChatMessage("- " + player.getColoredName() + " &bhas challenged" +
+              " you to a duel!");
+          p.getActionSender().sendChatMessage("- &bSay /accept if you would like to accept their " +
+              "challenge");
         }
+      }
     }
+  }
 }

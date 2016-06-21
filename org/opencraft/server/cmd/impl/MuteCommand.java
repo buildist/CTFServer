@@ -36,8 +36,6 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.opencraft.server.Server;
 import org.opencraft.server.WebServer;
 import org.opencraft.server.cmd.Command;
@@ -46,68 +44,65 @@ import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class MuteCommand implements Command {
-    
-    private static final MuteCommand INSTANCE = new MuteCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static MuteCommand getCommand() {
-            return INSTANCE;
-    }
+  private static final MuteCommand INSTANCE = new MuteCommand();
 
-    public void execute(Player player, CommandParameters params) {
-        if (player.isOp() || player.isVIP())
-        {
-            List<Player> other = new ArrayList<Player>();
-            if(params.getStringArgument(0).equals("all")) {
-                for(Player p : World.getWorld().getPlayerList().getPlayers()) {
-                    if(!p.isOp() && !p.isVIP()) {
-                        other.add(p);
-                    }
-                }
-            } else {
-                other.add(Player.getPlayer(params.getStringArgument(0), player.getActionSender()));
-            }
-            for(Player otherPlayer : other) {
-                if(otherPlayer != null) {
-                    if(!otherPlayer.muted)
-                    {
-                        otherPlayer.muted = true;
-                        ((CTFGameMode)World.getWorld().getGameMode()).mute(otherPlayer);
-                        Server.log(player.getName()+" muted "+otherPlayer.getName());
-                        World.getWorld().broadcast("- "+otherPlayer.parseName()+" has been muted!");
-                        otherPlayer.getActionSender().sendChatMessage("- &eYou have been muted!");
-                        player.getActionSender().sendChatMessage("- &eSay /mute [name] again to unmute them");
-                    }
-                    else
-                    {
-                        otherPlayer.muted = false;
-                        ((CTFGameMode)World.getWorld().getGameMode()).unmute(otherPlayer);
-                        Server.log(player.getName()+" unmuted "+otherPlayer.getName());
-                        World.getWorld().broadcast("- "+otherPlayer.parseName()+" has been ummuted!");
-                        otherPlayer.getActionSender().sendChatMessage("- &eYou are no longer muted");
-                    }
-                }
-            }
-            if(!params.getStringArgument(0).equals("all")) {
-                String name = params.getStringArgument(0).toLowerCase()+"[website]";
-                if(WebServer.blockedWords.contains(name)) {
-                    WebServer.blockedWords.remove(name);
-                    player.getActionSender().sendChatMessage("- &eUnmuted "+name);
-                }
-                else {
-                    WebServer.blockedWords.add(name);
-                    player.getActionSender().sendChatMessage("- &eMuted "+name);
-                }
-            }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static MuteCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp() || player.isVIP()) {
+      List<Player> other = new ArrayList<Player>();
+      if (params.getStringArgument(0).equals("all")) {
+        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+          if (!p.isOp() && !p.isVIP()) {
+            other.add(p);
+          }
         }
-        else
-        {
-            player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
+      } else {
+        other.add(Player.getPlayer(params.getStringArgument(0), player.getActionSender()));
+      }
+      for (Player otherPlayer : other) {
+        if (otherPlayer != null) {
+          if (!otherPlayer.muted) {
+            otherPlayer.muted = true;
+            ((CTFGameMode) World.getWorld().getGameMode()).mute(otherPlayer);
+            Server.log(player.getName() + " muted " + otherPlayer.getName());
+            World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been muted!");
+            otherPlayer.getActionSender().sendChatMessage("- &eYou have been muted!");
+            player.getActionSender().sendChatMessage("- &eSay /mute [name] again to unmute them");
+          } else {
+            otherPlayer.muted = false;
+            ((CTFGameMode) World.getWorld().getGameMode()).unmute(otherPlayer);
+            Server.log(player.getName() + " unmuted " + otherPlayer.getName());
+            World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been ummuted!");
+            otherPlayer.getActionSender().sendChatMessage("- &eYou are no longer muted");
+          }
         }
+      }
+      if (!params.getStringArgument(0).equals("all")) {
+        String name = params.getStringArgument(0).toLowerCase() + "[website]";
+        if (WebServer.blockedWords.contains(name)) {
+          WebServer.blockedWords.remove(name);
+          player.getActionSender().sendChatMessage("- &eUnmuted " + name);
+        } else {
+          WebServer.blockedWords.add(name);
+          player.getActionSender().sendChatMessage("- &eMuted " + name);
+        }
+      }
+    } else {
+      player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
     }
+  }
 
 }

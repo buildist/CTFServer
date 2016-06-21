@@ -40,30 +40,28 @@ import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class UnbanIPCommand implements Command{
+public class UnbanIPCommand implements Command {
 
-	private static final UnbanIPCommand INSTANCE = new UnbanIPCommand();
+  private static final UnbanIPCommand INSTANCE = new UnbanIPCommand();
 
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static UnbanIPCommand getCommand() {
-		return INSTANCE;
-	}
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static UnbanIPCommand getCommand() {
+    return INSTANCE;
+  }
 
 
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            if (player.isOp())
-            {
-                Server.log(player.getName()+" unbanned "+params.getStringArgument(0));
-                Server.unbanIP(params.getStringArgument(0));
-                player.getActionSender().sendChatMessage(params.getStringArgument(0)+" has been unbanned.");
-            }
-            else
-                player.getActionSender().sendChatMessage("You need to be op to do that!");
-	}
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      Server.log(player.getName() + " unbanned " + params.getStringArgument(0));
+      Server.unbanIP(params.getStringArgument(0));
+      player.getActionSender().sendChatMessage(params.getStringArgument(0) + " has been unbanned.");
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

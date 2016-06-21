@@ -45,36 +45,34 @@ import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class NewGameCommand implements Command{
-    private static final NewGameCommand INSTANCE = new NewGameCommand();
+public class NewGameCommand implements Command {
+  private static final NewGameCommand INSTANCE = new NewGameCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static NewGameCommand getCommand() {
-            return INSTANCE;
-    }
-    public void execute(Player player, CommandParameters params) {
-        if ((player.isOp()) || player.isVIP())
-        {
-            Server.log(player.getName()+" used /newgame");
-            String mapName;
-            try {
-            mapName = params.getStringArgument(0);
-            }
-            catch(Exception ex)
-            {
-                mapName = null;
-            }
-            Level newMap;
-            if(mapName == null)
-                newMap = MapController.randomLevel();
-            else
-                newMap = MapController.getLevel(mapName);
-            ((CTFGameMode)World.getWorld().getGameMode()).startGame(newMap);
-        }
-        else
-            player.getActionSender().sendChatMessage("You must be OP to do that");
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static NewGameCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if ((player.isOp()) || player.isVIP()) {
+      Server.log(player.getName() + " used /newgame");
+      String mapName;
+      try {
+        mapName = params.getStringArgument(0);
+      } catch (Exception ex) {
+        mapName = null;
+      }
+      Level newMap;
+      if (mapName == null)
+        newMap = MapController.randomLevel();
+      else
+        newMap = MapController.getLevel(mapName);
+      ((CTFGameMode) World.getWorld().getGameMode()).startGame(newMap);
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

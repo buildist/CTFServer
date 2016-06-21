@@ -42,20 +42,21 @@ import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class FlagDropCommand implements Command{
+public class FlagDropCommand implements Command {
 
-    private static final FlagDropCommand INSTANCE = new FlagDropCommand();
+  private static final FlagDropCommand INSTANCE = new FlagDropCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static FlagDropCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static FlagDropCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        ((CTFGameMode)World.getWorld().getGameMode()).dropFlag(player, false, true);
-    }
+  public void execute(Player player, CommandParameters params) {
+    ((CTFGameMode) World.getWorld().getGameMode()).dropFlag(player, false, true);
+  }
 
 }

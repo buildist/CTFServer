@@ -37,10 +37,6 @@
 package org.opencraft.server.net.codec;
 
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
@@ -50,71 +46,77 @@ import org.opencraft.server.net.packet.PacketDefinition;
 import org.opencraft.server.net.packet.PacketField;
 import org.opencraft.server.net.packet.PacketManager;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * An implement of a <code>ProtocolDecoder</code> which decodes buffers into
- * Minecraft packet objects then dispatches them.
+ * An implement of a <code>ProtocolDecoder</code> which decodes buffers into Minecraft packet
+ * objects then dispatches them.
+ *
  * @author Graham Edgecombe
  */
 public final class MinecraftProtocolDecoder extends CumulativeProtocolDecoder {
-	
-	/**
-	 * The current packet being decoded.
-	 */
-	private PacketDefinition currentPacket = null;
-	private PacketManager manager;
-	
-	public MinecraftProtocolDecoder(PacketManager manager)
-	{
-		this.manager = manager;
-	}
-	@Override
-	protected boolean doDecode(IoSession session, IoBuffer buffer, ProtocolDecoderOutput out) throws Exception {
-		if (currentPacket == null) {
-			if (buffer.remaining() >= 1) {
-				int opcode = buffer.getUnsigned();
-				currentPacket = manager.getIncomingPacket(opcode);
-				if (currentPacket == null) {
-					throw new IOException("Unknown incoming packet type (opcode = " + opcode + ").");
-				}
-			} else {
-				return false;
-			}
-		}
-		if (buffer.remaining() >= currentPacket.getLength()) {
-			Map<String, Object> values = new HashMap<String, Object>();
-			for (PacketField field : currentPacket.getFields()) {
-				Object value = null;
-				switch (field.getType()) {
-				case BYTE:
-					value = buffer.get();
-					break;
-				case SHORT:
-					value = buffer.getShort();
-					break;
-				case INT:
-					value = buffer.getInt();
-					break;
-				case LONG:
-					value = buffer.getLong();
-					break;
-				case BYTE_ARRAY:
-					value = IoBuffer.allocate(1024).put(buffer);
-					break;
-				case STRING:
-					byte[] bytes = new byte[64];
-					buffer.get(bytes);
-					value = new String(bytes).trim();
-					break;
-				}
-				values.put(field.getName(), value);
-			}
-			Packet packet = new Packet(currentPacket, values);
-			currentPacket = null;
-			out.write(packet);
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
+
+  /**
+   * The current packet being decoded.
+   */
+  private PacketDefinition currentPacket = null;
+  private PacketManager manager;
+
+  public MinecraftProtocolDecoder(PacketManager manager) {
+    this.manager = manager;
+  }
+
+  @Override
+  protected boolean doDecode(IoSession session, IoBuffer buffer, ProtocolDecoderOutput out)
+      throws Exception {
+    if (currentPacket == null) {
+      if (buffer.remaining() >= 1) {
+        int opcode = buffer.getUnsigned();
+        currentPacket = manager.getIncomingPacket(opcode);
+        if (currentPacket == null) {
+          throw new IOException("Unknown incoming packet type (opcode = " + opcode + ").");
+        }
+      } else {
+        return false;
+      }
+    }
+    if (buffer.remaining() >= currentPacket.getLength()) {
+      Map<String, Object> values = new HashMap<String, Object>();
+      for (PacketField field : currentPacket.getFields()) {
+        Object value = null;
+        switch (field.getType()) {
+          case BYTE:
+            value = buffer.get();
+            break;
+          case SHORT:
+            value = buffer.getShort();
+            break;
+          case INT:
+            value = buffer.getInt();
+            break;
+          case LONG:
+            value = buffer.getLong();
+            break;
+          case BYTE_ARRAY:
+            value = IoBuffer.allocate(1024).put(buffer);
+            break;
+          case STRING:
+            byte[] bytes = new byte[64];
+            buffer.get(bytes);
+            value = new String(bytes).trim();
+            break;
+        }
+        values.put(field.getName(), value);
+      }
+      Packet packet = new Packet(currentPacket, values);
+      currentPacket = null;
+      out.write(packet);
+      return true;
+    } else {
+      return false;
+    }
+  }
+
 }

@@ -44,36 +44,42 @@ import org.opencraft.server.model.Level;
 
 /**
  * A block behaviour that handles lava.
+ *
  * @author Brett Russell
  */
 
 public class LavaBehaviour implements BlockBehaviour {
-	@Override
-	public void handlePassive(Level level, int x, int y, int z, int type) {
-		level.queueActiveBlockUpdate(x, y, z);
-	}
-	
-	@Override
-	public void handleDestroy(Level level, int x, int y, int z, int type) {
-		
-	}
-	
-	@Override
-	public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
-		// represents the different directions lava can spread
-		// x, y, z
-		int[][] spreadRules = { { 0, 0, -1 }, { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 } };
-		// then, spread outward
-		for (int i = 0; i <= spreadRules.length - 1; i++) {
-			byte thisOutwardBlock = level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2]);
-			
-			// check for lava
-			if (thisOutwardBlock == BlockConstants.WATER || thisOutwardBlock == BlockConstants.STILL_WATER) {
-				level.setBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2], BlockConstants.STONE);
-			} else if (!BlockManager.getBlockManager().getBlock(thisOutwardBlock).isSolid() && !BlockManager.getBlockManager().getBlock(thisOutwardBlock).isLiquid()) {
-				level.setBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2], BlockConstants.LAVA);
-			}
-		}
-	}
-	
+  @Override
+  public void handlePassive(Level level, int x, int y, int z, int type) {
+    level.queueActiveBlockUpdate(x, y, z);
+  }
+
+  @Override
+  public void handleDestroy(Level level, int x, int y, int z, int type) {
+
+  }
+
+  @Override
+  public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
+    // represents the different directions lava can spread
+    // x, y, z
+    int[][] spreadRules = {{0, 0, -1}, {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}};
+    // then, spread outward
+    for (int i = 0; i <= spreadRules.length - 1; i++) {
+      byte thisOutwardBlock = level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z +
+          spreadRules[i][2]);
+
+      // check for lava
+      if (thisOutwardBlock == BlockConstants.WATER || thisOutwardBlock == BlockConstants
+          .STILL_WATER) {
+        level.setBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2],
+            BlockConstants.STONE);
+      } else if (!BlockManager.getBlockManager().getBlock(thisOutwardBlock).isSolid() &&
+          !BlockManager.getBlockManager().getBlock(thisOutwardBlock).isLiquid()) {
+        level.setBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2],
+            BlockConstants.LAVA);
+      }
+    }
+  }
+
 }

@@ -43,32 +43,29 @@ import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
 
-public class ActivateItemCommand implements Command{
-        private StoreItem item = null;
-        public ActivateItemCommand(StoreItem item)
-        {
-            super();
-            this.item = item;
-        }
+public class ActivateItemCommand implements Command {
+  private StoreItem item = null;
 
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            if(!GameSettings.getBoolean("EnableStore"))
-                player.getActionSender().sendChatMessage("- &eThe store is disabled");
-            else if(player.team == -1)
-                player.getActionSender().sendChatMessage("- &eYou need to join a team to do that!");
-            else if(player.duelPlayer != null)
-                player.getActionSender().sendChatMessage("- &eYou can't use the store while dueling!");
-            else
-            {
-                if(!(item.name.equals("Brush") && player.brush == true))
-                {
-                    boolean r = Server.getStore().buy(player, item.name);
-                    if(r)
-                        item.activate(player);
-                }
-                else
-                    item.activate(player);
-            }
-        }
+  public ActivateItemCommand(StoreItem item) {
+    super();
+    this.item = item;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (!GameSettings.getBoolean("EnableStore"))
+      player.getActionSender().sendChatMessage("- &eThe store is disabled");
+    else if (player.team == -1)
+      player.getActionSender().sendChatMessage("- &eYou need to join a team to do that!");
+    else if (player.duelPlayer != null)
+      player.getActionSender().sendChatMessage("- &eYou can't use the store while dueling!");
+    else {
+      if (!(item.name.equals("Brush") && player.brush == true)) {
+        boolean r = Server.getStore().buy(player, item.name);
+        if (r)
+          item.activate(player);
+      } else
+        item.activate(player);
+    }
+  }
 }

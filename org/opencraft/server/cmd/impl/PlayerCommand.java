@@ -40,22 +40,23 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class PlayerCommand implements Command{
-        public static int playerCount = 0;
-	private static final PlayerCommand INSTANCE = new PlayerCommand();
+public class PlayerCommand implements Command {
+  private static final PlayerCommand INSTANCE = new PlayerCommand();
+  public static int playerCount = 0;
 
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static PlayerCommand getCommand() {
-		return INSTANCE;
-	}
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static PlayerCommand getCommand() {
+    return INSTANCE;
+  }
 
 
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            if (player.isOp())
-                playerCount = Integer.parseInt(params.getStringArgument(0));
-	}
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp())
+      playerCount = Integer.parseInt(params.getStringArgument(0));
+  }
 }

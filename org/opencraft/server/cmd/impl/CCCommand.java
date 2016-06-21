@@ -38,24 +38,25 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class CCCommand implements Command{
-    private static final CCCommand INSTANCE = new CCCommand();
+public class CCCommand implements Command {
+  private static final CCCommand INSTANCE = new CCCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static CCCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static CCCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (!player.getSession().ccUser) {
+      player.setAttribute("ccAuthenticated", "true");
+      player.getActionSender().sendChatMessage("- &eYou can now use this username from ClassiCube" +
+          ".");
     }
-    public void execute(Player player, CommandParameters params) {
-        if(!player.getSession().ccUser) {
-            player.setAttribute("ccAuthenticated", "true");
-            player.getActionSender().sendChatMessage("- &eYou can now use this username from ClassiCube.");
-        }
-    }
+  }
 }

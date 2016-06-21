@@ -36,18 +36,19 @@
  */
 package org.opencraft.server.model;
 
-public class PlayerUntagger implements Runnable{
-    private Player tagged;
-    public PlayerUntagger(Player p)
-    {
-        tagged = p;
+public class PlayerUntagger implements Runnable {
+  private Player tagged;
+
+  public PlayerUntagger(Player p) {
+    tagged = p;
+  }
+
+  public void run() {
+    try {
+      Thread.sleep(3 * 1000);
+    } catch (InterruptedException ex) {
     }
-    public void run() {
-        try {
-            Thread.sleep(3 * 1000);
-        } catch (InterruptedException ex) {
-        }
-        tagged.safe = false;
-    }
+    tagged.safe = false;
+  }
 
 }

@@ -40,21 +40,25 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class StatsCommand implements Command{
-    private static final StatsCommand INSTANCE = new StatsCommand();
+public class StatsCommand implements Command {
+  private static final StatsCommand INSTANCE = new StatsCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static StatsCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static StatsCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        player.getActionSender().sendChatMessage("- &eWins: "+player.getAttribute("wins")+" - "+"Games Played: "+player.getAttribute("games")+" ");
-        player.getActionSender().sendChatMessage("- &eTags: "+player.getAttribute("tags")+" - "+"Captures: "+player.getAttribute("captures")+" ");
-        player.getActionSender().sendChatMessage("- &eExplodes: "+player.getAttribute("explodes")+" - "+"Mines: "+player.getAttribute("mines")+" ");
-        player.getActionSender().sendChatMessage("- &eRagequits: "+player.getAttribute("ragequits"));
-    }
+  public void execute(Player player, CommandParameters params) {
+    player.getActionSender().sendChatMessage("- &eWins: " + player.getAttribute("wins") + " - " +
+        "Games Played: " + player.getAttribute("games") + " ");
+    player.getActionSender().sendChatMessage("- &eTags: " + player.getAttribute("tags") + " - " +
+        "Captures: " + player.getAttribute("captures") + " ");
+    player.getActionSender().sendChatMessage("- &eExplodes: " + player.getAttribute("explodes") +
+        " - " + "Mines: " + player.getAttribute("mines") + " ");
+    player.getActionSender().sendChatMessage("- &eRagequits: " + player.getAttribute("ragequits"));
+  }
 }

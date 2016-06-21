@@ -42,28 +42,30 @@ import org.opencraft.server.model.Player;
 
 /**
  * A Brush that makes boxes
+ *
  * @author S�ren Enevoldsen
  */
 
 public class BoxBrush extends BrushAdapter {
-	
-	public BoxBrush() {
-	}
-	
-	public BoxBrush(int radius) {
-		setRadius(radius);
-	}
-	
-	@Override
-	protected void paintBlocks(Player player, Level level, int x, int y, int z, boolean adding, int type) {
-		
-		setOffsetsFromPerspective(player);
-		
-		for (int offsetZ = zOffStart; offsetZ <= zOffEnd; offsetZ++)
-			for (int offsetY = yOffStart; offsetY <= yOffEnd; offsetY++)
-				for (int offsetX = xOffStart; offsetX <= xOffEnd; offsetX++)
-					if (positionIsBuildable(offsetX + x, offsetY + y, offsetZ + z) == adding)
-						level.setBlock(offsetX + x, offsetY + y, offsetZ + z, type);
-	}
-	
+
+  public BoxBrush() {
+  }
+
+  public BoxBrush(int radius) {
+    setRadius(radius);
+  }
+
+  @Override
+  protected void paintBlocks(Player player, Level level, int x, int y, int z, boolean adding, int
+      type) {
+
+    setOffsetsFromPerspective(player);
+
+    for (int offsetZ = zOffStart; offsetZ <= zOffEnd; offsetZ++)
+      for (int offsetY = yOffStart; offsetY <= yOffEnd; offsetY++)
+        for (int offsetX = xOffStart; offsetX <= xOffEnd; offsetX++)
+          if (positionIsBuildable(offsetX + x, offsetY + y, offsetZ + z) == adding)
+            level.setBlock(offsetX + x, offsetY + y, offsetZ + z, type);
+  }
+
 }

@@ -37,7 +37,6 @@
 package org.opencraft.server.cmd.impl;
 
 
-import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
@@ -45,37 +44,39 @@ import org.opencraft.server.model.World;
 
 /**
  * Official /say command
+ *
  * @author S�ren Enevoldsen
  */
 
 public class ClientsCommand implements Command {
-	
-	/**
-	 * The instance of this command.
-	 */
-	private static final ClientsCommand INSTANCE = new ClientsCommand();
-	
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static ClientsCommand getCommand() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * Default private constructor.
-	 */
-	private ClientsCommand() {
-		/* empty */
-	}
-	
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            String message = "";
-            for(Player p : World.getWorld().getPlayerList().getPlayers()) {
-                message += p.parseName()+": "+p.getSession().client+", ";
-            }
-            player.getActionSender().sendChatMessage("- "+message);
-	}
+
+  /**
+   * The instance of this command.
+   */
+  private static final ClientsCommand INSTANCE = new ClientsCommand();
+
+  /**
+   * Default private constructor.
+   */
+  private ClientsCommand() {
+        /* empty */
+  }
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static ClientsCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    String message = "";
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      message += p.parseName() + ": " + p.getSession().client + ", ";
+    }
+    player.getActionSender().sendChatMessage("- " + message);
+  }
 }

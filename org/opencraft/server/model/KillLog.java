@@ -42,38 +42,41 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 public class KillLog {
-    private static KillLog instance = new KillLog();
-    public static KillLog getInstance() {
-        return instance;
+  private static KillLog instance = new KillLog();
+  private BufferedWriter writer;
+
+  public KillLog() {
+    try {
+      FileOutputStream out = new FileOutputStream("kills.txt", true);
+      writer = new BufferedWriter(new OutputStreamWriter(out));
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
-    private BufferedWriter writer;
-    public KillLog() {
-        try {
-            FileOutputStream out = new FileOutputStream("kills.txt", true);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-        }
-        catch(IOException ex) {
-            ex.printStackTrace();
-        }
+  }
+
+  public static KillLog getInstance() {
+    return instance;
+  }
+
+  public void logKill(Player attacker, Player defender) {
+    synchronized (writer) {
+      String l = World.getWorld().getLevel().id + " " + defender.team + " " + attacker
+          .getPosition() + " " + defender.hasFlag;
+      try {
+        writer.write(l + "\n");
+        writer.flush();
+      } catch (IOException ex) {
+        ex.printStackTrace();
+      }
     }
-    public void logKill(Player attacker, Player defender) {
-        synchronized(writer) {
-            String l = World.getWorld().getLevel().id+" "+defender.team+" "+attacker.getPosition()+" "+defender.hasFlag;
-            try {
-                writer.write(l+"\n");
-                writer.flush();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
+  }
+
+  public void finalize() {
+    try {
+      if (writer != null)
+        writer.close();
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
-    public void finalize() {
-        try {
-            if(writer != null)
-                writer.close();
-        }
-        catch(IOException ex ){
-            ex.printStackTrace();
-        }
-    }
+  }
 }

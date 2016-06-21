@@ -41,25 +41,26 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
 public class PayCommand implements Command {
-    private static final PayCommand INSTANCE = new PayCommand();
+  private static final PayCommand INSTANCE = new PayCommand();
 
-    public static PayCommand getCommand() {
-            return INSTANCE;
+  public static PayCommand getCommand() {
+    return INSTANCE;
+  }
+
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (params.getArgumentCount() != 2)
+      player.getActionSender().sendChatMessage("/pay [player] [value]");
+    else {
+      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+      if (other != null && params.getIntegerArgument(1) >= 0 && params.getIntegerArgument(1) <
+          player.getStorePoints()) {
+        other.addStorePoints(params.getIntegerArgument(1));
+        player.addStorePoints(-params.getIntegerArgument(1));
+        player.getActionSender().sendChatMessage("- &ePaid " + other.getName() + " " + params
+            .getIntegerArgument(1) + " points");
+      }
     }
-
-
-    @Override
-    public void execute(Player player, CommandParameters params) {
-        if(params.getArgumentCount() != 2)
-            player.getActionSender().sendChatMessage("/pay [player] [value]");
-        else
-        {
-            Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-            if(other != null && params.getIntegerArgument(1) >= 0 && params.getIntegerArgument(1) < player.getStorePoints()) {
-                other.addStorePoints(params.getIntegerArgument(1));
-                player.addStorePoints(-params.getIntegerArgument(1));
-                player.getActionSender().sendChatMessage("- &ePaid "+other.getName()+" "+params.getIntegerArgument(1)+" points");
-            }
-        }
-    }
+  }
 }

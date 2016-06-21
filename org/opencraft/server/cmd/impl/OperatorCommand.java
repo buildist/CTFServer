@@ -45,54 +45,55 @@ import org.opencraft.server.model.World;
 /**
  * Official /op command **NEEDS PERSISTENCE
  *
- **
+ * *
+ *
  * @author S�ren Enevoldsen
  */
 public class OperatorCommand implements Command {
 
-    /**
-     * The instance of this command.
-     */
-    private static final OperatorCommand INSTANCE = new OperatorCommand();
+  /**
+   * The instance of this command.
+   */
+  private static final OperatorCommand INSTANCE = new OperatorCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     *
-     * @return The singleton instance of this command.
-     */
-    public static OperatorCommand getCommand() {
-        return INSTANCE;
-    }
-
-    /**
-     * Default private constructor.
-     */
-    private OperatorCommand() {
+  /**
+   * Default private constructor.
+   */
+  private OperatorCommand() {
         /* empty */
-    }
+  }
 
-    @Override
-    public void execute(Player player, CommandParameters params) {
-        // Player using command is OP?
-        if (player.isOp()) {
-            if (params.getArgumentCount() == 1) {
-                for (Player other : World.getWorld().getPlayerList().getPlayers()) {
-                    if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
-                        Server.log(player.getName() + " opped " + other.getName());
-                        other.setAttribute("IsOperator", "true");
-                        other.getActionSender().sendChatMessage("You are now an OP");
-                        player.getActionSender().sendChatMessage(other.getName() + " is now an OP");
-                        return;
-                    }
-                }
-                // Player not found
-                player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
-            } else {
-                player.getActionSender().sendChatMessage("Wrong number of arguments");
-                player.getActionSender().sendChatMessage("/op <name>");
-            }
-        } else {
-            player.getActionSender().sendChatMessage("You must be OP to do that");
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static OperatorCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    // Player using command is OP?
+    if (player.isOp()) {
+      if (params.getArgumentCount() == 1) {
+        for (Player other : World.getWorld().getPlayerList().getPlayers()) {
+          if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
+            Server.log(player.getName() + " opped " + other.getName());
+            other.setAttribute("IsOperator", "true");
+            other.getActionSender().sendChatMessage("You are now an OP");
+            player.getActionSender().sendChatMessage(other.getName() + " is now an OP");
+            return;
+          }
         }
+        // Player not found
+        player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/op <name>");
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that");
     }
+  }
 }

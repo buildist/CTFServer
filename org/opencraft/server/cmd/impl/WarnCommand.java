@@ -39,44 +39,39 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class WarnCommand implements Command{
-    private static final WarnCommand INSTANCE = new WarnCommand();
+public class WarnCommand implements Command {
+  private static final WarnCommand INSTANCE = new WarnCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static WarnCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static WarnCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        if(player.isOp()) {
-            if(params.getArgumentCount() == 0)
-            {
-                player.getActionSender().sendChatMessage("- &e/warn [name] [message]");
-            }
-            String target = params.getStringArgument(0);
-            Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-            if(other != null) {
-                String text = "";
-                for(int i = 1; i < params.getArgumentCount(); i++)
-                {
-                    text += " "+params.getStringArgument(i);
-                }
-                if(!text.equals(""))
-                {
-                    other.getActionSender().sendChatMessage("&c[Warning] "+text);
-                    player.getActionSender().sendChatMessage("&5-->"+other.parseName()+">&f"+text);
-                }
-                else
-                    player.getActionSender().sendChatMessage("- &ePlease include a message.");
-            }
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      if (params.getArgumentCount() == 0) {
+        player.getActionSender().sendChatMessage("- &e/warn [name] [message]");
+      }
+      String target = params.getStringArgument(0);
+      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+      if (other != null) {
+        String text = "";
+        for (int i = 1; i < params.getArgumentCount(); i++) {
+          text += " " + params.getStringArgument(i);
         }
-        else {
-            player.getActionSender().sendChatMessage("- &eYou need to be op to do that!");
-        }
+        if (!text.equals("")) {
+          other.getActionSender().sendChatMessage("&c[Warning] " + text);
+          player.getActionSender().sendChatMessage("&5-->" + other.parseName() + ">&f" + text);
+        } else
+          player.getActionSender().sendChatMessage("- &ePlease include a message.");
+      }
+    } else {
+      player.getActionSender().sendChatMessage("- &eYou need to be op to do that!");
     }
+  }
 }

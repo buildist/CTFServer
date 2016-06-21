@@ -39,44 +39,48 @@ package org.opencraft.server.net.packet;
 
 /**
  * Represents a particular field in a packet.
+ *
  * @author Graham Edgecombe
  */
 public final class PacketField {
-	
-	/**
-	 * The name.
-	 */
-	private final String name;
-	
-	/**
-	 * The type.
-	 */
-	private final DataType type;
-	
-	/**
-	 * Creates the field.
-	 * @param name The name of the field.
-	 * @param type The field's data type.
-	 */
-	public PacketField(String name, DataType type) {
-		this.name = name;
-		this.type = type;
-	}
-	
-	/**
-	 * Gets the name of this field.
-	 * @return The name of this field.
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	/**
-	 * Gets the data type of this field.
-	 * @return The data type of this field.
-	 */
-	public DataType getType() {
-		return type;
-	}
-	
+
+  /**
+   * The name.
+   */
+  private final String name;
+
+  /**
+   * The type.
+   */
+  private final DataType type;
+
+  /**
+   * Creates the field.
+   *
+   * @param name The name of the field.
+   * @param type The field's data type.
+   */
+  public PacketField(String name, DataType type) {
+    this.name = name;
+    this.type = type;
+  }
+
+  /**
+   * Gets the name of this field.
+   *
+   * @return The name of this field.
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Gets the data type of this field.
+   *
+   * @return The data type of this field.
+   */
+  public DataType getType() {
+    return type;
+  }
+
 }

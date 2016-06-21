@@ -42,37 +42,35 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class XBanCommand implements Command{
+public class XBanCommand implements Command {
 
-	private static final XBanCommand INSTANCE = new XBanCommand();
+  private static final XBanCommand INSTANCE = new XBanCommand();
 
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static XBanCommand getCommand() {
-		return INSTANCE;
-	}
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static XBanCommand getCommand() {
+    return INSTANCE;
+  }
 
 
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            if (player.isOp())
-            {
-                String name = params.getStringArgument(0);
-                Player other = Player.setAttributeFor(name, "banned", "true", player.getActionSender());
-                if(other != null) {
-                    Server.banIP(other.getSession().getIP());
-                    other.getActionSender().sendLoginFailure("You were banned!");
-                    other.getSession().close();
-                }
-                else {
-                    Server.banIP(Player.getAttributeFor(name, "ip", player.getActionSender()));
-                }
-                Server.log(player.getName()+" xbanned "+name);
-                World.getWorld().broadcast("- "+name + "&e has been banned!");
-            }
-            else
-                player.getActionSender().sendChatMessage("You need to be op to do that!");
-	}
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      String name = params.getStringArgument(0);
+      Player other = Player.setAttributeFor(name, "banned", "true", player.getActionSender());
+      if (other != null) {
+        Server.banIP(other.getSession().getIP());
+        other.getActionSender().sendLoginFailure("You were banned!");
+        other.getSession().close();
+      } else {
+        Server.banIP(Player.getAttributeFor(name, "ip", player.getActionSender()));
+      }
+      Server.log(player.getName() + " xbanned " + name);
+      World.getWorld().broadcast("- " + name + "&e has been banned!");
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

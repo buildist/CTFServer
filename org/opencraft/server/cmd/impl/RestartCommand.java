@@ -1,4 +1,3 @@
-
 /*
  * Jacob_'s Capture the Flag for Minecraft Classic and ClassiCube
  * Copyright (c) 2010-2014 Jacob Morgan
@@ -38,34 +37,30 @@
 package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.Server;
-import org.opencraft.server.WebServer;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
 public class RestartCommand implements Command {
-    
-    private static final RestartCommand INSTANCE = new RestartCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static RestartCommand getCommand() {
-            return INSTANCE;
-    }
+  private static final RestartCommand INSTANCE = new RestartCommand();
 
-    public void execute(Player player, CommandParameters params) {
-        if (player.isOp() || player.isVIP())
-        {
-          String message = params.getArgumentCount() == 1 ? params.getStringArgument(0) : null;
-          Server.restartServer(message);
-        }
-        else
-        {
-            player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
-        }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static RestartCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp() || player.isVIP()) {
+      String message = params.getArgumentCount() == 1 ? params.getStringArgument(0) : null;
+      Server.restartServer(message);
+    } else {
+      player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
     }
+  }
 
 }

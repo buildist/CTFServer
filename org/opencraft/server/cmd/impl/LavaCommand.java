@@ -40,29 +40,27 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class LavaCommand implements Command{
+public class LavaCommand implements Command {
 
-    private static final LavaCommand INSTANCE = new LavaCommand();
+  private static final LavaCommand INSTANCE = new LavaCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static LavaCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static LavaCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (player.placeBlock == -1) {
+      player.placeBlock = 11;
+      player.getActionSender().sendChatMessage("&e*&fNow placing lava.");
+    } else {
+      player.placeBlock = -1;
+      player.getActionSender().sendChatMessage("&e*&fNo longer placing lava.");
     }
-
-    public void execute(Player player, CommandParameters params) {
-        if(player.placeBlock == -1)
-        {
-            player.placeBlock = 11;
-            player.getActionSender().sendChatMessage("&e*&fNow placing lava.");
-        }
-        else
-        {
-            player.placeBlock = -1;
-            player.getActionSender().sendChatMessage("&e*&fNo longer placing lava.");
-        }
-    }
+  }
 
 }

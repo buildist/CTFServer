@@ -40,20 +40,19 @@ import org.opencraft.server.model.BuildMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
 
-public class TeleporterItem extends StoreItem{
-    public TeleporterItem(String n, int p)
-    {
-        super(n, p);
-    }
-    
-    @Override
-    public StoreItem getCopy() {
-        return new TeleporterItem(name, price);
-    }
+public class TeleporterItem extends StoreItem {
+  public TeleporterItem(String n, int p) {
+    super(n, p);
+  }
 
-    @Override
-    public void activate(Player p) {
-        p.buildMode = BuildMode.TELE_ENTRANCE;
-    }
-    
+  @Override
+  public StoreItem getCopy() {
+    return new TeleporterItem(name, price);
+  }
+
+  @Override
+  public void activate(Player p) {
+    p.buildMode = BuildMode.TELE_ENTRANCE;
+  }
+
 }

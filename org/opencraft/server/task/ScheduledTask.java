@@ -39,57 +39,62 @@ package org.opencraft.server.task;
 
 /**
  * Represents a task which can be repeated multiple times and then stopoped.
+ *
  * @author Graham Edgecombe
  */
 public abstract class ScheduledTask implements Task {
-	
-	/**
-	 * The delay.
-	 */
-	private long delay;
-	
-	/**
-	 * Running flag.
-	 */
-	private boolean running = true;
-	
-	/**
-	 * Creates a scheduled task with the specific delay.
-	 * @param delay The delay.
-	 */
-	public ScheduledTask(long delay) {
-		this.delay = delay;
-	}
-	
-	/**
-	 * Gets the delay.
-	 * @return The delay.
-	 */
-	public long getDelay() {
-		return delay;
-	}
-	
-	/**
-	 * Sets the delay.
-	 * @param delay The delay.
-	 */
-	public void setDelay(long delay) {
-		this.delay = delay;
-	}
-	
-	/**
-	 * Checks the is running flag.
-	 * @return The is running flag.
-	 */
-	public boolean isRunning() {
-		return running;
-	}
-	
-	/**
-	 * Stops the server.
-	 */
-	public void stop() {
-		running = false;
-	}
-	
+
+  /**
+   * The delay.
+   */
+  private long delay;
+
+  /**
+   * Running flag.
+   */
+  private boolean running = true;
+
+  /**
+   * Creates a scheduled task with the specific delay.
+   *
+   * @param delay The delay.
+   */
+  public ScheduledTask(long delay) {
+    this.delay = delay;
+  }
+
+  /**
+   * Gets the delay.
+   *
+   * @return The delay.
+   */
+  public long getDelay() {
+    return delay;
+  }
+
+  /**
+   * Sets the delay.
+   *
+   * @param delay The delay.
+   */
+  public void setDelay(long delay) {
+    this.delay = delay;
+  }
+
+  /**
+   * Checks the is running flag.
+   *
+   * @return The is running flag.
+   */
+  public boolean isRunning() {
+    return running;
+  }
+
+  /**
+   * Stops the server.
+   */
+  public void stop() {
+    running = false;
+  }
+
 }

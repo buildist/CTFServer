@@ -39,44 +39,48 @@ package org.opencraft.server.model;
 
 /**
  * Represents a rotation in the game world.
+ *
  * @author Graham Edgecombe
  */
 public final class Rotation {
-	
-	/**
-	 * The rotation.
-	 */
-	private final int rotation;
-	
-	/**
-	 * The look.
-	 */
-	private final int look;
-	
-	/**
-	 * Creates the rotation.
-	 * @param rotation The rotation.
-	 * @param look The look value.
-	 */
-	public Rotation(int rotation, int look) {
-		this.rotation = rotation;
-		this.look = look;
-	}
-	
-	/**
-	 * Gets the rotation.
-	 * @return The rotation.
-	 */
-	public int getRotation() {
-		return rotation;
-	}
-	
-	/**
-	 * Gets the look value.
-	 * @return The look value.
-	 */
-	public int getLook() {
-		return look;
-	}
-	
+
+  /**
+   * The rotation.
+   */
+  private final int rotation;
+
+  /**
+   * The look.
+   */
+  private final int look;
+
+  /**
+   * Creates the rotation.
+   *
+   * @param rotation The rotation.
+   * @param look     The look value.
+   */
+  public Rotation(int rotation, int look) {
+    this.rotation = rotation;
+    this.look = look;
+  }
+
+  /**
+   * Gets the rotation.
+   *
+   * @return The rotation.
+   */
+  public int getRotation() {
+    return rotation;
+  }
+
+  /**
+   * Gets the look value.
+   *
+   * @return The look value.
+   */
+  public int getLook() {
+    return look;
+  }
+
 }

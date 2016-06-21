@@ -44,40 +44,43 @@ import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class NominateCommand implements Command{
-	/**
-	 * The instance of this command.
-	 */
-	private static final NominateCommand INSTANCE = new NominateCommand();
-	
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static NominateCommand getCommand() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * Default private constructor.
-	 */
-	private NominateCommand() {
-		/* empty */
-	}
-	
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            if(!GameSettings.getBoolean("Tournament")) {
-                if(params.getArgumentCount() == 1)
-                {
-                    String mapname = params.getStringArgument(0);
-                    if(!player.hasNominated && ((CTFGameMode)World.getWorld().getGameMode()).rtvVotes > 0 && MapController.getLevel(mapname) != null && !((CTFGameMode)World.getWorld().getGameMode()).nominatedMaps.contains(mapname) 
-                            && !mapname.equals(((CTFGameMode)World.getWorld().getGameMode()).currentMap) && !mapname.equals(((CTFGameMode)World.getWorld().getGameMode()).previousMap)) {
-                        ((CTFGameMode)World.getWorld().getGameMode()).nominatedMaps.add(mapname);
-                        World.getWorld().broadcast("- "+player.getColoredName()+" &3nominated "+mapname);
-                        player.hasNominated = true;
-                    }
-                }
-            }
-    	}
+public class NominateCommand implements Command {
+  /**
+   * The instance of this command.
+   */
+  private static final NominateCommand INSTANCE = new NominateCommand();
+
+  /**
+   * Default private constructor.
+   */
+  private NominateCommand() {
+        /* empty */
+  }
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static NominateCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (!GameSettings.getBoolean("Tournament")) {
+      if (params.getArgumentCount() == 1) {
+        String mapname = params.getStringArgument(0);
+        if (!player.hasNominated && ((CTFGameMode) World.getWorld().getGameMode()).rtvVotes > 0
+            && MapController.getLevel(mapname) != null && !((CTFGameMode) World.getWorld()
+            .getGameMode()).nominatedMaps.contains(mapname)
+            && !mapname.equals(((CTFGameMode) World.getWorld().getGameMode()).currentMap) &&
+            !mapname.equals(((CTFGameMode) World.getWorld().getGameMode()).previousMap)) {
+          ((CTFGameMode) World.getWorld().getGameMode()).nominatedMaps.add(mapname);
+          World.getWorld().broadcast("- " + player.getColoredName() + " &3nominated " + mapname);
+          player.hasNominated = true;
+        }
+      }
+    }
+  }
 }

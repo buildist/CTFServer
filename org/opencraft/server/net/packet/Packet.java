@@ -43,63 +43,69 @@ import java.util.Map;
 
 /**
  * Represents a single packet.
+ *
  * @author Graham Edgecombe
  */
 public final class Packet {
-	
-	/**
-	 * The packet definition.
-	 */
-	public final PacketDefinition definition;
-	
-	/**
-	 * A map of field name to field data.
-	 */
-	public final Map<String, Object> fields;
-	
-	/**
-	 * Creates the packet.
-	 * @param definition The definition.
-	 * @param fields The field map.
-	 */
-	public Packet(PacketDefinition definition, Map<String, Object> fields) {
-		this.definition = definition;
-		this.fields = Collections.unmodifiableMap(new HashMap<String, Object>(fields));
-	}
-	
-	/**
-	 * Gets the definition of this packet.
-	 * @return The definition of this packet.
-	 */
-	public PacketDefinition getDefinition() {
-		return definition;
-	}
-	
-	/**
-	 * Gets a numeric field.
-	 * @param fieldName The name of the field.
-	 * @return The value of the numeric field.
-	 */
-	public Number getNumericField(String fieldName) {
-		return (Number) fields.get(fieldName);
-	}
-	
-	/**
-	 * Gets a string field.
-	 * @param fieldName The name of the field.
-	 * @return The value of the string field.
-	 */
-	public String getStringField(String fieldName) {
-		return (String) fields.get(fieldName);
-	}
-	
-	/**
-	 * Gets a byte array field.
-	 * @param fieldName The name of the field.
-	 * @return The value of the byte array field.
-	 */
-	public byte[] getByteArrayField(String fieldName) {
-		return (byte[]) fields.get(fieldName);
-	}
-	
+
+  /**
+   * The packet definition.
+   */
+  public final PacketDefinition definition;
+
+  /**
+   * A map of field name to field data.
+   */
+  public final Map<String, Object> fields;
+
+  /**
+   * Creates the packet.
+   *
+   * @param definition The definition.
+   * @param fields     The field map.
+   */
+  public Packet(PacketDefinition definition, Map<String, Object> fields) {
+    this.definition = definition;
+    this.fields = Collections.unmodifiableMap(new HashMap<String, Object>(fields));
+  }
+
+  /**
+   * Gets the definition of this packet.
+   *
+   * @return The definition of this packet.
+   */
+  public PacketDefinition getDefinition() {
+    return definition;
+  }
+
+  /**
+   * Gets a numeric field.
+   *
+   * @param fieldName The name of the field.
+   * @return The value of the numeric field.
+   */
+  public Number getNumericField(String fieldName) {
+    return (Number) fields.get(fieldName);
+  }
+
+  /**
+   * Gets a string field.
+   *
+   * @param fieldName The name of the field.
+   * @return The value of the string field.
+   */
+  public String getStringField(String fieldName) {
+    return (String) fields.get(fieldName);
+  }
+
+  /**
+   * Gets a byte array field.
+   *
+   * @param fieldName The name of the field.
+   * @return The value of the byte array field.
+   */
+  public byte[] getByteArrayField(String fieldName) {
+    return (byte[]) fields.get(fieldName);
+  }
+
 }

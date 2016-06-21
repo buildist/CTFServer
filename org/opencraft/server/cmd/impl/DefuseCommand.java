@@ -42,32 +42,32 @@ import org.opencraft.server.model.Mine;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class DefuseCommand implements Command{
-    private static final DefuseCommand INSTANCE = new DefuseCommand();
+public class DefuseCommand implements Command {
+  private static final DefuseCommand INSTANCE = new DefuseCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static DefuseCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static DefuseCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        synchronized(player.mines) {
-            if(!player.mines.isEmpty())
-            {
-                Mine m = player.mines.removeLast();
-                World.getWorld().removeMine(m);
-                World.getWorld().getLevel().setBlock((m.x - 16)/32, (m.y - 16)/32,(m.z - 16)/32, 0);
-                if(player.mines.isEmpty()) {
-                    player.getActionSender().sendChatMessage("- &eMine has been defused.");
-                } else {
-                    player.getActionSender().sendChatMessage("- &eRemoved the last mine you placed. "+player.mines.size()+" remaining.");
-                }
-            }
-            else
-                player.getActionSender().sendChatMessage("- &eYou haven't placed a mine!");
+  public void execute(Player player, CommandParameters params) {
+    synchronized (player.mines) {
+      if (!player.mines.isEmpty()) {
+        Mine m = player.mines.removeLast();
+        World.getWorld().removeMine(m);
+        World.getWorld().getLevel().setBlock((m.x - 16) / 32, (m.y - 16) / 32, (m.z - 16) / 32, 0);
+        if (player.mines.isEmpty()) {
+          player.getActionSender().sendChatMessage("- &eMine has been defused.");
+        } else {
+          player.getActionSender().sendChatMessage("- &eRemoved the last mine you placed. " +
+              player.mines.size() + " remaining.");
         }
+      } else
+        player.getActionSender().sendChatMessage("- &eYou haven't placed a mine!");
     }
+  }
 }

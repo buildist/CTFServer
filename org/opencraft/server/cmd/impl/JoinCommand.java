@@ -41,35 +41,36 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 
-public class JoinCommand implements Command{
+public class JoinCommand implements Command {
 
-	/**
-	 * The instance of this command.
-	 */
-	private static final JoinCommand INSTANCE = new JoinCommand();
+  /**
+   * The instance of this command.
+   */
+  private static final JoinCommand INSTANCE = new JoinCommand();
 
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static JoinCommand getCommand() {
-		return INSTANCE;
-	}
+  /**
+   * Default private constructor.
+   */
+  private JoinCommand() {
+        /* empty */
+  }
 
-	/**
-	 * Default private constructor.
-	 */
-	private JoinCommand() {
-		/* empty */
-	}
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static JoinCommand getCommand() {
+    return INSTANCE;
+  }
 
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            if(!GameSettings.getBoolean("Tournament")) {
-            if(params.getArgumentCount() == 1)
-                player.joinTeam(params.getStringArgument(0));
-            else
-                player.autoJoinTeam();
-            }
-        }
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (!GameSettings.getBoolean("Tournament")) {
+      if (params.getArgumentCount() == 1)
+        player.joinTeam(params.getStringArgument(0));
+      else
+        player.autoJoinTeam();
+    }
+  }
 }

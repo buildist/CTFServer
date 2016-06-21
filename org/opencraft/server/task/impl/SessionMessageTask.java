@@ -44,33 +44,35 @@ import org.opencraft.server.task.Task;
 
 /**
  * A task which parses a packet received from a session.
+ *
  * @author Graham Edgecombe
  */
 public final class SessionMessageTask implements Task {
-	
-	/**
-	 * The session.
-	 */
-	private final IoSession session;
-	
-	/**
-	 * The packet.
-	 */
-	private final Packet packet;
-	
-	/**
-	 * Creates the session message task.
-	 * @param session The session.
-	 * @param packet The packet.
-	 */
-	public SessionMessageTask(IoSession session, Packet packet) {
-		this.session = session;
-		this.packet = packet;
-	}
-	
-	@Override
-	public void execute() {
-		((MinecraftSession) session.getAttribute("attachment")).handle(packet);
-	}
-	
+
+  /**
+   * The session.
+   */
+  private final IoSession session;
+
+  /**
+   * The packet.
+   */
+  private final Packet packet;
+
+  /**
+   * Creates the session message task.
+   *
+   * @param session The session.
+   * @param packet  The packet.
+   */
+  public SessionMessageTask(IoSession session, Packet packet) {
+    this.session = session;
+    this.packet = packet;
+  }
+
+  @Override
+  public void execute() {
+    ((MinecraftSession) session.getAttribute("attachment")).handle(packet);
+  }
+
 }

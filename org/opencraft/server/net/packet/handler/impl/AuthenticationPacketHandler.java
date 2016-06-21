@@ -37,11 +37,6 @@
 package org.opencraft.server.net.packet.handler.impl;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.opencraft.server.Constants;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
@@ -50,62 +45,68 @@ import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.handler.PacketHandler;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Logger;
+
 /**
  * Handles the incoming authentication packet.
+ *
  * @author Graham Edgecombe
  */
 public final class AuthenticationPacketHandler implements PacketHandler<MinecraftSession> {
-	
-	/**
-	 * Logger instance.
-	 */
-	private static final Logger logger = Logger.getLogger(AuthenticationPacketHandler.class.getName());
-	
-	@Override
-	public void handlePacket(MinecraftSession session, Packet packet) {
-		if (session.isAuthenticated()) {
-			return;
-		}
-		
-		String username = packet.getStringField("username");
-                int idx = username.indexOf("@");
-                if(idx > -1) {
-                    session.isEmailUser = true;
-                    String[] parts = username.split("@");
-                    int n = (parts[0].charAt(0)*parts[0].charAt(1)*parts[0].charAt(2))%99;
-                    username = parts[0]+"_"+n;
-                }
-                int padding = packet.getNumericField("unused").intValue();
-                if(padding == 0x42) {
-                    session.ccUser = true;
-                    boolean authenticated = true;
-                    File test = new File("./savedGames/"+username.toLowerCase()+".xml");
-                    if(test.exists()) {
-                        Player p = new Player(null, username);
-                        try {
-                            new LoadPersistenceRequest(p).perform();
-                            authenticated = p.getAttribute("ccAuthenticated") != null;
-                        } catch (IOException ex) {
-                            authenticated = false;
-                        }
-                    }
-                    session.ccAuthenticated = authenticated;
-                    if(!authenticated) {
-                        username += "*";
-                    }
-                    session.getActionSender().sendCPEHandshake();
-                }
-                session.username = username;
-		String verificationKey = session.verificationKey = packet.getStringField("verification_key");
-		int protocolVersion = packet.getNumericField("protocol_version").intValue();
-		
-		if (protocolVersion != Constants.PROTOCOL_VERSION) {
-			session.getActionSender().sendLoginFailure("Incorrect protocol version.");
-		} else {
-                    if(!session.ccUser)
-			World.getWorld().register(session, username, verificationKey);
-		}
-	}
 
-	
+  /**
+   * Logger instance.
+   */
+  private static final Logger logger = Logger.getLogger(AuthenticationPacketHandler.class.getName
+      ());
+
+  @Override
+  public void handlePacket(MinecraftSession session, Packet packet) {
+    if (session.isAuthenticated()) {
+      return;
+    }
+
+    String username = packet.getStringField("username");
+    int idx = username.indexOf("@");
+    if (idx > -1) {
+      session.isEmailUser = true;
+      String[] parts = username.split("@");
+      int n = (parts[0].charAt(0) * parts[0].charAt(1) * parts[0].charAt(2)) % 99;
+      username = parts[0] + "_" + n;
+    }
+    int padding = packet.getNumericField("unused").intValue();
+    if (padding == 0x42) {
+      session.ccUser = true;
+      boolean authenticated = true;
+      File test = new File("./savedGames/" + username.toLowerCase() + ".xml");
+      if (test.exists()) {
+        Player p = new Player(null, username);
+        try {
+          new LoadPersistenceRequest(p).perform();
+          authenticated = p.getAttribute("ccAuthenticated") != null;
+        } catch (IOException ex) {
+          authenticated = false;
+        }
+      }
+      session.ccAuthenticated = authenticated;
+      if (!authenticated) {
+        username += "*";
+      }
+      session.getActionSender().sendCPEHandshake();
+    }
+    session.username = username;
+    String verificationKey = session.verificationKey = packet.getStringField("verification_key");
+    int protocolVersion = packet.getNumericField("protocol_version").intValue();
+
+    if (protocolVersion != Constants.PROTOCOL_VERSION) {
+      session.getActionSender().sendLoginFailure("Incorrect protocol version.");
+    } else {
+      if (!session.ccUser)
+        World.getWorld().register(session, username, verificationKey);
+    }
+  }
+
+
 }

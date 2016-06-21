@@ -37,6 +37,12 @@
 package org.opencraft.server.io;
 
 
+import org.apache.mina.core.buffer.IoBuffer;
+import org.opencraft.server.Constants;
+import org.opencraft.server.model.Level;
+import org.opencraft.server.model.World;
+import org.opencraft.server.net.MinecraftSession;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -44,77 +50,72 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPOutputStream;
 
-import org.apache.mina.core.buffer.IoBuffer;
-import org.opencraft.server.Configuration;
-import org.opencraft.server.Constants;
-import org.opencraft.server.model.Level;
-import org.opencraft.server.model.World;
-import org.opencraft.server.net.MinecraftSession;
-
 /**
  * A utility class for gzipping levels.
+ *
  * @author Graham Edgecombe
  */
 public final class LevelGzipper {
-	
-	private static final LevelGzipper INSTANCE = new LevelGzipper();
-	
-	public static LevelGzipper getLevelGzipper() {
-		return INSTANCE;
-	}
 
-	private ExecutorService service = Executors.newCachedThreadPool();
+  private static final LevelGzipper INSTANCE = new LevelGzipper();
+  private ExecutorService service = Executors.newCachedThreadPool();
 
-	private LevelGzipper() {
-		/* empty */
-	}
-	
+  private LevelGzipper() {
+        /* empty */
+  }
 
-	public void gzipLevel(final MinecraftSession session) {
-		final Level level = World.getWorld().getLevel();
-                if(session.levelSent)
-                    session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, "Next map: "+level.id, "&0"+(session.getPlayer().isVIP()? "+hax" : "-hax")+" cfg=buildism.net/m/", session.getPlayer().isOp());
-                session.levelSent = true;
-                final int width = level.getWidth();
-		final int height = level.getHeight();
-		final int depth = level.getDepth();
-		session.getActionSender().sendLevelInit();
-                service.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            ByteArrayOutputStream out = new ByteArrayOutputStream();
-                            int size = width * height * depth;
-                            DataOutputStream os = new DataOutputStream(new GZIPOutputStream(out));
-                            os.writeInt(size);
-                            os.write(level.getBlocks1D());
-                            os.close();
-                            byte[] data = out.toByteArray();
-                            IoBuffer buf = IoBuffer.allocate(data.length);
-                            buf.put(data);
-                            buf.flip();
-                            while (buf.hasRemaining()) {
-                                    int len = buf.remaining();
-                                    if (len > 1024) {
-                                            len = 1024;
-                                    }
-                                    byte[] chunk = new byte[len];
-                                    buf.get(chunk);
-                                    int percent = (int) ((double) buf.position() / (double) buf.limit() * 255D);
-                                    session.getActionSender().sendLevelBlock(len, chunk, percent);
-                            }
-                            if(session.isExtensionSupported("EnvMapAppearance"))
-                                session.getActionSender().sendMapAppearance();
-                            if(session.isExtensionSupported("EnvColors"))
-                                session.getActionSender().sendMapColors();
-                            session.getActionSender().sendLevelFinish();
-                            session.getPlayer().getLocalEntities().clear();
-                        } catch (IOException ex) {
-                                session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");
-                        }                    }
-                });
-                // if(session.isExtensionSupported("HackControl"))
-                //      session.getActionSender().sendHackControl(session.getPlayer().isOp());
-	}
-	
+  public static LevelGzipper getLevelGzipper() {
+    return INSTANCE;
+  }
+
+  public void gzipLevel(final MinecraftSession session) {
+    final Level level = World.getWorld().getLevel();
+    if (session.levelSent)
+      session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, "Next map: " +
+          level.id, "&0" + (session.getPlayer().isVIP() ? "+hax" : "-hax") + " cfg=buildism" +
+          ".net/m/", session.getPlayer().isOp());
+    session.levelSent = true;
+    final int width = level.getWidth();
+    final int height = level.getHeight();
+    final int depth = level.getDepth();
+    session.getActionSender().sendLevelInit();
+    service.submit(new Runnable() {
+      @Override
+      public void run() {
+        try {
+          ByteArrayOutputStream out = new ByteArrayOutputStream();
+          int size = width * height * depth;
+          DataOutputStream os = new DataOutputStream(new GZIPOutputStream(out));
+          os.writeInt(size);
+          os.write(level.getBlocks1D());
+          os.close();
+          byte[] data = out.toByteArray();
+          IoBuffer buf = IoBuffer.allocate(data.length);
+          buf.put(data);
+          buf.flip();
+          while (buf.hasRemaining()) {
+            int len = buf.remaining();
+            if (len > 1024) {
+              len = 1024;
+            }
+            byte[] chunk = new byte[len];
+            buf.get(chunk);
+            int percent = (int) ((double) buf.position() / (double) buf.limit() * 255D);
+            session.getActionSender().sendLevelBlock(len, chunk, percent);
+          }
+          if (session.isExtensionSupported("EnvMapAppearance"))
+            session.getActionSender().sendMapAppearance();
+          if (session.isExtensionSupported("EnvColors"))
+            session.getActionSender().sendMapColors();
+          session.getActionSender().sendLevelFinish();
+          session.getPlayer().getLocalEntities().clear();
+        } catch (IOException ex) {
+          session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");
+        }
+      }
+    });
+    // if(session.isExtensionSupported("HackControl"))
+    //      session.getActionSender().sendHackControl(session.getPlayer().isOp());
+  }
+
 }

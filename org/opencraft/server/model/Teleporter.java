@@ -37,11 +37,11 @@
 package org.opencraft.server.model;
 
 public class Teleporter {
-    public int inX;
-    public int inY;
-    public int inZ;
-    public int outX;
-    public int outY;
-    public int outZ;
-    public Player owner;
+  public int inX;
+  public int inY;
+  public int inZ;
+  public int outX;
+  public int outY;
+  public int outZ;
+  public Player owner;
 }

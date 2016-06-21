@@ -37,16 +37,18 @@
 package org.opencraft.server.model;
 
 public abstract class StoreItem {
-    public String name;
-    public int price;
-    public String description;
-    public String command;
-    public StoreItem(String n, int p)
-    {
-        name = n;
-        price = p;
-    }
-    public abstract StoreItem getCopy();
-    public abstract void activate(Player p);
+  public String name;
+  public int price;
+  public String description;
+  public String command;
+
+  public StoreItem(String n, int p) {
+    name = n;
+    price = p;
+  }
+
+  public abstract StoreItem getCopy();
+
+  public abstract void activate(Player p);
 
 }

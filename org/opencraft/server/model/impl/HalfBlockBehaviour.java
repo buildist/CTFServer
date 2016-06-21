@@ -44,26 +44,28 @@ import org.opencraft.server.model.Level;
 
 /**
  * Handles how half-blocks stack when placed overtop eachother.
+ *
  * @author Brett Russell
  */
 public class HalfBlockBehaviour implements BlockBehaviour {
-	
-	@Override
-	public void handleDestroy(Level level, int x, int y, int z, int type) {
-		
-	}
-	
-	@Override
-	public void handlePassive(Level level, int x, int y, int z, int type) {
-		if (BlockManager.getBlockManager().getBlock(level.getBlock(x, y, z - 1)).isHalfBlock()) {
-			level.setBlock(x, y, z, BlockConstants.AIR);
-			level.setBlock(x, y, z - 1, BlockManager.getBlockManager().getBlock(type).getFullCounterpart());
-		}
-	}
-	
-	@Override
-	public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
-		
-	}
-	
+
+  @Override
+  public void handleDestroy(Level level, int x, int y, int z, int type) {
+
+  }
+
+  @Override
+  public void handlePassive(Level level, int x, int y, int z, int type) {
+    if (BlockManager.getBlockManager().getBlock(level.getBlock(x, y, z - 1)).isHalfBlock()) {
+      level.setBlock(x, y, z, BlockConstants.AIR);
+      level.setBlock(x, y, z - 1, BlockManager.getBlockManager().getBlock(type)
+          .getFullCounterpart());
+    }
+  }
+
+  @Override
+  public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
+
+  }
+
 }

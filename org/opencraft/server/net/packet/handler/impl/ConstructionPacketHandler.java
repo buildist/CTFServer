@@ -37,38 +37,37 @@
 package org.opencraft.server.net.packet.handler.impl;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.handler.PacketHandler;
 
+import java.util.Date;
+
 /**
  * A packet handler which handles the construction packet.
+ *
  * @author Graham Edgecombe
  */
 public class ConstructionPacketHandler implements PacketHandler<MinecraftSession> {
-	@Override
-	public void handlePacket(MinecraftSession session, Packet packet) {
-		if (!session.isAuthenticated()) {
-			return;
-		}
-                Player p = session.getPlayer();
-                long time = new Date().getTime() - p.lastBlockTimestamp;
-                int type = packet.getNumericField("type").intValue();
-                if(time < 5 && type == 22)
-                    p.kickForHacking();
-                else
-                {
-                    int x = packet.getNumericField("x").intValue();
-                    int y = packet.getNumericField("y").intValue();
-                    int z = packet.getNumericField("z").intValue();
-                    int mode = packet.getNumericField("mode").intValue();
-                    World.getWorld().getGameMode().setBlock(p, World.getWorld().getLevel(), x, y, z, mode, type);
-                }
-                p.lastBlockTimestamp = new Date().getTime();
-	}
+  @Override
+  public void handlePacket(MinecraftSession session, Packet packet) {
+    if (!session.isAuthenticated()) {
+      return;
+    }
+    Player p = session.getPlayer();
+    long time = new Date().getTime() - p.lastBlockTimestamp;
+    int type = packet.getNumericField("type").intValue();
+    if (time < 5 && type == 22)
+      p.kickForHacking();
+    else {
+      int x = packet.getNumericField("x").intValue();
+      int y = packet.getNumericField("y").intValue();
+      int z = packet.getNumericField("z").intValue();
+      int mode = packet.getNumericField("mode").intValue();
+      World.getWorld().getGameMode().setBlock(p, World.getWorld().getLevel(), x, y, z, mode, type);
+    }
+    p.lastBlockTimestamp = new Date().getTime();
+  }
 }

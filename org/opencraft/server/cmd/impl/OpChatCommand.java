@@ -36,38 +36,37 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class OpChatCommand implements Command{
+public class OpChatCommand implements Command {
 
-    private static final OpChatCommand INSTANCE = new OpChatCommand();
+  private static final OpChatCommand INSTANCE = new OpChatCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static OpChatCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static OpChatCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        if (player.isOp()) {
-                if (params.getArgumentCount() == 0) {
-                        player.getActionSender().sendChatMessage("No message to send");
-                        player.getActionSender().sendChatMessage("/opchat <message>");
-                        return;
-                }
-                String text = "";
-                for(int i = 0; i < params.getArgumentCount(); i++)
-                {
-                    text += " "+params.getStringArgument(i);
-                }
-                World.getWorld().sendOpChat(player, text);
-        } else
-                player.getActionSender().sendChatMessage("You must be OP to do that");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      if (params.getArgumentCount() == 0) {
+        player.getActionSender().sendChatMessage("No message to send");
+        player.getActionSender().sendChatMessage("/opchat <message>");
+        return;
+      }
+      String text = "";
+      for (int i = 0; i < params.getArgumentCount(); i++) {
+        text += " " + params.getStringArgument(i);
+      }
+      World.getWorld().sendOpChat(player, text);
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

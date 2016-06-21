@@ -41,29 +41,29 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class MeCommand implements Command{
+public class MeCommand implements Command {
 
-    private static final MeCommand INSTANCE = new MeCommand();
+  private static final MeCommand INSTANCE = new MeCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static MeCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static MeCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    String text = "";
+    for (int i = 0; i < params.getArgumentCount(); i++) {
+      text += " " + params.getStringArgument(i);
     }
-
-    public void execute(Player player, CommandParameters params) {
-        String text = "";
-        for(int i = 0; i < params.getArgumentCount(); i++)
-        {
-            text += " "+params.getStringArgument(i);
-        }
-        if(params.getArgumentCount() > 0 && !player.muted)
-            for(Player t : World.getWorld().getPlayerList().getPlayers()) {
-                if(!t.isIgnored(player))
-                    t.getActionSender().sendChatMessage("* "+player.getColoredName()+" &f"+text);
-            }
-    }
+    if (params.getArgumentCount() > 0 && !player.muted)
+      for (Player t : World.getWorld().getPlayerList().getPlayers()) {
+        if (!t.isIgnored(player))
+          t.getActionSender().sendChatMessage("* " + player.getColoredName() + " &f" + text);
+      }
+  }
 
 }

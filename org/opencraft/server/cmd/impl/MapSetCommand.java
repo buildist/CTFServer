@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import java.util.Enumeration;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
@@ -45,43 +44,47 @@ import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
+import java.util.Enumeration;
+
 public class MapSetCommand implements Command {
 
-    private static final MapSetCommand INSTANCE = new MapSetCommand();
+  private static final MapSetCommand INSTANCE = new MapSetCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     *
-     * @return The singleton instance of this command.
-     */
-    public static MapSetCommand getCommand() {
-        return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static MapSetCommand getCommand() {
+    return INSTANCE;
+  }
 
-    @Override
-    public void execute(Player player, CommandParameters params) {
-        if (player.isOp()) {
-            Level level = World.getWorld().getLevel();
-            if(level.id.contains("more/") || Configuration.getConfiguration().isTest() || player.isOwner()) {
-                if (params.getArgumentCount() == 0) {
-                    player.getActionSender().sendChatMessage("/mapset [name] [value]");
-                    Enumeration<Object> keys = level.props.keys();
-                    while(keys.hasMoreElements()) {
-                        Object key = keys.nextElement();
-                        player.getActionSender().sendChatMessage(key + " = " + level.props.get(key));
-                    }
-                } else if (params.getArgumentCount() == 2) {
-                    String k = params.getStringArgument(0);
-                    String v = params.getStringArgument(1);
-                    level.props.setProperty(k, v);
-                    level.saveProps();
-                    level.loadProps();
-                    World.getWorld().broadcast("- &7Map setting "+k+" set to "+v);
-                    Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + params.getStringArgument(1));
-                }
-            }
-        } else {
-            player.getActionSender().sendChatMessage("You need to be op to do that!");
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      Level level = World.getWorld().getLevel();
+      if (level.id.contains("more/") || Configuration.getConfiguration().isTest() || player
+          .isOwner()) {
+        if (params.getArgumentCount() == 0) {
+          player.getActionSender().sendChatMessage("/mapset [name] [value]");
+          Enumeration<Object> keys = level.props.keys();
+          while (keys.hasMoreElements()) {
+            Object key = keys.nextElement();
+            player.getActionSender().sendChatMessage(key + " = " + level.props.get(key));
+          }
+        } else if (params.getArgumentCount() == 2) {
+          String k = params.getStringArgument(0);
+          String v = params.getStringArgument(1);
+          level.props.setProperty(k, v);
+          level.saveProps();
+          level.loadProps();
+          World.getWorld().broadcast("- &7Map setting " + k + " set to " + v);
+          Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + params
+              .getStringArgument(1));
         }
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
     }
+  }
 }

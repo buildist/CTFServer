@@ -42,24 +42,27 @@ import org.opencraft.server.model.Player;
 
 /**
  * Makes a diamond
+ *
  * @author S�ren Enevoldsen
  */
 
 public class DiamondBrush extends BrushAdapter {
-	
-	public DiamondBrush() {
-	}
-	
-	public DiamondBrush(int radius) {
-		setRadius(radius);
-	}
-	
-	@Override
-	protected void paintBlocks(Player player, Level level, int x, int y, int z, boolean adding, int type) {
-		for (int offsetZ = -height; offsetZ <= radius; offsetZ++)
-			for (int offsetY = -radius; offsetY <= radius; offsetY++)
-				for (int offsetX = -radius; offsetX <= radius; offsetX++)
-					if (positionIsBuildable(offsetX + x, offsetY + y, offsetZ + z) == adding && Math.abs(offsetX) + Math.abs(offsetY) + Math.abs(offsetZ) <= Math.abs(radius))
-						level.setBlock(offsetX + x, offsetY + y, offsetZ + z, type);
-	}
+
+  public DiamondBrush() {
+  }
+
+  public DiamondBrush(int radius) {
+    setRadius(radius);
+  }
+
+  @Override
+  protected void paintBlocks(Player player, Level level, int x, int y, int z, boolean adding, int
+      type) {
+    for (int offsetZ = -height; offsetZ <= radius; offsetZ++)
+      for (int offsetY = -radius; offsetY <= radius; offsetY++)
+        for (int offsetX = -radius; offsetX <= radius; offsetX++)
+          if (positionIsBuildable(offsetX + x, offsetY + y, offsetZ + z) == adding && Math.abs
+              (offsetX) + Math.abs(offsetY) + Math.abs(offsetZ) <= Math.abs(radius))
+            level.setBlock(offsetX + x, offsetY + y, offsetZ + z, type);
+  }
 }

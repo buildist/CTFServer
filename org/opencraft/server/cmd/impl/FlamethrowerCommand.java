@@ -38,32 +38,31 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class FlamethrowerCommand implements Command{
+public class FlamethrowerCommand implements Command {
 
-    private static final FlamethrowerCommand INSTANCE = new FlamethrowerCommand();
+  private static final FlamethrowerCommand INSTANCE = new FlamethrowerCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static FlamethrowerCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static FlamethrowerCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (player.team == -1 || player.flamethrowerEnabled)
+      return;
+    long dt = (System.currentTimeMillis() - player.flamethrowerTime);
+    if (dt < 120000)
+      player.getActionSender().sendChatMessage("- &ePlease wait " + (120 - dt / 1000) + " seconds");
+    else {
+      player.flamethrowerEnabled = true;
+      player.flamethrowerUnits = 100;
     }
-
-    public void execute(Player player, CommandParameters params) {
-        if(player.team == -1 || player.flamethrowerEnabled)
-            return;
-        long dt = (System.currentTimeMillis() - player.flamethrowerTime);
-        if(dt < 120000)
-            player.getActionSender().sendChatMessage("- &ePlease wait "+(120-dt/1000)+" seconds");
-        else {
-            player.flamethrowerEnabled = true;
-            player.flamethrowerUnits = 100;
-        }
-    }
+  }
 
 }

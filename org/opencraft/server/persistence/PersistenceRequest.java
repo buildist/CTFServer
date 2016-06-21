@@ -37,62 +37,65 @@
 package org.opencraft.server.persistence;
 
 
+import org.opencraft.server.model.Player;
+
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.opencraft.server.model.Player;
-
 /**
  * Represents a single persistence request.
- * @author Graham Edgecombe
  *
+ * @author Graham Edgecombe
  */
 public abstract class PersistenceRequest implements Runnable {
-	
-	/**
-	 * Logger instance.
-	 */
-	private static final Logger logger = Logger.getLogger(PersistenceRequest.class.getName());
-	
-	/**
-	 * The player.
-	 */
-	private final Player player;
-	
-	/**
-	 * Creates a persistence request for the specified player.
-	 * @param player The player.
-	 */
-	public PersistenceRequest(Player player) {
-		this.player = player;
-	}
-	
-	/**
-	 * Gets the player.
-	 * @return The player.
-	 */
-	public final Player getPlayer() {
-		return player;
-	}
-	
-	/**
-	 * Performs the persistence request.
-	 */
-	public abstract void perform() throws IOException;
-	
-	/**
-	 * Calls the <code>perform</code> method to actually run the persistence
-	 * request.
-	 */
-	@Override
-	public final void run() {
-		try {
-			perform();
-		} catch (IOException ex) {
-			logger.log(Level.SEVERE, getClass().getName() + " for : " + player.getName() + " failed.", ex);
-			player.getSession().getActionSender().sendLoginFailure("Persistence request failed. Please try again.");
-		}
-	}
-	
+
+  /**
+   * Logger instance.
+   */
+  private static final Logger logger = Logger.getLogger(PersistenceRequest.class.getName());
+
+  /**
+   * The player.
+   */
+  private final Player player;
+
+  /**
+   * Creates a persistence request for the specified player.
+   *
+   * @param player The player.
+   */
+  public PersistenceRequest(Player player) {
+    this.player = player;
+  }
+
+  /**
+   * Gets the player.
+   *
+   * @return The player.
+   */
+  public final Player getPlayer() {
+    return player;
+  }
+
+  /**
+   * Performs the persistence request.
+   */
+  public abstract void perform() throws IOException;
+
+  /**
+   * Calls the <code>perform</code> method to actually run the persistence request.
+   */
+  @Override
+  public final void run() {
+    try {
+      perform();
+    } catch (IOException ex) {
+      logger.log(Level.SEVERE, getClass().getName() + " for : " + player.getName() + " failed.",
+          ex);
+      player.getSession().getActionSender().sendLoginFailure("Persistence request failed. Please " +
+          "try again.");
+    }
+  }
+
 }

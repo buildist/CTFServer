@@ -37,9 +37,8 @@
 package org.opencraft.server.io;
 
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import org.opencraft.server.model.BlockDefinition;
 import org.opencraft.server.model.BlockManager;
@@ -47,76 +46,81 @@ import org.opencraft.server.net.packet.PacketDefinition;
 import org.opencraft.server.net.packet.PacketField;
 import org.opencraft.server.net.packet.PacketManager;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 
 /**
  * A class which manages XStream persistence.
+ *
  * @author Graham Edgecombe
  */
 public final class PersistenceManager {
-	
-	/**
-	 * The singleton instance.
-	 */
-	private static final PersistenceManager INSTANCE = new PersistenceManager();
-	
-	/**
-	 * Gets the persistence manager instance.
-	 * @return The persistence manager instance.
-	 */
-	public static PersistenceManager getPersistenceManager() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * The XStream object.
-	 */
-	private final XStream xstream = new XStream(new DomDriver());
-	
-	/**
-	 * Initializes the persistence manager.
-	 */
-	private PersistenceManager() {
-		xstream.alias("packets", PacketManager.class);
-		xstream.alias("packet", PacketDefinition.class);
-		xstream.alias("field", PacketField.class);
-		xstream.alias("blocks", BlockManager.class);
-		xstream.alias("block", BlockDefinition.class);
-	}
-	
-	/**
-	 * Loads an object from an XML file.
-	 * @param file The file.
-	 * @return The object.
-	 */
-	public Object load(String file) {
-		try {
-			return xstream.fromXML(new FileInputStream(file));
-		} catch (FileNotFoundException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-	
-	/**
-	 * Saves an object to an XML file.
-	 * @param file The file.
-	 * @param o The object.
-	 */
-	public void save(String file, Object o) {
-		try {
-			xstream.toXML(o, new FileOutputStream(file));
-		} catch (FileNotFoundException ex) {
-			throw new RuntimeException(ex);
-		}
-	}
-	
-	/**
-	 * Gets the xstream object.
-	 * @return the xstream object.
-	 */
-	public XStream getXStream() {
-		return xstream;
-	}
-	
+
+  /**
+   * The singleton instance.
+   */
+  private static final PersistenceManager INSTANCE = new PersistenceManager();
+  /**
+   * The XStream object.
+   */
+  private final XStream xstream = new XStream(new DomDriver());
+
+  /**
+   * Initializes the persistence manager.
+   */
+  private PersistenceManager() {
+    xstream.alias("packets", PacketManager.class);
+    xstream.alias("packet", PacketDefinition.class);
+    xstream.alias("field", PacketField.class);
+    xstream.alias("blocks", BlockManager.class);
+    xstream.alias("block", BlockDefinition.class);
+  }
+
+  /**
+   * Gets the persistence manager instance.
+   *
+   * @return The persistence manager instance.
+   */
+  public static PersistenceManager getPersistenceManager() {
+    return INSTANCE;
+  }
+
+  /**
+   * Loads an object from an XML file.
+   *
+   * @param file The file.
+   * @return The object.
+   */
+  public Object load(String file) {
+    try {
+      return xstream.fromXML(new FileInputStream(file));
+    } catch (FileNotFoundException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
+  /**
+   * Saves an object to an XML file.
+   *
+   * @param file The file.
+   * @param o    The object.
+   */
+  public void save(String file, Object o) {
+    try {
+      xstream.toXML(o, new FileOutputStream(file));
+    } catch (FileNotFoundException ex) {
+      throw new RuntimeException(ex);
+    }
+  }
+
+  /**
+   * Gets the xstream object.
+   *
+   * @return the xstream object.
+   */
+  public XStream getXStream() {
+    return xstream;
+  }
+
 }

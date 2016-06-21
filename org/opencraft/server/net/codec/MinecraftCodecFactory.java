@@ -45,35 +45,35 @@ import org.opencraft.server.net.packet.PacketManager;
 
 /**
  * A <code>ProtocolCodecFactory</code> for the Minecraft protocol.
+ *
  * @author Graham Edgecombe
  */
 public final class MinecraftCodecFactory implements ProtocolCodecFactory {
-	
-	/**
-	 * The decoder instance.
-	 */
-	private final ProtocolDecoder decoder;
-	
-	/**
-	 * The encoder instance.
-	 */
-	private final ProtocolEncoder encoder;
-	
-	
-	public MinecraftCodecFactory(PacketManager manager)
-	{
-		decoder = new MinecraftProtocolDecoder(manager);
-		encoder = new MinecraftProtocolEncoder();
-	}
-	
-	@Override
-	public ProtocolDecoder getDecoder(IoSession session) throws Exception {
-		return decoder;
-	}
-	
-	@Override
-	public ProtocolEncoder getEncoder(IoSession session) throws Exception {
-		return encoder;
-	}
-	
+
+  /**
+   * The decoder instance.
+   */
+  private final ProtocolDecoder decoder;
+
+  /**
+   * The encoder instance.
+   */
+  private final ProtocolEncoder encoder;
+
+
+  public MinecraftCodecFactory(PacketManager manager) {
+    decoder = new MinecraftProtocolDecoder(manager);
+    encoder = new MinecraftProtocolEncoder();
+  }
+
+  @Override
+  public ProtocolDecoder getDecoder(IoSession session) throws Exception {
+    return decoder;
+  }
+
+  @Override
+  public ProtocolEncoder getEncoder(IoSession session) throws Exception {
+    return encoder;
+  }
+
 }

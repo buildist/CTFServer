@@ -35,24 +35,26 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.net;
+
 /**
  * Various connection states.
+ *
  * @author Graham Edgecombe
  */
 public enum State {
-	
-	/**
-	 * Indicates the connection is new and has just connected.
-	 */
-	CONNECTED,
 
-	/**
-	 * Indicates the connection has been authenticated but is not yet ready.
-	 */
-	AUTHENTICATED,
+  /**
+   * Indicates the connection is new and has just connected.
+   */
+  CONNECTED,
 
-	/**
-	 * Indicates the connection is ready for use.
-	 */
-	READY;
+  /**
+   * Indicates the connection has been authenticated but is not yet ready.
+   */
+  AUTHENTICATED,
+
+  /**
+   * Indicates the connection is ready for use.
+   */
+  READY;
 }

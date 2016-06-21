@@ -42,29 +42,30 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
 
-public class StoreCommand implements Command{
-    private static final StoreCommand INSTANCE = new StoreCommand();
+public class StoreCommand implements Command {
+  private static final StoreCommand INSTANCE = new StoreCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static StoreCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static StoreCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        player.getActionSender().sendChatMessage("- &aYou have "+player.getStorePoints()+" points.");
-        Object[] items = Server.getStore().getItems();
-        int i = 1;
-        for(Object obj : items)
-        {
-            String msg = "- &a"+i+". ";
-            StoreItem item = (StoreItem) obj;
-            msg = msg + item.name + " - " + item.description + " - " + item.price+" - /"+item.command;
-            player.getActionSender().sendChatMessage(msg);
-            i++;
-        }
-        player.getActionSender().sendChatMessage("- &aSay a command to buy something!");
+  public void execute(Player player, CommandParameters params) {
+    player.getActionSender().sendChatMessage("- &aYou have " + player.getStorePoints() + " points" +
+        ".");
+    Object[] items = Server.getStore().getItems();
+    int i = 1;
+    for (Object obj : items) {
+      String msg = "- &a" + i + ". ";
+      StoreItem item = (StoreItem) obj;
+      msg = msg + item.name + " - " + item.description + " - " + item.price + " - /" + item.command;
+      player.getActionSender().sendChatMessage(msg);
+      i++;
     }
+    player.getActionSender().sendChatMessage("- &aSay a command to buy something!");
+  }
 }

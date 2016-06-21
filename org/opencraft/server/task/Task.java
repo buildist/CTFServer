@@ -39,13 +39,14 @@ package org.opencraft.server.task;
 
 /**
  * Represents a task that is executed on the <code>TaskQueue</code>.
+ *
  * @author Graham Edgecombe
  */
 public interface Task {
-	
-	/**
-	 * Performs whatever action this task is for.
-	 */
-	public void execute();
-	
+
+  /**
+   * Performs whatever action this task is for.
+   */
+  public void execute();
+
 }

@@ -42,29 +42,32 @@ import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class WomIDCommand implements Command{
-    private static final WomIDCommand INSTANCE = new WomIDCommand();
+public class WomIDCommand implements Command {
+  private static final WomIDCommand INSTANCE = new WomIDCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static WomIDCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static WomIDCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    try {
+      String id = params.getStringArgument(0);
+      if (!player.getSession().ccUser) {
+        player.getSession().client = id;
+        player.isWOM = true;
+        ((CTFGameMode) World.getWorld().getGameMode()).sendDefaultMessage(player);
+        //player.getActionSender().sendChatMessage("&4Warning: Using fly or speed hacks will get
+        // you banned.");
+        ((CTFGameMode) World.getWorld().getGameMode()).sendCustomWomMessage(player, "&5Welcome to" +
+            " the Original CTF!");
+      }
+    } catch (Exception ex) {
+      player.isWOM = false;
     }
-    public void execute(Player player, CommandParameters params) {
-        try {
-            String id = params.getStringArgument(0);
-            if(!player.getSession().ccUser) {
-                player.getSession().client = id;
-                player.isWOM = true;
-                ((CTFGameMode)World.getWorld().getGameMode()).sendDefaultMessage(player);
-                //player.getActionSender().sendChatMessage("&4Warning: Using fly or speed hacks will get you banned.");
-                ((CTFGameMode)World.getWorld().getGameMode()).sendCustomWomMessage(player, "&5Welcome to the Original CTF!");
-            }
-        }
-        catch(Exception ex) {
-            player.isWOM = false;
-        }
-    }
+  }
 }

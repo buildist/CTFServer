@@ -43,55 +43,62 @@ import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class RTVCommand implements Command{
-    /**
-     * The instance of this command.
-     */
-    private static final RTVCommand INSTANCE = new RTVCommand();
+public class RTVCommand implements Command {
+  /**
+   * The instance of this command.
+   */
+  private static final RTVCommand INSTANCE = new RTVCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static RTVCommand getCommand() {
-            return INSTANCE;
-    }
-
-    /**
-     * Default private constructor.
-     */
-    private RTVCommand() {
+  /**
+   * Default private constructor.
+   */
+  private RTVCommand() {
             /* empty */
-    }
+  }
 
-    @Override
-    public void execute(Player player, CommandParameters params) {
-        if(!GameSettings.getBoolean("Tournament")) {
-            int requiredVotes = World.getWorld().getPlayerList().size()/2;
-            if(World.getWorld().getPlayerList().size()%2 != 0)
-                requiredVotes++;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static RTVCommand getCommand() {
+    return INSTANCE;
+  }
 
-            if(((CTFGameMode)World.getWorld().getGameMode()).voting)
-                player.getActionSender().sendChatMessage("- &eYou can't /rtv during map voting.");
-            else if(((CTFGameMode)World.getWorld().getGameMode()).rtvYesPlayers.contains(player.getSession().getIP()))
-                player.getActionSender().sendChatMessage("- &eYou have already voted.");
-            else if(player.team == -1)
-                player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
-            else {
-                if(((CTFGameMode)World.getWorld().getGameMode()).rtvNoPlayers.contains(player.getSession().getIP())) {
-                    ((CTFGameMode)World.getWorld().getGameMode()).rtvVotes++;
-                    ((CTFGameMode)World.getWorld().getGameMode()).rtvNoPlayers.remove(player.getSession().getIP());
-                }
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (!GameSettings.getBoolean("Tournament")) {
+      int requiredVotes = World.getWorld().getPlayerList().size() / 2;
+      if (World.getWorld().getPlayerList().size() % 2 != 0)
+        requiredVotes++;
 
-                int votes = ++((CTFGameMode)World.getWorld().getGameMode()).rtvVotes;
-                World.getWorld().broadcast("- "+player.getColoredName()+" &3wants to rock the vote &f("+votes+" votes, "+requiredVotes+" required)");
-                World.getWorld().broadcast("- &3/rtv to vote, /nominate [mapname] to nominate a map, /no to stay on this map");
-                ((CTFGameMode)World.getWorld().getGameMode()).rtvYesPlayers.add(player.getSession().getIP());
-
-                if(votes >= requiredVotes) {
-                    ((CTFGameMode)World.getWorld().getGameMode()).endGame();
-                }
-            }
+      if (((CTFGameMode) World.getWorld().getGameMode()).voting)
+        player.getActionSender().sendChatMessage("- &eYou can't /rtv during map voting.");
+      else if (((CTFGameMode) World.getWorld().getGameMode()).rtvYesPlayers.contains(player
+          .getSession().getIP()))
+        player.getActionSender().sendChatMessage("- &eYou have already voted.");
+      else if (player.team == -1)
+        player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
+      else {
+        if (((CTFGameMode) World.getWorld().getGameMode()).rtvNoPlayers.contains(player
+            .getSession().getIP())) {
+          ((CTFGameMode) World.getWorld().getGameMode()).rtvVotes++;
+          ((CTFGameMode) World.getWorld().getGameMode()).rtvNoPlayers.remove(player.getSession()
+              .getIP());
         }
+
+        int votes = ++((CTFGameMode) World.getWorld().getGameMode()).rtvVotes;
+        World.getWorld().broadcast("- " + player.getColoredName() + " &3wants to rock the vote &f" +
+            "(" + votes + " votes, " + requiredVotes + " required)");
+        World.getWorld().broadcast("- &3/rtv to vote, /nominate [mapname] to nominate a map, /no " +
+            "to stay on this map");
+        ((CTFGameMode) World.getWorld().getGameMode()).rtvYesPlayers.add(player.getSession()
+            .getIP());
+
+        if (votes >= requiredVotes) {
+          ((CTFGameMode) World.getWorld().getGameMode()).endGame();
+        }
+      }
     }
+  }
 }

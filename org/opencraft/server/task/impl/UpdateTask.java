@@ -37,73 +37,74 @@
 package org.opencraft.server.task.impl;
 
 
-import java.util.List;
-import java.util.Set;
 import org.opencraft.server.Server;
-
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.task.ScheduledTask;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * Updates the players and game world.
+ *
  * @author Graham Edgecombe
  */
 public class UpdateTask extends ScheduledTask {
-	
-	/**
-	 * The delay.
-	 */
-	private static final long DELAY = 150;
-	
-	/**
-	 * Creates the update task with a delay of 100ms.
-	 */
-	public UpdateTask() {
-		super(DELAY);
-	}
-	
-	@Override
-	public void execute() {
-		final World world = World.getWorld();
-		world.getGameMode().tick();
-                List<Player> players = world.getPlayerList().getPlayers();
-		for(int i = 0; i < players.size(); i++) {
-                    Player player = players.get(i);
-                    Set le = player.getLocalEntities();
-                    Object[] localEntities = le.toArray();
-                    for(Object object : localEntities)
-                    {
-                        Entity localEntity = (Entity) object;
-                        if (localEntity.getId() == -1) {
-                                le.remove(localEntity);
-                                if(localEntity instanceof Player)
-                                    player.getSession().getActionSender().sendRemovePlayer((Player) localEntity);
-                                else
-                                    player.getSession().getActionSender().sendRemoveEntity(localEntity);
-                                Server.d("Removing "+localEntity.getName()+" from "+player.getName());
-                        } else {
-                                player.getSession().getActionSender().sendUpdateEntity(localEntity);
-                        }
-                    }
-                    for (int j = 0; j < players.size(); j++) {
-                        Player otherEntity = players.get(j);
-                        if (!le.contains(otherEntity) && otherEntity != player && otherEntity.isVisible) {
-                                le.add(otherEntity);
-                                player.getSession().getActionSender().sendAddPlayer(otherEntity, false);                                            
-                                Server.d("Adding "+otherEntity.getName()+" to "+player.getName());
-                        }
-                    }
-                    if(player.lastPacketTime != 0 && System.currentTimeMillis() - player.lastPacketTime > 30000) {
-                        player.getActionSender().sendLoginFailure("Too much lag`");
-                        player.getSession().close();
-                    }
-		}
-		for (Player player : world.getPlayerList().getPlayers()) {
-			player.resetOldPositionAndRotation();
-		}
-		world.getLevel().applyBlockBehaviour();
-	}
-	
+
+  /**
+   * The delay.
+   */
+  private static final long DELAY = 150;
+
+  /**
+   * Creates the update task with a delay of 100ms.
+   */
+  public UpdateTask() {
+    super(DELAY);
+  }
+
+  @Override
+  public void execute() {
+    final World world = World.getWorld();
+    world.getGameMode().tick();
+    List<Player> players = world.getPlayerList().getPlayers();
+    for (int i = 0; i < players.size(); i++) {
+      Player player = players.get(i);
+      Set le = player.getLocalEntities();
+      Object[] localEntities = le.toArray();
+      for (Object object : localEntities) {
+        Entity localEntity = (Entity) object;
+        if (localEntity.getId() == -1) {
+          le.remove(localEntity);
+          if (localEntity instanceof Player)
+            player.getSession().getActionSender().sendRemovePlayer((Player) localEntity);
+          else
+            player.getSession().getActionSender().sendRemoveEntity(localEntity);
+          Server.d("Removing " + localEntity.getName() + " from " + player.getName());
+        } else {
+          player.getSession().getActionSender().sendUpdateEntity(localEntity);
+        }
+      }
+      for (int j = 0; j < players.size(); j++) {
+        Player otherEntity = players.get(j);
+        if (!le.contains(otherEntity) && otherEntity != player && otherEntity.isVisible) {
+          le.add(otherEntity);
+          player.getSession().getActionSender().sendAddPlayer(otherEntity, false);
+          Server.d("Adding " + otherEntity.getName() + " to " + player.getName());
+        }
+      }
+      if (player.lastPacketTime != 0 && System.currentTimeMillis() - player.lastPacketTime >
+          30000) {
+        player.getActionSender().sendLoginFailure("Too much lag`");
+        player.getSession().close();
+      }
+    }
+    for (Player player : world.getPlayerList().getPlayers()) {
+      player.resetOldPositionAndRotation();
+    }
+    world.getLevel().applyBlockBehaviour();
+  }
+
 }

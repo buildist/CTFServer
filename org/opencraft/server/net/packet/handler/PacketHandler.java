@@ -42,15 +42,17 @@ import org.opencraft.server.net.packet.Packet;
 
 /**
  * Describes the methods necessary for a packet handler.
+ *
  * @author Graham Edgecombe
  */
 public interface PacketHandler<SessionType extends OCSession> {
-	
-	/**
-	 * Handles a packet.
-	 * @param session The session.
-	 * @param packet The packet.
-	 */
-	public void handlePacket(SessionType session, Packet packet);
-	
+
+  /**
+   * Handles a packet.
+   *
+   * @param session The session.
+   * @param packet  The packet.
+   */
+  public void handlePacket(SessionType session, Packet packet);
+
 }

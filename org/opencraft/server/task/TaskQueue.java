@@ -42,87 +42,90 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Manages the task queue.
+ *
  * @author Graham Edgecombe
  */
 public final class TaskQueue {
-	
-	/**
-	 * The task queue singleton.
-	 */
-	private static final TaskQueue INSTANCE = new TaskQueue();
-	
-	
-	/**
-	 * Gets the task queue instance.
-	 * @return The task queue instance.
-	 */
-	public static TaskQueue getTaskQueue() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * The scheduled executor service backing this task queue.
-	 */
-	private ScheduledExecutorService service = Executors.newScheduledThreadPool(3);
-	
-	/**
-	 * Default private constructor.
-	 */
-	private TaskQueue() {
-		/* empty */
-	}
-	
-	/**
-	 * Pushes a task onto the task queue.
-	 * @param task The task to be executed.
-	 */
-	public void push(final Task task) {
-		service.submit(new Runnable() {
-			public void run() {
-				try {
-					task.execute();
-				} catch (Throwable t) {
-					System.err.println("Error during task execution." + t);
-                                        t.printStackTrace();
-				}
-			}
-		});
-	}
-	
-	/**
-	 * Schedules a task to run in the future.
-	 * @param task The scheduled task.
-	 */
-	public void schedule(final ScheduledTask task) {
-		schedule(task, task.getDelay());
-	}
-	
-	/**
-	 * Internally schedules the task.
-	 * @param task The task.
-	 * @param delay The remaining delay.
-	 */
-	private void schedule(final ScheduledTask task, final long delay) {
-		service.schedule(new Runnable() {
-			public void run() {
-				long start = System.currentTimeMillis();
-				try {
-					task.execute();
-				} catch (Throwable t) {
-					System.err.println("Error during task execution." + t);
-                                        t.printStackTrace();
-				}
-				if (!task.isRunning()) {
-					return;
-				}
-				long elapsed = System.currentTimeMillis() - start;
-				long waitFor = task.getDelay() - elapsed;
-				if (waitFor < 0) {
-					waitFor = 0;
-				}
-				schedule(task, waitFor);
-			}
-		}, delay, TimeUnit.MILLISECONDS);
-	}
-	
+
+  /**
+   * The task queue singleton.
+   */
+  private static final TaskQueue INSTANCE = new TaskQueue();
+  /**
+   * The scheduled executor service backing this task queue.
+   */
+  private ScheduledExecutorService service = Executors.newScheduledThreadPool(3);
+
+  /**
+   * Default private constructor.
+   */
+  private TaskQueue() {
+        /* empty */
+  }
+
+  /**
+   * Gets the task queue instance.
+   *
+   * @return The task queue instance.
+   */
+  public static TaskQueue getTaskQueue() {
+    return INSTANCE;
+  }
+
+  /**
+   * Pushes a task onto the task queue.
+   *
+   * @param task The task to be executed.
+   */
+  public void push(final Task task) {
+    service.submit(new Runnable() {
+      public void run() {
+        try {
+          task.execute();
+        } catch (Throwable t) {
+          System.err.println("Error during task execution." + t);
+          t.printStackTrace();
+        }
+      }
+    });
+  }
+
+  /**
+   * Schedules a task to run in the future.
+   *
+   * @param task The scheduled task.
+   */
+  public void schedule(final ScheduledTask task) {
+    schedule(task, task.getDelay());
+  }
+
+  /**
+   * Internally schedules the task.
+   *
+   * @param task  The task.
+   * @param delay The remaining delay.
+   */
+  private void schedule(final ScheduledTask task, final long delay) {
+    service.schedule(new Runnable() {
+      public void run() {
+        long start = System.currentTimeMillis();
+        try {
+          task.execute();
+        } catch (Throwable t) {
+          System.err.println("Error during task execution." + t);
+          t.printStackTrace();
+        }
+        if (!task.isRunning()) {
+          return;
+        }
+        long elapsed = System.currentTimeMillis() - start;
+        long waitFor = task.getDelay() - elapsed;
+        if (waitFor < 0) {
+          waitFor = 0;
+        }
+        schedule(task, waitFor);
+      }
+    }, delay, TimeUnit.MILLISECONDS);
+  }
+
 }

@@ -44,25 +44,27 @@ import org.opencraft.server.model.Level;
 
 /**
  * A block behaviour that handles plants which require darkness.
+ *
  * @author Brett Russell
  */
 public class CavePlantBehaviour implements BlockBehaviour {
-	
-	@Override
-	public void handleDestroy(Level level, int x, int y, int z, int type) {
-		
-	}
-	
-	@Override
-	public void handlePassive(Level level, int x, int y, int z, int type) {
-		
-	}
-	
-	@Override
-	public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
-		if (BlockManager.getBlockManager().getBlock(level.getBlock(x, y, z + 1)).isLiquid() || level.getLightDepth(x, y) < z) {
-			level.setBlock(x, y, z, BlockConstants.AIR);
-		}
-	}
-	
+
+  @Override
+  public void handleDestroy(Level level, int x, int y, int z, int type) {
+
+  }
+
+  @Override
+  public void handlePassive(Level level, int x, int y, int z, int type) {
+
+  }
+
+  @Override
+  public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
+    if (BlockManager.getBlockManager().getBlock(level.getBlock(x, y, z + 1)).isLiquid() || level
+        .getLightDepth(x, y) < z) {
+      level.setBlock(x, y, z, BlockConstants.AIR);
+    }
+  }
+
 }

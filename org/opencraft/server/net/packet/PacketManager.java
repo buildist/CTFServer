@@ -42,70 +42,74 @@ import java.util.List;
 
 /**
  * A utility class for managing the whole packet system.
+ *
  * @param Graham Edgecombe
  */
 public class PacketManager {
-	
-	
-	/**
-	 * Incoming packets.
-	 */
-	private List<PacketDefinition> incoming = new LinkedList<PacketDefinition>();
-	
-	/**
-	 * Outgoing packets.
-	 */
-	private List<PacketDefinition> outgoing = new LinkedList<PacketDefinition>();
-	
-	/**
-	 * The incoming packet array (faster access by opcode than list iteration).
-	 */
-	private transient PacketDefinition[] incomingArray;
-	
-	/**
-	 * The outgoing packet array (faster access by opcode than list iteration).
-	 */
-	private transient PacketDefinition[] outgoingArray;
-	
-	/**
-	 * Default private constructor.
-	 */
-	protected PacketManager() {
-		/* empty */
-	}
-	
-	/**
-	 * Resolves the packet manager after deserialization.
-	 * @return The resolved object.
-	 */
-	private Object readResolve() {
-		incomingArray = new PacketDefinition[256];
-		for (PacketDefinition def : incoming) {
-			incomingArray[def.getOpcode()] = def;
-		}
-		outgoingArray = new PacketDefinition[256];
-		for (PacketDefinition def : outgoing) {
-			outgoingArray[def.getOpcode()] = def;
-		}
-		return this;
-	}
-	
-	/**
-	 * Gets an incoming packet definition.
-	 * @param opcode The opcode.
-	 * @return The packet definition.
-	 */
-	public PacketDefinition getIncomingPacket(int opcode) {
-		return incomingArray[opcode];
-	}
-	
-	/**
-	 * Gets an outgoing packet definition.
-	 * @param opcode The opcode.
-	 * @return The packet definition.
-	 */
-	public PacketDefinition getOutgoingPacket(int opcode) {
-		return outgoingArray[opcode];
-	}
-	
+
+
+  /**
+   * Incoming packets.
+   */
+  private List<PacketDefinition> incoming = new LinkedList<PacketDefinition>();
+
+  /**
+   * Outgoing packets.
+   */
+  private List<PacketDefinition> outgoing = new LinkedList<PacketDefinition>();
+
+  /**
+   * The incoming packet array (faster access by opcode than list iteration).
+   */
+  private transient PacketDefinition[] incomingArray;
+
+  /**
+   * The outgoing packet array (faster access by opcode than list iteration).
+   */
+  private transient PacketDefinition[] outgoingArray;
+
+  /**
+   * Default private constructor.
+   */
+  protected PacketManager() {
+        /* empty */
+  }
+
+  /**
+   * Resolves the packet manager after deserialization.
+   *
+   * @return The resolved object.
+   */
+  private Object readResolve() {
+    incomingArray = new PacketDefinition[256];
+    for (PacketDefinition def : incoming) {
+      incomingArray[def.getOpcode()] = def;
+    }
+    outgoingArray = new PacketDefinition[256];
+    for (PacketDefinition def : outgoing) {
+      outgoingArray[def.getOpcode()] = def;
+    }
+    return this;
+  }
+
+  /**
+   * Gets an incoming packet definition.
+   *
+   * @param opcode The opcode.
+   * @return The packet definition.
+   */
+  public PacketDefinition getIncomingPacket(int opcode) {
+    return incomingArray[opcode];
+  }
+
+  /**
+   * Gets an outgoing packet definition.
+   *
+   * @param opcode The opcode.
+   * @return The packet definition.
+   */
+  public PacketDefinition getOutgoingPacket(int opcode) {
+    return outgoingArray[opcode];
+  }
+
 }

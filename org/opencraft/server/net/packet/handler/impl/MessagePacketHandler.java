@@ -37,11 +37,7 @@
 package org.opencraft.server.net.packet.handler.impl;
 
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import org.opencraft.server.Server;
-
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.World;
@@ -49,60 +45,66 @@ import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.handler.PacketHandler;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 /**
  * A class which handles message and comamnd packets.
+ *
  * @author Graham Edgecombe
  */
 public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
-	
-	@Override
-	public void handlePacket(MinecraftSession session, Packet packet) {
-		if (!session.isAuthenticated()) {
-			return;
-		}
-		String message = packet.getStringField("message");
-                if(message.contains("&"))
-                {
-                    session.getPlayer().kickForHacking();
-                    return;
-                }
-                int clientMaxLength = 64 - session.getPlayer().getName().length() - 2;
-                if(message.charAt(message.length()-1) == '>' || message.charAt(message.length()-1) == '<') {
-                    message = message.substring(0, message.length()-1);
-                    session.getPlayer().appendingChat = true;
-                    session.getPlayer().partialChatMessage += message;
-                    session.getActionSender().sendChatMessage("&7"+message);
-                    return;
-                } else if(session.getPlayer().appendingChat) {
-                    message = session.getPlayer().partialChatMessage + message;
-                    session.getPlayer().partialChatMessage = "";
-                } else if(message.length() == clientMaxLength) {
-                    session.getActionSender().sendChatMessage("&7 End your chat with > to send a longer message.");
-                }
-                
-                message = Server.cleanColorCodes(message);
-		if (message.startsWith("/")) {
-			// interpret as command
-			String tokens = message.substring(1);
-			String[] parts = tokens.split(" ");
-			final Map<String, Command> commands = World.getWorld().getGameMode().getCommands();
-			Command c = commands.get(parts[0].toLowerCase());
-			if (c != null) {
-				parts[0] = null;
-				List<String> partsList = new ArrayList<String>();
-				for (String s : parts) {
-					if (s != null) {
-						partsList.add(s);
-					}
-				}
-				parts = partsList.toArray(new String[0]);
-				c.execute(session.getPlayer(), new CommandParameters(parts));
-			} else {
-				session.getActionSender().sendChatMessage("Invalid command /"+parts[0]+".");
-			}
-		} else {
-			World.getWorld().getGameMode().broadcastChatMessage(session.getPlayer(), message);
-		}
-	}
-	
+
+  @Override
+  public void handlePacket(MinecraftSession session, Packet packet) {
+    if (!session.isAuthenticated()) {
+      return;
+    }
+    String message = packet.getStringField("message");
+    if (message.contains("&")) {
+      session.getPlayer().kickForHacking();
+      return;
+    }
+    int clientMaxLength = 64 - session.getPlayer().getName().length() - 2;
+    if (message.charAt(message.length() - 1) == '>' || message.charAt(message.length() - 1) ==
+        '<') {
+      message = message.substring(0, message.length() - 1);
+      session.getPlayer().appendingChat = true;
+      session.getPlayer().partialChatMessage += message;
+      session.getActionSender().sendChatMessage("&7" + message);
+      return;
+    } else if (session.getPlayer().appendingChat) {
+      message = session.getPlayer().partialChatMessage + message;
+      session.getPlayer().partialChatMessage = "";
+    } else if (message.length() == clientMaxLength) {
+      session.getActionSender().sendChatMessage("&7 End your chat with > to send a longer message" +
+          ".");
+    }
+
+    message = Server.cleanColorCodes(message);
+    if (message.startsWith("/")) {
+      // interpret as command
+      String tokens = message.substring(1);
+      String[] parts = tokens.split(" ");
+      final Map<String, Command> commands = World.getWorld().getGameMode().getCommands();
+      Command c = commands.get(parts[0].toLowerCase());
+      if (c != null) {
+        parts[0] = null;
+        List<String> partsList = new ArrayList<String>();
+        for (String s : parts) {
+          if (s != null) {
+            partsList.add(s);
+          }
+        }
+        parts = partsList.toArray(new String[0]);
+        c.execute(session.getPlayer(), new CommandParameters(parts));
+      } else {
+        session.getActionSender().sendChatMessage("Invalid command /" + parts[0] + ".");
+      }
+    } else {
+      World.getWorld().getGameMode().broadcastChatMessage(session.getPlayer(), message);
+    }
+  }
+
 }

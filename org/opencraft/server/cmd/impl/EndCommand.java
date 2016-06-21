@@ -43,25 +43,24 @@ import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class EndCommand implements Command{
+public class EndCommand implements Command {
 
-    private static final EndCommand INSTANCE = new EndCommand();
+  private static final EndCommand INSTANCE = new EndCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static EndCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static EndCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        if ((player.isOp()))
-        {
-            Server.log(player.getName()+" used /end");
-            ((CTFGameMode)World.getWorld().getGameMode()).endGame();
-        }
-        else
-            player.getActionSender().sendChatMessage("You must be OP to do that");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if ((player.isOp())) {
+      Server.log(player.getName() + " used /end");
+      ((CTFGameMode) World.getWorld().getGameMode()).endGame();
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

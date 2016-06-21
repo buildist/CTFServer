@@ -44,56 +44,57 @@ import org.opencraft.server.model.World;
 /**
  * Official /deop command **NEEDS PERSISTENCE
  *
- **
+ * *
+ *
  * @author S�ren Enevoldsen
  */
 public class DuelAcceptCommand implements Command {
 
-    /**
-     * The instance of this command.
-     */
-    private static final DuelAcceptCommand INSTANCE = new DuelAcceptCommand();
+  /**
+   * The instance of this command.
+   */
+  private static final DuelAcceptCommand INSTANCE = new DuelAcceptCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     *
-     * @return The singleton instance of this command.
-     */
-    public static DuelAcceptCommand getCommand() {
-        return INSTANCE;
-    }
-
-    /**
-     * Default private constructor.
-     */
-    private DuelAcceptCommand() {
+  /**
+   * Default private constructor.
+   */
+  private DuelAcceptCommand() {
         /* empty */
-    }
+  }
 
-    @Override
-    public void execute(final Player player, CommandParameters params) {
-        if(player.duelChallengedBy == null) {
-            player.getActionSender().sendChatMessage("- &eNo one has challenged you to a duel.");
-        }
-        else if(player.hasFlag || player.duelChallengedBy.hasFlag) {
-            player.getActionSender().sendChatMessage("- &eYou can't duel when you have the flag or your opponent has it.");
-        }
-        else if(player.duelPlayer != null || player.duelChallengedBy.duelPlayer != null) {
-            player.getActionSender().sendChatMessage("- &eYou're already in a duel.");
-        }
-        else if(player.team == -1 || player.duelChallengedBy.team == -1) {
-            player.getActionSender().sendChatMessage("- &eYou must be on a team to duel.");
-        }
-        else {
-            player.getActionSender().sendChatMessage("- &bYou are now dueling "+player.duelChallengedBy.getColoredName()+"&b! Kill them 3 times to win.");
-            player.duelChallengedBy.getActionSender().sendChatMessage("- "+player.getColoredName()+"&b accepted your request to duel! Kill them 3 times to win.");
-            World.getWorld().broadcast("- "+player.duelChallengedBy.getColoredName()+" &bis now dueling "+player.getColoredName()+"!");
-            
-            player.duelPlayer = player.duelChallengedBy;
-            player.duelChallengedBy.duelPlayer = player;
-            
-            player.duelKills = 0;
-            player.duelChallengedBy.duelKills = 0;
-        }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static DuelAcceptCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(final Player player, CommandParameters params) {
+    if (player.duelChallengedBy == null) {
+      player.getActionSender().sendChatMessage("- &eNo one has challenged you to a duel.");
+    } else if (player.hasFlag || player.duelChallengedBy.hasFlag) {
+      player.getActionSender().sendChatMessage("- &eYou can't duel when you have the flag or your" +
+          " opponent has it.");
+    } else if (player.duelPlayer != null || player.duelChallengedBy.duelPlayer != null) {
+      player.getActionSender().sendChatMessage("- &eYou're already in a duel.");
+    } else if (player.team == -1 || player.duelChallengedBy.team == -1) {
+      player.getActionSender().sendChatMessage("- &eYou must be on a team to duel.");
+    } else {
+      player.getActionSender().sendChatMessage("- &bYou are now dueling " + player
+          .duelChallengedBy.getColoredName() + "&b! Kill them 3 times to win.");
+      player.duelChallengedBy.getActionSender().sendChatMessage("- " + player.getColoredName() +
+          "&b accepted your request to duel! Kill them 3 times to win.");
+      World.getWorld().broadcast("- " + player.duelChallengedBy.getColoredName() + " &bis now " +
+          "dueling " + player.getColoredName() + "!");
+
+      player.duelPlayer = player.duelChallengedBy;
+      player.duelChallengedBy.duelPlayer = player;
+
+      player.duelKills = 0;
+      player.duelChallengedBy.duelKills = 0;
     }
+  }
 }

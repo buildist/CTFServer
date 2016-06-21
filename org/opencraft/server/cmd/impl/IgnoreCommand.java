@@ -40,24 +40,25 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class IgnoreCommand implements Command{
+public class IgnoreCommand implements Command {
 
-    private static final IgnoreCommand INSTANCE = new IgnoreCommand();
+  private static final IgnoreCommand INSTANCE = new IgnoreCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static IgnoreCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static IgnoreCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    String name = params.getStringArgument(0);
+    Player p = Player.getPlayer(name, player.getActionSender());
+    if (p != null) {
+      player.ignore(p);
     }
-
-    public void execute(Player player, CommandParameters params) {
-        String name = params.getStringArgument(0);
-        Player p = Player.getPlayer(name, player.getActionSender());
-        if(p != null) {
-            player.ignore(p);
-        }
-    }
+  }
 
 }

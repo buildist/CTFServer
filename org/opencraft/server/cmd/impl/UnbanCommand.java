@@ -1,4 +1,3 @@
-
 /*
  * Jacob_'s Capture the Flag for Minecraft Classic and ClassiCube
  * Copyright (c) 2010-2014 Jacob Morgan
@@ -42,30 +41,29 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class UnbanCommand implements Command{
-    
-        private static final UnbanCommand INSTANCE = new UnbanCommand();
+public class UnbanCommand implements Command {
 
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static UnbanCommand getCommand() {
-		return INSTANCE;
-	}
+  private static final UnbanCommand INSTANCE = new UnbanCommand();
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static UnbanCommand getCommand() {
+    return INSTANCE;
+  }
 
 
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            if (player.isOp())
-            {
-                String name = params.getStringArgument(0);
-                Server.log(player.getName()+" unbanned "+name);
-                player.getActionSender().sendChatMessage(name+" has been unbanned.");
-                Player.setAttributeFor(name, "banned", "false", player.getActionSender());
-                Server.unbanIP(player.getSession().getIP());
-            }
-            else
-                player.getActionSender().sendChatMessage("You need to be op to do that!");
-	}
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      String name = params.getStringArgument(0);
+      Server.log(player.getName() + " unbanned " + name);
+      player.getActionSender().sendChatMessage(name + " has been unbanned.");
+      Player.setAttributeFor(name, "banned", "false", player.getActionSender());
+      Server.unbanIP(player.getSession().getIP());
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

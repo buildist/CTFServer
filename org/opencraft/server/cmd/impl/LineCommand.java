@@ -44,52 +44,52 @@ import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.World;
 
-public class LineCommand implements Command{
-    private static final LineCommand INSTANCE = new LineCommand();
+public class LineCommand implements Command {
+  private static final LineCommand INSTANCE = new LineCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static LineCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static LineCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    Position pos = player.getPosition().toBlockPos();
+    Rotation r = player.getRotation();
+
+    int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256)) - 90;
+    int pitch = 360 - (int) (Server.getUnsigned(r.getLook()) * ((float) 360 / 256));
+
+    double px = pos.getX();
+    double py = pos.getY();
+    double pz = pos.getZ();
+
+    double vx = Math.cos(Math.toRadians(heading));
+    double vz = Math.tan(Math.toRadians(pitch));
+    double vy = Math.sin(Math.toRadians(heading));
+    double length = Math.sqrt(vx * vx + vy * vy + vz * vz);
+    vx /= length;
+    vz /= length;
+    vy /= length;
+    double x = px;
+    double y = py;
+    double z = pz;
+    for (int i = 0; i < 256; i++) {
+      int bx = (int) Math.round(x);
+      int by = (int) Math.round(y);
+      int bz = (int) Math.round(z);
+      int block = World.getWorld().getLevel().getBlock(bx, by, bz);
+      if ((block != 0 && block != 20))
+        return;
+      else if (i > 0)
+        World.getWorld().getLevel().setBlock(bx, by, bz, 20);
+      x += vx;
+      y += vy;
+      z += vz;
+      i++;
     }
-
-    public void execute(Player player, CommandParameters params) {
-        Position pos = player.getPosition().toBlockPos();
-        Rotation r = player.getRotation();
-
-        int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float)360/256)) - 90;
-        int pitch = 360 - (int) (Server.getUnsigned(r.getLook()) * ((float)360/256));
-
-        double px = pos.getX();
-        double py = pos.getY();
-        double pz = pos.getZ();
-
-        double vx = Math.cos(Math.toRadians(heading));
-        double vz = Math.tan(Math.toRadians(pitch));
-        double vy = Math.sin(Math.toRadians(heading));
-        double length = Math.sqrt(vx*vx+vy*vy+vz*vz);
-        vx /= length;
-        vz /= length;
-        vy /= length;
-        double x = px;
-        double y = py;
-        double z = pz;
-        for(int i = 0; i < 256; i++)
-        {
-            int bx = (int) Math.round(x);
-            int by = (int) Math.round(y);
-            int bz = (int) Math.round(z);
-            int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-            if((block != 0 && block != 20))
-                return;
-            else if(i > 0)
-                World.getWorld().getLevel().setBlock(bx, by, bz, 20);
-            x += vx;
-            y += vy;
-            z += vz;
-            i++;
-        }
-    }
+  }
 }

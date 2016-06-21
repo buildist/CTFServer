@@ -41,73 +41,68 @@ import org.opencraft.server.Server;
 import org.opencraft.server.net.packet.Packet;
 
 /**
- * @author Mark Farrell
- * The base class for all sessions .
+ * @author Mark Farrell The base class for all sessions .
  */
-public abstract class OCSession extends Connectable{
-	
-
-	
-	/**
-	 * The <code>IoSession</code> associated with this
-	 * <code>MinecraftSession</code>.
-	 */
-	protected final IoSession session;
-
-	/**
-	 * Creates the Minecraft session.
-	 * @param session The <code>IoSession</code>.
-	 */
-	public OCSession(IoSession session) {
-		this.session = session;
-	}
-	
-
-	
-	/**
-	 * Sets the state to authenticated.
-	 */
-	public void setAuthenticated() {
-		this.state = State.AUTHENTICATED;
-	}
-	
-	/**
-	 * Sets the state to ready.
-	 */
-	public void setReady() {
-		this.state = State.READY;
-	}
-	
-	/**
-	 * Sends a packet. This method may be called from multiple threads.
-	 * @param packet The packet to send.
-	 */
-	public void send(Packet packet) {
-			this.send(packet, session);
-            if(packet.definition.getOpcode() != 8)
-                Server.d(packet.definition.getOpcode()+" --> "+session.getRemoteAddress());
-	}
-	
-	/**
-	 * Closes this session.
-	 */
-	public void close() {
-		session.close(false);
-	}
-	
-	/**
-	 * Called when this session is to be destroyed, should release any
-	 * resources.
-	 */
-	public abstract void destroy();
-	
-	
+public abstract class OCSession extends Connectable {
 
 
-	
-	/**
-	 * Handles a packet.
-	 * @param packet The packet to handle.
-	 */
-	public abstract void handle(Packet packet);
+  /**
+   * The <code>IoSession</code> associated with this <code>MinecraftSession</code>.
+   */
+  protected final IoSession session;
+
+  /**
+   * Creates the Minecraft session.
+   *
+   * @param session The <code>IoSession</code>.
+   */
+  public OCSession(IoSession session) {
+    this.session = session;
+  }
+
+
+  /**
+   * Sets the state to authenticated.
+   */
+  public void setAuthenticated() {
+    this.state = State.AUTHENTICATED;
+  }
+
+  /**
+   * Sets the state to ready.
+   */
+  public void setReady() {
+    this.state = State.READY;
+  }
+
+  /**
+   * Sends a packet. This method may be called from multiple threads.
+   *
+   * @param packet The packet to send.
+   */
+  public void send(Packet packet) {
+    this.send(packet, session);
+    if (packet.definition.getOpcode() != 8)
+      Server.d(packet.definition.getOpcode() + " --> " + session.getRemoteAddress());
+  }
+
+  /**
+   * Closes this session.
+   */
+  public void close() {
+    session.close(false);
+  }
+
+  /**
+   * Called when this session is to be destroyed, should release any resources.
+   */
+  public abstract void destroy();
+
+
+  /**
+   * Handles a packet.
+   *
+   * @param packet The packet to handle.
+   */
+  public abstract void handle(Packet packet);
 }

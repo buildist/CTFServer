@@ -36,24 +36,22 @@
  */
 package org.opencraft.server.model;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+public class MineActivator implements Runnable {
+  private Mine mine;
+  private Player player;
 
-public class MineActivator implements Runnable{
-    private Mine mine;
-    private Player player;
-    public MineActivator(Mine m, Player p)
-    {
-        this.mine = m;
-        this.player = p;
+  public MineActivator(Mine m, Player p) {
+    this.mine = m;
+    this.player = p;
+  }
+
+  public void run() {
+    try {
+      Thread.sleep(5000);
+    } catch (InterruptedException ex) {
     }
-    public void run() {
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException ex) {
-        }
-        mine.active = true;
-        player.getActionSender().sendChatMessage("- &eMine is now active!");
-    }
+    mine.active = true;
+    player.getActionSender().sendChatMessage("- &eMine is now active!");
+  }
 
 }

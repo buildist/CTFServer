@@ -36,53 +36,56 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import java.io.FileOutputStream;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
+import java.io.FileOutputStream;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+
 public class MapImportCommand implements Command {
 
-    private static final MapImportCommand INSTANCE = new MapImportCommand();
+  private static final MapImportCommand INSTANCE = new MapImportCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     *
-     * @return The singleton instance of this command.
-     */
-    public static MapImportCommand getCommand() {
-        return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static MapImportCommand getCommand() {
+    return INSTANCE;
+  }
 
-    @Override
-    public void execute(final Player player, final CommandParameters params) {
-        if (player.isOp()) {
-            player.getActionSender().sendChatMessage("Downloading map...");
-            new Thread(new Runnable() {
-                @Override
-                public void run() {                    
-                    try {
-                        String mapName = params.getStringArgument(0);
-                        String urlString = "http://persignum.com/download.php?password=IJobS0d3Mb&mapname="+mapName;
-                        URL url = new URL(urlString);
-                        ReadableByteChannel ch = Channels.newChannel(url.openStream());
-                        if(mapName.contains("/"))
-                            mapName = mapName.substring(mapName.indexOf("/")+1);
-                        String path = "maps/more/"+mapName+".lvl";
-                        FileOutputStream out = new FileOutputStream(path);
-                        out.getChannel().transferFrom(ch, 0, Long.MAX_VALUE);
-                        player.getActionSender().sendChatMessage("Saved to "+path);
-                        player.getActionSender().sendChatMessage("Use /newgame more/"+mapName+" to switch to it");
-                    } catch(Exception ex) {
-                        player.getActionSender().sendChatMessage("Error downloading map. Blame Jacob_ or Jack");
-                    }
-                }                
-            }).start();
-        } else {
-            player.getActionSender().sendChatMessage("You need to be op to do that!");
+  @Override
+  public void execute(final Player player, final CommandParameters params) {
+    if (player.isOp()) {
+      player.getActionSender().sendChatMessage("Downloading map...");
+      new Thread(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            String mapName = params.getStringArgument(0);
+            String urlString = "http://persignum.com/download.php?password=IJobS0d3Mb&mapname=" +
+                mapName;
+            URL url = new URL(urlString);
+            ReadableByteChannel ch = Channels.newChannel(url.openStream());
+            if (mapName.contains("/"))
+              mapName = mapName.substring(mapName.indexOf("/") + 1);
+            String path = "maps/more/" + mapName + ".lvl";
+            FileOutputStream out = new FileOutputStream(path);
+            out.getChannel().transferFrom(ch, 0, Long.MAX_VALUE);
+            player.getActionSender().sendChatMessage("Saved to " + path);
+            player.getActionSender().sendChatMessage("Use /newgame more/" + mapName + " to switch" +
+                " to it");
+          } catch (Exception ex) {
+            player.getActionSender().sendChatMessage("Error downloading map. Blame Jacob_ or Jack");
+          }
         }
+      }).start();
+    } else {
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
     }
+  }
 }

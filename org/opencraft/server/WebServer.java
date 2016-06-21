@@ -41,14 +41,7 @@ import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import javax.imageio.ImageIO;
+
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
@@ -56,101 +49,113 @@ import org.opencraft.server.model.World;
 import org.opencraft.server.net.ConsoleActionSender;
 import org.opencraft.server.task.impl.RenderMapTask;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import javax.imageio.ImageIO;
+
 public class WebServer {
-    private static Player consolePlayer = new Player(null, "WebConsole");
-    private static ExecutorService executor;
-    public static ArrayList<String> blockedWords = new ArrayList<String>();
-    public static void init() {
-        consolePlayer.setActionSender(new ConsoleActionSender());
-        consolePlayer.setAttribute("IsOperator", "true");
-        consolePlayer.setAttribute("IsOwner", "true");
-        try {
-            InetSocketAddress addr = new InetSocketAddress(22000);
-            HttpServer server = HttpServer.create(addr, 0);
-            
-            CTFHandler ch = new CTFHandler();
-            HttpContext c = server.createContext("/", ch);
-            c.getFilters().add(new ParameterFilter());
-            executor = Executors.newCachedThreadPool();
-            server.setExecutor(executor);
-            server.start();
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-    public static void run(Runnable r) {
-        if(!Configuration.getConfiguration().isTest())
-        executor.submit(r);
-    }
-    static class CTFHandler implements HttpHandler {
+  public static ArrayList<String> blockedWords = new ArrayList<String>();
+  private static Player consolePlayer = new Player(null, "WebConsole");
+  private static ExecutorService executor;
 
-        public void handle(HttpExchange exchange) throws IOException {
-            try {
-                Map<String, Object> params = (Map<String, Object>) exchange.getAttribute("parameters");
-                if(!params.containsKey("k") || !params.get("k").equals(Integer.toString(Constants.SECRET))) {
-                    exchange.close();
-                    return;
-                }
-                if(params.containsKey("x")) {
-                    String message = Server.cleanColorCodes(params.get("x").toString());
-                    String messageLower = message.toLowerCase();
-                    for(String word : blockedWords) {
-                        if(messageLower.contains(word)) {
-                            exchange.close();
-                            return;
-                        }
-                    }
-                    if(message.equals("stop"))
-                    {
-                        Server.stop();
-                    }
-                    else if (message.startsWith("/")) {
-                            // interpret as command
-                            String tokens = message.substring(1);
-                            String[] parts = tokens.split(" ");
-                            final Map<String, Command> commands = World.getWorld().getGameMode().getCommands();
-                            Command c = commands.get(parts[0]);
-                            if (c != null) {
-                                    parts[0] = null;
-                                    List<String> partsList = new ArrayList<String>();
-                                    for (String s : parts) {
-                                            if (s != null) {
-                                                    partsList.add(s);
-                                            }
-                                    }
-                                    parts = partsList.toArray(new String[0]);
-                                    c.execute(consolePlayer, new CommandParameters(parts));
-                            } else {
-                                System.out.println("Invalid command.");
-                            }
-                    } else {
-                            World.getWorld().broadcast("(Console) &e"+message);
-                            System.out.println(message);
-                    }
-                    exchange.sendResponseHeaders(200, 0);
-                    exchange.close();
-                } else if(params.containsKey("t")) {
-                    long time = Long.parseLong(params.get("t").toString());
-                    Headers responseHeaders = exchange.getResponseHeaders();
-                    responseHeaders.set("Content-Type", "text/plain");
-                    responseHeaders.set("Access-Control-Allow-Origin", "*");
-                    exchange.sendResponseHeaders(200, 0);
-                    exchange.getResponseBody().write(Server.getConsoleMessages(time).getBytes());
-                    exchange.close();                    
-                } else if(params.containsKey("map")) {
-                    Headers responseHeaders = exchange.getResponseHeaders();
-                    responseHeaders.set("Content-Type", "image/jpeg");
-                    exchange.sendResponseHeaders(200, 0);
-                    ImageIO.write(RenderMapTask.mapImage, "jpeg", exchange.getResponseBody());
-                    exchange.close();                    
-                } else {
-                    exchange.close();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                exchange.close();
+  public static void init() {
+    consolePlayer.setActionSender(new ConsoleActionSender());
+    consolePlayer.setAttribute("IsOperator", "true");
+    consolePlayer.setAttribute("IsOwner", "true");
+    try {
+      InetSocketAddress addr = new InetSocketAddress(22000);
+      HttpServer server = HttpServer.create(addr, 0);
+
+      CTFHandler ch = new CTFHandler();
+      HttpContext c = server.createContext("/", ch);
+      c.getFilters().add(new ParameterFilter());
+      executor = Executors.newCachedThreadPool();
+      server.setExecutor(executor);
+      server.start();
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public static void run(Runnable r) {
+    if (!Configuration.getConfiguration().isTest())
+      executor.submit(r);
+  }
+
+  static class CTFHandler implements HttpHandler {
+
+    public void handle(HttpExchange exchange) throws IOException {
+      try {
+        Map<String, Object> params = (Map<String, Object>) exchange.getAttribute("parameters");
+        if (!params.containsKey("k") || !params.get("k").equals(Integer.toString(Constants
+            .SECRET))) {
+          exchange.close();
+          return;
+        }
+        if (params.containsKey("x")) {
+          String message = Server.cleanColorCodes(params.get("x").toString());
+          String messageLower = message.toLowerCase();
+          for (String word : blockedWords) {
+            if (messageLower.contains(word)) {
+              exchange.close();
+              return;
             }
-
+          }
+          if (message.equals("stop")) {
+            Server.stop();
+          } else if (message.startsWith("/")) {
+            // interpret as command
+            String tokens = message.substring(1);
+            String[] parts = tokens.split(" ");
+            final Map<String, Command> commands = World.getWorld().getGameMode().getCommands();
+            Command c = commands.get(parts[0]);
+            if (c != null) {
+              parts[0] = null;
+              List<String> partsList = new ArrayList<String>();
+              for (String s : parts) {
+                if (s != null) {
+                  partsList.add(s);
+                }
+              }
+              parts = partsList.toArray(new String[0]);
+              c.execute(consolePlayer, new CommandParameters(parts));
+            } else {
+              System.out.println("Invalid command.");
+            }
+          } else {
+            World.getWorld().broadcast("(Console) &e" + message);
+            System.out.println(message);
+          }
+          exchange.sendResponseHeaders(200, 0);
+          exchange.close();
+        } else if (params.containsKey("t")) {
+          long time = Long.parseLong(params.get("t").toString());
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Content-Type", "text/plain");
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+          exchange.sendResponseHeaders(200, 0);
+          exchange.getResponseBody().write(Server.getConsoleMessages(time).getBytes());
+          exchange.close();
+        } else if (params.containsKey("map")) {
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Content-Type", "image/jpeg");
+          exchange.sendResponseHeaders(200, 0);
+          ImageIO.write(RenderMapTask.mapImage, "jpeg", exchange.getResponseBody());
+          exchange.close();
+        } else {
+          exchange.close();
         }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        exchange.close();
+      }
+
     }
+  }
 }

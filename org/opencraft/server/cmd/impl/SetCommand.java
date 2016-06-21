@@ -44,42 +44,43 @@ import org.opencraft.server.game.impl.GameSettings.GameSetting;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class SetCommand implements Command{
+public class SetCommand implements Command {
 
-	private static final SetCommand INSTANCE = new SetCommand();
+  private static final SetCommand INSTANCE = new SetCommand();
 
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static SetCommand getCommand() {
-		return INSTANCE;
-	}
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static SetCommand getCommand() {
+    return INSTANCE;
+  }
 
 
-	@Override
-	public void execute(Player player, CommandParameters params) {
-            if (player.isVIP())
-            {
-                if(params.getArgumentCount() == 0) {
-                    player.getActionSender().sendChatMessage("/set [name] [value]");
-                    for(GameSetting setting : GameSettings.getSettings().values()) {
-                        player.getActionSender().sendChatMessage(setting.name+" = "+setting.value);
-                    }
-                } else if(params.getArgumentCount() == 2) {
-                    if(GameSettings.set(params.getStringArgument(0), params.getStringArgument(1))) {
-                        World.getWorld().broadcast("- &7Server setting "+params.getStringArgument(0)+" set to "+params.getStringArgument(1));
-                        Server.log(player.getName()+" "+params.getStringArgument(0)+" set to "+params.getStringArgument(1));
-                    }
-                } else {
-                    if(params.getStringArgument(0).equals("default")) {
-                        GameSettings.reset();
-                    } else {
-                        player.getActionSender().sendChatMessage("Setting doesn't exist, or invalid value.");
-                    }
-                }
-            }
-            else
-                player.getActionSender().sendChatMessage("You need to be op to do that!");
-	}
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (player.isVIP()) {
+      if (params.getArgumentCount() == 0) {
+        player.getActionSender().sendChatMessage("/set [name] [value]");
+        for (GameSetting setting : GameSettings.getSettings().values()) {
+          player.getActionSender().sendChatMessage(setting.name + " = " + setting.value);
+        }
+      } else if (params.getArgumentCount() == 2) {
+        if (GameSettings.set(params.getStringArgument(0), params.getStringArgument(1))) {
+          World.getWorld().broadcast("- &7Server setting " + params.getStringArgument(0) + " set " +
+              "to " + params.getStringArgument(1));
+          Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + params
+              .getStringArgument(1));
+        }
+      } else {
+        if (params.getStringArgument(0).equals("default")) {
+          GameSettings.reset();
+        } else {
+          player.getActionSender().sendChatMessage("Setting doesn't exist, or invalid value.");
+        }
+      }
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

@@ -42,152 +42,157 @@ import java.util.Set;
 
 /**
  * The superclass for players and mobs.
+ *
  * @author Graham Edgecombe
  */
 public abstract class Entity {
-	
-	/**
-	 * A collection of local entities.
-	 */
-	private final Set<Entity> localEntities = new HashSet<Entity>();
-	
-	/**
-	 * The old position.
-	 */
-	private Position oldPosition;
-	
-	/**
-	 * The current position.
-	 */
-	private Position position;
-	
-	/**
-	 * The old rotation.
-	 */
-	private Rotation oldRotation;
-	
-	/**
-	 * The current rotation.
-	 */
-	private Rotation rotation;
-	
-	/**
-	 * The current id.
-	 */
-	private int id = -1;
-	
-	/**
-	 * The old id.
-	 */
-	private int oldId = -1;
-        
-        public Position goodPosition;
-	
-	/**
-	 * Default public constructor.
-	 */
-	public Entity() {
-		position = new Position(0, 0, 0);
-		rotation = new Rotation(0, 0);
-		resetOldPositionAndRotation();
-	}
-	
-	/**
-	 * Gets the local entity set.
-	 * @return The local entity set.
-	 */
-	public Set<Entity> getLocalEntities() {
-		return localEntities;
-	}
-	
-	/**
-	 * Gets the id.
-	 * @return The id.
-	 */
-	public int getId() {
-		return id;
-	}
-	
-	/**
-	 * Sets the id.
-	 * @param id The id.
-	 */
-	public void setId(int id) {
-                if(id != -1)
-                    this.oldId = id;
-		this.id = id;
-	}
-	
-	/**
-	 * Gets the old id.
-	 * @return The old id.
-	 */
-	public int getOldId() {
-		return oldId;
-	}
-	
-	/**
-	 * Sets the rotation.
-	 * @param rotation The rotation.
-	 */
-	public void setRotation(Rotation rotation) {
-		this.rotation = rotation;
-	}
-	
-	/**
-	 * Gets the rotation.
-	 * @return The rotation.
-	 */
-	public Rotation getRotation() {
-		return rotation;
-	}
-	
-	/**
-	 * Sets the position.
-	 * @param position The position.
-	 */
-	public void setPosition(Position position) {
-		this.position = position;
-	}
-	
-	/**
-	 * Gets the position.
-	 * @return The position.
-	 */
-	public Position getPosition() {
-            return position;
-	}
-	
-	/**
-	 * Gets the old position.
-	 * @return The old position.
-	 */
-	public Position getOldPosition() {
-		return oldPosition;
-	}
-	
-	/**
-	 * Gets the old rotation.
-	 * @return The old rotation.
-	 */
-	public Rotation getOldRotation() {
-		return oldRotation;
-	}
-	
-	/**
-	 * Resets the old position and rotation data.
-	 */
-	public void resetOldPositionAndRotation() {
-		oldPosition = position;
-		oldRotation = rotation;
-	}
-	
-	/**
-	 * Gets the name of this entity.
-	 * @return The name of this entity.
-	 */
-	public abstract String getName();
 
-        public abstract String getColoredName();
-	
+  /**
+   * A collection of local entities.
+   */
+  private final Set<Entity> localEntities = new HashSet<Entity>();
+  public Position goodPosition;
+  /**
+   * The old position.
+   */
+  private Position oldPosition;
+  /**
+   * The current position.
+   */
+  private Position position;
+  /**
+   * The old rotation.
+   */
+  private Rotation oldRotation;
+  /**
+   * The current rotation.
+   */
+  private Rotation rotation;
+  /**
+   * The current id.
+   */
+  private int id = -1;
+  /**
+   * The old id.
+   */
+  private int oldId = -1;
+
+  /**
+   * Default public constructor.
+   */
+  public Entity() {
+    position = new Position(0, 0, 0);
+    rotation = new Rotation(0, 0);
+    resetOldPositionAndRotation();
+  }
+
+  /**
+   * Gets the local entity set.
+   *
+   * @return The local entity set.
+   */
+  public Set<Entity> getLocalEntities() {
+    return localEntities;
+  }
+
+  /**
+   * Gets the id.
+   *
+   * @return The id.
+   */
+  public int getId() {
+    return id;
+  }
+
+  /**
+   * Sets the id.
+   *
+   * @param id The id.
+   */
+  public void setId(int id) {
+    if (id != -1)
+      this.oldId = id;
+    this.id = id;
+  }
+
+  /**
+   * Gets the old id.
+   *
+   * @return The old id.
+   */
+  public int getOldId() {
+    return oldId;
+  }
+
+  /**
+   * Gets the rotation.
+   *
+   * @return The rotation.
+   */
+  public Rotation getRotation() {
+    return rotation;
+  }
+
+  /**
+   * Sets the rotation.
+   *
+   * @param rotation The rotation.
+   */
+  public void setRotation(Rotation rotation) {
+    this.rotation = rotation;
+  }
+
+  /**
+   * Gets the position.
+   *
+   * @return The position.
+   */
+  public Position getPosition() {
+    return position;
+  }
+
+  /**
+   * Sets the position.
+   *
+   * @param position The position.
+   */
+  public void setPosition(Position position) {
+    this.position = position;
+  }
+
+  /**
+   * Gets the old position.
+   *
+   * @return The old position.
+   */
+  public Position getOldPosition() {
+    return oldPosition;
+  }
+
+  /**
+   * Gets the old rotation.
+   *
+   * @return The old rotation.
+   */
+  public Rotation getOldRotation() {
+    return oldRotation;
+  }
+
+  /**
+   * Resets the old position and rotation data.
+   */
+  public void resetOldPositionAndRotation() {
+    oldPosition = position;
+    oldRotation = rotation;
+  }
+
+  /**
+   * Gets the name of this entity.
+   *
+   * @return The name of this entity.
+   */
+  public abstract String getName();
+
+  public abstract String getColoredName();
+
 }

@@ -39,32 +39,30 @@ package org.opencraft.server.model.impl;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
 
-public class ShieldItem extends StoreItem{
-    public ShieldItem(String n, int p)
-    {
-        super(n, p);
-        description = "Prevents tagging for 25 seconds";
-    }
-    public StoreItem getCopy()
-    {
-        return new ShieldItem(name, price);
-    }
-    public void activate(final Player player)
-    {
-        player.shield = true;
-        new Thread(new Runnable()
-        {
+public class ShieldItem extends StoreItem {
+  public ShieldItem(String n, int p) {
+    super(n, p);
+    description = "Prevents tagging for 25 seconds";
+  }
 
-            public void run() {
-                player.getActionSender().sendChatMessage("- &eShield will expire in 25 seconds");
-                try {
-                    Thread.sleep(25 * 1000);
-                } catch (InterruptedException ex) {
-                }
-                player.getActionSender().sendChatMessage("- &eShield has expired!");
-                player.shield = false;
-            }
+  public StoreItem getCopy() {
+    return new ShieldItem(name, price);
+  }
 
-        }).start();
-    }
+  public void activate(final Player player) {
+    player.shield = true;
+    new Thread(new Runnable() {
+
+      public void run() {
+        player.getActionSender().sendChatMessage("- &eShield will expire in 25 seconds");
+        try {
+          Thread.sleep(25 * 1000);
+        } catch (InterruptedException ex) {
+        }
+        player.getActionSender().sendChatMessage("- &eShield has expired!");
+        player.shield = false;
+      }
+
+    }).start();
+  }
 }

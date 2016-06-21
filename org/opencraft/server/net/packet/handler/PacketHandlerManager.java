@@ -37,61 +37,64 @@
 package org.opencraft.server.net.packet.handler;
 
 
-import java.util.Map;
-import java.util.logging.Logger;
 import org.opencraft.server.Server;
 import org.opencraft.server.net.MinecraftSession;
-
 import org.opencraft.server.net.OCSession;
 import org.opencraft.server.net.packet.Packet;
 
+import java.util.Map;
+import java.util.logging.Logger;
+
 /**
  * A class which manages <code>PacketHandler</code>s.
+ *
  * @author Graham Edgecombe
  */
 public class PacketHandlerManager<SessionType extends OCSession> {
-	
-	
-	/**
-	 * Logger instance.
-	 */
-	private static final Logger logger = Logger.getLogger(PacketHandlerManager.class.getName());
-	
-	
-	/**
-	 * An array of packet handlers.
-	 */
-	private PacketHandler[] handlers = new PacketHandler[256];
-	
-	/**
-	 * Default private constructor.
-	 */
-	@SuppressWarnings("unchecked")
-	protected PacketHandlerManager(Map<Integer, String> map) {
-		try {
-			Map<Integer, String> handlers = map;
-			for (Map.Entry<Integer, String> handler : handlers.entrySet()) {
-				this.handlers[handler.getKey()] = (PacketHandler) Class.forName(handler.getValue()).newInstance();
-			}
-		} catch (Exception ex) {
-			throw new ExceptionInInitializerError(ex);
-		}
-	}
-	
-	/**
-	 * Handles a packet.
-	 * @param session The session.
-	 * @param packet The packet.
-	 */
-	public void handlePacket(SessionType session, Packet packet) {
-		PacketHandler handler = handlers[packet.getDefinition().getOpcode()];
-                if(packet.definition.getOpcode() != 8)
-                    Server.d(packet.definition.getOpcode()+" <--  "+((MinecraftSession)session).getIP());
-		if (handler != null) {
-			handler.handlePacket(session, packet);
-		} else {
-			logger.info("Unhandled packet : " + packet + ".");
-		}
-	}
-	
+
+
+  /**
+   * Logger instance.
+   */
+  private static final Logger logger = Logger.getLogger(PacketHandlerManager.class.getName());
+
+
+  /**
+   * An array of packet handlers.
+   */
+  private PacketHandler[] handlers = new PacketHandler[256];
+
+  /**
+   * Default private constructor.
+   */
+  @SuppressWarnings("unchecked")
+  protected PacketHandlerManager(Map<Integer, String> map) {
+    try {
+      Map<Integer, String> handlers = map;
+      for (Map.Entry<Integer, String> handler : handlers.entrySet()) {
+        this.handlers[handler.getKey()] = (PacketHandler) Class.forName(handler.getValue())
+            .newInstance();
+      }
+    } catch (Exception ex) {
+      throw new ExceptionInInitializerError(ex);
+    }
+  }
+
+  /**
+   * Handles a packet.
+   *
+   * @param session The session.
+   * @param packet  The packet.
+   */
+  public void handlePacket(SessionType session, Packet packet) {
+    PacketHandler handler = handlers[packet.getDefinition().getOpcode()];
+    if (packet.definition.getOpcode() != 8)
+      Server.d(packet.definition.getOpcode() + " <--  " + ((MinecraftSession) session).getIP());
+    if (handler != null) {
+      handler.handlePacket(session, packet);
+    } else {
+      logger.info("Unhandled packet : " + packet + ".");
+    }
+  }
+
 }

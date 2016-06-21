@@ -38,24 +38,25 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class HelpCommand implements Command{
+public class HelpCommand implements Command {
 
-    private static final HelpCommand INSTANCE = new HelpCommand();
+  private static final HelpCommand INSTANCE = new HelpCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static HelpCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static HelpCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        player.getActionSender().sendChatMessage("&eCommands: /help, /rules, /join, /spec, /red, /blue, /team, /me, /pstats, /pm, /water, /lava, /status, /stats, /store, /vote, /t, /dtnt, /d, /maps, /f, /rtv, /nominate, /cc, /b, /");
-    }
+  public void execute(Player player, CommandParameters params) {
+    player.getActionSender().sendChatMessage("&eCommands: /help, /rules, /join, /spec, /red, " +
+        "/blue, /team, /me, /pstats, /pm, /water, /lava, /status, /stats, /store, /vote, /t, " +
+        "/dtnt, /d, /maps, /f, /rtv, /nominate, /cc, /b, /");
+  }
 
 }

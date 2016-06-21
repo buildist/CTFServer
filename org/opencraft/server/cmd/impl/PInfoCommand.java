@@ -39,46 +39,46 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 
 public class PInfoCommand implements Command {
 
-    private static final PInfoCommand INSTANCE = new PInfoCommand();
+  private static final PInfoCommand INSTANCE = new PInfoCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static PInfoCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static PInfoCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        Player target = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-        if(target == null)
-        {
-            target = new Player(null, params.getStringArgument(0));
-            try
-            {
-                new LoadPersistenceRequest(target).perform();
-            }
-            catch(Exception e)
-            {
-                target = null;
-            }
-        }
-        if(target != null)
-        {
-            player.getActionSender().sendChatMessage("- &aStats for "+target.getName());
-            // if(player.isOp())
-            //    player.getActionSender().sendChatMessage("- &eIP:"+Player.getAttributeFor(target.getName(), "ip", player.getActionSender()));
-            player.getActionSender().sendChatMessage("- &eWins: "+target.getAttribute("wins")+" - "+"Games Played: "+target.getAttribute("games")+" ");
-            player.getActionSender().sendChatMessage("- &eTags: "+target.getAttribute("tags")+" - "+"Captures: "+target.getAttribute("captures")+" ");
-            player.getActionSender().sendChatMessage("- &eExplodes: "+target.getAttribute("explodes")+" - "+"Mines: "+target.getAttribute("mines")+" ");
-            player.getActionSender().sendChatMessage("- &eRagequits: "+target.getAttribute("ragequits"));
-            player.getActionSender().sendChatMessage("- &eStore Points: "+target.getStorePoints());
-        }
+  public void execute(Player player, CommandParameters params) {
+    Player target = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+    if (target == null) {
+      target = new Player(null, params.getStringArgument(0));
+      try {
+        new LoadPersistenceRequest(target).perform();
+      } catch (Exception e) {
+        target = null;
+      }
     }
+    if (target != null) {
+      player.getActionSender().sendChatMessage("- &aStats for " + target.getName());
+      // if(player.isOp())
+      //    player.getActionSender().sendChatMessage("- &eIP:"+Player.getAttributeFor(target
+      // .getName(), "ip", player.getActionSender()));
+      player.getActionSender().sendChatMessage("- &eWins: " + target.getAttribute("wins") + " - "
+          + "Games Played: " + target.getAttribute("games") + " ");
+      player.getActionSender().sendChatMessage("- &eTags: " + target.getAttribute("tags") + " - "
+          + "Captures: " + target.getAttribute("captures") + " ");
+      player.getActionSender().sendChatMessage("- &eExplodes: " + target.getAttribute("explodes")
+          + " - " + "Mines: " + target.getAttribute("mines") + " ");
+      player.getActionSender().sendChatMessage("- &eRagequits: " + target.getAttribute
+          ("ragequits"));
+      player.getActionSender().sendChatMessage("- &eStore Points: " + target.getStorePoints());
+    }
+  }
 
 }

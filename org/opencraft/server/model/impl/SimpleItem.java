@@ -40,22 +40,23 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
 
-public class SimpleItem extends StoreItem{
-    private Command command;
-    public SimpleItem(String name, int price, String description, Command command)
-    {
-        super(name, price);
-        this.command = command;
-        this.description = description;
-    }
-    @Override
-    public StoreItem getCopy() {
-        return new SimpleItem(name, price, description, command);
-    }
+public class SimpleItem extends StoreItem {
+  private Command command;
 
-    @Override
-    public void activate(Player p) {
-        command.execute(p, null);
-    }
+  public SimpleItem(String name, int price, String description, Command command) {
+    super(name, price);
+    this.command = command;
+    this.description = description;
+  }
+
+  @Override
+  public StoreItem getCopy() {
+    return new SimpleItem(name, price, description, command);
+  }
+
+  @Override
+  public void activate(Player p) {
+    command.execute(p, null);
+  }
 
 }

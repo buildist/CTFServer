@@ -37,72 +37,75 @@
 package org.opencraft.server.persistence;
 
 
+import com.thoughtworks.xstream.XStream;
+
+import org.opencraft.server.Constants;
+import org.opencraft.server.io.PersistenceManager;
+import org.opencraft.server.model.Player;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.opencraft.server.io.PersistenceManager;
-import org.opencraft.server.model.Player;
-
-import com.thoughtworks.xstream.XStream;
-import org.opencraft.server.Constants;
-
 /**
  * The core class of the saved game system.
- * @author Graham Edgecombe
  *
+ * @author Graham Edgecombe
  */
 public class SavedGameManager {
-	
-	/**
-	 * The singleton instance of the persistence manager.
-	 */
-	private static final SavedGameManager INSTANCE = new SavedGameManager();
-	
-	/**
-	 * Gets the saved game manager instance.
-	 * @return The saved game manager instance.
-	 */
-	public static SavedGameManager getSavedGameManager() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * The executor service in which persistence requests are executed.
-	 */
-	private ExecutorService service = Executors.newSingleThreadExecutor();
-	
-	/**
-	 * Creates the saved game manager.
-	 */
-	private SavedGameManager() {
-		/* empty */
-	}
-	
-	/**
-	 * Gets the xstream instance.
-	 * @return The xstream instance.
-	 */
-	public XStream getXStream() {
-		return PersistenceManager.getPersistenceManager().getXStream();
-	}
-	
-	/**
-	 * Gets the path to a saved game.
-	 * @param player The player.
-	 * @return The path to their saved game.
-	 */
-	public String getPath(Player player) {
-		return Constants.ROOT_PATH+"/savedGames/" + player.getName().toLowerCase() + ".xml";
-	}
-	
-	/**
-	 * Queues a persistence request.
-	 * @param req The request to queue.
-	 * @return The future object.
-	 */
-	public Future<?> queuePersistenceRequest(PersistenceRequest req) {
-		return service.submit(req);
-	}
-	
+
+  /**
+   * The singleton instance of the persistence manager.
+   */
+  private static final SavedGameManager INSTANCE = new SavedGameManager();
+  /**
+   * The executor service in which persistence requests are executed.
+   */
+  private ExecutorService service = Executors.newSingleThreadExecutor();
+
+  /**
+   * Creates the saved game manager.
+   */
+  private SavedGameManager() {
+        /* empty */
+  }
+
+  /**
+   * Gets the saved game manager instance.
+   *
+   * @return The saved game manager instance.
+   */
+  public static SavedGameManager getSavedGameManager() {
+    return INSTANCE;
+  }
+
+  /**
+   * Gets the xstream instance.
+   *
+   * @return The xstream instance.
+   */
+  public XStream getXStream() {
+    return PersistenceManager.getPersistenceManager().getXStream();
+  }
+
+  /**
+   * Gets the path to a saved game.
+   *
+   * @param player The player.
+   * @return The path to their saved game.
+   */
+  public String getPath(Player player) {
+    return Constants.ROOT_PATH + "/savedGames/" + player.getName().toLowerCase() + ".xml";
+  }
+
+  /**
+   * Queues a persistence request.
+   *
+   * @param req The request to queue.
+   * @return The future object.
+   */
+  public Future<?> queuePersistenceRequest(PersistenceRequest req) {
+    return service.submit(req);
+  }
+
 }

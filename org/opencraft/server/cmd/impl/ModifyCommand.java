@@ -39,43 +39,40 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
 
-public class ModifyCommand implements Command{
-    private static final ModifyCommand INSTANCE = new ModifyCommand();
+public class ModifyCommand implements Command {
+  private static final ModifyCommand INSTANCE = new ModifyCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static ModifyCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static ModifyCommand getCommand() {
+    return INSTANCE;
+  }
+
+  private static boolean isInteger(String s) {
+    try {
+      Integer.parseInt(s);
+      return true;
+    } catch (NumberFormatException ex) {
+      return false;
     }
-    public void execute(Player player, CommandParameters params) {
-        String key = params.getStringArgument(1);
-        Object value = params.getStringArgument(2);
-        if (player.isOp())
-        {
-            Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-            if(other != null) {
-                Object old = other.setAttribute(key, value);
-                player.getActionSender().sendChatMessage("- &eChanged "+key+" of "+other.getName()+" from "+old+" to "+value);
-            }
-        }
-        else
-            player.getActionSender().sendChatMessage("You need to be op to do that!");
-    }
-    private static boolean isInteger(String s)
-    {
-        try
-        {
-            Integer.parseInt(s);
-            return true;
-        }
-        catch(NumberFormatException ex)
-        {
-            return false;
-        }
-    }
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    String key = params.getStringArgument(1);
+    Object value = params.getStringArgument(2);
+    if (player.isOp()) {
+      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+      if (other != null) {
+        Object old = other.setAttribute(key, value);
+        player.getActionSender().sendChatMessage("- &eChanged " + key + " of " + other.getName()
+            + " from " + old + " to " + value);
+      }
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

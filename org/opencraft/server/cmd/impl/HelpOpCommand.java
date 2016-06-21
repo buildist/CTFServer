@@ -42,41 +42,39 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class HelpOpCommand implements Command{
+public class HelpOpCommand implements Command {
 
-    private static final HelpOpCommand INSTANCE = new HelpOpCommand();
+  private static final HelpOpCommand INSTANCE = new HelpOpCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static HelpOpCommand getCommand() {
-            return INSTANCE;
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static HelpOpCommand getCommand() {
+    return INSTANCE;
+  }
+
+  public void execute(Player player, CommandParameters params) {
+    if (params.getArgumentCount() == 0) {
+      player.getActionSender().sendChatMessage("No message to send");
+      player.getActionSender().sendChatMessage("/helpop <message>");
+      return;
     }
-
-    public void execute(Player player, CommandParameters params) {
-        if (params.getArgumentCount() == 0) {
-                player.getActionSender().sendChatMessage("No message to send");
-                player.getActionSender().sendChatMessage("/helpop <message>");
-                return;
-        }
-        String text = "";
-        for(int i = 0; i < params.getArgumentCount(); i++)
-        {
-            text += " "+params.getStringArgument(i);
-        }
-        Server.log(player.getName()+" [opchat]:  "+text);
-        boolean found = false;
-        for (Player t : World.getWorld().getPlayerList().getPlayers())
-        {
-            if(t.isOp())
-            {
-                t.getActionSender().sendChatMessage("[Help request] "+player.parseName() + ">&f " + text);
-                found = true;
-            }
-        }
-        if(!found) {
-            player.getActionSender().sendChatMessage("- &bThere are currently no operators online.");
-        }
+    String text = "";
+    for (int i = 0; i < params.getArgumentCount(); i++) {
+      text += " " + params.getStringArgument(i);
     }
+    Server.log(player.getName() + " [opchat]:  " + text);
+    boolean found = false;
+    for (Player t : World.getWorld().getPlayerList().getPlayers()) {
+      if (t.isOp()) {
+        t.getActionSender().sendChatMessage("[Help request] " + player.parseName() + ">&f " + text);
+        found = true;
+      }
+    }
+    if (!found) {
+      player.getActionSender().sendChatMessage("- &bThere are currently no operators online.");
+    }
+  }
 }

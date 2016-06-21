@@ -45,51 +45,53 @@ import org.opencraft.server.model.World;
 
 /**
  * Official /deop command **NEEDS PERSISTENCE**
+ *
  * @author S�ren Enevoldsen
  */
 
 public class DeOperatorCommand implements Command {
-	
-	/**
-	 * The instance of this command.
-	 */
-	private static final DeOperatorCommand INSTANCE = new DeOperatorCommand();
-	
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static DeOperatorCommand getCommand() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * Default private constructor.
-	 */
-	private DeOperatorCommand() {
-		/* empty */
-	}
-	
-	@Override
-	public void execute(Player player, CommandParameters params) {
-		// Player using command is OP?
-		if (player.isOp()) {
-			if (params.getArgumentCount() == 1) {
-				for (Player other : World.getWorld().getPlayerList().getPlayers()) {
-					if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
-                                                Server.log(player.getName()+" deopped "+other.getName());
-						other.removeAttribute("IsOperator");
-						other.getActionSender().sendChatMessage("You are no longer an OP");
-						player.getActionSender().sendChatMessage(other.getName() + " is no longer an OP");
-						return;
-					}
-				}
-				// Player not found
-				player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
-			} else
-				player.getActionSender().sendChatMessage("Wrong number of arguments");
-			player.getActionSender().sendChatMessage("/deop <name>");
-		} else
-			player.getActionSender().sendChatMessage("You must be OP to do that");
-	}
+
+  /**
+   * The instance of this command.
+   */
+  private static final DeOperatorCommand INSTANCE = new DeOperatorCommand();
+
+  /**
+   * Default private constructor.
+   */
+  private DeOperatorCommand() {
+        /* empty */
+  }
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static DeOperatorCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    // Player using command is OP?
+    if (player.isOp()) {
+      if (params.getArgumentCount() == 1) {
+        for (Player other : World.getWorld().getPlayerList().getPlayers()) {
+          if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
+            Server.log(player.getName() + " deopped " + other.getName());
+            other.removeAttribute("IsOperator");
+            other.getActionSender().sendChatMessage("You are no longer an OP");
+            player.getActionSender().sendChatMessage(other.getName() + " is no longer an OP");
+            return;
+          }
+        }
+        // Player not found
+        player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
+      } else
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/deop <name>");
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

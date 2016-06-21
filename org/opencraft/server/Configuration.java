@@ -36,12 +36,13 @@
  */
 package org.opencraft.server;
 
+import org.opencraft.server.game.impl.CTFGameMode;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import org.opencraft.server.game.impl.CTFGameMode;
 
 /**
  * Manages server configuration.
@@ -50,243 +51,233 @@ import org.opencraft.server.game.impl.CTFGameMode;
  */
 public class Configuration {
 
-    /**
-     * The configuration instance.
-     */
-    private static Configuration configuration;
+  /**
+   * The configuration instance.
+   */
+  private static Configuration configuration;
+  /**
+   * The filename of the map file.
+   */
+  private static String mapFilename;
+  /**
+   * The server name.
+   */
+  private String name;
+  private String longName;
+  /**
+   * The server MOTD.
+   */
+  private String message;
+  /**
+   * The maximum allowed player count.
+   */
+  private int maximumPlayers;
+  /**
+   * The radius of a sponge's effectiveness.
+   */
+  private int spongeRadius;
+  /**
+   * Public server flag.
+   */
+  private boolean publicServer;
+  /**
+   * Verify names flag.
+   */
+  private boolean verifyNames;
+  /**
+   * The game mode.
+   */
+  private String gameMode;
+  /**
+   * The script name.
+   */
+  private String scriptName;
+  private String statsPostURL;
+  private String welcomeMessage;
+  private int rankLimit;
+  private String ircServer;
+  private String ircChannel;
+  private String ircName;
+  private boolean premium;
+  private String envTexturePack;
+  private boolean test = false;
 
-    /**
-     * Reads and parses the configuration.
-     *
-     * @throws FileNotFoundException if the configuration file is not present.
-     * @throws IOException if an I/O error occurs.
-     */
-    public static void readConfiguration() throws FileNotFoundException, IOException {
-        synchronized (Configuration.class) {
-            Properties props = new Properties();
-            InputStream is = new FileInputStream(Constants.ROOT_PATH + "/opencraft.properties");
-            try {
-                props.load(is);
-                configuration = new Configuration(props);
-            } finally {
-                is.close();
-            }
-        }
+  /**
+   * Creates the configuration from the specified properties object.
+   *
+   * @param props The properties object.
+   */
+  public Configuration(Properties props) {
+    test = Boolean.valueOf(props.getProperty("test", "false"));
+    name = props.getProperty("name", "OpenCraft Server");
+    longName = props.getProperty("longName", "OpenCraft Server");
+    message = props.getProperty("message", "http://opencraft.sf.net/");
+    maximumPlayers = Integer.valueOf(props.getProperty("max_players", "16"));
+    publicServer = Boolean.valueOf(props.getProperty("public", "false"));
+    verifyNames = Boolean.valueOf(props.getProperty("verify_names", "false")) /*&& !test*/;
+    mapFilename = props.getProperty("filename", "server_level.dat");
+    spongeRadius = Integer.valueOf(props.getProperty("sponge_radius", "2"));
+    gameMode = props.getProperty("game_mode", CTFGameMode.class.getName());
+    scriptName = props.getProperty("script_name", null);
+    statsPostURL = props.getProperty("statsPostURL");
+    welcomeMessage = props.getProperty("welcomeMessage");
+    rankLimit = Integer.valueOf(props.getProperty("minRank"));
+    ircServer = props.getProperty("ircServer");
+    ircChannel = props.getProperty("ircChannel");
+    ircName = props.getProperty("ircName");
+    Constants.PORT = Integer.valueOf(props.getProperty("port"));
+    premium = Boolean.valueOf(props.getProperty("premium", "false"));
+    envTexturePack = props.getProperty("envTexturePack", Constants.URL_TEXTURE_PACK);
+  }
+
+  /**
+   * Reads and parses the configuration.
+   *
+   * @throws FileNotFoundException if the configuration file is not present.
+   * @throws IOException           if an I/O error occurs.
+   */
+  public static void readConfiguration() throws FileNotFoundException, IOException {
+    synchronized (Configuration.class) {
+      Properties props = new Properties();
+      InputStream is = new FileInputStream(Constants.ROOT_PATH + "/opencraft.properties");
+      try {
+        props.load(is);
+        configuration = new Configuration(props);
+      } finally {
+        is.close();
+      }
     }
+  }
 
-    /**
-     * Gets the configuration instance.
-     *
-     * @return The configuration instance.
-     */
-    public static Configuration getConfiguration() {
-        synchronized (Configuration.class) {
-            return configuration;
-        }
+  /**
+   * Gets the configuration instance.
+   *
+   * @return The configuration instance.
+   */
+  public static Configuration getConfiguration() {
+    synchronized (Configuration.class) {
+      return configuration;
     }
+  }
 
-    /**
-     * The server name.
-     */
-    private String name;
-    private String longName;
+  /**
+   * Gets the server name.
+   *
+   * @return The server name.
+   */
+  public String getName() {
+    return name;
+  }
 
-    /**
-     * The server MOTD.
-     */
-    private String message;
+  public String getLongName() {
+    return longName;
+  }
 
-    /**
-     * The filename of the map file.
-     */
-    private static String mapFilename;
+  public String getStatsPostURL() {
+    return statsPostURL;
+  }
 
-    /**
-     * The maximum allowed player count.
-     */
-    private int maximumPlayers;
+  public String getWelcomeMessage() {
+    return welcomeMessage;
+  }
 
-    /**
-     * The radius of a sponge's effectiveness.
-     */
-    private int spongeRadius;
+  /**
+   * Gets the server MOTD.
+   *
+   * @return The server MOTD.
+   */
+  public String getMessage() {
+    return message;
+  }
 
-    /**
-     * Public server flag.
-     */
-    private boolean publicServer;
+  /**
+   * Gets the maximum player count.
+   *
+   * @return The maximum player count.
+   */
+  public int getMaximumPlayers() {
+    return maximumPlayers;
+  }
 
-    /**
-     * Verify names flag.
-     */
-    private boolean verifyNames;
+  /**
+   * Gets the public server flag.
+   *
+   * @return The public server flag.
+   */
+  public boolean isPublicServer() {
+    return publicServer;
+  }
 
-    /**
-     * The game mode.
-     */
-    private String gameMode;
+  /**
+   * Gets the verify names flag.
+   *
+   * @return The verify names flag.
+   */
+  public boolean isVerifyingNames() {
+    return verifyNames;
+  }
 
-    /**
-     * The script name.
-     */
-    private String scriptName;
+  /**
+   * Gets the map filename.
+   *
+   * @return The map's filename.
+   */
+  public String getMapFilename() {
+    return mapFilename;
+  }
 
-    private String statsPostURL;
-    private String welcomeMessage;
-    private int rankLimit;
-    private String ircServer;
-    private String ircChannel;
-    private String ircName;
-    private boolean premium;
-    private String envTexturePack;
-    private boolean test = false;
+  /**
+   * Gets the range at which a sponge is effective.
+   *
+   * @return The sponge radius.
+   */
+  public int getSpongeRadius() {
+    return spongeRadius;
+  }
 
-    /**
-     * Creates the configuration from the specified properties object.
-     *
-     * @param props The properties object.
-     */
-    public Configuration(Properties props) {
-        test = Boolean.valueOf(props.getProperty("test", "false"));
-        name = props.getProperty("name", "OpenCraft Server");
-        longName = props.getProperty("longName", "OpenCraft Server");
-        message = props.getProperty("message", "http://opencraft.sf.net/");
-        maximumPlayers = Integer.valueOf(props.getProperty("max_players", "16"));
-        publicServer = Boolean.valueOf(props.getProperty("public", "false"));
-        verifyNames = Boolean.valueOf(props.getProperty("verify_names", "false")) /*&& !test*/;
-        mapFilename = props.getProperty("filename", "server_level.dat");
-        spongeRadius = Integer.valueOf(props.getProperty("sponge_radius", "2"));
-        gameMode = props.getProperty("game_mode", CTFGameMode.class.getName());
-        scriptName = props.getProperty("script_name", null);
-        statsPostURL = props.getProperty("statsPostURL");
-        welcomeMessage = props.getProperty("welcomeMessage");
-        rankLimit = Integer.valueOf(props.getProperty("minRank"));
-        ircServer = props.getProperty("ircServer");
-        ircChannel = props.getProperty("ircChannel");
-        ircName = props.getProperty("ircName");
-        Constants.PORT = Integer.valueOf(props.getProperty("port"));
-        premium = Boolean.valueOf(props.getProperty("premium", "false"));
-        envTexturePack = props.getProperty("envTexturePack", Constants.URL_TEXTURE_PACK);
-    }
+  /**
+   * Gets the game mode class.
+   *
+   * @return The game mode class.
+   */
+  public String getGameMode() {
+    return gameMode;
+  }
 
-    /**
-     * Gets the server name.
-     *
-     * @return The server name.
-     */
-    public String getName() {
-        return name;
-    }
+  /**
+   * Gets the script name.
+   *
+   * @return The script name.
+   */
+  public String getScriptName() {
+    return scriptName;
+  }
 
-    public String getLongName() {
-        return longName;
-    }
+  public int getMinRank() {
+    return rankLimit;
+  }
 
-    public String getStatsPostURL() {
-        return statsPostURL;
-    }
+  public String getIRCServer() {
+    return ircServer;
+  }
 
-    public String getWelcomeMessage() {
-        return welcomeMessage;
-    }
+  public String getIRCChannel() {
+    return ircChannel;
+  }
 
-    /**
-     * Gets the server MOTD.
-     *
-     * @return The server MOTD.
-     */
-    public String getMessage() {
-        return message;
-    }
+  public String getIRCName() {
+    return ircName;
+  }
 
-    /**
-     * Gets the maximum player count.
-     *
-     * @return The maximum player count.
-     */
-    public int getMaximumPlayers() {
-        return maximumPlayers;
-    }
+  public boolean isPremium() {
+    return premium;
+  }
 
-    /**
-     * Gets the public server flag.
-     *
-     * @return The public server flag.
-     */
-    public boolean isPublicServer() {
-        return publicServer;
-    }
+  public String getEnvTexturePack() {
+    return envTexturePack;
+  }
 
-    /**
-     * Gets the verify names flag.
-     *
-     * @return The verify names flag.
-     */
-    public boolean isVerifyingNames() {
-        return verifyNames;
-    }
-
-    /**
-     * Gets the map filename.
-     *
-     * @return The map's filename.
-     */
-    public String getMapFilename() {
-        return mapFilename;
-    }
-
-    /**
-     * Gets the range at which a sponge is effective.
-     *
-     * @return The sponge radius.
-     */
-    public int getSpongeRadius() {
-        return spongeRadius;
-    }
-
-    /**
-     * Gets the game mode class.
-     *
-     * @return The game mode class.
-     */
-    public String getGameMode() {
-        return gameMode;
-    }
-
-    /**
-     * Gets the script name.
-     *
-     * @return The script name.
-     */
-    public String getScriptName() {
-        return scriptName;
-    }
-
-    public int getMinRank() {
-        return rankLimit;
-    }
-
-    public String getIRCServer() {
-        return ircServer;
-    }
-
-    public String getIRCChannel() {
-        return ircChannel;
-    }
-
-    public String getIRCName() {
-        return ircName;
-    }
-
-    public boolean isPremium() {
-        return premium;
-    }
-
-    public String getEnvTexturePack() {
-        return envTexturePack;
-    }
-
-    public boolean isTest() {
-        return test;
-    }
+  public boolean isTest() {
+    return test;
+  }
 }

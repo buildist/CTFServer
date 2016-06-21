@@ -38,19 +38,19 @@ package org.opencraft.server.net.packet.handler.impl;
 
 
 import org.opencraft.server.Constants;
-import org.opencraft.server.Server;
-import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.handler.PacketHandler;
 
 /**
  * A class which handles message and comamnd packets.
+ *
  * @author Graham Edgecombe
  */
 public class CustomBlockSupportPacketHandler implements PacketHandler<MinecraftSession> {
-    @Override
-    public void handlePacket(final MinecraftSession session, Packet packet) {
-        session.customBlockLevel = Math.min(Constants.CUSTOM_BLOCK_LEVEL, packet.getNumericField("support_level").byteValue());
-    }	
+  @Override
+  public void handlePacket(final MinecraftSession session, Packet packet) {
+    session.customBlockLevel = Math.min(Constants.CUSTOM_BLOCK_LEVEL, packet.getNumericField
+        ("support_level").byteValue());
+  }
 }

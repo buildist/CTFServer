@@ -36,51 +36,53 @@
  */
 package org.opencraft.server.net;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
-
 import org.apache.mina.core.session.IoSession;
 import org.opencraft.server.net.packet.Packet;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+
 /**
- * @author Mark Farrell
- * Represents an object that is bound to either end of a socket.
+ * @author Mark Farrell Represents an object that is bound to either end of a socket.
  */
 public abstract class Connectable {
-	
-	/**
-	 * Packet queue.
-	 */
-	protected final Queue<Packet> queuedPackets = new ArrayDeque<Packet>();
-	
-	/**
-	 * State.
-	 */
-	protected State state = State.CONNECTED;
-	
-	/**
-	 * Sends a packet. This method may be called from multiple threads.
-	 * @param packet The packet to send.
-	 */
-	protected void send(Packet packet, IoSession session) {
-		synchronized (this) {
-			final String name = packet.getDefinition().getName();
-			final boolean unqueuedPacket = name.equals("authentication_response") || name.endsWith("level_init") || name.equals("level_block") || name.equals("level_finish") || name.equals("disconnect") || name.equals("ext_info") || name.equals("ext_entry");
-			if (state == State.READY) {
-				if (queuedPackets.size() > 0) {
-					for (Packet queuedPacket : queuedPackets) {
-						session.write(queuedPacket);
-					}
-					queuedPackets.clear();
-				}
-				session.write(packet);
-			} else if (unqueuedPacket) {
-				session.write(packet);
-			} else {
-				queuedPackets.add(packet);
-			}
-		}
-	}
-	
-	
+
+  /**
+   * Packet queue.
+   */
+  protected final Queue<Packet> queuedPackets = new ArrayDeque<Packet>();
+
+  /**
+   * State.
+   */
+  protected State state = State.CONNECTED;
+
+  /**
+   * Sends a packet. This method may be called from multiple threads.
+   *
+   * @param packet The packet to send.
+   */
+  protected void send(Packet packet, IoSession session) {
+    synchronized (this) {
+      final String name = packet.getDefinition().getName();
+      final boolean unqueuedPacket = name.equals("authentication_response") || name.endsWith
+          ("level_init") || name.equals("level_block") || name.equals("level_finish") || name
+          .equals("disconnect") || name.equals("ext_info") || name.equals("ext_entry");
+      if (state == State.READY) {
+        if (queuedPackets.size() > 0) {
+          for (Packet queuedPacket : queuedPackets) {
+            session.write(queuedPacket);
+          }
+          queuedPackets.clear();
+        }
+        session.write(packet);
+      } else if (unqueuedPacket) {
+        session.write(packet);
+      } else {
+        queuedPackets.add(packet);
+      }
+    }
+  }
+
+
 }

@@ -39,93 +39,101 @@ package org.opencraft.server.model;
 
 /**
  * Represents a location in the game world.
+ *
  * @author Graham Edgecombe
  */
 public final class Position {
-	
-	/**
-	 * X position.
-	 */
-	private final int x;
-	
-	/**
-	 * Y position.
-	 */
-	private final int y;
-	
-	/**
-	 * Z position.
-	 */
-	private final int z;
-	
-	/**
-	 * Creates a new position.
-	 * @param x The x coordinate.
-	 * @param y The y coordinate.
-	 * @param z The z coordinate.
-	 */
-	public Position(int x, int y, int z) {
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-	
-	/**
-	 * Gets the x coordinate.
-	 * @return The x coordinate.
-	 */
-	public int getX() {
-		return x;
-	}
-	
-	/**
-	 * Gets the y coordinate.
-	 * @return The y coordinate.
-	 */
-	public int getY() {
-		return y;
-	}
-	
-	/**
-	 * Gets the z coordinate.
-	 * @return The z coordinate.
-	 */
-	public int getZ() {
-		return z;
-	}
-        
-        public Position toBlockPos()
-        {
-            return new Position(Math.round((x - 16)/32f), Math.round((y - 16)/32f), Math.round((z - 16)/32f));
-        }
-        public Position toFloatPos()
-        {
-            return new Position(Math.round(x*32f+16), Math.round(y*32f+16), Math.round(z*32f+16));
-        }
-        public double dist2(Position blockPos) {
-            double dx = (x-blockPos.x) * (x-blockPos.x);
-            double dy = (y-blockPos.y) * (y-blockPos.y);
-            double dz = (z-blockPos.z) * (z-blockPos.z);
-            return dx+dy+dz;
-        }
-        public String toString() {
-            return x+" "+y+" "+z;
-        }
-    @Override
-    public boolean equals(Object obj)
-    {
-        if(!(obj instanceof Position))
-            return false;
-        Position p = (Position) obj;
-        return p.x == x && p.y == y && p.z == z;
-    }
 
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 37 * hash + this.x;
-        hash = 37 * hash + this.y;
-        hash = 37 * hash + this.z;
-        return hash;
-    }
+  /**
+   * X position.
+   */
+  private final int x;
+
+  /**
+   * Y position.
+   */
+  private final int y;
+
+  /**
+   * Z position.
+   */
+  private final int z;
+
+  /**
+   * Creates a new position.
+   *
+   * @param x The x coordinate.
+   * @param y The y coordinate.
+   * @param z The z coordinate.
+   */
+  public Position(int x, int y, int z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+
+  /**
+   * Gets the x coordinate.
+   *
+   * @return The x coordinate.
+   */
+  public int getX() {
+    return x;
+  }
+
+  /**
+   * Gets the y coordinate.
+   *
+   * @return The y coordinate.
+   */
+  public int getY() {
+    return y;
+  }
+
+  /**
+   * Gets the z coordinate.
+   *
+   * @return The z coordinate.
+   */
+  public int getZ() {
+    return z;
+  }
+
+  public Position toBlockPos() {
+    return new Position(Math.round((x - 16) / 32f), Math.round((y - 16) / 32f), Math.round((z -
+        16) / 32f));
+  }
+
+  public Position toFloatPos() {
+    return new Position(Math.round(x * 32f + 16), Math.round(y * 32f + 16), Math.round(z * 32f +
+        16));
+  }
+
+  public double dist2(Position blockPos) {
+    double dx = (x - blockPos.x) * (x - blockPos.x);
+    double dy = (y - blockPos.y) * (y - blockPos.y);
+    double dz = (z - blockPos.z) * (z - blockPos.z);
+    return dx + dy + dz;
+  }
+
+  public String toString() {
+    return x + " " + y + " " + z;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (!(obj instanceof Position))
+      return false;
+    Position p = (Position) obj;
+    return p.x == x && p.y == y && p.z == z;
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 37 * hash + this.x;
+    hash = 37 * hash + this.y;
+    hash = 37 * hash + this.z;
+    return hash;
+  }
 }

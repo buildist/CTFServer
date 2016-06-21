@@ -40,33 +40,31 @@ import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class ForceCommand implements Command{
+public class ForceCommand implements Command {
 
-    private static final ForceCommand INSTANCE = new ForceCommand();
+  private static final ForceCommand INSTANCE = new ForceCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static ForceCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static ForceCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        if ((player.isOp()) || player.isVIP())
-        {
-            String pname = params.getStringArgument(0);
-            String tname = params.getStringArgument(1);
-            Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-            if(other != null) {
-                Server.log(player.getName()+" forced "+other.getName()+" to "+tname);
-                other.joinTeam(tname);
-            }
-        }
-        else
-            player.getActionSender().sendChatMessage("You must be OP to do that");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if ((player.isOp()) || player.isVIP()) {
+      String pname = params.getStringArgument(0);
+      String tname = params.getStringArgument(1);
+      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+      if (other != null) {
+        Server.log(player.getName() + " forced " + other.getName() + " to " + tname);
+        other.joinTeam(tname);
+      }
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 
 }

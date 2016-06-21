@@ -43,24 +43,26 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.World;
 
-public class CreeperCommand implements Command{
-    private static final CreeperCommand INSTANCE = new CreeperCommand();
+public class CreeperCommand implements Command {
+  private static final CreeperCommand INSTANCE = new CreeperCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static CreeperCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static CreeperCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        Position pos = player.getPosition();
-        int px = (pos.getX()-16) / 32;
-        int py = (pos.getY()-16) / 32;
-        int pz = ((pos.getZ()-16) / 32);
-        World.getWorld().announce("&esssssssSSSSSSSSS");
-        ((CTFGameMode)World.getWorld().getGameMode()).explodeTNT(player, World.getWorld().getLevel(), px, py, pz, 4, true, true, false, null);
+  public void execute(Player player, CommandParameters params) {
+    Position pos = player.getPosition();
+    int px = (pos.getX() - 16) / 32;
+    int py = (pos.getY() - 16) / 32;
+    int pz = ((pos.getZ() - 16) / 32);
+    World.getWorld().announce("&esssssssSSSSSSSSS");
+    ((CTFGameMode) World.getWorld().getGameMode()).explodeTNT(player, World.getWorld().getLevel()
+        , px, py, pz, 4, true, true, false, null);
 
-    }
+  }
 }

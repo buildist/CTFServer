@@ -36,42 +36,39 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class NotesCommand implements Command{
-    private static final NotesCommand INSTANCE = new NotesCommand();
+public class NotesCommand implements Command {
+  private static final NotesCommand INSTANCE = new NotesCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static NotesCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static NotesCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        if(player.isOp()) {
-            if(params.getArgumentCount() == 0)
-            {
-                player.getActionSender().sendChatMessage("- &e/notes [name]");
-            }
-            String target = params.getStringArgument(0);
-            player.getActionSender().sendChatMessage("- &eNotes for "+target+":");
-            String notes = Player.getAttributeFor(target, "notes", player.getActionSender());
-            if(notes != null) {
-                String[] parts = notes.split(";");
-                for(String note : parts) {
-                    if(!note.isEmpty())
-                        player.getActionSender().sendChatMessage("* "+note);
-                }
-            }
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      if (params.getArgumentCount() == 0) {
+        player.getActionSender().sendChatMessage("- &e/notes [name]");
+      }
+      String target = params.getStringArgument(0);
+      player.getActionSender().sendChatMessage("- &eNotes for " + target + ":");
+      String notes = Player.getAttributeFor(target, "notes", player.getActionSender());
+      if (notes != null) {
+        String[] parts = notes.split(";");
+        for (String note : parts) {
+          if (!note.isEmpty())
+            player.getActionSender().sendChatMessage("* " + note);
         }
-        else {
-            player.getActionSender().sendChatMessage("- &eYou need to be op to do that!");
-        }
+      }
+    } else {
+      player.getActionSender().sendChatMessage("- &eYou need to be op to do that!");
     }
+  }
 }

@@ -39,45 +39,52 @@ package org.opencraft.server.model;
 import java.util.HashMap;
 
 public class BlockLog {
-    private static HashMap<IntPosition, BlockInfo> info = new HashMap<IntPosition, BlockInfo>(1024);
-    public static BlockInfo getInfo(int x, int y, int z) {
-        IntPosition pos = new IntPosition(x, y, z);
-        return info.get(pos);
-    }
-    public static void clear() {
-        info.clear();
-    }
-    public static void logBlockChange(Player p, int x, int y, int z) {
-        BlockInfo b = new BlockInfo();
-        b.player = p;
-        info.put(new IntPosition(x, y, z), b);
-    }
-    public static class BlockInfo {
-        public Player player;
-    }
-    private static class IntPosition {
-        public int x;
-        public int y;
-        public int z;
-        public IntPosition(int x, int y, int z) {
-            this.x = x;
-            this.y = y;
-            this.z = z;
-        }
-        public boolean equals(Object obj) {
-            if(!(obj instanceof IntPosition))
-                return false;
-            IntPosition p = (IntPosition) obj;
-            return x == p.x && y == p.y && z == p.z;
-        }
+  private static HashMap<IntPosition, BlockInfo> info = new HashMap<IntPosition, BlockInfo>(1024);
 
-        @Override
-        public int hashCode() {
-            int hash = 3;
-            hash = 29 * hash + this.x;
-            hash = 29 * hash + this.y;
-            hash = 29 * hash + this.z;
-            return hash;
-        }
+  public static BlockInfo getInfo(int x, int y, int z) {
+    IntPosition pos = new IntPosition(x, y, z);
+    return info.get(pos);
+  }
+
+  public static void clear() {
+    info.clear();
+  }
+
+  public static void logBlockChange(Player p, int x, int y, int z) {
+    BlockInfo b = new BlockInfo();
+    b.player = p;
+    info.put(new IntPosition(x, y, z), b);
+  }
+
+  public static class BlockInfo {
+    public Player player;
+  }
+
+  private static class IntPosition {
+    public int x;
+    public int y;
+    public int z;
+
+    public IntPosition(int x, int y, int z) {
+      this.x = x;
+      this.y = y;
+      this.z = z;
     }
+
+    public boolean equals(Object obj) {
+      if (!(obj instanceof IntPosition))
+        return false;
+      IntPosition p = (IntPosition) obj;
+      return x == p.x && y == p.y && z == p.z;
+    }
+
+    @Override
+    public int hashCode() {
+      int hash = 3;
+      hash = 29 * hash + this.x;
+      hash = 29 * hash + this.y;
+      hash = 29 * hash + this.z;
+      return hash;
+    }
+  }
 }

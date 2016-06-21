@@ -44,21 +44,24 @@ import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class TutorialCommand implements Command{
-    private static final TutorialCommand INSTANCE = new TutorialCommand();
+public class TutorialCommand implements Command {
+  private static final TutorialCommand INSTANCE = new TutorialCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static TutorialCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static TutorialCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-       if(((CTFGameMode)World.getWorld().getGameMode()).getMode() == Level.CTF)
-           player.getActionSender().sendChatMessage("- &eSay /commands for a command list. "+Constants.HELP_TEXT);
-       else
-           player.getActionSender().sendChatMessage("- &eSay /commands for a command list. "+Constants.TDM_HELP_TEXT);           
-    }
+  public void execute(Player player, CommandParameters params) {
+    if (((CTFGameMode) World.getWorld().getGameMode()).getMode() == Level.CTF)
+      player.getActionSender().sendChatMessage("- &eSay /commands for a command list. " +
+          Constants.HELP_TEXT);
+    else
+      player.getActionSender().sendChatMessage("- &eSay /commands for a command list. " +
+          Constants.TDM_HELP_TEXT);
+  }
 }

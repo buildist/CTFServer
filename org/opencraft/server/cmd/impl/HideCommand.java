@@ -40,38 +40,35 @@ import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class HideCommand implements Command{
-    private static final HideCommand INSTANCE = new HideCommand();
+public class HideCommand implements Command {
+  private static final HideCommand INSTANCE = new HideCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static HideCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static HideCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-		if (player.isOp()) {
-                    if(player.isVisible)
-                    {
-                        if(player.team != -1)
-                            player.joinTeam("spec");
-                        Server.log(player.getName()+" is now hidden");
-                        player.makeInvisible();
-                        player.getActionSender().sendChatMessage("- &eSay /hide again to unhide");
-                        player.isVisible = false;
-                    }
-                    else
-                    {
-                        Server.log(player.getName()+" is now unhidden");
-                        player.makeVisible();
-                        player.getActionSender().sendChatMessage("- &eYou are now visible");
-                        player.isVisible = true;
-                    }
-		} else
-			player.getActionSender().sendChatMessage("You must be OP to do that");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      if (player.isVisible) {
+        if (player.team != -1)
+          player.joinTeam("spec");
+        Server.log(player.getName() + " is now hidden");
+        player.makeInvisible();
+        player.getActionSender().sendChatMessage("- &eSay /hide again to unhide");
+        player.isVisible = false;
+      } else {
+        Server.log(player.getName() + " is now unhidden");
+        player.makeVisible();
+        player.getActionSender().sendChatMessage("- &eYou are now visible");
+        player.isVisible = true;
+      }
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

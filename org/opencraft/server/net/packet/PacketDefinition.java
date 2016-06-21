@@ -39,87 +39,94 @@ package org.opencraft.server.net.packet;
 
 /**
  * Represents a type of packet.
+ *
  * @author Graham Edgecombe
  */
 public final class PacketDefinition {
-	
-	/**
-	 * The opcode of this packet.
-	 */
-	private final int opcode;
-	
-	/**
-	 * The name of this packet.
-	 */
-	private final String name;
-	
-	/**
-	 * The fields in this packet.
-	 */
-	private final PacketField[] fields;
-	
-	/**
-	 * The length of this packet.
-	 */
-	private final transient int length;
-	
-	/**
-	 * Creates the packet definition.
-	 * @param opcode The opcode.
-	 * @param name The name.
-	 * @param fields The fields.
-	 */
-	public PacketDefinition(int opcode, String name, PacketField[] fields) {
-		this.opcode = opcode;
-		this.name = name;
-		this.fields = fields;
-		// compute packet length
-		int length = 0;
-		for (PacketField field : fields) {
-			length += field.getType().getLength();
-		}
-		this.length = length;
-	}
-	
-	/**
-	 * Resolves this object.
-	 * @return The object with the correct packet length.
-	 */
-	private Object readResolve() {
-		// ensures length is computed
-		return new PacketDefinition(opcode, name, fields);
-	}
-	
-	/**
-	 * Gets the opcode of this packet.
-	 * @return The opcode of this packet.
-	 */
-	public int getOpcode() {
-		return opcode;
-	}
-	
-	/**
-	 * Gets the name of this packet.
-	 * @return The name of this packet.
-	 */
-	public String getName() {
-		return name;
-	}
-	
-	/**
-	 * Gets the fields in this packet.
-	 * @return The fields in this packet.
-	 */
-	public PacketField[] getFields() {
-		return fields;
-	}
-	
-	/**
-	 * Gets the length of this packet.
-	 * @return The length of this packet, in bytes.
-	 */
-	public int getLength() {
-		return length;
-	}
-	
+
+  /**
+   * The opcode of this packet.
+   */
+  private final int opcode;
+
+  /**
+   * The name of this packet.
+   */
+  private final String name;
+
+  /**
+   * The fields in this packet.
+   */
+  private final PacketField[] fields;
+
+  /**
+   * The length of this packet.
+   */
+  private final transient int length;
+
+  /**
+   * Creates the packet definition.
+   *
+   * @param opcode The opcode.
+   * @param name   The name.
+   * @param fields The fields.
+   */
+  public PacketDefinition(int opcode, String name, PacketField[] fields) {
+    this.opcode = opcode;
+    this.name = name;
+    this.fields = fields;
+    // compute packet length
+    int length = 0;
+    for (PacketField field : fields) {
+      length += field.getType().getLength();
+    }
+    this.length = length;
+  }
+
+  /**
+   * Resolves this object.
+   *
+   * @return The object with the correct packet length.
+   */
+  private Object readResolve() {
+    // ensures length is computed
+    return new PacketDefinition(opcode, name, fields);
+  }
+
+  /**
+   * Gets the opcode of this packet.
+   *
+   * @return The opcode of this packet.
+   */
+  public int getOpcode() {
+    return opcode;
+  }
+
+  /**
+   * Gets the name of this packet.
+   *
+   * @return The name of this packet.
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
+   * Gets the fields in this packet.
+   *
+   * @return The fields in this packet.
+   */
+  public PacketField[] getFields() {
+    return fields;
+  }
+
+  /**
+   * Gets the length of this packet.
+   *
+   * @return The length of this packet, in bytes.
+   */
+  public int getLength() {
+    return length;
+  }
+
 }

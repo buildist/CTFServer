@@ -1,4 +1,3 @@
-
 /*
  * Jacob_'s Capture the Flag for Minecraft Classic and ClassiCube
  * Copyright (c) 2010-2014 Jacob Morgan
@@ -42,22 +41,24 @@ import org.opencraft.server.io.PersistenceManager;
 import org.opencraft.server.net.packet.PacketManager;
 
 /**
- * @author Mark Farrell
- * A packet manager with persistence.
+ * @author Mark Farrell A packet manager with persistence.
  */
-public class PersistingPacketManager extends PacketManager{
+public class PersistingPacketManager extends PacketManager {
 
-	/**
-	 * The packet manager instance.
-	 */
-	private static final PacketManager INSTANCE = (PacketManager) PersistenceManager.getPersistenceManager().load(Constants.ROOT_PATH+"/packets.xml");;
-	
-	
-	/**
-	 * Gets the packet manager instance.
-	 * @return The packet manager instance.
-	 */
-	public static PacketManager getPacketManager() {
-		return INSTANCE;
-	}
+  /**
+   * The packet manager instance.
+   */
+  private static final PacketManager INSTANCE = (PacketManager) PersistenceManager
+      .getPersistenceManager().load(Constants.ROOT_PATH + "/packets.xml");
+  ;
+
+
+  /**
+   * Gets the packet manager instance.
+   *
+   * @return The packet manager instance.
+   */
+  public static PacketManager getPacketManager() {
+    return INSTANCE;
+  }
 }

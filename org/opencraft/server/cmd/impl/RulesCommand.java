@@ -41,26 +41,27 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
-public class RulesCommand implements Command{
-    private static final RulesCommand INSTANCE = new RulesCommand();
+public class RulesCommand implements Command {
+  private static final RulesCommand INSTANCE = new RulesCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static RulesCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static RulesCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        int i = 1;
-        for(String l : Server.rulesText)
-        {
-            player.getActionSender().sendChatMessage(i+". "+l);
-            i++;
-        }
-        if(player.isNewPlayer) {
-            player.getActionSender().sendChatMessage("&bSay /join to start playing, or /spec to spectate!");
-        }
+  public void execute(Player player, CommandParameters params) {
+    int i = 1;
+    for (String l : Server.rulesText) {
+      player.getActionSender().sendChatMessage(i + ". " + l);
+      i++;
     }
+    if (player.isNewPlayer) {
+      player.getActionSender().sendChatMessage("&bSay /join to start playing, or /spec to " +
+          "spectate!");
+    }
+  }
 }

@@ -37,5 +37,5 @@
 package org.opencraft.server.model;
 
 public class Achievements {
-    
+
 }

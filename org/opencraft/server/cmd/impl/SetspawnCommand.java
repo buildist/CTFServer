@@ -44,38 +44,40 @@ import org.opencraft.server.model.World;
 
 /**
  * Official /setspawn command
+ *
  * @author S�ren Enevoldsen
  */
 
 public class SetspawnCommand implements Command {
-	
-	/**
-	 * The instance of this command.
-	 */
-	private static final SetspawnCommand INSTANCE = new SetspawnCommand();
-	
-	/**
-	 * Gets the singleton instance of this command.
-	 * @return The singleton instance of this command.
-	 */
-	public static SetspawnCommand getCommand() {
-		return INSTANCE;
-	}
-	
-	/**
-	 * Default private constructor.
-	 */
-	private SetspawnCommand() {
-		/* empty */
-	}
-	
-	@Override
-	public void execute(Player player, CommandParameters params) {
-		// Player using command is OP?
-		if (player.isOp()) {
-			World.getWorld().getLevel().setSpawnPosition(player.getPosition());
-			World.getWorld().getLevel().setSpawnRotation(player.getRotation());
-		} else
-			player.getActionSender().sendChatMessage("You must be OP to do that");
-	}
+
+  /**
+   * The instance of this command.
+   */
+  private static final SetspawnCommand INSTANCE = new SetspawnCommand();
+
+  /**
+   * Default private constructor.
+   */
+  private SetspawnCommand() {
+        /* empty */
+  }
+
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static SetspawnCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    // Player using command is OP?
+    if (player.isOp()) {
+      World.getWorld().getLevel().setSpawnPosition(player.getPosition());
+      World.getWorld().getLevel().setSpawnRotation(player.getRotation());
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

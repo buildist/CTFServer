@@ -42,25 +42,24 @@ import org.opencraft.server.model.DropItem;
 import org.opencraft.server.model.Player;
 
 
-public class DropCommand implements Command{
-    private static final DropCommand INSTANCE = new DropCommand();
+public class DropCommand implements Command {
+  private static final DropCommand INSTANCE = new DropCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static DropCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static DropCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        if ((player.isOp()) || player.isVIP())
-        {
-            int points = params.getIntegerArgument(0);
-            if(points >= 0 && points < 1001)
-                new DropItem(points);
-        }
-        else
-            player.getActionSender().sendChatMessage("You must be OP to do that");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if ((player.isOp()) || player.isVIP()) {
+      int points = params.getIntegerArgument(0);
+      if (points >= 0 && points < 1001)
+        new DropItem(points);
+    } else
+      player.getActionSender().sendChatMessage("You must be OP to do that");
+  }
 }

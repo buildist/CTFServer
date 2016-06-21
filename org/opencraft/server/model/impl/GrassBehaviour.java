@@ -44,47 +44,52 @@ import org.opencraft.server.model.Level;
 
 /**
  * Handles the spreading of grass blocks to adjacent, sun-exposed dirt blocks.
+ *
  * @author Brett Russell
  */
 public class GrassBehaviour implements BlockBehaviour {
-	
-	@Override
-	public void handleDestroy(Level level, int x, int y, int z, int type) {
-		
-	}
-	
-	@Override
-	public void handlePassive(Level level, int x, int y, int z, int type) {
-		level.queueActiveBlockUpdate(x, y, z);
-	}
-	
-	@Override
-	public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
-		// do we need to die?
-		if (level.getLightDepth(x, y) > z) {
-			level.setBlock(x, y, z, BlockConstants.DIRT);
-			return;
-		}
-		
-		// represents the different directions grass can spread
-		// x, y, z
-		int[][] spreadRules = { { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 } };
-		
-		// spread
-		for (int i = 0; i <= spreadRules.length - 1; i++) {
-			boolean found = false;
-			if (level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2]) == BlockConstants.DIRT) {
-				if (z + spreadRules[i][2] < level.getLightDepth(x + spreadRules[i][0], y + spreadRules[i][1])) {
-					found = true;
-				}
-				if (BlockManager.getBlockManager().getBlock(level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + 1)).isLiquid()) {
-					found = true;
-				}
-				
-				if (!found) {
-					level.setBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2], BlockConstants.GRASS);
-				}
-			}
-		}
-	}
+
+  @Override
+  public void handleDestroy(Level level, int x, int y, int z, int type) {
+
+  }
+
+  @Override
+  public void handlePassive(Level level, int x, int y, int z, int type) {
+    level.queueActiveBlockUpdate(x, y, z);
+  }
+
+  @Override
+  public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
+    // do we need to die?
+    if (level.getLightDepth(x, y) > z) {
+      level.setBlock(x, y, z, BlockConstants.DIRT);
+      return;
+    }
+
+    // represents the different directions grass can spread
+    // x, y, z
+    int[][] spreadRules = {{1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}};
+
+    // spread
+    for (int i = 0; i <= spreadRules.length - 1; i++) {
+      boolean found = false;
+      if (level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2]) ==
+          BlockConstants.DIRT) {
+        if (z + spreadRules[i][2] < level.getLightDepth(x + spreadRules[i][0], y +
+            spreadRules[i][1])) {
+          found = true;
+        }
+        if (BlockManager.getBlockManager().getBlock(level.getBlock(x + spreadRules[i][0], y +
+            spreadRules[i][1], z + 1)).isLiquid()) {
+          found = true;
+        }
+
+        if (!found) {
+          level.setBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2],
+              BlockConstants.GRASS);
+        }
+      }
+    }
+  }
 }

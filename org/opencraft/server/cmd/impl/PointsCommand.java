@@ -39,30 +39,28 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
 public class PointsCommand implements Command {
-    private static final PointsCommand INSTANCE = new PointsCommand();
+  private static final PointsCommand INSTANCE = new PointsCommand();
 
-    public static PointsCommand getCommand() {
-            return INSTANCE;
-    }
+  public static PointsCommand getCommand() {
+    return INSTANCE;
+  }
 
 
-    @Override
-    public void execute(Player player, CommandParameters params) {
-        if(params.getArgumentCount() != 2)
-            player.getActionSender().sendChatMessage("/points [player] [value]");
-        else if(player.isOp())
-        {
-            Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-            if(other != null) {
-                other.setStorePoints(params.getIntegerArgument(1));
-                player.getActionSender().sendChatMessage("- &ePoints of "+other.getName()+" set to "+other.getStorePoints());
-                return;
-            }
-        }
-        else
-            player.getActionSender().sendChatMessage("You need to be op to do that!");
-    }
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    if (params.getArgumentCount() != 2)
+      player.getActionSender().sendChatMessage("/points [player] [value]");
+    else if (player.isOp()) {
+      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+      if (other != null) {
+        other.setStorePoints(params.getIntegerArgument(1));
+        player.getActionSender().sendChatMessage("- &ePoints of " + other.getName() + " set to "
+            + other.getStorePoints());
+        return;
+      }
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

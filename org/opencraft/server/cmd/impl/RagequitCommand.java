@@ -41,21 +41,22 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class RagequitCommand implements Command{
-    private static final RagequitCommand INSTANCE = new RagequitCommand();
+public class RagequitCommand implements Command {
+  private static final RagequitCommand INSTANCE = new RagequitCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static RagequitCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static RagequitCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-        player.getActionSender().sendLoginFailure("Hope you feel better soon!");
-        player.getSession().close();
-        World.getWorld().broadcast("- &4"+player.getName()+" ragequit!!");
-        player.setAttribute("ragequits", (Integer) player.getAttribute("ragequits") + 1);
-    }
+  public void execute(Player player, CommandParameters params) {
+    player.getActionSender().sendLoginFailure("Hope you feel better soon!");
+    player.getSession().close();
+    World.getWorld().broadcast("- &4" + player.getName() + " ragequit!!");
+    player.setAttribute("ragequits", (Integer) player.getAttribute("ragequits") + 1);
+  }
 }

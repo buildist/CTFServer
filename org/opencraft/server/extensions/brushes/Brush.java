@@ -42,96 +42,103 @@ import org.opencraft.server.model.Player;
 
 /**
  * Represents the brush used to "paint" the level with.
+ *
  * @author S�ren Enevoldsen
  */
 public abstract class Brush {
-	
-	/**
-	 * Creates the brush with the default radius.
-	 */
-	public Brush() {
-	}
-	
-	/**
-	 * Creates the brush with the specified radius.
-	 * @param radius The radius of this brush.
-	 */
-	public Brush(int radius) {
-	}
-	
-	/**
-	 * Handles the "painting". Implementation should be done with paintBlocks
-	 * @param level The level
-	 * @param x x position
-	 * @param y y position
-	 * @param z z position
-	 * @param mode
-	 * @param type Type of block
-	 */
-	public abstract void paint(Player player, Level level, int x, int y, int z, int mode, int type);
-	
-	/**
-	 * Set the radius
-	 * @param newRadius
-	 * @return Whether the radius was set
-	 */
-	public abstract boolean setRadius(int newRadius);
-	
-	/**
-	 * Sets the width
-	 * @param newWidth
-	 * @return Return the width that was set
-	 */
-	public abstract int setWidth(int newWidth);
-	
-	/**
-	 * Sets the height
-	 * @param newHeight
-	 * @return Return the height that was set
-	 */
-	public abstract int setHeight(int newHeight);
-	
-	/**
-	 * Sets the length
-	 * @param newLength
-	 * @return Return the length that was set
-	 */
-	public abstract int setLength(int newLength);
-	
-	/**
-	 * Sets whether this brush will delete also
-	 * @param enable
-	 * @return The old value
-	 */
-	public abstract boolean useForDelete(boolean enable);
-	
-	/**
-	 * Returns whether this brush is used to delete
-	 * @return If used for delete
-	 */
-	public abstract boolean getUseForDelete();
-	
-	/**
-	 * Gets the width
-	 * @return The width
-	 */
-	public abstract int getWidth();
-	
-	/**
-	 * Gets the length
-	 * @return The length
-	 */
-	public abstract int getLength();
-	
-	/**
-	 * Gets the height
-	 * @return The height
-	 */
-	public abstract int getHeight();
-	
-	/**
-	 * Gets the radius
-	 * @return The radius
-	 */
-	public abstract int getRadius();
+
+  /**
+   * Creates the brush with the default radius.
+   */
+  public Brush() {
+  }
+
+  /**
+   * Creates the brush with the specified radius.
+   *
+   * @param radius The radius of this brush.
+   */
+  public Brush(int radius) {
+  }
+
+  /**
+   * Handles the "painting". Implementation should be done with paintBlocks
+   *
+   * @param level The level
+   * @param x     x position
+   * @param y     y position
+   * @param z     z position
+   * @param type  Type of block
+   */
+  public abstract void paint(Player player, Level level, int x, int y, int z, int mode, int type);
+
+  /**
+   * Set the radius
+   *
+   * @return Whether the radius was set
+   */
+  public abstract boolean setRadius(int newRadius);
+
+  /**
+   * Sets the width
+   *
+   * @return Return the width that was set
+   */
+  public abstract int setWidth(int newWidth);
+
+  /**
+   * Sets the height
+   *
+   * @return Return the height that was set
+   */
+  public abstract int setHeight(int newHeight);
+
+  /**
+   * Sets the length
+   *
+   * @return Return the length that was set
+   */
+  public abstract int setLength(int newLength);
+
+  /**
+   * Sets whether this brush will delete also
+   *
+   * @return The old value
+   */
+  public abstract boolean useForDelete(boolean enable);
+
+  /**
+   * Returns whether this brush is used to delete
+   *
+   * @return If used for delete
+   */
+  public abstract boolean getUseForDelete();
+
+  /**
+   * Gets the width
+   *
+   * @return The width
+   */
+  public abstract int getWidth();
+
+  /**
+   * Gets the length
+   *
+   * @return The length
+   */
+  public abstract int getLength();
+
+  /**
+   * Gets the height
+   *
+   * @return The height
+   */
+  public abstract int getHeight();
+
+  /**
+   * Gets the radius
+   *
+   * @return The radius
+   */
+  public abstract int getRadius();
 }

@@ -41,24 +41,24 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.BuildMode;
 import org.opencraft.server.model.Player;
 
-public class BoxCommand implements Command{
-    private static final BoxCommand INSTANCE = new BoxCommand();
+public class BoxCommand implements Command {
+  private static final BoxCommand INSTANCE = new BoxCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     * @return The singleton instance of this command.
-     */
-    public static BoxCommand getCommand() {
-            return INSTANCE;
-    }
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static BoxCommand getCommand() {
+    return INSTANCE;
+  }
 
-    public void execute(Player player, CommandParameters params) {
-            if (player.isOp())
-            {
-                player.buildMode = BuildMode.BOX;
-                player.getActionSender().sendChatMessage("- &e Place a block in each corner (Are you sure you want to do this?)");
-            }
-            else
-                player.getActionSender().sendChatMessage("You need to be op to do that!");
-    }
+  public void execute(Player player, CommandParameters params) {
+    if (player.isOp()) {
+      player.buildMode = BuildMode.BOX;
+      player.getActionSender().sendChatMessage("- &e Place a block in each corner (Are you sure " +
+          "you want to do this?)");
+    } else
+      player.getActionSender().sendChatMessage("You need to be op to do that!");
+  }
 }

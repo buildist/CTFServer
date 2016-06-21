@@ -40,25 +40,25 @@ import java.io.BufferedWriter;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class MoveLog {
-    private static MoveLog instance = new MoveLog();
-    public static MoveLog getInstance() {
-        return instance;
+  private static MoveLog instance = new MoveLog();
+  private BufferedWriter writer;
+
+  public MoveLog() {
+    try {
+      FileOutputStream out = new FileOutputStream("moves.txt", true);
+      writer = new BufferedWriter(new OutputStreamWriter(out));
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
-    private BufferedWriter writer;
-    public MoveLog() {
-        try {
-            FileOutputStream out = new FileOutputStream("moves.txt", true);
-            writer = new BufferedWriter(new OutputStreamWriter(out));
-        }
-        catch(IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-    public void logPosition(Player p) {
+  }
+
+  public static MoveLog getInstance() {
+    return instance;
+  }
+
+  public void logPosition(Player p) {
         /*if(p.getPosition().equals(p.getOldPosition()))
             return;
         synchronized(writer) {
@@ -69,8 +69,9 @@ public class MoveLog {
                 ex.printStackTrace();
             }
         }*/
-    }
-    public void logMapChange(String name) {
+  }
+
+  public void logMapChange(String name) {
         /*synchronized(writer) {
             String l = name;
             try {
@@ -80,8 +81,9 @@ public class MoveLog {
                 ex.printStackTrace();
             }
         }*/
-    }
-    public void flush() {
+  }
+
+  public void flush() {
         /*synchronized(writer) {
             try {
                 writer.flush();
@@ -89,14 +91,14 @@ public class MoveLog {
                 ex.printStackTrace();
             }
         }*/
+  }
+
+  public void finalize() {
+    try {
+      if (writer != null)
+        writer.close();
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
-    public void finalize() {
-        try {
-            if(writer != null)
-                writer.close();
-        }
-        catch(IOException ex ){
-            ex.printStackTrace();
-        }
-    }
+  }
 }

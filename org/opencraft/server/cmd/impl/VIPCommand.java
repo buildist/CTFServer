@@ -45,54 +45,55 @@ import org.opencraft.server.model.World;
 /**
  * Official /op command **NEEDS PERSISTENCE
  *
- **
+ * *
+ *
  * @author S�ren Enevoldsen
  */
 public class VIPCommand implements Command {
 
-    /**
-     * The instance of this command.
-     */
-    private static final VIPCommand INSTANCE = new VIPCommand();
+  /**
+   * The instance of this command.
+   */
+  private static final VIPCommand INSTANCE = new VIPCommand();
 
-    /**
-     * Gets the singleton instance of this command.
-     *
-     * @return The singleton instance of this command.
-     */
-    public static VIPCommand getCommand() {
-        return INSTANCE;
-    }
-
-    /**
-     * Default private constructor.
-     */
-    private VIPCommand() {
+  /**
+   * Default private constructor.
+   */
+  private VIPCommand() {
         /* empty */
-    }
+  }
 
-    @Override
-    public void execute(Player player, CommandParameters params) {
-        // Player using command is OP?
-        if (player.isOp()) {
-            if (params.getArgumentCount() == 1) {
-                for (Player other : World.getWorld().getPlayerList().getPlayers()) {
-                    if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
-                        Server.log(player.getName() + " vip'd " + other.getName());
-                        other.setAttribute("VIP", "true");
-                        other.getActionSender().sendChatMessage("You are now a VIP");
-                        player.getActionSender().sendChatMessage(other.getName() + " is now a VIP");
-                        return;
-                    }
-                }
-                // Player not found
-                player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
-            } else {
-                player.getActionSender().sendChatMessage("Wrong number of arguments");
-                player.getActionSender().sendChatMessage("/vip <name>");
-            }
-        } else {
-            player.getActionSender().sendChatMessage("You must be OP to do that");
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static VIPCommand getCommand() {
+    return INSTANCE;
+  }
+
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    // Player using command is OP?
+    if (player.isOp()) {
+      if (params.getArgumentCount() == 1) {
+        for (Player other : World.getWorld().getPlayerList().getPlayers()) {
+          if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
+            Server.log(player.getName() + " vip'd " + other.getName());
+            other.setAttribute("VIP", "true");
+            other.getActionSender().sendChatMessage("You are now a VIP");
+            player.getActionSender().sendChatMessage(other.getName() + " is now a VIP");
+            return;
+          }
         }
+        // Player not found
+        player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/vip <name>");
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that");
     }
+  }
 }
