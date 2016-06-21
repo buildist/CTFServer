@@ -59,14 +59,8 @@ public class RestartCommand implements Command {
     public void execute(Player player, CommandParameters params) {
         if (player.isOp() || player.isVIP())
         {
-            for(Player p : World.getWorld().getPlayerList().getPlayers()) {
-                p.getActionSender().sendLoginFailure("Server is restarting!");
-            }
-            try {
-                Thread.sleep(2000);
-            }
-            catch(Exception ex){}
-            System.exit(1);
+          String message = params.getArgumentCount() == 1 ? params.getStringArgument(0) : null;
+          Server.restartServer(message);
         }
         else
         {

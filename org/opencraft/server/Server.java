@@ -63,10 +63,12 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.opencraft.server.game.impl.GameSettings;
 //import org.opencraft.server.model.IRC;
 import org.opencraft.server.model.MapController;
+import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Store;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.SessionHandler;
 import org.opencraft.server.task.TaskQueue;
+import org.opencraft.server.task.impl.AutoRestartTask;
 import org.opencraft.server.task.impl.CTFProcessTask;
 import org.opencraft.server.task.impl.ConsoleTask;
 import org.opencraft.server.task.impl.HeartbeatTask;
@@ -227,6 +229,7 @@ public final class Server {
         TaskQueue.getTaskQueue().schedule(new CTFProcessTask());
         TaskQueue.getTaskQueue().schedule(new HeartbeatTask());
         TaskQueue.getTaskQueue().schedule(new MessageTask());
+        TaskQueue.getTaskQueue().schedule(new AutoRestartTask());
         new Thread(new ConsoleTask()).start();
         new Thread(new ItemDropTask()).start();
         //new Thread(new RenderMapTask()).start();
@@ -348,6 +351,20 @@ public final class Server {
             i++;
         }
         return msg2;
+    }
+    
+    public static void restartServer(String why) {
+        String message = why == null ? "Server is restarting!" : "Server is restarting: " + why; 
+        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+            p.getActionSender().sendLoginFailure(message);
+        }
+        try {
+            Thread.sleep(2000);
+        }
+        catch (Exception ex){}
+        
+        // This just exits but the server runs with a wrapper script that automatically restarts it.
+        System.exit(1);      
     }
     
     public static String getConsoleMessages(long minTime) {
