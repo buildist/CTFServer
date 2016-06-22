@@ -135,7 +135,7 @@ public final class Server {
     TaskQueue.getTaskQueue().schedule(new CTFProcessTask());
     TaskQueue.getTaskQueue().schedule(new HeartbeatTask());
     TaskQueue.getTaskQueue().schedule(new MessageTask());
-    TaskQueue.getTaskQueue().schedule(new AutoRestartTask());
+    // TaskQueue.getTaskQueue().schedule(new AutoRestartTask());
     new Thread(new ConsoleTask()).start();
     new Thread(new ItemDropTask()).start();
     //new Thread(new RenderMapTask()).start();
