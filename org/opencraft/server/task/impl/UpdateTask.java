@@ -43,6 +43,7 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.task.ScheduledTask;
 
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Set;
 
@@ -104,7 +105,9 @@ public class UpdateTask extends ScheduledTask {
     for (Player player : world.getPlayerList().getPlayers()) {
       player.resetOldPositionAndRotation();
     }
-    world.getLevel().applyBlockBehaviour();
+    try {
+      world.getLevel().applyBlockBehaviour();
+    } catch(ConcurrentModificationException ex) {}
   }
 
 }
