@@ -72,9 +72,12 @@ public class MapSetCommand implements Command {
             Object key = keys.nextElement();
             player.getActionSender().sendChatMessage(key + " = " + level.props.get(key));
           }
-        } else if (params.getArgumentCount() == 2) {
+        } else if (params.getArgumentCount() >= 2) {
           String k = params.getStringArgument(0);
-          String v = params.getStringArgument(1);
+          String v = "";
+          for (int i = 1; i < params.getArgumentCount(); i++) {
+            v += params.getStringArgument(i) + " ";
+          }
           level.props.setProperty(k, v);
           level.saveProps();
           level.loadProps();
