@@ -82,7 +82,7 @@ public class LineCommand implements Command {
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z);
       int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-      if ((block != 0 && block != 20))
+      if ((block != 0 && block != 20) || World.getWorld().getLevel().ceiling < bz)
         return;
       else if (i > 0)
         World.getWorld().getLevel().setBlock(bx, by, bz, 20);

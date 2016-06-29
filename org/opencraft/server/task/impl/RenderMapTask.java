@@ -36,6 +36,8 @@
  */
 package org.opencraft.server.task.impl;
 
+import java.awt.Color;
+import java.awt.Graphics2D;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
