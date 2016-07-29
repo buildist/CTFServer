@@ -35,6 +35,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.visualizer;
+import java.awt.*;
+import java.awt.image.*;
 
 import java.awt.Composite;
 import java.awt.CompositeContext;

@@ -1,10 +1,5 @@
-*.idea
-out/
-*.iml
-*.properties
-*.jar
-*.xml
-*.txt
-savedGames/
-*.bat
-maps/
+*
+!.gitignore
+!org
+!FindNullStats.java
+!Main.java
