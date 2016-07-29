@@ -398,7 +398,8 @@ public class Player extends Entity {
   }
 
   public boolean isVIP() {
-    return (getAttribute("VIP") != null && getAttribute("VIP").equals("true")) || isOp();
+    return (!GameSettings.getBoolean("Tournament")
+        && getAttribute("VIP") != null && getAttribute("VIP").equals("true")) || isOp();
   }
 
   public boolean isOp() {
