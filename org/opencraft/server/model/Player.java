@@ -83,6 +83,7 @@ public class Player extends Entity {
   public long lastMessageTime;
   public long lastPacketTime;
   public int heldBlock = 0;
+  public boolean joinedDuringTournamentMode;
 
   /**
    * Creates the player.

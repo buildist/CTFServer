@@ -139,6 +139,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+import org.opencraft.server.cmd.impl.StartCommand;
 
 public class CTFGameMode extends GameModeAdapter<Player> {
 
@@ -166,6 +167,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public int redPlayers = 0;
 
   public long gameStartTime = System.currentTimeMillis();
+  public boolean tournamentGameStarted = false;
 
   public Level startNewMap;
   public boolean voting = false;
@@ -246,6 +248,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("set", SetCommand.getCommand());
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
+    registerCommand("start", StartCommand.getCommand());
     registerCommand("stats", StatsCommand.getCommand());
     registerCommand("status", StatusCommand.getCommand());
     registerCommand("store", StoreCommand.getCommand());
@@ -623,6 +626,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       public void run() {
         try {
           gameStartTime = System.currentTimeMillis();
+          tournamentGameStarted = !GameSettings.getBoolean("Tournament");
           for (Player player : World.getWorld().getPlayerList().getPlayers()) {
             player.team = -1;
             player.hasVoted = false;
@@ -1086,7 +1090,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         dropFlag(p.team);
       }
     }
-    if (getMode() == Level.CTF) {
+    if (getMode() == Level.CTF && tournamentGameStarted) {
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
         if (t.getPosition().getX() > x - 64 && t.getPosition().getX() < x + 64 && t.getPosition()
             .getY() > y - 64 && t.getPosition().getY() < y + 64 && t.getPosition().getZ() > z -
@@ -1238,6 +1242,15 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         } else {
           player.getActionSender().sendBlock(x, y, z, (byte) 0);
         }
+      } else if(!tournamentGameStarted) {
+        ignore = true;
+        player.getActionSender().sendChatMessage("- &aThe game has not started yet.");
+        if (mode == 0) {
+          player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+        } else {
+          player.getActionSender().sendBlock(x, y, z, (byte) 0);
+        }
+       
       } else if (player.respawning && type != 30) {
         System.out.println("Ignoring block change by " + player.getName());
         ignore = true;

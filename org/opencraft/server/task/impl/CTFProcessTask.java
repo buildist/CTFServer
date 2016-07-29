@@ -118,33 +118,42 @@ public class CTFProcessTask extends ScheduledTask {
       }
     }
     if (((CTFGameMode) World.getWorld().getGameMode()).getMode() == Level.TDM) {
-      long elapsedTime = System.currentTimeMillis() - ((CTFGameMode) World.getWorld().getGameMode
-          ()).gameStartTime;
-      if (elapsedTime > GameSettings.getInt("TDMTimeLimit") * 60 * 1000) {
-        ((CTFGameMode) World.getWorld().getGameMode()).gameStartTime = System.currentTimeMillis();
-        ((CTFGameMode) World.getWorld().getGameMode()).endGame();
-      }
-      long remaining = Math.max((GameSettings.getInt("TDMTimeLimit") * 60 * 1000 - elapsedTime) /
-          1000, 0);
-      if (((CTFGameMode) World.getWorld().getGameMode()).voting)
-        remaining = 0;
-      if (ticks == 0) {
-        for (Player player : world.getPlayerList().getPlayers()) {
-          if (player.getSession().isExtensionSupported("MessageTypes")) {
-            ((CTFGameMode) World.getWorld().getGameMode()).sendDefaultMessage(player);
-            player.getActionSender().sendChatMessage("Team Deathmatch | " + prettyTime((int)
-                remaining), false, 1);
-          }
-        }
-      }
+      showTimer("TDMTimeLimit", true /* shouldEndGame */, "Team Deathmatch");
+    } else if(GameSettings.getBoolean("Tournament")) {
+      showTimer("TournamentTimeLimit", false /* shouldEndGame */, "Tournament");
     }
     ticks++;
     if (ticks == 10) {
       ticks = 0;
     }
   }
+  
+  private void showTimer(String settingName, boolean shouldEndGame, String message) {
+    long elapsedTime = System.currentTimeMillis()
+        - ((CTFGameMode) World.getWorld().getGameMode()).gameStartTime;
+    if (shouldEndGame && elapsedTime > GameSettings.getInt(settingName) * 60 * 1000) {
+      ((CTFGameMode) World.getWorld().getGameMode()).gameStartTime = System.currentTimeMillis();
+      ((CTFGameMode) World.getWorld().getGameMode()).endGame();
+    }
+    long remaining =
+        Math.max((GameSettings.getInt(settingName) * 60 * 1000 - elapsedTime) / 1000, 0);
+    if (((CTFGameMode) World.getWorld().getGameMode()).voting) {
+      remaining = 0;
+    } else if(!((CTFGameMode) World.getWorld().getGameMode()).tournamentGameStarted) {
+      remaining = GameSettings.getInt(settingName) * 60;
+    }
+    if (ticks == 0) {
+      for (Player player : world.getPlayerList().getPlayers()) {
+        if (player.getSession().isExtensionSupported("MessageTypes")) {
+          ((CTFGameMode) World.getWorld().getGameMode()).sendDefaultMessage(player);
+          player.getActionSender()
+              .sendChatMessage(message + " | " + prettyTime((int) remaining), false, 1);
+        }
+      }
+    }
+  }
 
-  public String prettyTime(int seconds) {
+  private static String prettyTime(int seconds) {
     int day = (int) Math.floor(seconds / (24 * 3600));
     int hs = (int) Math.floor(seconds / 3600 % 24);
     int ms = (int) Math.floor(seconds / 60 % 60);

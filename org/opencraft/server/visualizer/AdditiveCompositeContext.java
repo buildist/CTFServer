@@ -36,6 +36,10 @@
  */
 package org.opencraft.server.visualizer;
 
+import java.awt.CompositeContext;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
+
 public class AdditiveCompositeContext implements CompositeContext {
   public AdditiveCompositeContext() {
   }

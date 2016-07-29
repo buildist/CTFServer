@@ -39,6 +39,7 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.World;
@@ -56,13 +57,17 @@ public class CreeperCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
+    if (GameSettings.getBoolean("Tournament")) {
+      player.getActionSender().sendChatMessage("- &e/cr is disabled during the tournament.");
+      return;
+    }
     Position pos = player.getPosition();
     int px = (pos.getX() - 16) / 32;
     int py = (pos.getY() - 16) / 32;
     int pz = ((pos.getZ() - 16) / 32);
     World.getWorld().announce("&esssssssSSSSSSSSS");
-    ((CTFGameMode) World.getWorld().getGameMode()).explodeTNT(player, World.getWorld().getLevel()
-        , px, py, pz, 4, true, true, false, null);
+    ((CTFGameMode) World.getWorld().getGameMode()).explodeTNT(
+            player, World.getWorld().getLevel(), px, py, pz, 4, true, true, false, null);
 
   }
 }

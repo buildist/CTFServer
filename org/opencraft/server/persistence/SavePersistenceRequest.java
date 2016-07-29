@@ -108,7 +108,7 @@ public class SavePersistenceRequest extends PersistenceRequest {
 
         c.disconnect();
       }
-      if (!GameSettings.getBoolean("Tournament"))
+      if (!player.joinedDuringTournamentMode)
         xs.toXML(player.getAttributes(), new FileOutputStream(file));
     } catch (Exception ex) {
       ex.printStackTrace();

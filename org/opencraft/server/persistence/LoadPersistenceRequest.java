@@ -103,6 +103,7 @@ public class LoadPersistenceRequest extends PersistenceRequest {
             player.setAttribute(entry.getKey(), entry.getValue());
           }
         }
+        player.joinedDuringTournamentMode = GameSettings.getBoolean("Tournament");
       } catch (RuntimeException ex) {
         throw new IOException(ex);
       }

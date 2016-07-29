@@ -1,5 +1,8 @@
 package org.opencraft.server.visualizer;
 
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;

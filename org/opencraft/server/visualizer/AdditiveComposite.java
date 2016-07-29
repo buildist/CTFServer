@@ -36,6 +36,11 @@
  */
 package org.opencraft.server.visualizer;
 
+import java.awt.Composite;
+import java.awt.CompositeContext;
+import java.awt.RenderingHints;
+import java.awt.image.ColorModel;
+
 public class AdditiveComposite implements Composite {
   public AdditiveComposite() {
     super();
