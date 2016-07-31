@@ -65,8 +65,8 @@ public final class MinecraftSession extends OCSession {
   public String client = "Minecraft.net";
   public String username;
   public String verificationKey;
-  public HashMap<String, Boolean> supportedCPEExtensions = new HashMap<String, Boolean>(Constants
-      .NUM_CPE_EXTENSIONS);
+  public HashMap<String, Integer> supportedCPEExtensions =
+      new HashMap<String, Integer>(Constants.NUM_CPE_EXTENSIONS);
   public int numExtEntries = 0;
   public int receivedExtEntries = 0;
   public boolean receivedAllExtEntries = false;
@@ -147,14 +147,22 @@ public final class MinecraftSession extends OCSession {
   }
 
   public boolean isExtensionSupported(String name) {
+    return isExtensionSupported(name, 1);
+  }
+  
+  public boolean isExtensionSupported(String name, int version) {
     if (!ccUser)
       return false;
     else
-      return supportedCPEExtensions.containsKey(name);
+      return supportedCPEExtensions.containsKey(name)
+          && supportedCPEExtensions.get(name) == version;
   }
 
   public void addExtension(String name) {
-    supportedCPEExtensions.put(name, true);
+    addExtension(name, 1);
   }
-
+  
+  public void addExtension(String name, int version) {
+    supportedCPEExtensions.put(name, version);
+  }
 }

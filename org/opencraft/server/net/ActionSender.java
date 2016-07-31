@@ -192,7 +192,7 @@ public class ActionSender {
 
   public void sendSpawn(byte id, short nameId, String colorName, String teamName, String name,
                         int x, int y, int z, byte rotation, byte look, boolean isSelf) {
-    if (session.isExtensionSupported("ExtPlayerList")) {
+    if (session.isExtensionSupported("ExtPlayerList", 2)) {
       sendAddPlayerName(nameId, name, colorName, teamName, (byte) 1);
       if (!isSelf)
         sendExtSpawn(id, colorName, name, x, y, z, rotation, look);
@@ -310,7 +310,7 @@ public class ActionSender {
 
   public void sendRemovePlayer(Player p) {
     sendRemoveEntity(p);
-    if (session.isExtensionSupported("ExtPlayerList")) {
+    if (session.isExtensionSupported("ExtPlayerList", 2)) {
       this.sendRemovePlayerName(p.nameId);
     }
   }
@@ -370,13 +370,25 @@ public class ActionSender {
     }
   }
 
-  public void sendMapAppearance() {
+  public void sendMapAppearanceV1() {
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(30));
     bldr.putString("texture_url", Configuration.getConfiguration().getEnvTexturePack());
     bldr.putByte("side_block", 7);
     bldr.putByte("edge_block", 8);
     bldr.putShort("side_level", World.getWorld().getLevel().depth / 2);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendMapAppearanceV2() {
+    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
+        .getOutgoingPacket(30));
+    bldr.putString("texture_url", Configuration.getConfiguration().getEnvTexturePack());
+    bldr.putByte("side_block", 7);
+    bldr.putByte("edge_block", 8);
+    bldr.putShort("side_level", World.getWorld().getLevel().depth / 2);
+    bldr.putShort("cloud_level", World.getWorld().getLevel().depth);
+    bldr.putShort("view_distance", World.getWorld().getLevel().viewDistance);
     session.send(bldr.toPacket());
   }
 
@@ -391,8 +403,18 @@ public class ActionSender {
   }
 
   public void sendMapColors() {
-    for (int i = 0; i < 3; i++) {
-      sendMapColor(i, Constants.COLORS[i][0], Constants.COLORS[i][1], Constants.COLORS[i][2]);
+    Level level = World.getWorld().getLevel();
+    short[][] colors = level.colors;
+    for (int i = 0; i < colors.length; i++) {
+      if (colors[i][0] == -1) {
+        sendMapColor(
+            i,
+            Constants.DEFAULT_COLORS[i][0],
+            Constants.DEFAULT_COLORS[i][1],
+            Constants.DEFAULT_COLORS[i][2]);        
+      } else {
+        sendMapColor(i, colors[i][0], colors[i][1], colors[i][2]);
+      }
     }
   }
 

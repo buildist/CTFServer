@@ -103,8 +103,10 @@ public final class LevelGzipper {
             int percent = (int) ((double) buf.position() / (double) buf.limit() * 255D);
             session.getActionSender().sendLevelBlock(len, chunk, percent);
           }
-          if (session.isExtensionSupported("EnvMapAppearance"))
-            session.getActionSender().sendMapAppearance();
+          if (session.isExtensionSupported("EnvMapAppearance", 2))
+            session.getActionSender().sendMapAppearanceV2();
+          else if (session.isExtensionSupported("EnvMapAppearance", 1))
+            session.getActionSender().sendMapAppearanceV1();
           if (session.isExtensionSupported("EnvColors"))
             session.getActionSender().sendMapColors();
           session.getActionSender().sendLevelFinish();

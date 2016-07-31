@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.model;
 
+import java.awt.Color;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
@@ -59,6 +60,7 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
+import org.opencraft.server.Constants;
 
 /**
  * Represents the actual level.
@@ -92,6 +94,10 @@ public final class Level implements Cloneable {
   public String filename;
   public String id;
   public int votes = 0;
+  
+  public short viewDistance = 0;
+  public short[][] colors = Constants.DEFAULT_COLORS;
+  
   /**
    * The blocks.
    */
@@ -336,12 +342,45 @@ public final class Level implements Cloneable {
     }
     ceiling = Integer.parseInt(props.getProperty("buildCeiling"));
     floor = Integer.parseInt(props.getProperty("buildFloor", "-8"));
+    
+    setMapColor("skyColor", 0);
+    setMapColor("cloudColor", 1);
+    setMapColor("fogColor", 2);
+    setMapColor("ambientColor", 3);
+    setMapColor("diffuseColor", 4);
+    
+    if(props.getProperty("viewDistance") != null) {
+      try {
+        viewDistance = (short) Integer.parseInt(props.getProperty("viewDistance"));
+      } catch(NumberFormatException ex) {
+        viewDistance = 0;
+      }
+    }
 
     if (World.getWorld().getLevel() == this) {
       ((CTFGameMode) World.getWorld().getGameMode()).resetRedFlagPos();
       ((CTFGameMode) World.getWorld().getGameMode()).resetBlueFlagPos();
       ((CTFGameMode) World.getWorld().getGameMode()).placeRedFlag();
       ((CTFGameMode) World.getWorld().getGameMode()).placeBlueFlag();
+    }
+  }
+  
+  private void setMapColor(String propertyName, int id) {
+    if (props.getProperty(propertyName) != null) {
+      String hexColor = props.getProperty(propertyName);
+      Color color;
+      try {
+        color = Color.decode(hexColor);
+      } catch(NumberFormatException ex) {
+        ex.printStackTrace();
+        colors[id][0] = -1;
+        colors[id][1] = -1;
+        colors[id][2] = -1;
+        return;
+      }
+      colors[id][0] = (short) color.getRed();
+      colors[id][1] = (short) color.getBlue();
+      colors[id][2] = (short) color.getGreen();
     }
   }
 

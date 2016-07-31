@@ -62,24 +62,26 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
       return;
     }
     String message = packet.getStringField("message");
+    int id = packet.getNumericField("id").byteValue();
     if (message.contains("&")) {
       session.getPlayer().kickForHacking();
       return;
     }
-    int clientMaxLength = 64 - session.getPlayer().getName().length() - 2;
+
     if (message.charAt(message.length() - 1) == '>' || message.charAt(message.length() - 1) ==
         '<') {
       message = message.substring(0, message.length() - 1);
       session.getPlayer().appendingChat = true;
-      session.getPlayer().partialChatMessage += message;
+      session.getPlayer().partialChatMessage += message + " ";
       session.getActionSender().sendChatMessage("&7" + message);
       return;
+    } else if(session.isExtensionSupported("LongerMessages") && id == 1){
+      session.getPlayer().appendingChat = true;
+      session.getPlayer().partialChatMessage += message + " ";
+      return;      
     } else if (session.getPlayer().appendingChat) {
       message = session.getPlayer().partialChatMessage + message;
       session.getPlayer().partialChatMessage = "";
-    } else if (message.length() == clientMaxLength) {
-      session.getActionSender().sendChatMessage("&7 End your chat with > to send a longer message" +
-          ".");
     }
 
     message = Server.cleanColorCodes(message);

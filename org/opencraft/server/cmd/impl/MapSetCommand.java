@@ -63,27 +63,36 @@ public class MapSetCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
       Level level = World.getWorld().getLevel();
-      if (level.id.contains("more/") || Configuration.getConfiguration().isTest() || player
-          .isOwner()) {
-        if (params.getArgumentCount() == 0) {
-          player.getActionSender().sendChatMessage("/mapset [name] [value]");
-          Enumeration<Object> keys = level.props.keys();
-          while (keys.hasMoreElements()) {
-            Object key = keys.nextElement();
-            player.getActionSender().sendChatMessage(key + " = " + level.props.get(key));
+      if (!level.id.contains("/")) {
+        player.getActionSender().sendChatMessage("- &eChanging a default map. Be careful!");
+      }
+      if (params.getArgumentCount() == 0) {
+        player.getActionSender().sendChatMessage("/mapset [name] [value]");
+        Enumeration<Object> keys = level.props.keys();
+        while (keys.hasMoreElements()) {
+          Object key = keys.nextElement();
+          player.getActionSender().sendChatMessage(key + " = " + level.props.get(key));
+        }
+      } else if (params.getArgumentCount() >= 2) {
+        String k = params.getStringArgument(0);
+        String v = "";
+        for (int i = 1; i < params.getArgumentCount(); i++) {
+          v += params.getStringArgument(i);
+          if (i != params.getArgumentCount() - 1) {
+            v += " ";
           }
-        } else if (params.getArgumentCount() >= 2) {
-          String k = params.getStringArgument(0);
-          String v = "";
-          for (int i = 1; i < params.getArgumentCount(); i++) {
-            v += params.getStringArgument(i) + " ";
+        }
+        level.props.setProperty(k, v);
+        level.saveProps();
+        level.loadProps();
+        World.getWorld().broadcast("- &7Map setting " + k + " set to " + v);
+        Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + params
+            .getStringArgument(1));
+        
+        if (k.endsWith("color")) {
+          for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+            p.getActionSender().sendMapColors();
           }
-          level.props.setProperty(k, v);
-          level.saveProps();
-          level.loadProps();
-          World.getWorld().broadcast("- &7Map setting " + k + " set to " + v);
-          Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + params
-              .getStringArgument(1));
         }
       }
     } else {

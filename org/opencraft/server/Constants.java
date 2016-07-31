@@ -64,21 +64,39 @@ public final class Constants {
       "many points you have and what you can buy. The team with the most kills after 10 minutes " +
       "wins. (Use the ClassiCube client to see a timer!)";
   // Supported Classic Protocol Extension names
-  public static final String[] CPE_EXT_NAMES = {"HeldBlock", "EnvMapAppearance", "MessageTypes",
-      "EnvColors", "HackControl", "CustomBlocks", "ExtPlayerList"};
+  public static final String[] CPE_EXT_NAMES = {
+    "HeldBlock",
+    "EnvMapAppearance",
+    "MessageTypes",
+    "EnvColors",
+    "HackControl",
+    "CustomBlocks",
+    "ExtPlayerList",
+    "LongerMessages"};
   // CPE versions
-  public static final int[] CPE_EXT_VERSIONS = {1, 1, 1, 1, 1, 1, 2};
+  public static final int[] CPE_EXT_VERSIONS = {
+    1,
+    2,
+    1,
+    1,
+    1,
+    1,
+    2,
+    1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
   public static final int COLOR_CLOUD = 1;
   public static final int COLOR_FOG = 2;
-  //public static int COLOR_AMBIENT = 3;
-  //public static int COLOR_DIFFUSE = 4;
+  public static final int COLOR_AMBIENT = 3;
+  public static final int COLOR_DIFFUSE = 4;
   // Environment colors for CPE clients
-  public static final short[][] COLORS = new short[][]{
+  public static final short[][] DEFAULT_COLORS = new short[][]{
       {127, 169, 255},
       {214, 229, 255},
-      {158, 193, 255},};
+      {158, 193, 255},
+      {  -1, -1, -1},
+      {  -1, -1, -1}
+  };
   public static final byte CUSTOM_BLOCK_LEVEL = 1;
   // URL of server texture pack for CPE
   public static final String URL_TEXTURE_PACK = "http://buildism.net/m/t.png";
