@@ -372,15 +372,14 @@ public final class Level implements Cloneable {
       try {
         color = Color.decode(hexColor);
       } catch(NumberFormatException ex) {
-        ex.printStackTrace();
         colors[id][0] = -1;
         colors[id][1] = -1;
         colors[id][2] = -1;
         return;
       }
       colors[id][0] = (short) color.getRed();
-      colors[id][1] = (short) color.getBlue();
-      colors[id][2] = (short) color.getGreen();
+      colors[id][1] = (short) color.getGreen();
+      colors[id][2] = (short) color.getBlue();
     }
   }
 

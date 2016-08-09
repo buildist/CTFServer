@@ -139,7 +139,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+import org.opencraft.server.cmd.impl.MapEnvironmentCommand;
 import org.opencraft.server.cmd.impl.StartCommand;
+import org.opencraft.server.cmd.impl.YesCommand;
+import org.opencraft.server.model.MapRatings;
 
 public class CTFGameMode extends GameModeAdapter<Player> {
 
@@ -219,6 +222,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("k", KickCommand.getCommand());
     registerCommand("kick", KickCommand.getCommand());
     registerCommand("lava", LavaCommand.getCommand());
+    registerCommand("mapenvironment", MapEnvironmentCommand.getCommand());
     registerCommand("mapimport", MapImportCommand.getCommand());
     registerCommand("maps", MapListCommand.getCommand());
     registerCommand("mapset", MapSetCommand.getCommand());
@@ -265,6 +269,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("warn", WarnCommand.getCommand());
     registerCommand("who", StatusCommand.getCommand());
     registerCommand("womid", WomIDCommand.getCommand());
+    registerCommand("yes", YesCommand.getCommand());
   }
 
   public int getRedPlayers() {
@@ -796,7 +801,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           if (GameSettings.getBoolean("Tournament"))
             return;
           World.getWorld().broadcast("- &aMap voting is now open for 40 seconds...");
-          World.getWorld().broadcast("- &aSay /vote [mapname] to vote!");
+          World.getWorld().broadcast("- &aSay /vote [mapname] to select the next map!");
           MapController.resetVotes();
           voting = true;
           int count = nominatedMaps.size();
@@ -811,6 +816,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             msg += map + ", ";
           }
           World.getWorld().broadcast("- &a" + msg);
+          World.getWorld().broadcast("- &3Did you like the map you just played (" + currentMap +")? Say /yes or /no to vote!");
           new Thread(new Runnable() {
             public void run() {
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
@@ -824,6 +830,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           Thread.sleep(40 * 1000);
           Level newLevel = MapController.getMostVotedForMap();
           ready = false;
+          String rating = Math.round(MapRatings.getRating(currentMap) * 100)+"%";
+          World.getWorld().broadcast("- &3This map's approval rating is now " + rating);
           World.getWorld().broadcast("- &e" + newLevel.id + " had the most votes. Starting new " +
               "game!");
           Thread.sleep(7 * 1000);

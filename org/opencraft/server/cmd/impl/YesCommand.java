@@ -43,16 +43,16 @@ import org.opencraft.server.model.MapRatings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class NoCommand implements Command {
+public class YesCommand implements Command {
   /**
    * The instance of this command.
    */
-  private static final NoCommand INSTANCE = new NoCommand();
+  private static final YesCommand INSTANCE = new YesCommand();
 
   /**
    * Default private constructor.
    */
-  private NoCommand() {
+  private YesCommand() {
         /* empty */
   }
 
@@ -61,45 +61,15 @@ public class NoCommand implements Command {
    *
    * @return The singleton instance of this command.
    */
-  public static NoCommand getCommand() {
+  public static YesCommand getCommand() {
     return INSTANCE;
   }
 
   @Override
   public void execute(Player player, CommandParameters params) {
     if (((CTFGameMode) World.getWorld().getGameMode()).voting) {
-      MapRatings.setPlayerRating(player.getName(), World.getWorld().getLevel().id, 0);
+      MapRatings.setPlayerRating(player.getName(), World.getWorld().getLevel().id, 1);
       player.getActionSender().sendChatMessage(" - &eThanks for your feedback!");
-    }
-    else {
-      int requiredVotes = World.getWorld().getPlayerList().size() / 2;
-      if (World.getWorld().getPlayerList().size() % 2 != 0)
-        requiredVotes++;
-
-      else if (((CTFGameMode) World.getWorld().getGameMode()).rtvNoPlayers.contains(player
-          .getSession().getIP()))
-        player.getActionSender().sendChatMessage("- &eYou have already voted.");
-      else if (player.team == -1)
-        player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
-      else {
-        if (((CTFGameMode) World.getWorld().getGameMode()).rtvYesPlayers.contains(player.getSession
-            ().getIP())) {
-          ((CTFGameMode) World.getWorld().getGameMode()).rtvVotes--;
-          ((CTFGameMode) World.getWorld().getGameMode()).rtvYesPlayers.remove(player.getSession()
-              .getIP());
-        }
-
-        int votes = --((CTFGameMode) World.getWorld().getGameMode()).rtvVotes;
-        World.getWorld().broadcast("- " + player.getColoredName() + " &3doesn't want to rock the " +
-            "vote &f(" + votes + " votes, " + requiredVotes + " required)");
-        World.getWorld().broadcast("- &3/rtv to vote, /nominate [mapname] to nominate a map, /no to" +
-            " stay on this map");
-        ((CTFGameMode) World.getWorld().getGameMode()).rtvNoPlayers.add(player.getSession().getIP());
-
-        if (votes >= requiredVotes) {
-          ((CTFGameMode) World.getWorld().getGameMode()).endGame();
-        }
-      }
     }
   }
 }

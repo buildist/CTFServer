@@ -82,14 +82,9 @@ public class MapSetCommand implements Command {
             v += " ";
           }
         }
-        level.props.setProperty(k, v);
-        level.saveProps();
-        level.loadProps();
-        World.getWorld().broadcast("- &7Map setting " + k + " set to " + v);
-        Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + params
-            .getStringArgument(1));
-        
-        if (k.endsWith("color")) {
+        Server.log(player.getName() + " " + k + " set to " + v);
+        doPropertyChange(k, v);
+        if (k.endsWith("Color")) {
           for (Player p : World.getWorld().getPlayerList().getPlayers()) {
             p.getActionSender().sendMapColors();
           }
@@ -98,5 +93,13 @@ public class MapSetCommand implements Command {
     } else {
       player.getActionSender().sendChatMessage("You need to be op to do that!");
     }
+  }
+  
+  public static void doPropertyChange(String k, String v) {
+    Level level = World.getWorld().getLevel();
+    level.props.setProperty(k, v);
+    level.saveProps();
+    level.loadProps();
+    World.getWorld().broadcast("- &7Map setting " + k + " set to " + v);
   }
 }

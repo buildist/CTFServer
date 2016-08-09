@@ -114,6 +114,7 @@ public class MapController {
     }
     Collections.sort(levelNames);
     nLevels = levelNames.size();
+    MapRatings.load();
   }
 
   public static Level randomLevel() {
