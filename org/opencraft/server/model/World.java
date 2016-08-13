@@ -219,7 +219,7 @@ public final class World {
     } else if (Configuration.getConfiguration().isVerifyingNames()) {
       Server.d(("Verifying " + username));
       long salt = HeartbeatManager.getHeartbeatManager().getSalt();
-      String hash = new StringBuilder().append(String.valueOf(salt)).toString();
+      String hash = new StringBuilder().append(String.valueOf(salt)).append(username).toString();
       MessageDigest digest;
       try {
         digest = MessageDigest.getInstance("MD5");
