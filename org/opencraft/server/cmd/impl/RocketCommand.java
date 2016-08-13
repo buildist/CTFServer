@@ -41,6 +41,7 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
+import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
@@ -112,7 +113,7 @@ public class RocketCommand implements Command {
           } else {
             World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY)
                 , (int) Math.round(lastZ), 0);
-            World.getWorld().getLevel().setBlock(bx, by, bz, 49);
+            World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.OBSIDIAN);
           }
           lastX = x;
           lastY = y;

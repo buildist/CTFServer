@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
@@ -106,7 +107,7 @@ public class GrenadeCommand implements Command {
             World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY)
                 , (int) Math.round(lastZ), 0);
             if (block == 0)
-              World.getWorld().getLevel().setBlock(bx, by, bz, 46);
+              World.getWorld().getLevel().setBlock(bx, by, bz, Constants.BLOCK_TNT);
           }
           lastX = x;
           lastY = y;

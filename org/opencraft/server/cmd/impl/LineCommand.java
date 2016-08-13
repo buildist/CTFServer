@@ -39,6 +39,7 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
@@ -85,7 +86,7 @@ public class LineCommand implements Command {
       if ((block != 0 && block != 20) || World.getWorld().getLevel().ceiling < bz)
         return;
       else if (i > 0)
-        World.getWorld().getLevel().setBlock(bx, by, bz, 20);
+        World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
       x += vx;
       y += vy;
       z += vz;

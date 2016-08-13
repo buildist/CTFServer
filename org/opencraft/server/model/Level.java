@@ -213,10 +213,11 @@ public final class Level implements Cloneable {
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z);
       int oldBlock = getBlock(bx, by, bz);
-      if (((oldBlock != 0 && oldBlock != 11) || bz > World.getWorld().getLevel().ceiling)) {
+      if (((oldBlock != 0 && oldBlock != BlockConstants.STILL_LAVA)
+          || bz > World.getWorld().getLevel().ceiling)) {
         return;
       } else {
-        World.getWorld().getLevel().setBlock(bx, by, bz, 11);
+        World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.STILL_LAVA);
       }
       x += vx;
       y += vy;
@@ -245,7 +246,7 @@ public final class Level implements Cloneable {
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z);
       int oldBlock = getBlock(bx, by, bz);
-      if (oldBlock == 11) {
+      if (oldBlock == BlockConstants.STILL_LAVA) {
         World.getWorld().getLevel().setBlock(bx, by, bz, 0);
       }
       x += vx;

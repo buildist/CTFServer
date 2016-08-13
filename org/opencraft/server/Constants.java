@@ -36,6 +36,8 @@
  */
 package org.opencraft.server;
 
+import org.opencraft.server.model.BlockConstants;
+
 /**
  * Holds global constants for the OpenCraft server.
  *
@@ -107,6 +109,10 @@ public final class Constants {
   public static final String URL_SERVER_STATUS = "http://buildism.net/mc/server/serverStatus.php";
   
   public static final int BLOCK_MINE = 62;
+  public static final int BLOCK_TNT = BlockConstants.TNT;
+  public static final int BLOCK_RED_FLAG = BlockConstants.CLOTH_RED;
+  public static final int BLOCK_BLUE_FLAG = BlockConstants.CLOTH_LIGHTBLUE;
+  public static final int BLOCK_CRATE = 64;
   /**
    * The protocol version of Minecraft that this version of OpenCraft is compatible with.
    */

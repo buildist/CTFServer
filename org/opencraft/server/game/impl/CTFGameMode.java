@@ -140,6 +140,7 @@ import java.util.TreeSet;
 import org.opencraft.server.cmd.impl.MapEnvironmentCommand;
 import org.opencraft.server.cmd.impl.StartCommand;
 import org.opencraft.server.cmd.impl.YesCommand;
+import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.MapRatings;
 
 public class CTFGameMode extends GameModeAdapter<Player> {
@@ -545,13 +546,13 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public void placeRedFlag() {
     if (getMode() == Level.CTF) {
-      World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, (byte) 21);
+      World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, (byte) Constants.BLOCK_RED_FLAG);
     }
   }
 
   public void placeBlueFlag() {
     if (getMode() == Level.CTF) {
-      World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, (byte) 28);
+      World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, (byte) Constants.BLOCK_BLUE_FLAG);
     }
   }
 
@@ -1309,7 +1310,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           !GameSettings.getBoolean("Chaos")) {
         player.getActionSender().sendBlock(x, y, z, (byte) level.getBlock(x, y, z));
       } else if (isTNT(x, y, z) && !ignore) { //Deleting tnt
-        player.getActionSender().sendBlock(x, y, z, (byte) 46);
+        player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_TNT);
       } else if (isMine(x, y, z) && !ignore) { // Deleting mines
         player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_MINE);
       } else if (type == 46 && mode == 1 && !ignore) //Placing tnt
@@ -1359,7 +1360,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             player.getActionSender().sendBlock(x, y, z, (byte) oldType);
           }
         }
-      } else if (((type == 8 || type == 10 || type == 7) && !player.isOp())) {
+      } else if (
+          (type == BlockConstants.LAVA
+              || type == BlockConstants.WATER || type == BlockConstants.ADMINIUM)
+          && !player.isOp()) {
         player.getActionSender().sendBlock(x, y, z, (byte) 0);
         player.getActionSender().sendChatMessage("- &eYou can't place this block type!");
       } else if (getDropItem(x, y, z) != null) {
@@ -1367,10 +1371,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         i.pickUp(player);
       } else if ((x == redFlagX && z == redFlagY && y == redFlagZ) && mode == 1 && !redFlagTaken
           && !ignore) {
-        player.getActionSender().sendBlock(x, y, z, (byte) 21);
+        player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_RED_FLAG);
       } else if ((x == blueFlagX && z == blueFlagY && y == blueFlagZ) && mode == 1 &&
           !blueFlagTaken && !ignore) {
-        player.getActionSender().sendBlock(x, y, z, (byte) 28);
+        player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_BLUE_FLAG);
       } else if (type < 50 + 16 && type > -1) {
         if (!ignore) {
           level.setBlock(x, y, z, (byte) (mode == 1 ? type : 0));
