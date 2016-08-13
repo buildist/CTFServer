@@ -1243,14 +1243,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           player.getActionSender().sendBlock(x, y, z, (byte) 0);
         }
        
-      } else if (player.respawning && type != 30) {
-        System.out.println("Ignoring block change by " + player.getName());
-        ignore = true;
-        if (mode == 0) {
-          player.getActionSender().sendBlock(x, y, z, (byte) oldType);
-        } else {
-          player.getActionSender().sendBlock(x, y, z, (byte) 0);
-        }
       } else if (!(x < playerX + MAX_DISTANCE
           && x > playerX - MAX_DISTANCE
           && y < playerY + MAX_DISTANCE

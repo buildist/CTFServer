@@ -148,9 +148,6 @@ public class ActionSender {
         session.send(bldr.toPacket());
         Position spawn = level.getSpawnPosition();
         Rotation r = level.getSpawnRotation();
-        if (session.getPlayer() != null) {
-          session.getPlayer().teleportBlockPosition = spawn.toBlockPos();
-        }
         sendSpawn((byte) -1, session.getPlayer().nameId, session.getPlayer().getColoredName(),
             session.getPlayer().getTeamName(), session.getPlayer().getName(), spawn.getX(), spawn
                 .getY(), spawn.getZ(), (byte) r.getRotation(), (byte) r.getLook(), false);
@@ -171,7 +168,6 @@ public class ActionSender {
    * @param rotation The new rotation.
    */
   public void sendTeleport(Position position, Rotation rotation) {
-    session.getPlayer().teleportBlockPosition = position.toBlockPos();
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(8));
     bldr.putByte("id", -1);
@@ -251,11 +247,7 @@ public class ActionSender {
    */
   public void sendUpdateEntity(Entity entity) {
     final Position oldPosition = entity.getOldPosition();
-    Position position;
-    if (false && ((Player) entity).respawning)
-      position = ((Player) entity).teleportBlockPosition.toFloatPos();
-    else
-      position = entity.getPosition();
+    Position position = entity.getPosition();
 
     final Rotation oldRotation = entity.getOldRotation();
     final Rotation rotation = entity.getRotation();

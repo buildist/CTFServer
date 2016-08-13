@@ -66,8 +66,7 @@ public class CTFProcessTask extends ScheduledTask {
         player.getSession().close();
         player.moveTime = System.currentTimeMillis();
       }
-      if (!player.respawning)
-        ctf.processPlayerMove(player);
+      ctf.processPlayerMove(player);
       if (player.flamethrowerEnabled) {
         player.flamethrowerUnits--;
         if (player.flamethrowerUnits == 0) {

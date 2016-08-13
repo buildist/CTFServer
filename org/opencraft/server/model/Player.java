@@ -105,7 +105,6 @@ public class Player extends Entity {
   public int placeBlock = -1;
   public boolean placeSolid = false;
   public boolean moveFlag = false;
-  public boolean respawning = false;
   public boolean isVisible = true;
   public boolean brush = false;
   public boolean hasVoted = false;
@@ -135,8 +134,6 @@ public class Player extends Entity {
   public int headBlockType = 0;
   public Position headBlockPosition = null;
   public int accumulatedStorePoints = 0;
-  public Position teleportBlockPosition;
-  public Position respawnPosition;
   public Player duelChallengedBy = null;
   public Player duelPlayer = null;
   public int duelKills = 0;
@@ -561,7 +558,6 @@ public class Player extends Entity {
       setAttribute("rules", "true");
       isNewPlayer = false;
     }
-    respawning = false;
   }
 
   public void sendToOtherPlayers() {
@@ -651,10 +647,8 @@ public class Player extends Entity {
                     new Thread(new PlayerUntagger(Player.this)).start();
                 }
             }).start();*/
-    respawnPosition = getPosition().toBlockPos();
     getActionSender().sendTeleport(World.getWorld().getLevel().getTeamSpawn(teamname), new
         Rotation(team == 0 ? 64 : 192, 0));
-    //respawning = true;
     System.out.println(getName() + " is respawning");
   }
 

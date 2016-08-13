@@ -89,14 +89,6 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     } else if (player.frozen) { //frozen
       player.getActionSender().sendTeleport(player.getPosition(), player.getRotation());
       return;
-    } else if (player.respawning) {
-      double distanceFromSpawn = blockPosition.dist2(player.teleportBlockPosition); //team spawn
-      double distanceFromRespawn = blockPosition.dist2(player.respawnPosition); //where they were
-      // killed
-      if (distanceFromSpawn < distanceFromRespawn) {
-        player.respawning = false;
-        System.out.println(player.getName() + " respawned");
-      }
     }
 
     if (dx != 0 || dy != 0 || dz != 0) { //for AFK kick
