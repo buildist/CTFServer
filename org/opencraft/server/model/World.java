@@ -293,7 +293,7 @@ public final class World {
         session.close();
 
       session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c
-          .getMessage() + "&0" + (player.isVIP() ? "+hax" : "-hax") + " cfg=buildism.net/m/", op);
+          .getMessage() + "&0" + (player.isVIP() ? "+hax" : "-hax"), op);
       LevelGzipper.getLevelGzipper().gzipLevel(session);
     }
     try {
@@ -352,29 +352,20 @@ public final class World {
 
   public void broadcast(Player player, String message) {
     for (Player otherPlayer : playerList.getPlayers()) {
-      otherPlayer.getSession().getActionSender().sendChatMessage(message, false);
+      otherPlayer.getSession().getActionSender().sendChatMessage(message);
     }
   }
 
   public void broadcastOp(String message) {
     for (Player otherPlayer : playerList.getPlayers()) {
       if (otherPlayer.isOp())
-        otherPlayer.getSession().getActionSender().sendChatMessage(message, false);
+        otherPlayer.getSession().getActionSender().sendChatMessage(message);
     }
   }
 
   public void broadcast(String message) {
     for (Player player : playerList.getPlayers()) {
       player.getSession().getActionSender().sendChatMessage(message);
-    }
-  }
-
-  public void announce(String message) {
-    for (Player player : playerList.getPlayers()) {
-      if (!player.isWOM || player.getSession().ccUser)
-        player.getSession().getActionSender().sendChatMessage("- " + message);
-      else
-        player.getSession().getActionSender().sendChatMessage(message, true);
     }
   }
 

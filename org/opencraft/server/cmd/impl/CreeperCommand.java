@@ -65,7 +65,7 @@ public class CreeperCommand implements Command {
     int px = (pos.getX() - 16) / 32;
     int py = (pos.getY() - 16) / 32;
     int pz = ((pos.getZ() - 16) / 32);
-    World.getWorld().announce("&esssssssSSSSSSSSS");
+    World.getWorld().broadcast("- &esssssssSSSSSSSSS");
     ((CTFGameMode) World.getWorld().getGameMode()).explodeTNT(
             player, World.getWorld().getLevel(), px, py, pz, 4, true, true, false, null);
 

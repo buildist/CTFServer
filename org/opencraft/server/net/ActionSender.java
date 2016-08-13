@@ -424,18 +424,17 @@ public class ActionSender {
    * @param message The message.
    */
   public void sendChatMessage(String message) {
-    sendChatMessage(message, false);
+    sendChatMessage(message, 0);
   }
 
-  public void sendWomMessage(String message) {
-    int maxLength = session.isExtensionSupported("MessageTypes") ? 64 : 64 - "^detail.user="
-        .length();
-    if (message.length() > maxLength)
+  public void sendStatusMessage(String message) {
+    int maxLength = 64;
+    if (message.length() > maxLength) {
       message = message.substring(0, maxLength);
+    }
     if (session.isExtensionSupported("MessageTypes")) {
-      this.sendChatMessage(message, false, 2);
-    } else if (session.getPlayer().isWOM)
-      sendChatMessage("^detail.user=" + message);
+      this.sendChatMessage(message, 2);
+    }
   }
 
   /**
@@ -462,13 +461,13 @@ public class ActionSender {
    * @param id      The source player id.
    * @param message The message.
    */
-  public void sendChatMessage(String message, boolean isWOM, int messageType) {
+  public void sendChatMessage(String message, int messageType) {
     if (messageType != 0 && !session.ccUser)
       return;
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(13));
     String message2 = "";
-    int maxLength = isWOM ? 64 - "^detail.user.alert=".length() : 64;
+    int maxLength = 64;
     if (message.length() > maxLength) {
       for (int i = maxLength; i > 0; i--) {
         if (message.charAt(i) == ' ' && !((i == 1 || i == 4) && message.charAt(0) == '>')) {
@@ -490,14 +489,9 @@ public class ActionSender {
         message = message.substring(0, maxLength - 1);
     }
     bldr.putByte("id", messageType);
-    bldr.putString("message", (isWOM ? "^detail.user.alert=" : "") + message);
+    bldr.putString("message", message);
     session.send(bldr.toPacket());
     if (!message2.equals(""))
-      sendChatMessage("> " + message2, isWOM, messageType);
+      sendChatMessage("> " + message2, messageType);
   }
-
-  public void sendChatMessage(String message, boolean isWOM) {
-    sendChatMessage(message, isWOM, 0);
-  }
-
 }

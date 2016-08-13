@@ -74,8 +74,6 @@ public class Player extends Entity {
    */
   private final Map<String, Object> attributes = new HashMap<String, Object>();
   public short nameId;
-  public boolean isWOM = false;
-  public boolean customWomMessage = false;
   public boolean isNewPlayer = false;
   public boolean appendingChat = false;
   public String partialChatMessage = "";
@@ -285,7 +283,7 @@ public class Player extends Entity {
         ((CTFGameMode) World.getWorld().getGameMode()).redCaptures++;
       else
         ((CTFGameMode) World.getWorld().getGameMode()).blueCaptures++;
-      ((CTFGameMode) World.getWorld().getGameMode()).updateWomMessage();
+      ((CTFGameMode) World.getWorld().getGameMode()).updateStatusMessage();
     }
 
     killstreak++;

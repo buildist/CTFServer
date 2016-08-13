@@ -110,7 +110,6 @@ import org.opencraft.server.cmd.impl.VIPCommand;
 import org.opencraft.server.cmd.impl.VoteCommand;
 import org.opencraft.server.cmd.impl.WarnCommand;
 import org.opencraft.server.cmd.impl.WaterCommand;
-import org.opencraft.server.cmd.impl.WomIDCommand;
 import org.opencraft.server.cmd.impl.XBanCommand;
 import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.model.BlockLog;
@@ -185,8 +184,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public String previousMap = null;
   private Level map;
   private ArrayList<DropItem> items = new ArrayList<DropItem>(8);
-  private String womMessage;
-  private String[] womDetails = new String[2];
+  private String statusMessage;
 
   public CTFGameMode() {
     registerCommand("accept", DuelAcceptCommand.getCommand());
@@ -268,7 +266,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("water", WaterCommand.getCommand());
     registerCommand("warn", WarnCommand.getCommand());
     registerCommand("who", StatusCommand.getCommand());
-    registerCommand("womid", WomIDCommand.getCommand());
     registerCommand("yes", YesCommand.getCommand());
   }
 
@@ -292,51 +289,42 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     return bluePlayers;
   }
 
-  public void updateWomMessage() {
+  public void updateStatusMessage() {
     String redFlag = redFlagTaken ? " &6[!]" : "";
     String blueFlag = blueFlagTaken ? " &6[!]" : "";
-    womMessage = "Map: " + map.id + " | &cRed: " + redCaptures + redFlag + " &f| &9Blue: " +
-        blueCaptures + blueFlag;
+    statusMessage = "Map: " + map.id
+        + " | &cRed: " + redCaptures + redFlag + " &f| &9Blue: " + blueCaptures + blueFlag;
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (!p.customWomMessage) {
-        sendDefaultMessage(p);
+      sendStatusMessage(p);
+    }
+  }
+
+  public void sendAnnouncement(String message) {
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p.getSession().ccUser) {
+        sendAnnouncement(p, message);
       }
     }
   }
 
-  public void sendCustomWomMessage(String message) {
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.isWOM || p.getSession().ccUser) {
-        sendCustomWomMessage(p, message);
-      }
-    }
-  }
+  public void sendAnnouncement(final Player p, final String message) {
+    if (p.getSession().isExtensionSupported("MessageTypes")) {
+      new Thread(new Runnable() {
 
-  public void sendCustomWomMessage(final Player p, final String message) {
-    new Thread(new Runnable() {
-
-      public void run() {
-        try {
-          if (p.getSession().isExtensionSupported("MessageTypes")) {
-            p.getActionSender().sendChatMessage(message, false, 100);
-            Thread.sleep(4000);
-            p.getActionSender().sendChatMessage("", false, 100);
-          } else {
-            p.customWomMessage = true;
-            p.getActionSender().sendWomMessage(message);
-            Thread.sleep(4000);
-            p.customWomMessage = false;
-            sendDefaultMessage(p);
+        public void run() {
+          try {
+              p.getActionSender().sendChatMessage(message, 100);
+              Thread.sleep(4000);
+              p.getActionSender().sendChatMessage("", 100);
+          } catch (InterruptedException ex) {
           }
-        } catch (Exception ex) {
-          p.customWomMessage = false;
         }
-      }
-    }).start();
+      }).start();
+    }
   }
 
-  public void sendDefaultMessage(Player p) {
-    p.getActionSender().sendWomMessage(womMessage);
+  public void sendStatusMessage(Player p) {
+    p.getActionSender().sendStatusMessage(statusMessage);
   }
 
   @Override
@@ -409,8 +397,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           " (www.classicube.net) for more features.");
     }
     if (player.getSession().isExtensionSupported("MessageTypes")) {
-      ((CTFGameMode) World.getWorld().getGameMode()).sendDefaultMessage(player);
-      player.getActionSender().sendChatMessage(Constants.SERVER_NAME, false, 1);
+      ((CTFGameMode) World.getWorld().getGameMode()).sendStatusMessage(player);
+      player.getActionSender().sendChatMessage(Constants.SERVER_NAME, 1);
     }
   }
 
@@ -440,8 +428,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           t.safe = true;
           new Thread(new PlayerUntagger(t)).start();
           n++;
-          World.getWorld().announce(p.parseName() + " exploded " + t.getColoredName() + (type ==
-              null ? "" : " &f(" + type + ")"));
+          World.getWorld().broadcast("- " + p.parseName() + " exploded " + t.getColoredName()
+              + (type == null ? "" : " &f(" + type + ")"));
           p.gotKill(t);
           t.sendToTeamSpawn();
           t.died(p);
@@ -473,19 +461,19 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               World.getWorld().getLevel().setBlock((m.x - 16) / 32, (m.y - 16) / 32, (m.z - 16) /
                   32, 0);
               m.owner.removeMine(m);
-              World.getWorld().announce(p.parseName() + " defused " + m.owner.parseName() + "'s " +
-                  "mine!");
+              World.getWorld()
+                  .broadcast("- " + p.parseName() + " defused " + m.owner.parseName() + "'s mine!");
             }
           }
         }
       }
     }
     if (n == 2) {
-      World.getWorld().announce("&bDouble Kill");
+      World.getWorld().broadcast("- &bDouble Kill");
     } else if (n == 3) {
-      World.getWorld().announce("&bTriple Kill");
+      World.getWorld().broadcast("- &bTriple Kill");
     } else if (n > 3) {
-      World.getWorld().announce("&b" + n + "x Kill");
+      World.getWorld().broadcast("- &b" + n + "x Kill");
     }
   }
 
@@ -520,7 +508,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           Position blockPos = t.getPosition().toBlockPos();
           if (blockPos.getX() == bx && blockPos.getY() == by && blockPos.getZ() == bz && (p.team
               != t.team) && !t.safe && p.canKill(t, false)) {
-            World.getWorld().announce(p.parseName() + " cooked " + t.getColoredName());
+            World.getWorld().broadcast("- " + p.parseName() + " cooked " + t.getColoredName());
             p.gotKill(t);
             t.sendToTeamSpawn();
             t.safe = true;
@@ -652,7 +640,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           World.getWorld().setLevel(map);
           resetRedFlagPos();
           resetBlueFlagPos();
-          updateWomMessage();
+          updateStatusMessage();
           updateLeaderboard();
           voting = false;
           rtvVotes = 0;
@@ -673,7 +661,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           redCaptures = 0;
           blueCaptures = 0;
           ready = true;
-          updateWomMessage();
+          updateStatusMessage();
           placeBlueFlag();
           placeRedFlag();
           openSpawns();
@@ -729,7 +717,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       int type = 10 + (3 - i);
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
         if (p.getSession().isExtensionSupported("MessageTypes")) {
-          p.getActionSender().sendChatMessage(msg, false, type);
+          p.getActionSender().sendChatMessage(msg, type);
         }
       }
     }
@@ -872,7 +860,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         dropFlag(p);
       }
     }
-    updateWomMessage();
+    updateStatusMessage();
     antiStalemate = false;
   }
 
@@ -884,7 +872,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     if (p.hasFlag) {
       p.hasFlag = false;
       World.getWorld().broadcast("- " + p.parseName() + " dropped the flag!");
-      sendCustomWomMessage(p.parseName() + " dropped the flag!");
+      sendAnnouncement(p.parseName() + " dropped the flag!");
       Position playerPos = p.getPosition().toBlockPos();
       final boolean _antiStalemate = this.antiStalemate;
       if (p.team == 0) {
@@ -949,13 +937,13 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             p.getActionSender().sendChatMessage("- &eYou can't take the flag while dueling");
           } else {
             World.getWorld().broadcast("- &eRed flag taken by " + p.parseName() + "!");
-            sendCustomWomMessage("&eRed flag taken by " + p.parseName() + "!");
+            sendAnnouncement("&eRed flag taken by " + p.parseName() + "!");
             p.getActionSender().sendChatMessage("- &eClick your own flag to capture, or use /fd " +
                 "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             redFlagTaken = true;
             checkForStalemate();
-            this.updateWomMessage();
+            this.updateStatusMessage();
             resetRedFlagPos();
             if (redFlagDroppedThread != null) {
               redFlagDroppedThread.interrupt();
@@ -968,14 +956,14 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         if (p.hasFlag && !redFlagTaken && !redFlagDropped) {
           World.getWorld().broadcast("- &eBlue flag captured by " + p.parseName() + " for the red" +
               " team!");
-          sendCustomWomMessage("&eBlue flag captured by " + p.parseName() + "!");
+          sendAnnouncement("&eBlue flag captured by " + p.parseName() + "!");
           redCaptures++;
           p.hasFlag = false;
           blueFlagTaken = false;
           placeBlueFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
           p.addStorePoints(20);
-          this.updateWomMessage();
+          this.updateStatusMessage();
           if (redCaptures == GameSettings.getInt("MaxCaptures")) {
             nominatedMaps.clear();
             endGame();
@@ -1001,13 +989,13 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             p.getActionSender().sendChatMessage("- &eYou can't take the flag while dueling");
           } else {
             World.getWorld().broadcast("- &eBlue flag taken by " + p.parseName() + "!");
-            sendCustomWomMessage("&eBlue flag taken by " + p.parseName() + "!");
+            sendAnnouncement("&eBlue flag taken by " + p.parseName() + "!");
             p.getActionSender().sendChatMessage("- &eClick your own flag to capture, or use /fd " +
                 "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             blueFlagTaken = true;
             checkForStalemate();
-            this.updateWomMessage();
+            this.updateStatusMessage();
             resetBlueFlagPos();
             if (blueFlagDroppedThread != null) {
               blueFlagDroppedThread.interrupt();
@@ -1019,14 +1007,14 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         if (p.hasFlag && !blueFlagTaken && !blueFlagDropped) {
           World.getWorld().broadcast("- &eRed flag captured by " + p.parseName() + " for the blue" +
               " team!");
-          sendCustomWomMessage("&eRed flag captured by " + p.parseName() + "!");
+          sendAnnouncement("&eRed flag captured by " + p.parseName() + "!");
           blueCaptures++;
           p.hasFlag = false;
           redFlagTaken = false;
           placeRedFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
           p.addStorePoints(20);
-          this.updateWomMessage();
+          this.updateStatusMessage();
           if (blueCaptures == GameSettings.getInt("MaxCaptures")) {
             nominatedMaps.clear();
             endGame();
@@ -1075,7 +1063,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               }
             }
           }
-          World.getWorld().announce(m.owner.parseName() + " mined " + p.parseName() + ".");
+          World.getWorld().broadcast("- " + m.owner.parseName() + " mined " + p.parseName() + ".");
           m.owner.gotKill(p);
           p.sendToTeamSpawn();
           checkFirstBlood(m.owner);
@@ -1125,7 +1113,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       }
       if (t1 != t2 && tagged != null && tagger != null && tagger.canKill(tagged, false) &&
           !tagged.safe && !tagged.shield) {
-        World.getWorld().announce(tagger.parseName() + " tagged " + tagged.parseName() + ".");
+        World.getWorld()
+            .broadcast("- " + tagger.parseName() + " tagged " + tagged.parseName() + ".");
         tagger.gotKill(tagged);
         tagged.sendToTeamSpawn();
         tagged.safe = true;

@@ -8,8 +8,9 @@ public class ConsoleActionSender extends ActionSender {
     super(null);
   }
 
-  public void sendChatMessage(int id, String message, boolean isWOM, int messageType) {
-    if (!isWOM && messageType == 0)
+  @Override
+  public void sendChatMessage(String message, int messageType) {
+    if (messageType == 0)
       Server.log(">> " + message);
   }
 }

@@ -145,9 +145,9 @@ public class CTFProcessTask extends ScheduledTask {
     if (ticks == 0) {
       for (Player player : world.getPlayerList().getPlayers()) {
         if (player.getSession().isExtensionSupported("MessageTypes")) {
-          ((CTFGameMode) World.getWorld().getGameMode()).sendDefaultMessage(player);
+          ((CTFGameMode) World.getWorld().getGameMode()).sendStatusMessage(player);
           player.getActionSender()
-              .sendChatMessage(message + " | " + prettyTime((int) remaining), false, 1);
+              .sendChatMessage(message + " | " + prettyTime((int) remaining), 1);
         }
       }
     }
