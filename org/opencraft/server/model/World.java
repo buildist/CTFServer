@@ -216,12 +216,10 @@ public final class World {
       session.getActionSender().sendLoginFailure("You're banned!");
       session.close();
       return;
-    } else if (Configuration.getConfiguration().isVerifyingNames() && !session.isEmailUser &&
-        !username.endsWith("+")) {
+    } else if (Configuration.getConfiguration().isVerifyingNames()) {
       Server.d(("Verifying " + username));
       long salt = HeartbeatManager.getHeartbeatManager().getSalt();
-      String hash = new StringBuilder().append(String.valueOf(salt)).append(username.replace("*",
-          "")).toString();
+      String hash = new StringBuilder().append(String.valueOf(salt)).toString();
       MessageDigest digest;
       try {
         digest = MessageDigest.getInstance("MD5");
@@ -231,8 +229,6 @@ public final class World {
       digest.update(hash.getBytes());
       byte[] bytes = digest.digest();
       String hex = new BigInteger(1, bytes).toString(16);
-      System.out.println(hex + " " + verificationKey + " " + salt + " " + username + " " +
-          username.replace("*", ""));
       if (!verificationKey.equals(hex) && !verificationKey.equals('0' + hex)) {
         session.getActionSender().sendLoginFailure("Login failed, please try again");
         session.close();
@@ -279,23 +275,11 @@ public final class World {
       op = false;
     if (player.getAttribute("rules") == null)
       player.isNewPlayer = true;
-
-                /*if(!Server.isAllowed(username) && !op && !player.isVIP())
-                {
-                    session.getActionSender().sendLoginFailure("You need to have rank
-                    "+Configuration.getConfiguration().getMinRank()+" or better to play here");
-                    session.close();
-                }
-                else*/
-    {
-
-      if (player.getAttribute("banned") != null && player.getAttribute("banned").equals("true"))
-        session.close();
-
-      session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c
-          .getMessage() + "&0" + (player.isVIP() ? "+hax" : "-hax"), op);
-      LevelGzipper.getLevelGzipper().gzipLevel(session);
-    }
+    if (player.getAttribute("banned") != null && player.getAttribute("banned").equals("true"))
+      session.close();
+    session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c
+        .getMessage() + "&0" + (player.isVIP() ? "+hax" : "-hax"), op);
+    LevelGzipper.getLevelGzipper().gzipLevel(session);
     try {
       Thread.sleep(100);
     } catch (InterruptedException ex) {

@@ -118,8 +118,6 @@ public class LoadPersistenceRequest extends PersistenceRequest {
         player.setAttribute("games", 0);
       }
       setDefaultStats(player);
-      if (player.getSession() != null && player.getSession().ccUser)
-        player.setAttribute("ccAuthenticated", "true");
     } else
       throw new IOException();
 

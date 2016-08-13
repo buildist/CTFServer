@@ -44,7 +44,6 @@ import org.opencraft.server.cmd.impl.BanIPCommand;
 import org.opencraft.server.cmd.impl.BlockInfoCommand;
 import org.opencraft.server.cmd.impl.BlueCommand;
 import org.opencraft.server.cmd.impl.BountyCommand;
-import org.opencraft.server.cmd.impl.CCCommand;
 import org.opencraft.server.cmd.impl.ChatCommand;
 import org.opencraft.server.cmd.impl.ClientsCommand;
 import org.opencraft.server.cmd.impl.DeOperatorCommand;
@@ -194,7 +193,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("blue", BlueCommand.getCommand());
     registerCommand("bounty", BountyCommand.getCommand());
     registerCommand("c", ChatCommand.getCommand());
-    registerCommand("cc", CCCommand.getCommand());
     registerCommand("commands", HelpCommand.getCommand());
     registerCommand("d", DefuseCommand.getCommand());
     registerCommand("defuse", DefuseCommand.getCommand());
@@ -388,11 +386,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       player.getActionSender().sendChatMessage("&bSay /join to start playing or /spec to spectate" +
           ". /help will show these instructions again.");
     }
-    if (player.getSession().ccUser && !player.getSession().ccAuthenticated) {
-      player.getActionSender().sendChatMessage("- &eSomeone on Minecraft.net is already using " +
-          "your name. If this is you, login to the server from Minecraft, type /cc and restart " +
-          "ClassiCube to remove the * from your name.");
-    } else if (!player.getSession().ccUser) {
+    if (!player.getSession().ccUser) {
       player.getActionSender().sendChatMessage("-- &bWe recommend using the &aClassiCube &bclient" +
           " (www.classicube.net) for more features.");
     }

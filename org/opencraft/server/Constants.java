@@ -105,6 +105,7 @@ public final class Constants {
       SECRET;
   // URL to send server status (map + number of players) to
   public static final String URL_SERVER_STATUS = "http://buildism.net/mc/server/serverStatus.php";
+  
   public static final int BLOCK_MINE = 62;
   /**
    * The protocol version of Minecraft that this version of OpenCraft is compatible with.

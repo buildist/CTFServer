@@ -59,9 +59,7 @@ public final class MinecraftSession extends OCSession {
    * The action sender associated with this session.
    */
   public boolean levelSent = false;
-  public boolean isEmailUser = false;
   public boolean ccUser = false;
-  public boolean ccAuthenticated = false;
   public String client = "Minecraft.net";
   public String username;
   public String verificationKey;

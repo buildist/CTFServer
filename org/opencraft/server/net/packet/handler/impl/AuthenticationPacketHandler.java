@@ -38,15 +38,10 @@ package org.opencraft.server.net.packet.handler.impl;
 
 
 import org.opencraft.server.Constants;
-import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.handler.PacketHandler;
-import org.opencraft.server.persistence.LoadPersistenceRequest;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 /**
@@ -69,31 +64,9 @@ public final class AuthenticationPacketHandler implements PacketHandler<Minecraf
     }
 
     String username = packet.getStringField("username");
-    int idx = username.indexOf("@");
-    if (idx > -1) {
-      session.isEmailUser = true;
-      String[] parts = username.split("@");
-      int n = (parts[0].charAt(0) * parts[0].charAt(1) * parts[0].charAt(2)) % 99;
-      username = parts[0] + "_" + n;
-    }
     int padding = packet.getNumericField("unused").intValue();
     if (padding == 0x42) {
       session.ccUser = true;
-      boolean authenticated = true;
-      File test = new File("./savedGames/" + username.toLowerCase() + ".xml");
-      if (test.exists()) {
-        Player p = new Player(null, username);
-        try {
-          new LoadPersistenceRequest(p).perform();
-          authenticated = p.getAttribute("ccAuthenticated") != null;
-        } catch (IOException ex) {
-          authenticated = false;
-        }
-      }
-      session.ccAuthenticated = authenticated;
-      if (!authenticated) {
-        username += "*";
-      }
       session.getActionSender().sendCPEHandshake();
     }
     session.username = username;
