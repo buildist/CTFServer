@@ -38,6 +38,7 @@ package org.opencraft.server.net;
 
 import org.apache.mina.core.session.IoSession;
 import org.opencraft.server.Server;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.net.packet.Packet;
 
 /**
@@ -82,8 +83,10 @@ public abstract class OCSession extends Connectable {
    */
   public void send(Packet packet) {
     this.send(packet, session);
-    if (packet.definition.getOpcode() != 8)
+    if (GameSettings.getBoolean("Debug") && packet.definition.getOpcode() != 8) {
       Server.d(packet.definition.getOpcode() + " --> " + session.getRemoteAddress());
+      Server.d(packet.toString());
+    }
   }
 
   /**

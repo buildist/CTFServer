@@ -108,4 +108,14 @@ public final class Packet {
     return (byte[]) fields.get(fieldName);
   }
 
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    builder.append(definition.getName()).append(" [");
+    for (PacketField field : definition.getFields()) {
+      builder.append(field.getName()).append("=").append(fields.get(field.getName())).append(" ");
+    }
+    builder.append("]");
+    return builder.toString();
+  }
 }

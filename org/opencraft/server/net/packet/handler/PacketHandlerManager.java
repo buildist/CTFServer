@@ -44,6 +44,7 @@ import org.opencraft.server.net.packet.Packet;
 
 import java.util.Map;
 import java.util.logging.Logger;
+import org.opencraft.server.game.impl.GameSettings;
 
 /**
  * A class which manages <code>PacketHandler</code>s.
@@ -88,8 +89,10 @@ public class PacketHandlerManager<SessionType extends OCSession> {
    */
   public void handlePacket(SessionType session, Packet packet) {
     PacketHandler handler = handlers[packet.getDefinition().getOpcode()];
-    if (packet.definition.getOpcode() != 8)
+    if (GameSettings.getBoolean("Debug") && packet.definition.getOpcode() != 8) {
       Server.d(packet.definition.getOpcode() + " <--  " + ((MinecraftSession) session).getIP());
+      Server.d(packet.toString());
+    }
     if (handler != null) {
       handler.handlePacket(session, packet);
     } else {
