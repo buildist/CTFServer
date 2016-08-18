@@ -36,6 +36,10 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import java.net.URLEncoder;
+import org.opencraft.server.Constants;
+import org.opencraft.server.Server;
+import org.opencraft.server.WebServer;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
@@ -68,8 +72,31 @@ public class NoCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     if (((CTFGameMode) World.getWorld().getGameMode()).voting) {
-      MapRatings.setPlayerRating(player.getName(), World.getWorld().getLevel().id, 0);
+      final String mapName = World.getWorld().getLevel().id;
+      MapRatings.setPlayerRating(player.getName(), mapName, 0);
       player.getActionSender().sendChatMessage(" - &eThanks for your feedback!");
+      String text = "";
+      if (params.getArgumentCount() > 0) {
+        for (int i = 0; i < params.getArgumentCount(); i++) {
+          text += params.getStringArgument(i);
+          if (i != params.getArgumentCount() - 1) {
+            text += " ";
+          }
+        }
+      }
+      final String message = player.getName() + " voted No: " + text + "\n\nCurrent rating: "
+          + MapRatings.getRating(mapName);
+      WebServer.run(new Runnable() {
+        @Override
+        public void run() {
+          try {
+          String urlMessage = URLEncoder.encode(message, "UTF-8");
+          Server.httpGet(Constants.URL_MAP_COMMENT + "&map=" + mapName + "&message=" + urlMessage);
+          } catch(Exception ex) {
+            ex.printStackTrace();
+          }
+        }
+      });
     }
     else {
       int requiredVotes = World.getWorld().getPlayerList().size() / 2;

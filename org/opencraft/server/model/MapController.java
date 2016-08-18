@@ -107,9 +107,10 @@ public class MapController {
     File dir = new File(Constants.ROOT_PATH + "/maps");
     String[] maps = dir.list();
     for (String mapName : maps) {
-      if (mapName.contains(".dat")) {
-        levelNames.add(mapName.replace(".dat", ""));
-        levelVotes.put(mapName.replace(".dat", ""), 0);
+      String[] parts = mapName.split("\\.");
+      if (parts.length == 2 && !parts[1].equals("properties")) {
+        levelNames.add(parts[0]);
+        levelVotes.put(parts[0], 0);
       }
     }
     Collections.sort(levelNames);
@@ -120,7 +121,7 @@ public class MapController {
   public static Level randomLevel() {
     int r = Server.random.nextInt(nLevels);
     String name = levelNames.get(r);
-    return new Level().load("maps/" + name + ".dat", name);
+    return getLevel(name);
   }
 
   public static Level getLevel(String id) {
@@ -189,6 +190,6 @@ public class MapController {
     if (highest == null)
       return randomLevel();
     else
-      return new Level().load("maps/" + highest + ".dat", highest);
+      return getLevel(highest);
   }
 }

@@ -108,6 +108,8 @@ public final class Constants {
   // URL to send server status (map + number of players) to
   public static final String URL_SERVER_STATUS = "http://buildism.net/mc/server/serverStatus.php";
   
+  public static final String URL_MAP_COMMENT = "http://buildism.net/mc/server/mapComment.php?k=" + SECRET;
+  
   public static final int BLOCK_MINE = 62;
   public static final int BLOCK_TNT = BlockConstants.TNT;
   public static final int BLOCK_RED_FLAG = BlockConstants.CLOTH_RED;

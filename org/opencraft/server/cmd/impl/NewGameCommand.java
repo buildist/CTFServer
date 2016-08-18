@@ -67,10 +67,16 @@ public class NewGameCommand implements Command {
         mapName = null;
       }
       Level newMap;
-      if (mapName == null)
+      if (mapName == null) {
         newMap = MapController.randomLevel();
-      else
+      }
+      else {
         newMap = MapController.getLevel(mapName);
+        if (newMap == null) {
+          player.getActionSender().sendChatMessage("- &eMap not found.");
+          return;
+        }
+      }
       ((CTFGameMode) World.getWorld().getGameMode()).startGame(newMap);
     } else
       player.getActionSender().sendChatMessage("You must be OP to do that");

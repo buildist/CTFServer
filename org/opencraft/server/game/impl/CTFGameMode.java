@@ -799,7 +799,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             msg += map + ", ";
           }
           World.getWorld().broadcast("- &a" + msg);
-          World.getWorld().broadcast("- &3Did you like the map you just played (" + currentMap +")? Say /yes or /no to vote!");
+          World.getWorld().broadcast("- &3Did you like the map you just played (" + currentMap +")? Say /yes or /no followed by a reason (optional) to vote!");
           new Thread(new Runnable() {
             public void run() {
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
@@ -813,8 +813,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           Thread.sleep(40 * 1000);
           Level newLevel = MapController.getMostVotedForMap();
           ready = false;
-          String rating = Math.round(MapRatings.getRating(currentMap) * 100)+"%";
+          String rating = MapRatings.getRating(currentMap);
           World.getWorld().broadcast("- &3This map's approval rating is now " + rating);
+          World.getWorld().broadcast("- &3See the ratings at http://buildism.net/mc/mapratings.");
           World.getWorld().broadcast("- &e" + newLevel.id + " had the most votes. Starting new " +
               "game!");
           Thread.sleep(7 * 1000);
