@@ -42,8 +42,10 @@ import org.opencraft.server.model.Player;
 
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import org.opencraft.server.Server;
 
 public class MapImportCommand implements Command {
 
@@ -67,8 +69,8 @@ public class MapImportCommand implements Command {
         public void run() {
           try {
             String mapName = params.getStringArgument(0);
-            String urlString = "http://persignum.com/download.php?password=IJobS0d3Mb&mapname=" +
-                mapName;
+            String urlString = "http://persignum.com/download.php?password=IJobS0d3Mb&mapname="
+                + URLEncoder.encode(mapName, "UTF-8");
             URL url = new URL(urlString);
             ReadableByteChannel ch = Channels.newChannel(url.openStream());
             if (mapName.contains("/"))
@@ -81,6 +83,9 @@ public class MapImportCommand implements Command {
                 " to it");
           } catch (Exception ex) {
             player.getActionSender().sendChatMessage("Error downloading map. Blame Jacob_ or Jack");
+            player.getActionSender().sendChatMessage(ex.toString());
+            Server.log(ex.toString());
+            Server.log(ex);
           }
         }
       }).start();
