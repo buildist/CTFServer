@@ -141,6 +141,7 @@ import org.opencraft.server.cmd.impl.MapEnvironmentCommand;
 import org.opencraft.server.cmd.impl.StartCommand;
 import org.opencraft.server.cmd.impl.YesCommand;
 import org.opencraft.server.model.BlockConstants;
+import org.opencraft.server.model.ChatMode;
 import org.opencraft.server.model.MapRatings;
 
 public class CTFGameMode extends GameModeAdapter<Player> {
@@ -1434,61 +1435,116 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
     player.lastMessage = message;
     player.lastMessageTime = System.currentTimeMillis();
-    if (message.startsWith("@") && message.length() > 1) {
+    
+    // Toggle chat mode ("#", "$", "@player").
+    if (message.equals("#") && player.isOp()) {
+      if(player.chatMode != ChatMode.OPERATOR) {
+        player.chatMode = ChatMode.OPERATOR;
+        player.getActionSender().sendChatMessage("&7Switched to op chat, say # again to return to normal.");
+      } else {
+        player.chatMode = ChatMode.DEFAULT;
+        player.getActionSender().sendChatMessage("&7Switched to normal chat.");        
+      }
+      return;
+    } else if(message.equals("$")) {
+      if(player.chatMode != ChatMode.TEAM) {
+        player.chatMode = ChatMode.TEAM;
+        player.getActionSender().sendChatMessage("&7Switched to team chat, say $ again to return to normal.");
+      } else {
+        player.chatMode = ChatMode.DEFAULT;
+        player.getActionSender().sendChatMessage("&7Switched to normal chat.");        
+      }
+      return;
+    } else if(message.startsWith("@") && message.trim().split(" ").length == 1) {
+      if (message.length() > 1) {
+        Player messagePlayer = Player.getPlayer(message.substring(1), player.getActionSender());
+        if (messagePlayer != null) {
+          player.chatMode = ChatMode.PRIVATE;
+          player.chatPlayer = messagePlayer;
+          player.getActionSender().sendChatMessage("&7Switched to private chat with " + messagePlayer.getName() + ", say @ to return to normal.");
+        } else {
+          player.getActionSender().sendChatMessage("- &ePlayer not found.");
+        }
+      } else if (player.chatMode == ChatMode.PRIVATE) {
+        player.chatMode = ChatMode.DEFAULT;
+        player.getActionSender().sendChatMessage("&7Switched to normal chat.");
+      } else {
+        player.getActionSender().sendChatMessage("@name message");
+      }
+      return;
+    }
+    
+    ChatMode messageChatMode = player.chatMode;
+    String messageToSend = message;
+    Player messagePlayer = player.chatPlayer;
+    
+    // Set temp chat mode for this message("#message", "$message", "@player message").
+    if (message.startsWith("@") && message.length() > 1 && message.trim().split(" ").length > 1) {
       String[] parts = message.split(" ");
       Player other = Player.getPlayer(parts[0].substring(1), player.getActionSender());
+      if (other == null) {
+        return;
+      }
       String text = "";
       for (int i = 1; i < parts.length; i++) {
         text += " " + parts[i];
       }
-      if (message.isEmpty()) {
+      text = text.trim();
+      if (text.isEmpty()) {
         player.getActionSender().sendChatMessage("@name message");
-      } else if (other == null) {
-        player.getActionSender().sendChatMessage("- &ePlayer not found.");
-      } else {
-        World.getWorld().sendPM(player, other, text);
+        return;
       }
+      messageChatMode = ChatMode.PRIVATE;
+      messageToSend = text;
+      messagePlayer = other;
     } else if (message.startsWith("#") && message.length() > 1) {
-      String text = message.substring(1);
-      World.getWorld().sendOpChat(player, text);
-    } else if (message.startsWith("$") && message.length() > 2) {
-      String text = message.substring(1);
-      if (GameSettings.getBoolean("Tournament"))
-        World.getWorld().sendChat(player, text);
-      else
-        World.getWorld().sendTeamChat(player, text);
-    } else {
-      String error = null;
-      if (player.muted) {
-        error = "You're muted!";
-      }
-      if (player.isNewPlayer) {
-        error = "Please read the instructions and rules before chatting.";
-      }
-      if (error != null) {
-        player.getActionSender().sendChatMessage("- &e" + error);
-      } else {
-        if (GameSettings.getBoolean("Tournament"))
-          World.getWorld().sendTeamChat(player, message);
-        else
-          World.getWorld().sendChat(player, message);
-        if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
-          WebServer.run(new Runnable() {
-            @Override
-            public void run() {
-              try {
-                String urlMessage = URLEncoder.encode(message, "UTF-8");
-                String urlName = URLEncoder.encode(player.getName(), "UTF-8");
-                Server.httpGet(Constants.URL_SENDCHAT + "&username=" + urlName + "&msg=" +
-                    urlMessage);
-              } catch (UnsupportedEncodingException ex) {
-                Server.log(ex);
-              }
-            }
-          });
+      messageChatMode = player.chatMode == ChatMode.OPERATOR ? ChatMode.DEFAULT : ChatMode.OPERATOR;
+      messageToSend = message.substring(1);
+    } else if (message.startsWith("$") && message.length() > 1) {
+      messageChatMode = player.chatMode == ChatMode.TEAM ? ChatMode.DEFAULT : ChatMode.TEAM;
+      messageToSend = message.substring(1);
+    }
+    
+    switch (messageChatMode) {
+      case TEAM:
+        World.getWorld().sendTeamChat(player, messageToSend);
+        break;
+      case OPERATOR:
+        World.getWorld().sendOpChat(player, messageToSend);
+        break;
+      case PRIVATE:
+        World.getWorld().sendPM(player, messagePlayer, messageToSend);
+        break;
+      default:
+        String error = null;
+        if (player.muted) {
+          error = "You're muted!";
         }
-      }
-      Server.log(player.getName() + ": " + message);
+        if (player.isNewPlayer) {
+          error = "Please read the instructions and rules before chatting.";
+        }
+        if (error != null) {
+          player.getActionSender().sendChatMessage("- &e" + error);
+        } else {
+          World.getWorld().sendChat(player, messageToSend);
+          if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
+            WebServer.run(new Runnable() {
+              @Override
+              public void run() {
+                try {
+                  String urlMessage = URLEncoder.encode(message, "UTF-8");
+                  String urlName = URLEncoder.encode(player.getName(), "UTF-8");
+                  Server.httpGet(Constants.URL_SENDCHAT + "&username=" + urlName + "&msg=" +
+                      urlMessage);
+                } catch (UnsupportedEncodingException ex) {
+                  Server.log(ex);
+                }
+              }
+            });
+          }
+        }
+        Server.log(player.getName() + ": " + message);
+        break;
     }
   }
 

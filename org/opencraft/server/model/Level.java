@@ -316,7 +316,15 @@ public final class Level implements Cloneable {
 
     if (props.getProperty("isTDM") != null) {
       mode = TDM;
-      if (props.getProperty("spawnsX") != null) {
+      if(props.getProperty("tdmSpawns") != null) {
+        String[] spawns = props.getProperty("tdmSpawns").split(" ");
+        for(String spawn : spawns) {
+          String[] parts = spawn.split(",");
+          tdmSpawns.add(new Position(Integer.parseInt(parts[0]) * 32 + 16,
+              Integer.parseInt(parts[2]) * 32 + 16, Integer.parseInt(parts[1]) * 32 + 16));
+        }
+      }
+      else if (props.getProperty("spawnsX") != null) {
         String[] spawnX = props.getProperty("spawnsX").split(" ");
         String[] spawnY = props.getProperty("spawnsY").split(" ");
         String[] spawnZ = props.getProperty("spawnsZ").split(" ");

@@ -73,6 +73,8 @@ public class Player extends Entity {
    * A map of attributes that can be attached to this player.
    */
   private final Map<String, Object> attributes = new HashMap<String, Object>();
+  
+  // There is literally no organization for these attributes, have fun!
   public short nameId;
   public boolean isNewPlayer = false;
   public boolean appendingChat = false;
@@ -82,13 +84,6 @@ public class Player extends Entity {
   public long lastPacketTime;
   public int heldBlock = 0;
   public boolean joinedDuringTournamentMode;
-
-  /**
-   * Creates the player.
-   *
-   * @param name The player's name.
-   */
-
   public boolean muted = false;
   public boolean frozen = false;
   public long moveTime = 0;
@@ -149,6 +144,8 @@ public class Player extends Entity {
   private ActionSender actionSender = null;
   private Player instance;
   private Thread followThread;
+  public ChatMode chatMode = ChatMode.DEFAULT;
+  public Player chatPlayer;
 
 
   public Player(MinecraftSession session, String name) {

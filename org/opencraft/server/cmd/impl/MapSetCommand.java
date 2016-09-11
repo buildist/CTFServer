@@ -83,7 +83,7 @@ public class MapSetCommand implements Command {
           }
         }
         Server.log(player.getName() + " " + k + " set to " + v);
-        doPropertyChange(k, v);
+        doPropertyChange(k, v.trim());
         if (k.endsWith("Color")) {
           for (Player p : World.getWorld().getPlayerList().getPlayers()) {
             p.getActionSender().sendMapColors();
@@ -97,7 +97,11 @@ public class MapSetCommand implements Command {
   
   public static void doPropertyChange(String k, String v) {
     Level level = World.getWorld().getLevel();
-    level.props.setProperty(k, v);
+    if (v.equals("null")) {
+      level.props.remove(k);
+    } else {
+      level.props.setProperty(k, v);
+    }
     level.saveProps();
     level.loadProps();
     World.getWorld().broadcast("- &7Map setting " + k + " set to " + v);
