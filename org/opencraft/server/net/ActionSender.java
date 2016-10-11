@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.net;
 
-
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
@@ -51,7 +50,6 @@ import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavedGameManager;
 import org.opencraft.server.task.Task;
 import org.opencraft.server.task.TaskQueue;
-
 
 /**
  * A utility class for sending packets.
@@ -78,9 +76,9 @@ public class ActionSender {
    * Sends a login response.
    *
    * @param protocolVersion The protocol version.
-   * @param name            The server name.
-   * @param message         The server message of the day.
-   * @param op              Operator flag.
+   * @param name The server name.
+   * @param message The server message of the day.
+   * @param op Operator flag.
    */
   public void sendLoginResponse(int protocolVersion, String name, String message, boolean op) {
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
@@ -119,8 +117,8 @@ public class ActionSender {
   /**
    * Sends a level block/chunk.
    *
-   * @param len     The length of the chunk.
-   * @param chunk   The chunk data.
+   * @param len The length of the chunk.
+   * @param chunk The chunk data.
    * @param percent The percentage.
    */
   public void sendLevelBlock(int len, byte[] chunk, int percent) {
@@ -150,11 +148,10 @@ public class ActionSender {
         Rotation r = level.getSpawnRotation();
         sendSpawn((byte) -1, session.getPlayer().nameId, session.getPlayer().getColoredName(),
             session.getPlayer().getTeamName(), session.getPlayer().getName(), spawn.getX(), spawn
-                .getY(), spawn.getZ(), (byte) r.getRotation(), (byte) r.getLook(), false);
+            .getY(), spawn.getZ(), (byte) r.getRotation(), (byte) r.getLook(), false);
         // now load the player's game (TODO in the future do this in parallel with loading the
         // level)
-        SavedGameManager.getSavedGameManager().queuePersistenceRequest(new LoadPersistenceRequest
-            (session.getPlayer()));
+        SavedGameManager.getSavedGameManager().queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
         session.setReady();
         World.getWorld().completeRegistration(session);
       }
@@ -181,17 +178,17 @@ public class ActionSender {
 
   public void sendAddPlayer(Player player, boolean isSelf) {
     sendSpawn((byte) player.getId(), (byte) player.nameId, player.getColoredName(), player
-        .getTeamName(), player.getName(), player.getPosition().getX(), player.getPosition().getY
-        (), player.getPosition().getZ(), (byte) player.getRotation().getRotation(), (byte) player
+        .getTeamName(), player.getName(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), (byte) player.getRotation().getRotation(), (byte) player
         .getRotation().getLook(), isSelf);
   }
 
   public void sendSpawn(byte id, short nameId, String colorName, String teamName, String name,
-                        int x, int y, int z, byte rotation, byte look, boolean isSelf) {
+      int x, int y, int z, byte rotation, byte look, boolean isSelf) {
     if (session.isExtensionSupported("ExtPlayerList", 2)) {
       sendAddPlayerName(nameId, name, colorName, teamName, (byte) 1);
-      if (!isSelf)
+      if (!isSelf) {
         sendExtSpawn(id, colorName, name, x, y, z, rotation, look);
+      }
     } else if (!isSelf) {
       PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
           .getOutgoingPacket(7));
@@ -206,8 +203,7 @@ public class ActionSender {
     }
   }
 
-  public void sendAddPlayerName(short id, String name, String listName, String groupName, byte
-      groupRank) {
+  public void sendAddPlayerName(short id, String name, String listName, String groupName, byte groupRank) {
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(22));
     bldr.putShort("id", id);
@@ -225,8 +221,7 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
-  public void sendExtSpawn(byte id, String name, String skinName, int x, int y, int z, byte
-      rotation, byte look) {
+  public void sendExtSpawn(byte id, String name, String skinName, int x, int y, int z, byte rotation, byte look) {
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(33));
     bldr.putByte("id", id);
@@ -261,8 +256,8 @@ public class ActionSender {
     if (deltaX != 0 || deltaY != 0 || deltaZ != 0) {
       if (deltaX > Byte.MAX_VALUE || deltaX < Byte.MIN_VALUE || deltaY > Byte.MAX_VALUE || deltaY
           < Byte.MIN_VALUE || deltaZ > Byte.MAX_VALUE || deltaZ < Byte.MIN_VALUE || deltaRotation
-          > Byte.MAX_VALUE || deltaRotation < Byte.MIN_VALUE || deltaLook > Byte.MAX_VALUE ||
-          deltaLook < Byte.MIN_VALUE) {
+          > Byte.MAX_VALUE || deltaRotation < Byte.MIN_VALUE || deltaLook > Byte.MAX_VALUE
+          || deltaLook < Byte.MIN_VALUE) {
         // teleport
         PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
             .getOutgoingPacket(8));
@@ -403,7 +398,7 @@ public class ActionSender {
             i,
             Constants.DEFAULT_COLORS[i][0],
             Constants.DEFAULT_COLORS[i][1],
-            Constants.DEFAULT_COLORS[i][2]);        
+            Constants.DEFAULT_COLORS[i][2]);
       } else {
         sendMapColor(i, colors[i][0], colors[i][1], colors[i][2]);
       }
@@ -432,9 +427,9 @@ public class ActionSender {
   /**
    * Sends a block.
    *
-   * @param x    X coordinate.
-   * @param y    Y coordinate.
-   * @param z    Z coordinate.
+   * @param x X coordinate.
+   * @param y Y coordinate.
+   * @param z Z coordinate.
    * @param type BlockDefinition type.
    */
   public void sendBlock(int x, int y, int z, byte type) {
@@ -450,12 +445,13 @@ public class ActionSender {
   /**
    * Sends a chat message.
    *
-   * @param id      The source player id.
+   * @param id The source player id.
    * @param message The message.
    */
   public void sendChatMessage(String message, int messageType) {
-    if (messageType != 0 && !session.ccUser)
+    if (messageType != 0 && !session.ccUser) {
       return;
+    }
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(13));
     String message2 = "";
@@ -470,20 +466,23 @@ public class ActionSender {
       message2 = message.substring(maxLength);
       int idx = message.lastIndexOf("&");
       if (idx != -1) {
-        if (message2.charAt(0) == '&')
+        if (message2.charAt(0) == '&') {
           message2 = message2.substring(2);
+        }
         message2 = "&" + message.charAt(idx + 1) + message2;
       }
       message = message.substring(0, maxLength);
-      if (message.charAt(message.length() - 2) == '&')
+      if (message.charAt(message.length() - 2) == '&') {
         message = message.substring(0, maxLength - 2);
-      else if (message.charAt(message.length() - 1) == '&')
+      } else if (message.charAt(message.length() - 1) == '&') {
         message = message.substring(0, maxLength - 1);
+      }
     }
     bldr.putByte("id", messageType);
     bldr.putString("message", message);
     session.send(bldr.toPacket());
-    if (!message2.equals(""))
+    if (!message2.equals("")) {
       sendChatMessage("> " + message2, messageType);
+    }
   }
 }

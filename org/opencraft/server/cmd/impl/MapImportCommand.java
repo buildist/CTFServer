@@ -84,7 +84,6 @@ public class MapImportCommand implements Command {
           } catch (Exception ex) {
             player.getActionSender().sendChatMessage("Error downloading map. Blame Jacob_ or Jack");
             player.getActionSender().sendChatMessage(ex.toString());
-            Server.log(ex.toString());
             Server.log(ex);
           }
         }

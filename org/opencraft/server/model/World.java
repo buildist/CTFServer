@@ -56,7 +56,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 /**
  * Manages the in-game world.
@@ -69,11 +68,6 @@ public final class World {
    * The singleton instance.
    */
   private static final World INSTANCE;
-
-  /**
-   * Logger instance.
-   */
-  private static final Logger logger = Logger.getLogger(World.class.getName());
 
   /**
    * Static initializer.
@@ -110,7 +104,6 @@ public final class World {
   private World() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
     gameMode = (GameMode) Class.forName(Configuration.getConfiguration().getGameMode())
         .newInstance();
-    logger.info("Active game mode : " + gameMode.getClass().getName() + ".");
   }
 
   /**

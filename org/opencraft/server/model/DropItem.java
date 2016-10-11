@@ -71,7 +71,7 @@ public class DropItem implements Runnable {
     posZ = World.getWorld().getLevel().ceiling - 8;
     ((CTFGameMode) World.getWorld().getGameMode()).addDropItem(this);
     boolean done = false;
-    while (!done) {
+    for(int i = 1; i < 1000 && !done; i++) {
       if (World.getWorld().getLevel().getBlock(posX, posY, posZ) != 7)
         World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
       posZ--;

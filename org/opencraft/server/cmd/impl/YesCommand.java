@@ -93,7 +93,7 @@ public class YesCommand implements Command {
           String urlMessage = URLEncoder.encode(message, "UTF-8");
           Server.httpGet(Constants.URL_MAP_COMMENT + "&map=" + mapName + "&message=" + urlMessage);
           } catch(Exception ex) {
-            ex.printStackTrace();
+            Server.log(ex);
           }
         }
       });  

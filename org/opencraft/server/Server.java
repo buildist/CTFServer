@@ -44,7 +44,7 @@ import org.opencraft.server.model.Store;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.SessionHandler;
 import org.opencraft.server.task.TaskQueue;
-import org.opencraft.server.task.impl.AutoRestartTask;
+import org.opencraft.server.task.impl.CheckCpuUsageTask;
 import org.opencraft.server.task.impl.CTFProcessTask;
 import org.opencraft.server.task.impl.ConsoleTask;
 import org.opencraft.server.task.impl.HeartbeatTask;
@@ -72,8 +72,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 //import org.opencraft.server.model.IRC;
 
@@ -83,11 +81,6 @@ import java.util.logging.Logger;
  * @author Graham Edgecombe
  */
 public final class Server {
-
-  /**
-   * Logger instance.
-   */
-  private static final Logger logger = Logger.getLogger(Server.class.getName());
 
   public static Random random = new Random();
   public static String log = "";
@@ -109,8 +102,7 @@ public final class Server {
    * @throws FileNotFoundException if the configuration file is not found.
    */
   public Server() throws FileNotFoundException, IOException {
-    logger.info("Starting OpenCraft server...");
-    logger.info("Configuring...");
+    log("Starting OpenCraft server...");
     Configuration.readConfiguration();
 
     FileInputStream ipFile = new FileInputStream("ipbans.txt");
@@ -128,31 +120,32 @@ public final class Server {
     }
 
     MapController.create();
-    logger.info("Creating world...");
+    log("Creating world...");
     World.getWorld();
     acceptor.setHandler(new SessionHandler());
     TaskQueue.getTaskQueue().schedule(new UpdateTask());
     TaskQueue.getTaskQueue().schedule(new CTFProcessTask());
     TaskQueue.getTaskQueue().schedule(new HeartbeatTask());
     TaskQueue.getTaskQueue().schedule(new MessageTask());
-    // TaskQueue.getTaskQueue().schedule(new AutoRestartTask());
+    TaskQueue.getTaskQueue().schedule(new CheckCpuUsageTask());
     new Thread(new ConsoleTask()).start();
     new Thread(new ItemDropTask()).start();
     //new Thread(new RenderMapTask()).start();
-    logger.info("Initializing game...");
+    log("Initializing game...");
   }
 
   /**
    * The entry point of the server application.
    */
   public static void log(Throwable e) {
-    Server.log(e.toString());
+    Server.log("[E] Exception occured: " + e.toString());
     if (e.getStackTrace() != null) {
       for (StackTraceElement s : e.getStackTrace()) {
-        Server.log(s.toString());
+        Server.log("[E]" + s.toString());
       }
     }
     if (e.getCause() != null) {
+      Server.log("[E] Caused by: ");
       log(e.getCause());
     }
   }
@@ -176,7 +169,8 @@ public final class Server {
       instance = new Server();
       instance.start();
     } catch (Throwable t) {
-      logger.log(Level.SEVERE, "An error occurred whilst loading the server.", t);
+      log("[E] An error occurred whilst loading the server.");
+      log(t);
     }
   }
 
@@ -247,7 +241,7 @@ public final class Server {
       in.close();
       return result;
     } catch (Exception ex) {
-      log("httpGet failed: " + ex.toString());
+      log("[E] httpGet failed: " + ex.toString());
       ex.printStackTrace();
       return null;
     }
@@ -302,9 +296,8 @@ public final class Server {
   }
 
   public static String cleanColorCodes(String msg) {
-    int i = 0;
     String msg2 = "";
-    while (i < msg.length()) {
+    for (int i = 0; i < msg.length(); i++) {
       char c = msg.charAt(i);
       if (c == '%') {
         if (i == msg.length() - 1) {
@@ -320,7 +313,6 @@ public final class Server {
       } else {
         msg2 += c;
       }
-      i++;
     }
     return msg2;
   }
@@ -355,11 +347,10 @@ public final class Server {
    * @throws IOException if an I/O error occurs.
    */
   public void start() throws IOException {
-    logger.info("Initializing server...");
-    logger.info("Binding to port " + Constants.PORT + "...");
+    log("Binding to port " + Constants.PORT + "...");
     acceptor.setReuseAddress(true);
     acceptor.bind(new InetSocketAddress(Constants.PORT));
-    logger.info("Ready for connections.");
+    log("Ready for connections.");
     createStore();
     //irc = new IRC();
     //if (!Configuration.getConfiguration().isTest()) {

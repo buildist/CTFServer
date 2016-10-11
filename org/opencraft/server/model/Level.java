@@ -311,7 +311,7 @@ public final class Level implements Cloneable {
       }
       ps.close();
     } catch (Exception ex) {
-      Server.log("Could not load props for " + id + ": " + ex);
+      Server.log("[E] Could not load props for " + id + ": " + ex);
     }
 
     if (props.getProperty("isTDM") != null) {

@@ -43,7 +43,6 @@ import org.opencraft.server.net.OCSession;
 import org.opencraft.server.net.packet.Packet;
 
 import java.util.Map;
-import java.util.logging.Logger;
 import org.opencraft.server.game.impl.GameSettings;
 
 /**
@@ -52,13 +51,6 @@ import org.opencraft.server.game.impl.GameSettings;
  * @author Graham Edgecombe
  */
 public class PacketHandlerManager<SessionType extends OCSession> {
-
-
-  /**
-   * Logger instance.
-   */
-  private static final Logger logger = Logger.getLogger(PacketHandlerManager.class.getName());
-
 
   /**
    * An array of packet handlers.
@@ -96,7 +88,7 @@ public class PacketHandlerManager<SessionType extends OCSession> {
     if (handler != null) {
       handler.handlePacket(session, packet);
     } else {
-      logger.info("Unhandled packet : " + packet + ".");
+      Server.log("[E] Unhandled packet : " + packet + ".");
     }
   }
 

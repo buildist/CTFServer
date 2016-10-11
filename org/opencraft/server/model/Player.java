@@ -165,7 +165,7 @@ public class Player extends Entity {
     int x = 0;
     int z = l.ceiling - 4;
     int y = 0;
-    while (!done) {
+    for (int i = 0; i < 1000; i++) {
       x = (int) (Math.random() * l.getWidth());
       y = (int) (Math.random() * l.getDepth());
       int block = 0;

@@ -47,8 +47,6 @@ import org.opencraft.server.task.impl.SessionClosedTask;
 import org.opencraft.server.task.impl.SessionMessageTask;
 import org.opencraft.server.task.impl.SessionOpenedTask;
 
-import java.util.logging.Logger;
-
 /**
  * An implementation of an <code>IoHandler</code> which manages incoming events from MINA and passes
  * them onto the necessary subsystem in the OpenCraft server.
@@ -56,11 +54,6 @@ import java.util.logging.Logger;
  * @author Graham Edgecombe
  */
 public final class SessionHandler extends IoHandlerAdapter {
-
-  /**
-   * Logger instance.
-   */
-  private static final Logger logger = Logger.getLogger(SessionHandler.class.getName());
 
   @Override
   public void exceptionCaught(IoSession session, Throwable throwable) throws Exception {

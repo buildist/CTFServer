@@ -45,8 +45,6 @@ import org.opencraft.server.model.World;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class QuoteCommand implements Command {
   private static final QuoteCommand INSTANCE = new QuoteCommand();
@@ -58,8 +56,8 @@ public class QuoteCommand implements Command {
       for (String q : array) {
         quotes.add(q);
       }
-    } catch (IOException ex) {
-      Logger.getLogger(QuoteCommand.class.getName()).log(Level.SEVERE, null, ex);
+    } catch (IOException ex) {  
+      Server.log(ex);
     }
   }
 

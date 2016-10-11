@@ -39,6 +39,7 @@ package org.opencraft.server.task;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.opencraft.server.Server;
 
 /**
  * Manages the task queue.
@@ -83,8 +84,8 @@ public final class TaskQueue {
         try {
           task.execute();
         } catch (Throwable t) {
-          System.err.println("Error during task execution." + t);
-          t.printStackTrace();
+          Server.log("[E] Error during task execution." + t);
+          Server.log(t);
         }
       }
     });
@@ -113,7 +114,7 @@ public final class TaskQueue {
           task.execute();
         } catch (Throwable t) {
           System.err.println("Error during task execution." + t);
-          t.printStackTrace();
+          Server.log(t);
         }
         if (!task.isRunning()) {
           return;
