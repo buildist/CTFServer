@@ -101,7 +101,7 @@ public class GrenadeCommand implements Command {
             World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY)
                 , (int) Math.round(lastZ), 0);
             ((CTFGameMode) World.getWorld().getGameMode()).explodeTNT(player, World.getWorld()
-                .getLevel(), bx, by, bz, 2, true, false, false, "grenade");
+                .getLevel(), bx, by, bz, 2, true, false, false, "Samsung Galaxy Note 7");
             break;
           } else {
             World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY)
