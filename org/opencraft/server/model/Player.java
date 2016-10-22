@@ -37,6 +37,7 @@
 package org.opencraft.server.model;
 
 
+import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
@@ -89,7 +90,7 @@ public class Player extends Entity {
   public long moveTime = 0;
   public int team = -1;
   public int killstreak = 0;
-  public boolean safe = false;
+  private long safeTime = 0;
   public boolean hasTNT = false;
   public int tntX;
   public int tntY;
@@ -764,5 +765,13 @@ public class Player extends Entity {
     } else {
       return true;
     }
+  }
+
+  public void markSafe() {
+    safeTime = System.currentTimeMillis();
+  }
+
+  public boolean isSafe() {
+    return System.currentTimeMillis() - safeTime < Constants.SAFE_TIME;
   }
 }

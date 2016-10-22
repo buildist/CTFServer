@@ -121,7 +121,6 @@ import org.opencraft.server.model.Mine;
 import org.opencraft.server.model.MineActivator;
 import org.opencraft.server.model.MoveLog;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.PlayerUntagger;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.Teleporter;
@@ -419,10 +418,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         float ty = (t.getPosition().getY()) / 32f;
         float tz = (t.getPosition().getZ()) / 32f;
         if (Math.abs(px - tx) < pr && Math.abs(py - ty) < pr && Math.abs(pz - tz) < pr && (p.team
-            != t.team || (tk && (t == p || !t.hasFlag))) && !t.safe && p.canKill(t, true) && t
+            != t.team || (tk && (t == p || !t.hasFlag))) && !t.isSafe() && p.canKill(t, true) && t
             .isVisible) {
-          t.safe = true;
-          new Thread(new PlayerUntagger(t)).start();
+          t.markSafe();
           n++;
           World.getWorld().broadcast("- " + p.parseName() + " exploded " + t.getColoredName()
               + (type == null ? "" : " &f(" + type + ")"));
@@ -503,12 +501,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         for (Player t : World.getWorld().getPlayerList().getPlayers()) {
           Position blockPos = t.getPosition().toBlockPos();
           if (blockPos.getX() == bx && blockPos.getY() == by && blockPos.getZ() == bz && (p.team
-              != t.team) && !t.safe && p.canKill(t, false)) {
+              != t.team) && !t.isSafe() && p.canKill(t, false)) {
             World.getWorld().broadcast("- " + p.parseName() + " cooked " + t.getColoredName());
             p.gotKill(t);
             t.sendToTeamSpawn();
-            t.safe = true;
-            new Thread(new PlayerUntagger(p)).start();
+            t.markSafe();
             t.died(p);
             checkFirstBlood(p);
             p.addStorePoints(5);
@@ -1109,13 +1106,12 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         tagger = p1;
       }
       if (t1 != t2 && tagged != null && tagger != null && tagger.canKill(tagged, false) &&
-          !tagged.safe && !tagged.shield) {
+          !tagged.isSafe() && !tagged.shield) {
         World.getWorld()
             .broadcast("- " + tagger.parseName() + " tagged " + tagged.parseName() + ".");
         tagger.gotKill(tagged);
         tagged.sendToTeamSpawn();
-        tagged.safe = true;
-        new Thread(new PlayerUntagger(tagged)).start();
+        tagged.markSafe();
         if (antiStalemate) {
           tagger.incStat("stalemateTags");
           dropFlag(tagged.team);
