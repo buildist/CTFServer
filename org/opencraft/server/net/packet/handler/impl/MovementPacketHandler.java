@@ -39,7 +39,6 @@ package org.opencraft.server.net.packet.handler.impl;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.MoveLog;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.PlayerUntagger;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.World;
@@ -96,15 +95,13 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     }
 
     //kill floor
-    if ((z - 16) / 32 < World.getWorld().getLevel().floor && !player.safe) {
+    if ((z - 16) / 32 < World.getWorld().getLevel().floor && !player.isSafe()) {
       if (World.getWorld().getLevel().id.equals("tdm_abyss")) {
-        player.safe = true;
-        new Thread(new PlayerUntagger(player)).start();
+        player.markSafe();
         player.getActionSender().sendTeleport(new Position(player.getPosition().getX(), player
             .getPosition().getY(), 128 * 32 + 16), player.getRotation());
       } else {
-        player.safe = true;
-        new Thread(new PlayerUntagger(player)).start();
+        player.markSafe();
         World.getWorld().broadcast("- " + player.parseName() + " died!");
         player.sendToTeamSpawn();
         if (player.hasFlag) {
