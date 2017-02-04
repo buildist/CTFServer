@@ -813,7 +813,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           ready = false;
           String rating = MapRatings.getRating(currentMap);
           World.getWorld().broadcast("- &3This map's approval rating is now " + rating);
-          World.getWorld().broadcast("- &3See the ratings at http://buildism.net/mc/mapratings.");
+          World.getWorld().broadcast("- &3See the ratings at http://jacobsc.tf/mapratings.");
           World.getWorld().broadcast("- &e" + newLevel.id + " had the most votes. Starting new " +
               "game!");
           Thread.sleep(7 * 1000);

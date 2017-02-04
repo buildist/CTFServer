@@ -116,7 +116,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     player.setRotation(new Rotation(rotation, look));
     MoveLog.getInstance().logPosition(player);
     if (session.isExtensionSupported("HeldBlock"))
-      player.heldBlock = packet.getNumericField("held_block").byteValue();
+      player.heldBlock = packet.getNumericField("id").byteValue();
   }
 
 }

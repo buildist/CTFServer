@@ -136,24 +136,29 @@ public class ActionSender {
   public void sendLevelFinish() {
     TaskQueue.getTaskQueue().push(new Task() {
       public void execute() {
-        // for thread safety
-        final Level level = World.getWorld().getLevel();
-        PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-            .getOutgoingPacket(4));
-        bldr.putShort("width", level.getWidth());
-        bldr.putShort("height", level.getHeight());
-        bldr.putShort("depth", level.getDepth());
-        session.send(bldr.toPacket());
-        Position spawn = level.getSpawnPosition();
-        Rotation r = level.getSpawnRotation();
-        sendSpawn((byte) -1, session.getPlayer().nameId, session.getPlayer().getColoredName(),
-            session.getPlayer().getTeamName(), session.getPlayer().getName(), spawn.getX(), spawn
-            .getY(), spawn.getZ(), (byte) r.getRotation(), (byte) r.getLook(), false);
-        // now load the player's game (TODO in the future do this in parallel with loading the
-        // level)
-        SavedGameManager.getSavedGameManager().queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
-        session.setReady();
-        World.getWorld().completeRegistration(session);
+        try {
+          // for thread safety
+          final Level level = World.getWorld().getLevel();
+          PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
+              .getOutgoingPacket(4));
+          bldr.putShort("width", level.getWidth());
+          bldr.putShort("height", level.getHeight());
+          bldr.putShort("depth", level.getDepth());
+          session.send(bldr.toPacket());
+          Position spawn = level.getSpawnPosition();
+          Rotation r = level.getSpawnRotation();
+          sendSpawn((byte) -1, session.getPlayer().nameId, session.getPlayer().getColoredName(),
+              session.getPlayer().getTeamName(), session.getPlayer().getName(), spawn.getX(), spawn
+                  .getY(), spawn.getZ(), (byte) r.getRotation(), (byte) r.getLook(), false);
+          // now load the player's game (TODO in the future do this in parallel with loading the
+          // level)
+          SavedGameManager.getSavedGameManager().queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
+
+          session.setReady();
+          World.getWorld().completeRegistration(session);
+        } catch (Exception ex) {
+          Server.log(ex);
+        }
       }
     });
   }
