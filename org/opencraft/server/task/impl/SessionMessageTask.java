@@ -72,7 +72,8 @@ public final class SessionMessageTask implements Task {
 
   @Override
   public void execute() {
-    ((MinecraftSession) session.getAttribute("attachment")).handle(packet);
+    if (session.getAttribute("attachment") != null) {
+      ((MinecraftSession) session.getAttribute("attachment")).handle(packet);
+    }
   }
-
 }
