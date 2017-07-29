@@ -94,7 +94,10 @@ public final class Level implements Cloneable {
   public String filename;
   public String id;
   public int votes = 0;
-  
+
+  public int sideBlock = 7;
+  public int edgeBlock = 8;
+  public int sideLevel = depth / 2;
   public short viewDistance = 0;
   public short[][] colors = Constants.DEFAULT_COLORS;
   
@@ -366,6 +369,41 @@ public final class Level implements Cloneable {
       }
     }
 
+    if(props.getProperty("sideBlock") != null) {
+      try {
+        sideBlock = (short) Integer.parseInt(props.getProperty("sideBlock"));
+      } catch(NumberFormatException ex) {
+        sideBlock = 7;
+      }
+    }
+
+    if(props.getProperty("edgeBlock") != null) {
+      try {
+        edgeBlock = (short) Integer.parseInt(props.getProperty("edgeBlock"));
+      } catch(NumberFormatException ex) {
+        edgeBlock = 8;
+      }
+    }
+
+    if(props.getProperty("sideLevel") != null) {
+      try {
+        sideLevel = (short) Integer.parseInt(props.getProperty("sideLevel"));
+      } catch(NumberFormatException ex) {
+        sideLevel = depth/2;
+      }
+    }
+
+    if (props.getProperty("spawnPosition") != null) {
+      String[] parts = props.getProperty("spawnPosition").split(",");
+      spawnPosition = new Position(Integer.parseInt(parts[0]) * 32 + 16,
+          Integer.parseInt(parts[1]) * 32 + 16, Integer.parseInt(parts[2]) * 32 + 16);
+    }
+
+    if (props.getProperty("spawnRotation") != null) {
+      String[] parts = props.getProperty("spawnRotation").split(",");
+      spawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    }
+
     if (World.getWorld().getLevel() == this) {
       ((CTFGameMode) World.getWorld().getGameMode()).resetRedFlagPos();
       ((CTFGameMode) World.getWorld().getGameMode()).resetBlueFlagPos();
@@ -436,8 +474,8 @@ public final class Level implements Cloneable {
         blocks1D = new byte[width * height * depth];
         byte[] tmpBlocks = new byte[width * height * depth];
         inputstream.readFully(tmpBlocks);
-        this.setSpawnPosition(new Position(vars[3] * 32 + 16, vars[4] * 32 + 16, (vars[5] +
-            (addOffset ? Z_OFFSET : 0)) * 32 + 16));
+        this.spawnPosition = new Position(vars[3] * 32 + 16, vars[4] * 32 + 16, (vars[5] +
+            (addOffset ? Z_OFFSET : 0)) * 32 + 16);
         if (addOffset) {
           Server.log("Loading map: " + id);
           loadProps();
@@ -515,8 +553,8 @@ public final class Level implements Cloneable {
       depth = (short) l.depth + (addOffset ? Z_OFFSET : 0);
       blocks = new byte[width][height][depth];
       blocks1D = new byte[width * height * depth];
-      this.setSpawnPosition(new Position(l.xSpawn * 32 + 16, (l.zSpawn) * 32 + 16, (l.ySpawn +
-          (addOffset ? Z_OFFSET : 0)) * 32 + 16));
+      this.spawnPosition = new Position(l.xSpawn * 32 + 16, (l.zSpawn) * 32 + 16, (l.ySpawn +
+          (addOffset ? Z_OFFSET : 0)) * 32 + 16);
 
       if (addOffset) {
         Server.log("Loading map: " + id);
@@ -885,29 +923,11 @@ public final class Level implements Cloneable {
   }
 
   /**
-   * Set the rotation of the character when spawned.
-   *
-   * @param spawnRotation The rotation.
-   */
-  public void setSpawnRotation(Rotation spawnRotation) {
-    this.spawnRotation = spawnRotation;
-  }
-
-  /**
    * Get the spawn position.
    *
    * @return The spawn position.
    */
   public Position getSpawnPosition() {
     return spawnPosition;
-  }
-
-  /**
-   * Set the spawn position.
-   *
-   * @param spawnPosition The spawn position.
-   */
-  public void setSpawnPosition(Position spawnPosition) {
-    this.spawnPosition = spawnPosition;
   }
 }

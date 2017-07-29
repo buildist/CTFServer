@@ -72,7 +72,7 @@ public final class LevelGzipper {
     final Level level = World.getWorld().getLevel();
     if (session.levelSent)
       session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, "Next map: " +
-              level.id, "&0" + (session.getPlayer().isVIP() ? "+hax" : "-hax"),
+              level.id, ""/*"&0" + (session.getPlayer().isVIP() ? "+hax" : "-hax")*/,
           session.getPlayer().isOp());
     session.levelSent = true;
     final int width = level.getWidth();

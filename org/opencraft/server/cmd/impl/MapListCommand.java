@@ -36,10 +36,13 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import org.opencraft.server.Constants;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
+
+import java.io.File;
 
 public class MapListCommand implements Command {
   private static final MapListCommand INSTANCE = new MapListCommand();
@@ -54,6 +57,23 @@ public class MapListCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
+    if(params.getArgumentCount() == 1) {
+      File dir = new File(Constants.ROOT_PATH + "/maps/more");
+      String[] maps = dir.list();
+      String msg = "&eAll maps: &a";
+      int i = 0;
+      for (String mapName : maps) {
+        String[] parts = mapName.split("\\.");
+        if (parts.length == 2 && !parts[1].equals("properties")) {
+          if (i > 0)
+            msg += ", ";
+          msg += parts[0];
+          i++;
+        }
+      }
+      player.getActionSender().sendChatMessage(msg);
+      return;
+    }
     String msg = "&eAvailable maps: &a";
     int i = 0;
     for (String map : MapController.levelNames) {
@@ -63,5 +83,8 @@ public class MapListCommand implements Command {
       i++;
     }
     player.getActionSender().sendChatMessage(msg);
+    if (player.isOp()) {
+      player.getActionSender().sendChatMessage("- &e Use &f/maps more to show all available maps");
+    }
   }
 }

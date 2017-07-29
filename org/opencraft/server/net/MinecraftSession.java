@@ -72,6 +72,7 @@ public final class MinecraftSession extends OCSession {
   private String ip;
 
 
+
   /**
    * The player associated with this session.
    */

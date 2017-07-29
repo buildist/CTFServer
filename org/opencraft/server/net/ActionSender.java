@@ -353,6 +353,7 @@ public class ActionSender {
     bldr.putByte("spawn_control", enableHacks ? (byte) 1 : (byte) 0);
     bldr.putByte("third_person_view", (byte) 1);
     bldr.putShort("jump_height", (short) -1);
+    session.send(bldr.toPacket());
   }
 
   public void sendCPEHandshake() {
@@ -366,8 +367,8 @@ public class ActionSender {
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(30));
     bldr.putString("texture_url", Configuration.getConfiguration().getEnvTexturePack());
-    bldr.putByte("side_block", 7);
-    bldr.putByte("edge_block", 8);
+    bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
+    bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
     bldr.putShort("side_level", World.getWorld().getLevel().depth / 2);
     session.send(bldr.toPacket());
   }
@@ -376,9 +377,9 @@ public class ActionSender {
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(30));
     bldr.putString("texture_url", Configuration.getConfiguration().getEnvTexturePack());
-    bldr.putByte("side_block", 7);
-    bldr.putByte("edge_block", 8);
-    bldr.putShort("side_level", World.getWorld().getLevel().depth / 2);
+    bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
+    bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
+    bldr.putShort("side_level", World.getWorld().getLevel().sideLevel);
     bldr.putShort("cloud_level", World.getWorld().getLevel().depth);
     bldr.putShort("view_distance", World.getWorld().getLevel().viewDistance);
     session.send(bldr.toPacket());
@@ -408,6 +409,14 @@ public class ActionSender {
         sendMapColor(i, colors[i][0], colors[i][1], colors[i][2]);
       }
     }
+  }
+
+  public void sendPing(boolean serverToClient, int data) {
+    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
+        .getOutgoingPacket(43));
+    bldr.putByte("server_to_client", serverToClient ? 1 : 0);
+    bldr.putShort("data", data);
+    session.send(bldr.toPacket());
   }
 
   /**

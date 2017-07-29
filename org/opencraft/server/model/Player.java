@@ -43,6 +43,7 @@ import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.net.ActionSender;
 import org.opencraft.server.net.MinecraftSession;
+import org.opencraft.server.net.PingList;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
@@ -147,7 +148,8 @@ public class Player extends Entity {
   private Thread followThread;
   public ChatMode chatMode = ChatMode.DEFAULT;
   public Player chatPlayer;
-
+  public boolean sendCommandLog = false;
+  public final PingList pingList = new PingList();
 
   public Player(MinecraftSession session, String name) {
     this.session = session;
@@ -551,6 +553,7 @@ public class Player extends Entity {
       Position spawn = l.getTeamSpawn(team);
       getActionSender().sendTeleport(spawn, new Rotation(this.team == 0 ? 64 : 192, 0));
       setPosition(spawn);
+      session.getActionSender().sendHackControl(this.team == -1);
     }
     if (isNewPlayer) {
       setAttribute("rules", "true");

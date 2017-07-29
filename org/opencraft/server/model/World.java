@@ -271,7 +271,7 @@ public final class World {
     if (player.getAttribute("banned") != null && player.getAttribute("banned").equals("true"))
       session.close();
     session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c
-        .getMessage() + "&0" + (player.isVIP() ? "+hax" : "-hax"), op);
+        .getMessage()/* + "&0" + (player.isVIP() ? "+hax" : "-hax")*/, op);
     LevelGzipper.getLevelGzipper().gzipLevel(session);
     try {
       Thread.sleep(100);

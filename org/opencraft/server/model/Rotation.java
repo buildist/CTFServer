@@ -83,4 +83,9 @@ public final class Rotation {
     return look;
   }
 
+  @Override
+  public String toString() {
+    return rotation + "," + look;
+  }
+
 }

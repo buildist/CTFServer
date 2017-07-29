@@ -74,7 +74,7 @@ public final class Constants {
     "HackControl",
     "CustomBlocks",
     "ExtPlayerList",
-    "LongerMessages"};
+    "TwoWayPing"};
   // CPE versions
   public static final int[] CPE_EXT_VERSIONS = {
     1,

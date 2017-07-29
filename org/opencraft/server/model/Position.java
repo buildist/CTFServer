@@ -117,7 +117,7 @@ public final class Position {
   }
 
   public String toString() {
-    return x + ", " + y + ", " + z;
+    return x + "," + y + "," + z;
   }
 
   @Override

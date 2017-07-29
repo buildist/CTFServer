@@ -40,6 +40,7 @@ package org.opencraft.server.net.packet.handler.impl;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
@@ -75,11 +76,11 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
       session.getPlayer().partialChatMessage += message + " ";
       session.getActionSender().sendChatMessage("&7" + message);
       return;
-    } else if(session.isExtensionSupported("LongerMessages") && id == 1){
+    } /* else if(session.isExtensionSupported("LongerMessages") && id == 1){
       session.getPlayer().appendingChat = true;
       session.getPlayer().partialChatMessage += message + " ";
       return;      
-    } else if (session.getPlayer().appendingChat) {
+    }*/ else if (session.getPlayer().appendingChat) {
       message = session.getPlayer().partialChatMessage + message;
       session.getPlayer().partialChatMessage = "";
     }
@@ -101,6 +102,11 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
         }
         parts = partsList.toArray(new String[0]);
         c.execute(session.getPlayer(), new CommandParameters(parts));
+        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+          if (p.sendCommandLog) {
+            p.getActionSender().sendChatMessage("&7" + session.getPlayer().getName() + "> " + message);
+          }
+        }
       } else {
         session.getActionSender().sendChatMessage("Invalid command /" + parts[0] + ".");
       }

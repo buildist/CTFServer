@@ -40,6 +40,8 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.Position;
+import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.World;
 
 /**
@@ -75,8 +77,10 @@ public class SetspawnCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     // Player using command is OP?
     if (player.isOp()) {
-      World.getWorld().getLevel().setSpawnPosition(player.getPosition());
-      World.getWorld().getLevel().setSpawnRotation(player.getRotation());
+      Position position = player.getPosition().toBlockPos();
+      Rotation rotation = player.getRotation();
+      MapSetCommand.doPropertyChange("spawnPosition", position.toString());
+      MapSetCommand.doPropertyChange("spawnRotation", rotation.toString());
     } else
       player.getActionSender().sendChatMessage("You must be OP to do that");
   }
