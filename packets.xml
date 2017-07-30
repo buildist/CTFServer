@@ -87,7 +87,7 @@ POSSIBILITY OF SUCH DAMAGE.
       <name>move_and_rotate</name>
       <fields>
         <field>
-          <name>held_block</name>
+          <name>id</name>
           <type>BYTE</type>
         </field>
         <field>
@@ -161,6 +161,20 @@ POSSIBILITY OF SUCH DAMAGE.
         <field>
           <name>support_level</name>
           <type>BYTE</type>
+        </field>
+      </fields>
+    </packet>
+    <packet>
+      <opcode>43</opcode>
+      <name>ping</name>
+      <fields>
+        <field>
+          <name>server_to_client</name>
+          <type>BYTE</type>
+        </field>
+        <field>
+          <name>data</name>
+          <type>SHORT</type>
         </field>
       </fields>
     </packet>
@@ -655,6 +669,20 @@ Z        <field>
         </field>
         <field>
           <name>b</name>
+          <type>SHORT</type>
+        </field>
+      </fields>
+    </packet>
+    <packet>
+      <opcode>43</opcode>
+      <name>ping</name>
+      <fields>
+        <field>
+          <name>server_to_client</name>
+          <type>BYTE</type>
+        </field>
+        <field>
+          <name>data</name>
           <type>SHORT</type>
         </field>
       </fields>

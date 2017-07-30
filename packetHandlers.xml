@@ -61,4 +61,8 @@ POSSIBILITY OF SUCH DAMAGE.
     <int>19</int>
     <string>org.opencraft.server.net.packet.handler.impl.CustomBlockSupportPacketHandler</string>
   </entry>
+  <entry>
+    <int>43</int>
+    <string>org.opencraft.server.net.packet.handler.impl.PingPacketHandler</string>
+  </entry>
 </map>
