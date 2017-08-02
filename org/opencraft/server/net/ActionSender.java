@@ -385,7 +385,7 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
-  public void sendMapColor(int id, short r, short g, short b) {
+  private void sendMapColor(int id, short r, short g, short b) {
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(25));
     bldr.putByte("color", id);

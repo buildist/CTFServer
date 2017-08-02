@@ -81,7 +81,7 @@ public class PacketHandlerManager<SessionType extends OCSession> {
    */
   public void handlePacket(SessionType session, Packet packet) {
     PacketHandler handler = handlers[packet.getDefinition().getOpcode()];
-    if (GameSettings.getBoolean("Debug") && packet.definition.getOpcode() != 8) {
+    if (GameSettings.getBoolean("Debug") && packet.definition.getOpcode() != 8 && packet.definition.getOpcode() != 43) {
       Server.d(packet.definition.getOpcode() + " <--  " + ((MinecraftSession) session).getIP());
       Server.d(packet.toString());
     }

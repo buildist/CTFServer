@@ -83,7 +83,7 @@ public abstract class OCSession extends Connectable {
    */
   public void send(Packet packet) {
     this.send(packet, session);
-    if (GameSettings.getBoolean("Debug") && packet.definition.getOpcode() != 8) {
+    if (GameSettings.getBoolean("Debug") && packet.definition.getOpcode() != 8 && packet.definition.getOpcode() != 43) {
       Server.d(packet.definition.getOpcode() + " --> " + session.getRemoteAddress());
       Server.d(packet.toString());
     }
