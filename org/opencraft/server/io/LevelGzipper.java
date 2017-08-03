@@ -39,6 +39,7 @@ package org.opencraft.server.io;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.opencraft.server.Constants;
+import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
@@ -81,6 +82,7 @@ public final class LevelGzipper {
     final int height = level.getHeight();
     final int depth = level.getDepth();
     session.getActionSender().sendLevelInit();
+    // session.getActionSender().sendDefineBlock(CustomBlockDefinition.MINE);
     service.submit(new Runnable() {
       @Override
       public void run() {

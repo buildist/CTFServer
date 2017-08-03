@@ -39,6 +39,7 @@ package org.opencraft.server.net;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
+import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
@@ -416,6 +417,65 @@ public class ActionSender {
         .getOutgoingPacket(43));
     bldr.putByte("server_to_client", serverToClient ? 1 : 0);
     bldr.putShort("data", data);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendDefineBlock(
+      CustomBlockDefinition block) {
+    sendDefineBlock(
+        block.id,
+        block.name,
+        block.solid,
+        block.movementSpeed,
+        block.textureTop,
+        block.textureSide,
+        block.textureBottom,
+        block.emitsLight,
+        block.walkSound,
+        block.fullBright,
+        block.shape,
+        block.blockDraw,
+        0,
+        0,
+        0,
+        0);
+  }
+
+  public void sendDefineBlock(
+      int id,
+      String name,
+      int solid,
+      int movementSpeed,
+      int textureTop,
+      int textureSide,
+      int textureBottom,
+      boolean emitsLight,
+      int walkSound,
+      boolean fullBright,
+      int shape,
+      int blockDraw,
+      int fogDensity,
+      int fogR,
+      int fogG,
+      int fogB) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(35));
+    bldr.putByte("id", id);
+    bldr.putString("name", name);
+    bldr.putByte("solid", solid);
+    bldr.putByte("movement_speed", movementSpeed);
+    bldr.putByte("texture_top", textureTop);
+    bldr.putByte("texture_side", textureSide);
+    bldr.putByte("texture_bottom", textureBottom);
+    bldr.putByte("emits_light", emitsLight ? 1 : 0);
+    bldr.putByte("walk_sound", walkSound);
+    bldr.putByte("full_bright", fullBright ? 1 : 0);
+    bldr.putByte("shape", shape);
+    bldr.putByte("block_draw", blockDraw);
+    bldr.putByte("fog_density", fogDensity);
+    bldr.putByte("fog_r", fogR);
+    bldr.putByte("fog_g", fogG);
+    bldr.putByte("fog_b", fogB);
     session.send(bldr.toPacket());
   }
 

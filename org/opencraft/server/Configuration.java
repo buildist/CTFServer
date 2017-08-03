@@ -127,7 +127,7 @@ public class Configuration {
     ircName = props.getProperty("ircName");
     Constants.PORT = Integer.valueOf(props.getProperty("port"));
     premium = Boolean.valueOf(props.getProperty("premium", "false"));
-    envTexturePack = props.getProperty("envTexturePack", Constants.URL_TEXTURE_PACK);
+    envTexturePack = props.getProperty("envTexturePack");
   }
 
   /**

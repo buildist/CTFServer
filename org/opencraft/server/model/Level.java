@@ -106,6 +106,7 @@ public final class Level implements Cloneable {
    */
   private byte[][][] blocks;
   private byte[] blocks1D;
+  private byte[][] customBlocks;
   /**
    * Light depth array.
    */
@@ -477,6 +478,26 @@ public final class Level implements Cloneable {
               }
               blocks[x][y][z + (addOffset ? Z_OFFSET : 0)] = (byte) type;
               blocks1D[((z + (addOffset ? Z_OFFSET : 0)) * height + y) * width + x] = (byte) type;
+            }
+          }
+        }
+        if (inputstream.readByte() == (byte) 0xBD) {
+          // https://github.com/Hetal728/MCGalaxy/blob/b5cf22c3c06d5b6ff0e255bfc769118f427d5d06/MCGalaxy/Levels/IO/Importers/LvlImporter.cs#L80
+          int chunksX = ceilDiv16(width);
+          int chunksY = ceilDiv16(height);
+          int chunksZ = ceilDiv16(depth);
+          customBlocks = new byte[chunksX * chunksY * chunksZ][];
+          int index = 0;
+          for (int y = 0; y < chunksY; y++) {
+            for (int z = 0; z < chunksZ; z++) {
+              for (int x = 0; x < chunksX; x++) {
+                if (inputstream.readByte() == 1) {
+                  byte[] chunk = new byte[16 * 16 * 16];
+                  inputstream.readFully(chunk);
+                  customBlocks[index]  = chunk;
+                }
+                index++;
+              }
             }
           }
         }
@@ -895,5 +916,9 @@ public final class Level implements Cloneable {
    */
   public Position getSpawnPosition() {
     return spawnPosition;
+  }
+
+  private static int ceilDiv16(int x) {
+    return (x + 15) / 16;
   }
 }

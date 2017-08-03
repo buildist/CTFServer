@@ -74,7 +74,8 @@ public final class Constants {
     "HackControl",
     "CustomBlocks",
     "ExtPlayerList",
-    "TwoWayPing"};
+    "TwoWayPing",
+    "BlockDefinitions"};
   // CPE versions
   public static final int[] CPE_EXT_VERSIONS = {
     1,
@@ -84,6 +85,7 @@ public final class Constants {
     1,
     1,
     2,
+    1,
     1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
@@ -100,8 +102,6 @@ public final class Constants {
       {  -1, -1, -1}
   };
   public static final byte CUSTOM_BLOCK_LEVEL = 1;
-  // URL of server texture pack for CPE
-  public static final String URL_TEXTURE_PACK = "http://buildism.net/m/t.png";
   // URL to send chat messages to
   public static final String URL_SENDCHAT = "http://buildism.net/mc/server/sendChat.php?k=" +
       SECRET;
@@ -115,6 +115,28 @@ public final class Constants {
   public static final int BLOCK_RED_FLAG = BlockConstants.CLOTH_RED;
   public static final int BLOCK_BLUE_FLAG = BlockConstants.CLOTH_LIGHTBLUE;
   public static final int BLOCK_CRATE = 64;
+
+  public static final int BLOCK_SOLIDITY_WALK_THROUGH = 0;
+  public static final int BLOCK_SOLIDITY_SWIM_THROUGH = 1;
+  public static final int BLOCK_SOLIDITY_SOLID = 2;
+
+  public static final int BLOCK_WALK_SOUND_NONE = 0;
+  public static final int BLOCK_WALK_SOUND_WOOD = 1;
+  public static final int BLOCK_WALK_SOUND_GRAVEL = 2;
+  public static final int BLOCK_WALK_SOUND_GRASS = 3;
+  public static final int BLOCK_WALK_SOUND_STONE = 4;
+  public static final int BLOCK_WALK_SOUND_METAL = 5;
+  public static final int BLOCK_WALK_SOUND_GLASS = 6;
+  public static final int BLOCK_WALK_SOUND_WOOL = 7;
+  public static final int BLOCK_WALK_SOUND_SAND = 8;
+  public static final int BLOCK_WALK_SOUND_SNOW = 9;
+
+  public static final int BLOCK_DRAW_OPAQUE = 0;
+  public static final int BLOCK_DRAW_TRANSPARENT_GLASS = 1;
+  public static final int BLOCK_DRAW_TRANSPARENT_LEAVES = 2;
+  public static final int BLOCK_DRAW_TRANSLUCENT = 3;
+  public static final int BLOCK_DRAW_GAS = 4;
+
   /**
    * The protocol version of Minecraft that this version of OpenCraft is compatible with.
    */
