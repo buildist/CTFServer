@@ -1526,9 +1526,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         if (player.muted) {
           error = "You're muted!";
         }
-        if (player.isNewPlayer) {
-          error = "Please read the instructions and rules before chatting.";
-        }
         if (error != null) {
           player.getActionSender().sendChatMessage("- &e" + error);
         } else {
