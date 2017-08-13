@@ -36,12 +36,24 @@
  */
 package org.opencraft.server.model;
 
+import com.flowpowered.nbt.ByteArrayTag;
+import com.flowpowered.nbt.ByteTag;
+import com.flowpowered.nbt.CompoundMap;
+import com.flowpowered.nbt.CompoundTag;
+import com.flowpowered.nbt.ShortTag;
+import com.flowpowered.nbt.Tag;
+import com.flowpowered.nbt.TagType;
+import com.flowpowered.nbt.stream.NBTInputStream;
+
 import java.awt.Color;
+
+import org.apache.mina.util.byteaccess.ByteArray;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -70,10 +82,8 @@ import org.opencraft.server.Constants;
  */
 public final class Level implements Cloneable {
 
-  public static final int Z_OFFSET = 0;
   public static final int CTF = 0;
   public static final int TDM = 1;
-  private static byte[] lobbyBlocks;
   /**
    * The level width.
    */
@@ -98,8 +108,10 @@ public final class Level implements Cloneable {
   public int sideBlock = 7;
   public int edgeBlock = 8;
   public int sideLevel = depth / 2;
+  public String textureUrl;
   public short viewDistance = 0;
   public short[][] colors = new short[Constants.DEFAULT_COLORS.length][3];
+  public HashSet<Integer> blockTypes = new HashSet<>();
   
   /**
    * The blocks.
@@ -119,10 +131,11 @@ public final class Level implements Cloneable {
    * The spawn position.
    */
   private Position spawnPosition;
-  private ArrayList<Position> tdmSpawns = new ArrayList<Position>();
-  private HashSet<Position> solidBlocks = new HashSet<Position>();
-  private HashSet<Integer> solidTypes = new HashSet<Integer>();
+  private ArrayList<Position> tdmSpawns = new ArrayList<>();
+  private HashSet<Position> solidBlocks = new HashSet<>();
+  private HashSet<Integer> solidTypes = new HashSet<>();
   private boolean allSolidTypes = false;
+  public final ArrayList<CustomBlockDefinition> customBlockDefinitions = new ArrayList<>();
   /**
    * The active "thinking" blocks on the map.
    */
@@ -136,7 +149,6 @@ public final class Level implements Cloneable {
    * A queue of positions to update at the next tick.
    */
   private Queue<Position> updateQueue = new ArrayDeque<Position>();
-  private com.mojang.minecraft.level.Level l;
 
   /**
    * Generates a level.
@@ -161,6 +173,7 @@ public final class Level implements Cloneable {
         colors[i][j] = Constants.DEFAULT_COLORS[i][j];
       }
     }
+    customBlockDefinitions.clear();
   }
 
   public void drawFire(Position pos, Rotation r) {
@@ -230,10 +243,6 @@ public final class Level implements Cloneable {
     Level copy = new Level();
     copy.load(filename, id);
     return copy;
-  }
-
-  public Level load(String filename, String id) {
-    return load(filename, id, true);
   }
 
   public String getCreator() {
@@ -321,13 +330,9 @@ public final class Level implements Cloneable {
     }
     ceiling = Integer.parseInt(props.getProperty("buildCeiling"));
     floor = Integer.parseInt(props.getProperty("buildFloor", "-8"));
-    
-    setMapColor("skyColor", 0);
-    setMapColor("cloudColor", 1);
-    setMapColor("fogColor", 2);
-    setMapColor("ambientColor", 3);
-    setMapColor("diffuseColor", 4);
-    
+
+    setMapColors();
+
     if(props.getProperty("viewDistance") != null) {
       try {
         viewDistance = (short) Integer.parseInt(props.getProperty("viewDistance"));
@@ -378,6 +383,14 @@ public final class Level implements Cloneable {
       ((CTFGameMode) World.getWorld().getGameMode()).placeBlueFlag();
     }
   }
+
+  private void setMapColors() {
+    setMapColor("skyColor", 0);
+    setMapColor("cloudColor", 1);
+    setMapColor("fogColor", 2);
+    setMapColor("ambientColor", 3);
+    setMapColor("diffuseColor", 4);
+  }
   
   private void setMapColor(String propertyName, int id) {
     if (props.getProperty(propertyName) != null) {
@@ -397,7 +410,7 @@ public final class Level implements Cloneable {
     }
   }
 
-  public Level load(String filename, String id, boolean addOffset) {
+  public Level load(String filename, String id) {
     solidTypes.add(BlockConstants.ADMINIUM);
     this.filename = filename;
     this.id = id;
@@ -441,66 +454,36 @@ public final class Level implements Cloneable {
         blocks1D = new byte[width * height * depth];
         byte[] tmpBlocks = new byte[width * height * depth];
         inputstream.readFully(tmpBlocks);
-        this.spawnPosition = new Position(vars[3] * 32 + 16, vars[4] * 32 + 16, (vars[5] +
-            (addOffset ? Z_OFFSET : 0)) * 32 + 16);
-        if (addOffset) {
-          Server.log("Loading map: " + id);
-          loadProps();
-        }
-        for (int x = 0; x < width; x++) {
-          for (int y = 0; y < height; y++) {
-            for (int z = 0; z < depth; z++) {
-              int type = tmpBlocks[(z * height + y) * width + x];
-              type = Math.min(Math.max(0, type), 127);
+        this.spawnPosition = new Position(vars[3] * 32 + 16, vars[4] * 32 + 16, vars[5] * 32 + 16);
 
-              if (GameSettings.getBoolean("Chaos")) {
-                if (type == 7) {
-                  type = 1;
-                } else if (type == 8) {
-                  type = 9;
-                } else if (type == 10) {
-                  type = 11;
+        Server.log("Loading map: " + id);
+        loadProps();
+
+        loadBlocks(tmpBlocks);
+
+        try {
+          if (inputstream.readByte() == (byte) 0xBD) {
+            // https://github.com/Hetal728/MCGalaxy/blob/b5cf22c3c06d5b6ff0e255bfc769118f427d5d06/MCGalaxy/Levels/IO/Importers/LvlImporter.cs#L80
+
+            int chunksX = ceilDiv16(width);
+            int chunksY = ceilDiv16(height);
+            int chunksZ = ceilDiv16(depth);
+            customBlocks = new byte[chunksX * chunksY * chunksZ][];
+            int index = 0;
+            for (int y = 0; y < chunksY; y++) {
+              for (int z = 0; z < chunksZ; z++) {
+                for (int x = 0; x < chunksX; x++) {
+                  if (inputstream.readByte() == 1) {
+                    byte[] chunk = new byte[16 * 16 * 16];
+                    inputstream.readFully(chunk);
+                    customBlocks[index] = chunk;
+                  }
+                  index++;
                 }
-                if (z == 0) {
-                  type = 7;
-                }
-              }
-              if (false && (type == 21 || type == 28)) {
-                if (Math.random() < 0.5) {
-                  type = 21;
-                } else {
-                  type = 28;
-                }
-              }
-              if ((allSolidTypes && type != 0 && type != 8 && type != 9 && type != 10 && type !=
-                  11) || solidTypes.contains(type)) {
-                solidBlocks.add(new Position(x, y, z));
-              }
-              blocks[x][y][z + (addOffset ? Z_OFFSET : 0)] = (byte) type;
-              blocks1D[((z + (addOffset ? Z_OFFSET : 0)) * height + y) * width + x] = (byte) type;
-            }
-          }
-        }
-        if (inputstream.readByte() == (byte) 0xBD) {
-          // https://github.com/Hetal728/MCGalaxy/blob/b5cf22c3c06d5b6ff0e255bfc769118f427d5d06/MCGalaxy/Levels/IO/Importers/LvlImporter.cs#L80
-          int chunksX = ceilDiv16(width);
-          int chunksY = ceilDiv16(height);
-          int chunksZ = ceilDiv16(depth);
-          customBlocks = new byte[chunksX * chunksY * chunksZ][];
-          int index = 0;
-          for (int y = 0; y < chunksY; y++) {
-            for (int z = 0; z < chunksZ; z++) {
-              for (int x = 0; x < chunksX; x++) {
-                if (inputstream.readByte() == 1) {
-                  byte[] chunk = new byte[16 * 16 * 16];
-                  inputstream.readFully(chunk);
-                  customBlocks[index]  = chunk;
-                }
-                index++;
               }
             }
           }
-        }
+        } catch (EOFException ex) {}
         gzis.close();
         fis.close();
       } catch (IOException ex) {
@@ -511,6 +494,7 @@ public final class Level implements Cloneable {
       GZIPInputStream gzis = null;
       ObjectInputStream in = null;
       DataInputStream inputstream = null;
+      com.mojang.minecraft.level.Level l = null;
       try {
         fis = new FileInputStream(filename);
         gzis = new GZIPInputStream(fis);
@@ -537,52 +521,171 @@ public final class Level implements Cloneable {
       byte[] tmpBlocks = l.blocks;
       width = (short) l.width;
       height = (short) l.height;
-      depth = (short) l.depth + (addOffset ? Z_OFFSET : 0);
+      depth = (short) l.depth;
       blocks = new byte[width][height][depth];
       blocks1D = new byte[width * height * depth];
-      this.spawnPosition = new Position(l.xSpawn * 32 + 16, (l.zSpawn) * 32 + 16, (l.ySpawn +
-          (addOffset ? Z_OFFSET : 0)) * 32 + 16);
+      this.spawnPosition = new Position(l.xSpawn * 32 + 16, (l.zSpawn) * 32 + 16, l.ySpawn  * 32 + 16);
 
-      if (addOffset) {
+      Server.log("Loading map: " + id);
+      loadProps();
+
+      loadBlocks(tmpBlocks);
+
+    } else if (filename.endsWith(".cw")) {
+      FileInputStream fileIn;
+      NBTInputStream nbtIn;
+      try {
+        fileIn = new FileInputStream(filename);
+        nbtIn = new NBTInputStream(fileIn);
+
+        CompoundMap classicWorld = ((CompoundTag) nbtIn.readTag()).getValue();
+
+        width = ((ShortTag)classicWorld.get("X")).getValue();
+        height = ((ShortTag)classicWorld.get("Z")).getValue();
+        depth = ((ShortTag)classicWorld.get("Y")).getValue();
+        blocks = new byte[width][height][depth];
+        blocks1D = new byte[width * height * depth];
+
+        byte[] tmpBlocks = ((ByteArrayTag)classicWorld.get("BlockArray")).getValue();
+
+        CompoundMap spawn = ((CompoundTag)classicWorld.get("Spawn")).getValue();
+        int spawnX = ((ShortTag)spawn.get("X")).getValue();
+        int spawnY = ((ShortTag)spawn.get("Y")).getValue();
+        int spawnZ = ((ShortTag)spawn.get("Z")).getValue();
+        int spawnH = ((ByteTag)spawn.get("H")).getValue();
+        int spawnP = ((ByteTag)spawn.get("P")).getValue();
+        this.spawnPosition = new Position(spawnX * 32 + 16, spawnZ * 32 + 16, spawnY * 32 + 16);
+        this.spawnRotation = new Rotation(spawnH, spawnP);
+
         Server.log("Loading map: " + id);
         loadProps();
-      }
 
-      for (int x = 0; x < l.width; x++) {
-        for (int y = 0; y < l.height; y++) {
-          for (int z = 0; z < l.depth; z++) {
-            int type = tmpBlocks[(z * l.height + y) * l.width + x];
+        loadBlocks(tmpBlocks);
+        loadMetadata(((CompoundTag)classicWorld.get("Metadata")).getValue());
 
-            if (GameSettings.getBoolean("Chaos")) {
-              if (type == 7) {
-                type = 1;
-              } else if (type == 8) {
-                type = 9;
-              } else if (type == 10) {
-                type = 11;
-              }
-              if (z == 0) {
-                type = 7;
-              }
-            }
-            if (false && (type == 21 || type == 28)) {
-              if (Math.random() < 0.5) {
-                type = 21;
-              } else {
-                type = 28;
-              }
-            }
-            if ((allSolidTypes && type != 0 && type != 8 && type != 9 && type != 10 && type !=
-                11) || solidTypes.contains(type)) {
-              solidBlocks.add(new Position(x, y, z));
-            }
-            blocks[x][y][z + (addOffset ? Z_OFFSET : 0)] = (byte) type;
-            blocks1D[((z + (addOffset ? Z_OFFSET : 0)) * l.height + y) * l.width + x] = (byte) type;
-          }
-        }
+      } catch (IOException ex) {
+        ex.printStackTrace();
       }
     }
     return this;
+  }
+
+  private void loadBlocks(byte[] blockArray) {
+    for (int x = 0; x < width; x++) {
+      for (int y = 0; y < height; y++) {
+        for (int z = 0; z < depth; z++) {
+          int type = blockArray[(z * height + y) * width + x];
+          blockTypes.add(type);
+
+          if (GameSettings.getBoolean("Chaos")) {
+            if (type == 7) {
+              type = 1;
+            } else if (type == 8) {
+              type = 9;
+            } else if (type == 10) {
+              type = 11;
+            }
+            if (z == 0) {
+              type = 7;
+            }
+          }
+          if ((allSolidTypes && type != 0 && type != 8 && type != 9 && type != 10 && type !=
+              11) || solidTypes.contains(type)) {
+            solidBlocks.add(new Position(x, y, z));
+          }
+          blocks[x][y][z] = (byte) type;
+          blocks1D[(z * height + y) * width + x] = (byte) type;
+        }
+      }
+    }
+  }
+
+  private void loadMetadata(CompoundMap metadata) {
+    CompoundMap cpe = ((CompoundTag)metadata.get("CPE")).getValue();
+
+    if (cpe.containsKey("BlockDefinitions")) {
+      CompoundMap blockDefinitions = ((CompoundTag) cpe.get("BlockDefinitions")).getValue();
+      for (Tag blockTag : blockDefinitions.values()) {
+        if (!(blockTag instanceof CompoundTag)) continue;
+        ;
+        CompoundMap block = ((CompoundTag) blockTag).getValue();
+        int blockDraw = (Byte) block.get("BlockDraw").getValue();
+        int collideType = (Byte) block.get("CollideType").getValue();
+        byte[] coords = ((ByteArrayTag) block.get("Coords")).getValue();
+        byte[] fog = ((ByteArrayTag) block.get("Fog")).getValue();
+        int fullBright = (Byte) block.get("FullBright").getValue();
+        int id = (Byte) block.get("ID").getValue();
+        String name = (String) block.get("Name").getValue();
+        int shape = (Byte) block.get("Shape").getValue();
+        float speed = (Float) block.get("Speed").getValue();
+        byte[] textures = ((ByteArrayTag) block.get("Textures")).getValue();
+        int transmitsLight = (Byte) block.get("TransmitsLight").getValue();
+        int walkSound = (Byte) block.get("WalkSound").getValue();
+
+        if (!blockTypes.contains(id)) continue;
+
+        CustomBlockDefinition blockDef = new CustomBlockDefinition(
+            Server.getUnsigned(id),
+            name,
+            collideType,
+            128,
+            textures[0],
+            textures[2],
+            textures[3],
+            textures[4],
+            textures[5],
+            textures[1],
+            transmitsLight == 1,
+            walkSound,
+            fullBright == 1,
+            coords[0],
+            coords[1],
+            coords[2],
+            coords[3],
+            coords[4],
+            coords[5],
+            blockDraw,
+            fog[0],
+            fog[1],
+            fog[2],
+            fog[3]);
+        customBlockDefinitions.add(blockDef);
+        BlockManager.getBlockManager().addCustomBlock(blockDef);
+      }
+    }
+
+    if (cpe.containsKey("EnvColors")) {
+      CompoundMap envColors = ((CompoundTag) cpe.get("EnvColors")).getValue();
+      String ambient = getColor(((CompoundTag)envColors.get("Ambient")).getValue());
+      String cloud = getColor(((CompoundTag)envColors.get("Cloud")).getValue());
+      String fog = getColor(((CompoundTag)envColors.get("Fog")).getValue());
+      String sky = getColor(((CompoundTag)envColors.get("Sky")).getValue());
+      String sunlight = getColor(((CompoundTag)envColors.get("Sunlight")).getValue());
+      props.put("ambientColor", ambient);
+      props.put("cloudColor", cloud);
+      props.put("fogColor", fog);
+      props.put("skyColor", sky);
+      props.put("diffuseColor", sunlight);
+      setMapColors();
+    }
+
+    if (cpe.containsKey("EnvMapAppearance")) {
+      CompoundMap envMapAppearance = ((CompoundTag)cpe.get("EnvMapAppearance")).getValue();
+      this.edgeBlock = (Byte) envMapAppearance.get("EdgeBlock").getValue();
+      this.sideBlock = (Byte) envMapAppearance.get("SideBlock").getValue();
+      this.sideLevel = (Short) envMapAppearance.get("SideLevel").getValue();
+      this.textureUrl = (String) envMapAppearance.get("TextureURL").getValue();
+      props.put("edgeBlock", edgeBlock + "");
+      props.put("sideBlock", sideBlock + "");
+      props.put("sideLevel", sideLevel + "");
+    }
+  }
+
+  private String getColor(CompoundMap map) {
+    int r = (Short) map.get("R").getValue();
+    int g = (Short) map.get("G").getValue();
+    int b = (Short) map.get("B").getValue();
+    return String.format("#%02x%02x%02x", r, g, b);
   }
 
   public void saveProps() {
@@ -619,7 +722,7 @@ public final class Level implements Cloneable {
       } else {
         return new Position(Integer.parseInt((String) getProp(team + "SpawnX")) * 32 + 16,
             Integer.parseInt((String) getProp(team + "SpawnZ")) * 32 + 16, (Integer.parseInt(
-            (String) getProp(team + "SpawnY")) + Z_OFFSET) * 32 + 16);
+            (String) getProp(team + "SpawnY"))) * 32 + 16);
       }
     }
   }
@@ -785,7 +888,7 @@ public final class Level implements Cloneable {
       return;
     }
     blocks1D[(z * this.height + y) * this.width + x] = (byte) type;
-    byte formerBlock = this.getBlock(x, y, z);
+    int formerBlock = this.getBlock(x, y, z);
     blocks[x][y][z] = (byte) type;
     if (type != formerBlock) {
       for (Player player : World.getWorld().getPlayerList().getPlayers()) {
@@ -888,15 +991,15 @@ public final class Level implements Cloneable {
    * @param z The z coordinate.
    * @return The type id.
    */
-  public byte getBlock(int x, int y, int z) {
+  public int getBlock(int x, int y, int z) {
     if (x >= 0 && y >= 0 && z >= 0 && x < width && y < height && z < depth) {
-      return blocks[x][y][z];
+      return Server.getUnsigned(blocks[x][y][z]);
     } else {
       return 0;
     }
   }
 
-  public byte getBlock(Position pos) {
+  public int getBlock(Position pos) {
     return getBlock(pos.getX(), pos.getY(), pos.getZ());
   }
 

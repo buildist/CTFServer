@@ -252,6 +252,16 @@ public class Player extends Entity {
     }
   }
 
+  public void clearMines() {
+    synchronized (mines) {
+      for (Mine m : mines) {
+        World.getWorld().removeMine(m);
+        World.getWorld().getLevel().setBlock((m.x - 16) / 32, (m.y - 16) / 32, (m.z - 16) / 32, 0);
+      }
+      mines.clear();
+    }
+  }
+
   public void ignore(Player p) {
     if (p.isOp()) {
       getActionSender().sendChatMessage("- &eYou can't ignore operators.");
@@ -537,11 +547,7 @@ public class Player extends Entity {
       bad = true;
       getActionSender().sendChatMessage("- Unrecognized team!");
     }
-    synchronized (mines) {
-      for (Mine mine : mines) {
-        mine.team = this.team;
-      }
-    }
+    clearMines();
     if (isVisible) {
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
         p.getActionSender().sendAddPlayer(this, p == this);

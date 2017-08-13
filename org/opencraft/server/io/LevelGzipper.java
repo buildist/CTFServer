@@ -38,6 +38,7 @@ package org.opencraft.server.io;
 
 
 import org.apache.mina.core.buffer.IoBuffer;
+import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.Level;
@@ -82,7 +83,13 @@ public final class LevelGzipper {
     final int height = level.getHeight();
     final int depth = level.getDepth();
     session.getActionSender().sendLevelInit();
-    // session.getActionSender().sendDefineBlock(CustomBlockDefinition.MINE);
+
+    for (CustomBlockDefinition blockDef : level.customBlockDefinitions) {
+      session.getActionSender().sendDefineBlockExt(blockDef);
+    }
+    for (CustomBlockDefinition blockDef : CustomBlockDefinition.CUSTOM_BLOCKS) {
+      session.getActionSender().sendDefineBlockExt(blockDef);
+    }
     service.submit(new Runnable() {
       @Override
       public void run() {
@@ -107,13 +114,25 @@ public final class LevelGzipper {
             int percent = (int) ((double) buf.position() / (double) buf.limit() * 255D);
             session.getActionSender().sendLevelBlock(len, chunk, percent);
           }
+          String texturePack = (level.textureUrl != null && !level.textureUrl.isEmpty())
+              ? level.textureUrl
+              : Configuration.getConfiguration().getEnvTexturePack();
           if (session.isExtensionSupported("EnvMapAppearance", 2))
-            session.getActionSender().sendMapAppearanceV2();
+            session.getActionSender().sendMapAppearanceV2(texturePack);
           else if (session.isExtensionSupported("EnvMapAppearance", 1))
             session.getActionSender().sendMapAppearanceV1();
           if (session.isExtensionSupported("EnvColors"))
             session.getActionSender().sendMapColors();
           session.getActionSender().sendLevelFinish();
+
+          session.getActionSender().sendBlockPermissions(0, true, true);
+          session.getActionSender().sendBlockPermissions(7, false, false);
+          session.getActionSender().sendBlockPermissions(8, false, false);
+          session.getActionSender().sendBlockPermissions(10, false, false);
+          session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE, true, false);
+          session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_RED, false, false);
+          session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_BLUE, false, false);
+
           session.getPlayer().getLocalEntities().clear();
         } catch (IOException ex) {
           session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");

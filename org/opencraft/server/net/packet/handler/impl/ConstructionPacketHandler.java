@@ -37,6 +37,7 @@
 package org.opencraft.server.net.packet.handler.impl;
 
 
+import org.opencraft.server.Server;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
@@ -58,7 +59,7 @@ public class ConstructionPacketHandler implements PacketHandler<MinecraftSession
     }
     Player p = session.getPlayer();
     long time = new Date().getTime() - p.lastBlockTimestamp;
-    int type = packet.getNumericField("type").intValue();
+    int type = Server.getUnsigned(packet.getNumericField("type").intValue());
     if (time < 5 && type == 22)
       p.kickForHacking();
     else {

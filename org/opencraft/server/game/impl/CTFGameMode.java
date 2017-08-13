@@ -116,6 +116,7 @@ import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.model.BlockLog;
 import org.opencraft.server.model.BlockLog.BlockInfo;
 import org.opencraft.server.model.BuildMode;
+import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.DropItem;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;
@@ -573,7 +574,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public void resetRedFlagPos() {
     if (getMode() == Level.CTF) {
       redFlagX = Integer.parseInt(map.props.getProperty("redFlagX"));
-      redFlagY = Integer.parseInt(map.props.getProperty("redFlagY")) + Level.Z_OFFSET;
+      redFlagY = Integer.parseInt(map.props.getProperty("redFlagY"));
       redFlagZ = Integer.parseInt(map.props.getProperty("redFlagZ"));
       redFlagDropped = false;
     }
@@ -582,7 +583,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public void resetBlueFlagPos() {
     if (getMode() == Level.CTF) {
       blueFlagX = Integer.parseInt(map.props.getProperty("blueFlagX"));
-      blueFlagY = Integer.parseInt(map.props.getProperty("blueFlagY")) + Level.Z_OFFSET;
+      blueFlagY = Integer.parseInt(map.props.getProperty("blueFlagY"));
       blueFlagZ = Integer.parseInt(map.props.getProperty("blueFlagZ"));
       blueFlagDropped = false;
     }
@@ -597,12 +598,13 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       int rDoorX = Integer.parseInt(map.props.getProperty("redSpawnX"));
       int rDoorY = Integer.parseInt(map.props.getProperty("redSpawnY")) - 2;
       int rDoorZ = Integer.parseInt(map.props.getProperty("redSpawnZ"));
-      map.setBlock(rDoorX, rDoorZ, rDoorY + Level.Z_OFFSET, (byte) 0x00);
-      map.setBlock(bDoorX, bDoorZ, bDoorY + Level.Z_OFFSET, (byte) 0x00);
+      map.setBlock(rDoorX, rDoorZ, rDoorY, (byte) 0x00);
+      map.setBlock(bDoorX, bDoorZ, bDoorY, (byte) 0x00);
     }
   }
 
   public void startGame(Level newMap) {
+    Level oldMap = map;
     if (newMap == null) {
       map = MapController.randomLevel();
     } else {
@@ -626,6 +628,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             player.flamethrowerEnabled = false;
             player.flamethrowerUnits = 200;
             player.accumulatedStorePoints = 0;
+            for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
+              player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
+            }
           }
           World.getWorld().clearMines();
           startNewMap = null;
@@ -1159,11 +1164,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     int MAX_DISTANCE = 10;
     boolean ignore = false;
     if (mode == 0) {
-      type = (byte) 0x00;
+      type = 0x00;
     }
     if (player.placeBlock != -1 && (player.placeBlock != 7 || player.placeBlock == 7 && type ==
         1)) {
-      type = (byte) player.placeBlock;
+      type = player.placeBlock;
     }
     if (player.placeSolid == true && type == 1) {
       type = 7;
@@ -1306,7 +1311,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       } else if (isTNT(x, y, z) && !ignore) { //Deleting tnt
         player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_TNT);
       } else if (isMine(x, y, z) && !ignore) { // Deleting mines
-        player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_MINE);
+        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
       } else if (type == 46 && mode == 1 && !ignore) //Placing tnt
       {
         if (player.getAttribute("explodes").toString().equals("0")) {
@@ -1323,7 +1328,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               player.tntX = x;
               player.tntY = y;
               player.tntZ = z;
-              level.setBlock(x, y, z, (byte) type);
+              level.setBlock(x, y, z, type);
             } else if (!isTNT(x, y, z) && !(x == redFlagX && z == redFlagY && y == redFlagZ) && !
                 (x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
               player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
@@ -1343,7 +1348,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             final Mine mine = new Mine(x, y, z, player.team, player);
             player.mines.add(mine);
             player.getActionSender().sendChatMessage("- Say /d to defuse the mine.");
-            level.setBlock(x, y, z, (byte) type);
+            level.setBlock(x, y, z,
+                player.team == 0 ? Constants.BLOCK_MINE_RED : Constants.BLOCK_MINE_BLUE);
             World.getWorld().addMine(mine);
             new Thread(new MineActivator(mine, player)).start();
           } else if (!isMine(x, y, z) && !(x == redFlagX && z == redFlagY && y == redFlagZ) && !
@@ -1356,7 +1362,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         }
       } else if (
           (type == BlockConstants.LAVA
-              || type == BlockConstants.WATER || type == BlockConstants.ADMINIUM)
+              || type == BlockConstants.WATER
+              || type == BlockConstants.ADMINIUM
+              || type == Constants.BLOCK_MINE_RED
+              || type == Constants.BLOCK_MINE_BLUE)
           && !player.isOp()) {
         player.getActionSender().sendBlock(x, y, z, (byte) 0);
         player.getActionSender().sendChatMessage("- &eYou can't place this block type!");
@@ -1369,9 +1378,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       } else if ((x == blueFlagX && z == blueFlagY && y == blueFlagZ) && mode == 1 &&
           !blueFlagTaken && !ignore) {
         player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_BLUE_FLAG);
-      } else if (type < 50 + 16 && type > -1) {
+      } else if (/*type < 50 + 16 && */type > -1) {
         if (!ignore) {
-          level.setBlock(x, y, z, (byte) (mode == 1 ? type : 0));
+          level.setBlock(x, y, z, (mode == 1 ? type : 0));
           BlockLog.logBlockChange(player, x, y, z);
         } else {
           player.getActionSender().sendBlock(x, y, z, (byte) oldType);
@@ -1407,11 +1416,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       dropFlag(p);
     }
 
-    synchronized (p.mines) {
-      for (Mine mine : p.mines) {
-        World.getWorld().removeMine(mine);
-      }
-    }
+    p.clearMines();
+
     if (p.team == 0) {
       ((CTFGameMode) World.getWorld().getGameMode()).redPlayers--;
     } else if (p.team == 1) {

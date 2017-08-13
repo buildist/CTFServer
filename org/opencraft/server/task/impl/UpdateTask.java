@@ -107,7 +107,9 @@ public class UpdateTask extends ScheduledTask {
     }
     try {
       world.getLevel().applyBlockBehaviour();
-    } catch(ConcurrentModificationException ex) {}
+    } catch(ConcurrentModificationException ex) {
+      Server.log(ex);
+    }
   }
 
 }

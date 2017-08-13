@@ -125,16 +125,19 @@ public class MapController {
   }
 
   public static Level getLevel(String id) {
-    try {
-      File lvlFile = new File("maps/" + id + ".lvl");
-      if (lvlFile.exists())
-        return new Level().load("maps/" + id + ".lvl", id);
-      else
-        return new Level().load("maps/" + id + ".dat", id);
-    } catch (Exception ex) {
-      ex.printStackTrace();
-      return null;
+    for (String ext : Constants.MAP_EXTENSIONS) {
+      try {
+        String path = "maps/" + id + "." + ext;
+        File file = new File(path);
+        if (file.exists()) {
+          return new Level().load(path, id);
+        }
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        continue;
+      }
     }
+    return null;
   }
 
   public static boolean addVote(String id) {

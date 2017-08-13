@@ -100,7 +100,7 @@ public class BlockDefinition {
 
   }
 
-  private BlockDefinition(String name, int bid, boolean solid, boolean liquid, boolean
+  public BlockDefinition(String name, int bid, boolean solid, boolean liquid, boolean
       blocksLight, boolean halfBlock, boolean doesThink, boolean isPlant, long thinkTimer, int
       fullCounterpart, String behaviourName) throws InstantiationException,
       IllegalAccessException, ClassNotFoundException {

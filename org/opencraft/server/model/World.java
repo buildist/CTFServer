@@ -228,6 +228,11 @@ public final class World {
         return;
       }
     }
+
+    if (username.equals("ChurroS")) {
+      username = "Matt";
+    }
+
     // check if name is valid
     char[] nameChars = username.toCharArray();
     for (char nameChar : nameChars) {

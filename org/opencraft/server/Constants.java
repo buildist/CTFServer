@@ -75,7 +75,9 @@ public final class Constants {
     "CustomBlocks",
     "ExtPlayerList",
     "TwoWayPing",
-    "BlockDefinitions"};
+    "BlockDefinitions",
+    "BlockDefinitionsExt",
+    "BlockPermissions"};
   // CPE versions
   public static final int[] CPE_EXT_VERSIONS = {
     1,
@@ -86,6 +88,8 @@ public final class Constants {
     1,
     2,
     1,
+    1,
+    2,
     1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
@@ -110,7 +114,9 @@ public final class Constants {
   
   public static final String URL_MAP_COMMENT = "http://buildism.net/mc/server/mapComment.php?k=" + SECRET;
   
-  public static final int BLOCK_MINE = 62;
+  public static final int BLOCK_MINE = 230;
+  public static final int BLOCK_MINE_RED = 231;
+  public static final int BLOCK_MINE_BLUE = 232;
   public static final int BLOCK_TNT = BlockConstants.TNT;
   public static final int BLOCK_RED_FLAG = BlockConstants.CLOTH_RED;
   public static final int BLOCK_BLUE_FLAG = BlockConstants.CLOTH_LIGHTBLUE;
@@ -136,6 +142,8 @@ public final class Constants {
   public static final int BLOCK_DRAW_TRANSPARENT_LEAVES = 2;
   public static final int BLOCK_DRAW_TRANSLUCENT = 3;
   public static final int BLOCK_DRAW_GAS = 4;
+
+  public static final String[] MAP_EXTENSIONS = new String[]{"dat", "lvl", "cw"};
 
   /**
    * The protocol version of Minecraft that this version of OpenCraft is compatible with.

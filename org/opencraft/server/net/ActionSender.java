@@ -374,10 +374,10 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
-  public void sendMapAppearanceV2() {
+  public void sendMapAppearanceV2(String textureUrl) {
     PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
         .getOutgoingPacket(30));
-    bldr.putString("texture_url", Configuration.getConfiguration().getEnvTexturePack());
+    bldr.putString("texture_url", textureUrl);
     bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
     bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
     bldr.putShort("side_level", World.getWorld().getLevel().sideLevel);
@@ -428,17 +428,46 @@ public class ActionSender {
         block.solid,
         block.movementSpeed,
         block.textureTop,
-        block.textureSide,
+        block.textureFront,
         block.textureBottom,
         block.emitsLight,
         block.walkSound,
         block.fullBright,
-        block.shape,
+        16,
         block.blockDraw,
-        0,
-        0,
-        0,
-        0);
+        block.fogDensity,
+        block.fogR,
+        block.fogG,
+        block.fogB);
+  }
+
+  public void sendDefineBlockExt(
+      CustomBlockDefinition block) {
+    sendDefineBlockExt(
+        block.id,
+        block.name,
+        block.solid,
+        block.movementSpeed,
+        block.textureTop,
+        block.textureLeft,
+        block.textureRight,
+        block.textureFront,
+        block.textureBack,
+        block.textureBottom,
+        block.emitsLight,
+        block.walkSound,
+        block.fullBright,
+        block.minX,
+        block.minY,
+        block.minZ,
+        block.maxX,
+        block.maxY,
+        block.maxZ,
+        block.blockDraw,
+        block.fogDensity,
+        block.fogR,
+        block.fogG,
+        block.fogB);
   }
 
   public void sendDefineBlock(
@@ -477,6 +506,77 @@ public class ActionSender {
     bldr.putByte("fog_g", fogG);
     bldr.putByte("fog_b", fogB);
     session.send(bldr.toPacket());
+  }
+
+  public void sendDefineBlockExt(
+      int id,
+      String name,
+      int solid,
+      int movementSpeed,
+      int textureTop,
+      int textureLeft,
+      int textureRight,
+      int textureFront,
+      int textureBack,
+      int textureBottom,
+      boolean emitsLight,
+      int walkSound,
+      boolean fullBright,
+      int minX,
+      int minY,
+      int minZ,
+      int maxX,
+      int maxY,
+      int maxZ,
+      int blockDraw,
+      int fogDensity,
+      int fogR,
+      int fogG,
+      int fogB) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(37));
+    bldr.putByte("id", id);
+    bldr.putString("name", name);
+    bldr.putByte("solid", solid);
+    bldr.putByte("movement_speed", movementSpeed);
+    bldr.putByte("texture_top", textureTop);
+    bldr.putByte("texture_left", textureLeft);
+    bldr.putByte("texture_right", textureRight);
+    bldr.putByte("texture_front", textureFront);
+    bldr.putByte("texture_back", textureBack);
+    bldr.putByte("texture_bottom", textureBottom);
+    bldr.putByte("emits_light", emitsLight ? 1 : 0);
+    bldr.putByte("walk_sound", walkSound);
+    bldr.putByte("full_bright", fullBright ? 1 : 0);
+    bldr.putByte("min_x", minX);
+    bldr.putByte("min_y", minY);
+    bldr.putByte("min_z", minZ);
+    bldr.putByte("max_x", maxX);
+    bldr.putByte("max_y", maxY);
+    bldr.putByte("max_z", maxZ);
+    bldr.putByte("block_draw", blockDraw);
+    bldr.putByte("fog_density", fogDensity);
+    bldr.putByte("fog_r", fogR);
+    bldr.putByte("fog_g", fogG);
+    bldr.putByte("fog_b", fogB);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendBlockPermissions(int id, boolean place, boolean delete) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(28));
+    bldr.putByte("id", id);
+    bldr.putByte("place", place ? 1 : 0);
+    bldr.putByte("delete", delete ? 1 : 0);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendRemoveBlockDefinition(int id) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(36));
+    bldr.putByte("id", id);
+    session.send(bldr.toPacket());
+
   }
 
   /**

@@ -708,7 +708,7 @@ POSSIBILITY OF SUCH DAMAGE.
       <halfBlock>false</halfBlock>
       <behaviourName>org.opencraft.server.model.impl.IceBlockBehavior</behaviourName>
       <doesThink>true</doesThink>
-      <thinkTimer>60000</thinkTimer>
+      <thinkTimer>10000</thinkTimer>
       <isPlant>false</isPlant>
     </block>
     <block>

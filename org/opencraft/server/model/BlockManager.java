@@ -104,4 +104,22 @@ public final class BlockManager {
     return blocksArray[id];
   }
 
+  public void addCustomBlock(CustomBlockDefinition customBlockDefinition) {
+    try {
+      blocksArray[customBlockDefinition.id] = new BlockDefinition(
+          customBlockDefinition.name,
+          customBlockDefinition.id,
+          customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SOLID,
+          customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SWIM_THROUGH,
+          customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SOLID,
+          false,
+          false,
+          false,
+          0,
+          0,
+          "");
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+  }
 }

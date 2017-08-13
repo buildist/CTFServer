@@ -66,7 +66,7 @@ public class LavaBehaviour implements BlockBehaviour {
     int[][] spreadRules = {{0, 0, -1}, {1, 0, 0}, {-1, 0, 0}, {0, 1, 0}, {0, -1, 0}};
     // then, spread outward
     for (int i = 0; i <= spreadRules.length - 1; i++) {
-      byte thisOutwardBlock = level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z +
+      int thisOutwardBlock = level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z +
           spreadRules[i][2]);
 
       // check for lava

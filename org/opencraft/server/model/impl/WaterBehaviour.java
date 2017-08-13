@@ -82,7 +82,7 @@ public class WaterBehaviour implements BlockBehaviour {
         }
       }
 
-      byte thisBlock = level.getBlock(x, y, offsetZ);
+      int thisBlock = level.getBlock(x, y, offsetZ);
 
       // check for lava
       if (thisBlock == BlockConstants.LAVA || thisBlock == BlockConstants.STILL_LAVA) {
@@ -97,7 +97,7 @@ public class WaterBehaviour implements BlockBehaviour {
     // then, spread outward
     OUTERMOST_OUTWARD:
     for (int i = 0; i <= spreadRules.length - 1; i++) {
-      byte thisOutwardBlock = level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z +
+      int thisOutwardBlock = level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z +
           spreadRules[i][2]);
 
       for (int spongeX = (-1 * spongeRadius); spongeX <= spongeRadius; spongeX++) {
