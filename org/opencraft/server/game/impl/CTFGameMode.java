@@ -604,7 +604,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public void startGame(Level newMap) {
-    Level oldMap = map;
+    final Level oldMap = map;
     if (newMap == null) {
       map = MapController.randomLevel();
     } else {

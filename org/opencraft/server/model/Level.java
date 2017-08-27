@@ -111,7 +111,7 @@ public final class Level implements Cloneable {
   public String textureUrl;
   public short viewDistance = 0;
   public short[][] colors = new short[Constants.DEFAULT_COLORS.length][3];
-  public HashSet<Integer> blockTypes = new HashSet<>();
+  public HashSet<Integer> blockTypes = new HashSet<Integer>();
   
   /**
    * The blocks.
@@ -131,11 +131,11 @@ public final class Level implements Cloneable {
    * The spawn position.
    */
   private Position spawnPosition;
-  private ArrayList<Position> tdmSpawns = new ArrayList<>();
-  private HashSet<Position> solidBlocks = new HashSet<>();
-  private HashSet<Integer> solidTypes = new HashSet<>();
+  private ArrayList<Position> tdmSpawns = new ArrayList<Position>();
+  private HashSet<Position> solidBlocks = new HashSet<Position>();
+  private HashSet<Integer> solidTypes = new HashSet<Integer>();
   private boolean allSolidTypes = false;
-  public final ArrayList<CustomBlockDefinition> customBlockDefinitions = new ArrayList<>();
+  public final ArrayList<CustomBlockDefinition> customBlockDefinitions = new ArrayList<CustomBlockDefinition>();
   /**
    * The active "thinking" blocks on the map.
    */
