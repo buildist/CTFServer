@@ -62,10 +62,6 @@ public class RocketCommand implements Command {
     return INSTANCE;
   }
 
-  void stop() {
-    rocketThread.stop();
-  }
-
   public void execute(final Player player, CommandParameters params) {
     rocketThread = new Thread(new Runnable() {
       public void run() {
@@ -79,19 +75,19 @@ public class RocketCommand implements Command {
           return;
         }
         player.rocketTime = System.currentTimeMillis();
-        Position pos = player.getPosition();
+        Position pos = player.getPosition().toBlockPos();
         Rotation r = player.getRotation();
 
-        int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256)) - 90;
-        int pitch = 360 - (int) (Server.getUnsigned(r.getLook()) * ((float) 360 / 256));
+        double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+        double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
-        double px = (pos.getX() - 16) / 32;
-        double py = (pos.getY() - 16) / 32;
-        double pz = ((pos.getZ() - 16) / 32);
+        double px = pos.getX();
+        double py = pos.getY();
+        double pz = pos.getZ();
 
-        double vx = Math.cos(Math.toRadians(heading));
-        double vz = Math.tan(Math.toRadians(pitch));
-        double vy = Math.sin(Math.toRadians(heading));
+        double vx = Math.cos(heading)*Math.cos(pitch);
+        double vy = Math.sin(heading)*Math.cos(pitch);
+        double vz = Math.sin(pitch);
         double x = px;
         double y = py;
         double z = pz;
@@ -125,50 +121,6 @@ public class RocketCommand implements Command {
           }
         }
         return;
-                /*Vector<Position> fires = new Vector<Position>(7 * 7 * 7);
-                for(int x2 = (int) lastX - 3; x2 < (int) lastX + 3; x2++)
-                {
-                    for(int y2 = (int) lastY - 3; y2 < (int) lastY + 3; y2++)
-                    {
-                        for(int z2 = (int) lastZ - 3; z2 < (int) lastZ + 3; z2++)
-                        {
-                            if(Math.random() < 0.20)
-                            {
-                                if(World.getWorld().getLevel().getBlock(x2, y2, z2) == 0)
-                                    fires.add(new Position(x2, y2, z2));
-                            }
-                        }
-                    }
-                }
-                while(fires.size() > 0)
-                {
-                    Enumeration<Position> en = fires.elements();
-                    while(en.hasMoreElements())
-                    {
-                        Position p = en.nextElement();
-                        int posX = p.getX();
-                        int posY = p.getY();
-                        int posZ = p.getZ();
-                        if(World.getWorld().getLevel().getBlock(posX, posY, posZ) != 7)
-                            World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
-                        posZ--;
-                        if(World.getWorld().getLevel().getBlock(posX, posY, posZ) != 0 && World
-                        .getWorld().getLevel().getBlock(posX, posY, posZ) != 11 || posZ < 0)
-                        {
-                            fires.remove(p);
-                        }
-                        else
-                        {
-                            World.getWorld().getLevel().setBlock(posX, posY, posZ, 11);
-                            fires.remove(p);
-                            fires.add(new Position(posX, posY, posZ));
-                        }
-                    }
-                    try {
-                        Thread.sleep(50);
-                    } catch (InterruptedException ex) {
-                    }
-                }*/
       }
     });
     rocketThread.start();

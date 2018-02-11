@@ -61,20 +61,16 @@ public class LineCommand implements Command {
     Position pos = player.getPosition().toBlockPos();
     Rotation r = player.getRotation();
 
-    int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256)) - 90;
-    int pitch = 360 - (int) (Server.getUnsigned(r.getLook()) * ((float) 360 / 256));
+    double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+    double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     double px = pos.getX();
     double py = pos.getY();
     double pz = pos.getZ();
 
-    double vx = Math.cos(Math.toRadians(heading));
-    double vz = Math.tan(Math.toRadians(pitch));
-    double vy = Math.sin(Math.toRadians(heading));
-    double length = Math.sqrt(vx * vx + vy * vy + vz * vz);
-    vx /= length;
-    vz /= length;
-    vy /= length;
+    double vx = Math.cos(heading)*Math.cos(pitch);
+    double vy = Math.sin(heading)*Math.cos(pitch);
+    double vz = Math.sin(pitch);
     double x = px;
     double y = py;
     double z = pz;
