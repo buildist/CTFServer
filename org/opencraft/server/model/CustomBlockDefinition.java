@@ -258,10 +258,4 @@ public class CustomBlockDefinition {
       FLAG_RED,
       FLAG_BLUE
   };
-
-  static {
-    for (CustomBlockDefinition block : CUSTOM_BLOCKS) {
-      BlockManager.getBlockManager().addCustomBlock(block);
-    }
-  }
 }

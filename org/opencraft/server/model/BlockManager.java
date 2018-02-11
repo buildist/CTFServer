@@ -43,6 +43,8 @@ import org.opencraft.server.io.PersistenceManager;
 import java.util.LinkedList;
 import java.util.List;
 
+import static org.opencraft.server.model.CustomBlockDefinition.CUSTOM_BLOCKS;
+
 /**
  * A class which manages <code>BlockDefinition</code>s and <code>BlockBehaviour</code>s.
  *
@@ -90,6 +92,9 @@ public final class BlockManager {
     blocksArray = new BlockDefinition[256];
     for (BlockDefinition def : blockList) {
       blocksArray[def.getId()] = def;
+    }
+    for (CustomBlockDefinition block : CUSTOM_BLOCKS) {
+      addCustomBlock(block);
     }
     return this;
   }
