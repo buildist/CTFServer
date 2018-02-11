@@ -148,7 +148,7 @@ public final class Level implements Cloneable {
   /**
    * A queue of positions to update at the next tick.
    */
-  private Queue<Position> updateQueue = new ArrayDeque<Position>();
+  private final Queue<Position> updateQueue = new ArrayDeque<Position>();
 
   /**
    * Generates a level.
@@ -793,8 +793,11 @@ public final class Level implements Cloneable {
    * Performs physics updates on queued blocks.
    */
   public void applyBlockBehaviour() {
-    Queue<Position> currentQueue = new ArrayDeque<Position>(updateQueue);
-    updateQueue.clear();
+    Queue<Position> currentQueue;
+    synchronized (updateQueue) {
+      currentQueue = new ArrayDeque<>(updateQueue);
+      updateQueue.clear();
+    }
     for (Position pos : currentQueue) {
       BlockManager.getBlockManager().getBlock(this.getBlock(pos.getX(), pos.getY(), pos.getZ()))
           .behavePassive(this, pos.getX(), pos.getY(), pos.getZ());
@@ -970,8 +973,10 @@ public final class Level implements Cloneable {
   private void queueTileUpdate(int x, int y, int z) {
     if (x >= 0 && y >= 0 && z >= 0 && x < width && y < height && z < depth) {
       Position pos = new Position(x, y, z);
-      if (!updateQueue.contains(pos)) {
-        updateQueue.add(pos);
+      synchronized (updateQueue) {
+        if (!updateQueue.contains(pos)) {
+          updateQueue.add(pos);
+        }
       }
     }
   }
