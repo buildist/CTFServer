@@ -67,6 +67,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
@@ -149,6 +151,8 @@ public final class Level implements Cloneable {
    * A queue of positions to update at the next tick.
    */
   private final Queue<Position> updateQueue = new ArrayDeque<Position>();
+
+  private final Queue<UpdateBlock> iceBlocks = new LinkedList<>();
 
   /**
    * Generates a level.
@@ -802,13 +806,13 @@ public final class Level implements Cloneable {
       BlockManager.getBlockManager().getBlock(this.getBlock(pos.getX(), pos.getY(), pos.getZ()))
           .behavePassive(this, pos.getX(), pos.getY(), pos.getZ());
     }
-    // we only process up to 20 of each type of thinking block every tick,
+    // we only process up to 500 of each type of thinking block every tick,
     // or we'd probably be here all day.
     for (int type = 0; type < 256; type++) {
       if (activeBlocks.containsKey(type)) {
         if (System.currentTimeMillis() - activeTimers.get(type) > BlockManager.getBlockManager()
             .getBlock(type).getTimer()) {
-          int cyclesThisTick = (activeBlocks.get(type).size() > 20 ? 20 : activeBlocks.get(type)
+          int cyclesThisTick = (activeBlocks.get(type).size() > 500 ? 500 : activeBlocks.get(type)
               .size());
           for (int i = 0; i < cyclesThisTick; i++) {
             Position pos = activeBlocks.get(type).poll();
@@ -826,6 +830,18 @@ public final class Level implements Cloneable {
           }
           activeTimers.put(type, System.currentTimeMillis());
         }
+      }
+    }
+
+    while (!iceBlocks.isEmpty()) {
+      UpdateBlock block = iceBlocks.peek();
+      if (System.currentTimeMillis() - block.time > Constants.ICE_MELT_TIME) {
+        iceBlocks.remove();
+        if (getBlock(block.position) == 60) {
+          setBlock(block.position, 0);
+        }
+      } else {
+        break;
       }
     }
   }
@@ -918,14 +934,17 @@ public final class Level implements Cloneable {
         //this.scheduleZPlantThink(x, y, z);
       }
     }
+    Position position = new Position(x, y, z);
     if (BlockManager.getBlockManager().getBlock(type).doesThink()) {
-      activeBlocks.get(type).add(new Position(x, y, z));
+      activeBlocks.get(type).add(position);
     }
     if (BlockManager.getBlockManager().getBlock(type).doesBlockLight()) {
       this.assignLightDepth(x, y, z);
       this.scheduleZPlantThink(x, y, z);
     }
-
+    if (type == 60) {
+      iceBlocks.add(new UpdateBlock(position, System.currentTimeMillis()));
+    }
   }
 
   /**
@@ -1037,5 +1056,15 @@ public final class Level implements Cloneable {
 
   private static int ceilDiv16(int x) {
     return (x + 15) / 16;
+  }
+}
+
+class UpdateBlock {
+  public final Position position;
+  public final long time;
+
+  public UpdateBlock(Position position, long time) {
+    this.position = position;
+    this.time = time;
   }
 }

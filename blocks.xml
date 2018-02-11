@@ -706,9 +706,8 @@ POSSIBILITY OF SUCH DAMAGE.
       <liquid>false</liquid>
       <blocksLight>true</blocksLight>
       <halfBlock>false</halfBlock>
-      <behaviourName>org.opencraft.server.model.impl.IceBlockBehavior</behaviourName>
-      <doesThink>true</doesThink>
-      <thinkTimer>10000</thinkTimer>
+      <behaviourName></behaviourName>
+      <doesThink>false</doesThink>
       <isPlant>false</isPlant>
     </block>
     <block>
