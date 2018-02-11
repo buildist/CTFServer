@@ -42,7 +42,6 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
-import org.opencraft.server.model.World;
 
 /**
  * Official /setspawn command

@@ -295,6 +295,26 @@ public final class Level implements Cloneable {
 
     if (props.getProperty("isTDM") != null) {
       mode = TDM;
+
+      if (props.getProperty("spawnsX") != null && !props.containsKey("tdmSpawns")) {
+        String[] spawnX = props.getProperty("spawnsX").split(" ");
+        String[] spawnY = props.getProperty("spawnsY").split(" ");
+        String[] spawnZ = props.getProperty("spawnsZ").split(" ");
+        String spawns = "";
+        for (int i = 0; i < spawnX.length; i++) {
+          spawns += spawnX[i]+","+spawnY[i]+","+spawnZ[i];
+          if (i != spawnX.length - 1) {
+            spawns += " ";
+          }
+        }
+        props.setProperty("tdmSpawns", spawns);
+        props.remove("spawnsX");
+        props.remove("spawnsY");
+        props.remove("spawnsZ");
+        saveProps();
+      }
+
+      tdmSpawns.clear();
       if(props.getProperty("tdmSpawns") != null) {
         String[] spawns = props.getProperty("tdmSpawns").split(" ");
         for(String spawn : spawns) {
@@ -302,17 +322,6 @@ public final class Level implements Cloneable {
           tdmSpawns.add(new Position(Integer.parseInt(parts[0]) * 32 + 16,
               Integer.parseInt(parts[2]) * 32 + 16, Integer.parseInt(parts[1]) * 32 + 16));
         }
-      }
-      else if (props.getProperty("spawnsX") != null) {
-        String[] spawnX = props.getProperty("spawnsX").split(" ");
-        String[] spawnY = props.getProperty("spawnsY").split(" ");
-        String[] spawnZ = props.getProperty("spawnsZ").split(" ");
-        for (int i = 0; i < spawnX.length; i++) {
-          tdmSpawns.add(new Position(Integer.parseInt(spawnX[i]) * 32 + 16, Integer.parseInt
-              (spawnZ[i]) * 32 + 16, Integer.parseInt(spawnY[i]) * 32 + 16));
-        }
-      } else {
-        tdmSpawns = null;
       }
     } else {
       mode = CTF;
@@ -711,7 +720,7 @@ public final class Level implements Cloneable {
 
   public Position getTeamSpawn(String team) {
     if (mode == TDM) {
-      if (tdmSpawns == null) {
+      if (tdmSpawns.isEmpty()) {
         return Player.getSpawnPos();
       } else {
         return tdmSpawns.get((int) (Math.random() * tdmSpawns.size()));
