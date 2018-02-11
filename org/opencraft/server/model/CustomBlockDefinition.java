@@ -2,7 +2,7 @@ package org.opencraft.server.model;
 
 import org.opencraft.server.Constants;
 
-import jdk.nashorn.internal.ir.Block;
+//import jdk.nashorn.internal.ir.Block;
 
 public class CustomBlockDefinition {
   public final int id;

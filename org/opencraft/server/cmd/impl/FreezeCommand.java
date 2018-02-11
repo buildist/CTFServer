@@ -63,7 +63,7 @@ public class FreezeCommand implements Command {
           other.frozen = true;
           Server.log(player.getName() + " froze " + other.getName());
           World.getWorld().broadcast("- " + other.parseName() + " has been frozen!");
-          player.getActionSender().sendChatMessage("- &eSay /freeze [name] again to unmute them");
+          player.getActionSender().sendChatMessage("- &eSay /freeze [name] again to unfreeze them");
         } else {
           other.frozen = false;
           Server.log(player.getName() + " unfroze " + other.getName());

@@ -104,7 +104,7 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
         c.execute(session.getPlayer(), new CommandParameters(parts));
         for (Player p : World.getWorld().getPlayerList().getPlayers()) {
           if (p.sendCommandLog) {
-            p.getActionSender().sendChatMessage("&7" + session.getPlayer().getName() + "> " + message);
+            p.getActionSender().sendChatMessage("&2" + session.getPlayer().getName() + " issued " + message);
           }
         }
       } else {

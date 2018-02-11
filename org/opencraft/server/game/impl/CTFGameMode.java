@@ -437,7 +437,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           t.sendToTeamSpawn();
           t.died(p);
           if (!tk)
-            checkFirstBlood(p);
+            checkFirstBlood(p, t);
           if (t.team != -1 && t.team != p.team) {
             p.setAttribute("explodes", (Integer) p.getAttribute("explodes") + 1);
             p.addStorePoints(5);
@@ -516,7 +516,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             t.sendToTeamSpawn();
             t.markSafe();
             t.died(p);
-            checkFirstBlood(p);
+            checkFirstBlood(p, t);
             p.addStorePoints(5);
             if (t.hasFlag) {
               dropFlag(t.team);
@@ -608,7 +608,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public void startGame(Level newMap) {
-    Level oldMap = map;
+    final Level oldMap = map;
     if (newMap == null) {
       map = MapController.randomLevel();
     } else {
@@ -680,8 +680,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     Server.saveLog();
   }
 
-  public void checkFirstBlood(Player attacker) {
-    if (isFirstBlood) {
+  private void checkFirstBlood(Player attacker, Player defender) {
+    if (isFirstBlood && defender.team != -1) {
       World.getWorld().broadcast("- " + attacker.getColoredName() + " &4took the first blood!");
       attacker.setAttribute("tags", (Integer) attacker.getAttribute("tags") + 10);
       attacker.addStorePoints(50);
@@ -1073,7 +1073,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           World.getWorld().broadcast("- " + m.owner.parseName() + " mined " + p.parseName() + ".");
           m.owner.gotKill(p);
           p.sendToTeamSpawn();
-          checkFirstBlood(m.owner);
+          checkFirstBlood(m.owner, p);
           m.owner.setAttribute("mines", (Integer) m.owner.getAttribute("mines") + 1);
           m.owner.removeMine(m);
           World.getWorld().removeMine(m);
