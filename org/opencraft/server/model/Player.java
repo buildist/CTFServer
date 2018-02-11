@@ -771,6 +771,12 @@ public class Player extends Entity {
             "are dueling " + p.duelPlayer.parseName() + ". They can't capture your flag or kill " +
             "anyone else right now.");
       return false;
+    } else if(p.team == -1) {
+      if (sendMessage) {
+        getActionSender().sendChatMessage("- &eYou can't kill " + p.parseName() + " since they " +
+            "are spectating.");
+      }
+      return false;
     } else {
       return true;
     }
