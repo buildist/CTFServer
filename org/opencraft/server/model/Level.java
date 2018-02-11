@@ -661,7 +661,8 @@ public final class Level implements Cloneable {
             fog[0],
             fog[1],
             fog[2],
-            fog[3]);
+            fog[3],
+            -1);
         customBlockDefinitions.add(blockDef);
         BlockManager.getBlockManager().addCustomBlock(blockDef);
       }

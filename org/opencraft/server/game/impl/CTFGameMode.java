@@ -553,13 +553,13 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public void placeRedFlag() {
     if (getMode() == Level.CTF) {
-      World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, (byte) Constants.BLOCK_RED_FLAG);
+      World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, Constants.BLOCK_RED_FLAG);
     }
   }
 
   public void placeBlueFlag() {
     if (getMode() == Level.CTF) {
-      World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, (byte) Constants.BLOCK_BLUE_FLAG);
+      World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, Constants.BLOCK_BLUE_FLAG);
     }
   }
 

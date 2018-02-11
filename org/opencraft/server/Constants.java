@@ -77,7 +77,8 @@ public final class Constants {
     "TwoWayPing",
     "BlockDefinitions",
     "BlockDefinitionsExt",
-    "BlockPermissions"};
+    "BlockPermissions",
+    "InventoryOrder"};
   // CPE versions
   public static final int[] CPE_EXT_VERSIONS = {
     1,
@@ -90,6 +91,7 @@ public final class Constants {
     1,
     1,
     2,
+    1,
     1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
@@ -118,8 +120,8 @@ public final class Constants {
   public static final int BLOCK_MINE_RED = 231;
   public static final int BLOCK_MINE_BLUE = 232;
   public static final int BLOCK_TNT = BlockConstants.TNT;
-  public static final int BLOCK_RED_FLAG = BlockConstants.CLOTH_RED;
-  public static final int BLOCK_BLUE_FLAG = BlockConstants.CLOTH_LIGHTBLUE;
+  public static final int BLOCK_RED_FLAG = 233;
+  public static final int BLOCK_BLUE_FLAG = 234;
   public static final int BLOCK_CRATE = 64;
 
   public static final int BLOCK_SOLIDITY_WALK_THROUGH = 0;

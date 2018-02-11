@@ -468,9 +468,10 @@ public class ActionSender {
         block.fogR,
         block.fogG,
         block.fogB);
+    sendInventoryOrder(block.id, block.inventoryOrder);
   }
 
-  public void sendDefineBlock(
+  private void sendDefineBlock(
       int id,
       String name,
       int solid,
@@ -576,7 +577,14 @@ public class ActionSender {
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(36));
     bldr.putByte("id", id);
     session.send(bldr.toPacket());
+  }
 
+  private void sendInventoryOrder(int id, int order) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(44));
+    bldr.putByte("id", id);
+    bldr.putByte("order", order);
+    session.send(bldr.toPacket());
   }
 
   /**
