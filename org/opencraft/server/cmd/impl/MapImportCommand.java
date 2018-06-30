@@ -69,7 +69,7 @@ public class MapImportCommand implements Command {
         public void run() {
           try {
             String mapName = params.getStringArgument(0);
-            String urlString = "http://persignum.com/download.php?password=IJobS0d3Mb&mapname="
+            String urlString = "https://persignum.com/download.php?password=IJobS0d3Mb&mapname="
                 + URLEncoder.encode(mapName, "UTF-8");
             URL url = new URL(urlString);
             ReadableByteChannel ch = Channels.newChannel(url.openStream());

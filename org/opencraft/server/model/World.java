@@ -285,7 +285,7 @@ public final class World {
       ex.printStackTrace();
     }
     if (session.isExtensionSupported("HeldBlock")) {
-      session.getActionSender().sendHoldThis(1, (byte) 30);
+      session.getActionSender().sendHoldThis(1, (byte) Constants.BLOCK_DETONATOR);
       session.getActionSender().sendHoldThis(2, (byte) Constants.BLOCK_MINE);
       session.getActionSender().sendHoldThis(3, (byte) 1);
       session.getActionSender().sendHoldThis(5, (byte) 20);

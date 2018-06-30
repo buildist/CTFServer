@@ -120,8 +120,9 @@ public final class Constants {
   public static final int BLOCK_MINE_RED = 231;
   public static final int BLOCK_MINE_BLUE = 232;
   public static final int BLOCK_TNT = BlockConstants.TNT;
-  public static final int BLOCK_RED_FLAG = 233;
+  public static final int BLOCK_RED_FLAG = 158;
   public static final int BLOCK_BLUE_FLAG = 234;
+  public static final int BLOCK_DETONATOR = 235;
   public static final int BLOCK_CRATE = 64;
 
   public static final int BLOCK_SOLIDITY_WALK_THROUGH = 0;

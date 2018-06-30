@@ -468,7 +468,7 @@ public class ActionSender {
         block.fogR,
         block.fogG,
         block.fogB);
-    sendInventoryOrder(block.id, block.inventoryOrder);
+    //sendInventoryOrder(block.id, block.inventoryOrder);
   }
 
   private void sendDefineBlock(

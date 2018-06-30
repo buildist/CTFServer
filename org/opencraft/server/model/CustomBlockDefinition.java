@@ -192,42 +192,34 @@ public class CustomBlockDefinition {
     );
   }
 
-  public static final CustomBlockDefinition TNT = new CustomBlockDefinition(
-      Constants.BLOCK_TNT,
-      "TNT",
-      9,
-      8,
-      10,
-      Constants.BLOCK_WALK_SOUND_METAL,
-      0);
   public static final CustomBlockDefinition PURPLE = new CustomBlockDefinition(
-      BlockConstants.CLOTH_PURPLE,
+      Constants.BLOCK_DETONATOR,
       "Detonator",
-      73,
+      245,
       Constants.BLOCK_WALK_SOUND_METAL,
       1);
   public static final CustomBlockDefinition MINE = new CustomBlockDefinition(
       Constants.BLOCK_MINE,
       "Mine",
-      89,
+      242,
       Constants.BLOCK_WALK_SOUND_METAL,
       2);
   public static final CustomBlockDefinition MINE_RED = new CustomBlockDefinition(
       Constants.BLOCK_MINE_RED,
       "Mine",
-      87,
+      240,
       Constants.BLOCK_WALK_SOUND_METAL,
       -1);
   public static final CustomBlockDefinition MINE_BLUE = new CustomBlockDefinition(
       Constants.BLOCK_MINE_BLUE,
       "Mine",
-      88,
+      241,
       Constants.BLOCK_WALK_SOUND_METAL,
       -1);
   public static final CustomBlockDefinition FLAG_RED = new CustomBlockDefinition(
       Constants.BLOCK_RED_FLAG,
       "Red Flag",
-      90,
+      243,
       2,
       2,
       2,
@@ -239,7 +231,7 @@ public class CustomBlockDefinition {
   public static final CustomBlockDefinition FLAG_BLUE = new CustomBlockDefinition(
       Constants.BLOCK_BLUE_FLAG,
       "Blue Flag",
-      91,
+      244,
       2,
       2,
       2,
@@ -250,7 +242,6 @@ public class CustomBlockDefinition {
       -1);
 
   public static final CustomBlockDefinition[] CUSTOM_BLOCKS = new CustomBlockDefinition[]{
-      TNT,
       PURPLE,
       MINE,
       MINE_RED,

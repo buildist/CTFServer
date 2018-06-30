@@ -1298,8 +1298,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             }
           }
         }
-      } else if (((type >= 30 && type <= 33)) && mode == 1 && !ignore && player.hasTNT) // Purple
-      // block
+      } else if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT)
       {
         int radius = player.tntRadius;
         explodeTNT(player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ,
