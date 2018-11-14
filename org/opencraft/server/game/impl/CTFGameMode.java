@@ -40,7 +40,7 @@ import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.WebServer;
-// import org.opencraft.server.cmd.impl.AddSpawnCommand;
+import org.opencraft.server.cmd.impl.AddSpawnCommand;
 import org.opencraft.server.cmd.impl.BanIPCommand;
 import org.opencraft.server.cmd.impl.BlockInfoCommand;
 import org.opencraft.server.cmd.impl.BlueCommand;
@@ -94,12 +94,12 @@ import org.opencraft.server.cmd.impl.RTVCommand;
 import org.opencraft.server.cmd.impl.RagequitCommand;
 import org.opencraft.server.cmd.impl.RedCommand;
 import org.opencraft.server.cmd.impl.ReloadCommand;
-// import org.opencraft.server.cmd.impl.RemoveSpawnCommand;
+import org.opencraft.server.cmd.impl.RemoveSpawnCommand;
 import org.opencraft.server.cmd.impl.RestartCommand;
 import org.opencraft.server.cmd.impl.RulesCommand;
 import org.opencraft.server.cmd.impl.SayCommand;
 import org.opencraft.server.cmd.impl.SetCommand;
-// import org.opencraft.server.cmd.impl.SetPathCommand;
+import org.opencraft.server.cmd.impl.SetPathCommand;
 import org.opencraft.server.cmd.impl.SolidCommand;
 import org.opencraft.server.cmd.impl.SpecCommand;
 import org.opencraft.server.cmd.impl.StartCommand;
@@ -196,7 +196,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public CTFGameMode() {
     registerCommand("accept", DuelAcceptCommand.getCommand());
-    // registerCommand("addspawn", AddSpawnCommand.getCommand());
+    registerCommand("addspawn", AddSpawnCommand.getCommand());
     registerCommand("b", BlockInfoCommand.getCommand());
     registerCommand("ban", XBanCommand.getCommand());
     registerCommand("banip", BanIPCommand.getCommand());
@@ -250,7 +250,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("points", PointsCommand.getCommand());
     registerCommand("pstats", PInfoCommand.getCommand());
     registerCommand("ragequit", RagequitCommand.getCommand());
-    // registerCommand("removespawn", RemoveSpawnCommand.getCommand());
+    registerCommand("removespawn", RemoveSpawnCommand.getCommand());
     registerCommand("quote", QuoteCommand.getCommand());
     registerCommand("red", RedCommand.getCommand());
     registerCommand("reload", ReloadCommand.getCommand());
@@ -259,7 +259,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("rules", RulesCommand.getCommand());
     registerCommand("say", SayCommand.getCommand());
     registerCommand("set", SetCommand.getCommand());
-    // registerCommand("setpath", SetPathCommand.getCommand());
+    registerCommand("setpath", SetPathCommand.getCommand());
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
     registerCommand("start", StartCommand.getCommand());
