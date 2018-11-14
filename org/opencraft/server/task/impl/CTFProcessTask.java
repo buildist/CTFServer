@@ -37,6 +37,7 @@
 package org.opencraft.server.task.impl;
 
 import org.opencraft.server.Configuration;
+import org.opencraft.server.Constants;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Level;
@@ -51,12 +52,21 @@ public class CTFProcessTask extends ScheduledTask {
   private static CTFGameMode ctf = (CTFGameMode) World.getWorld().getGameMode();
   private static World world = World.getWorld();
   private static int ticks = 0;
+  private static int payloadStep = 0;
+  private static String payloadStatus = "";
 
   public CTFProcessTask() {
     super(DELAY);
   }
 
   public void execute() {
+    Position payloadPosition = null;
+    int payloadAttackers = 0;
+    int payloadDefenders = 0;
+    if (ctf.getMode() == Level.PAYLOAD && ctf.payloadPosition != -1) {
+      payloadPosition = world.getLevel().getPayloadPath().get(ctf.payloadPosition);
+    }
+
     for (Player player : world.getPlayerList().getPlayers()) {
       if (World.getWorld().getPlayerList().size() >= Configuration.getConfiguration()
           .getMaximumPlayers() && System.currentTimeMillis() - player.moveTime > 5 * 60 * 1000 &&
@@ -115,8 +125,66 @@ public class CTFProcessTask extends ScheduledTask {
       } else if (player.headBlockPosition != null) {
         world.getLevel().setBlock(player.headBlockPosition, 0);
       }
+
+      if (player.setPayloadPath) {
+        Position currentPosition = player.getPosition().toBlockPos();
+        if (player.payloadPathPositions.isEmpty()
+            || !currentPosition.equals(
+                player.payloadPathPositions.get(player.payloadPathPositions.size()-1))) {
+          player.payloadPathPositions.add(currentPosition);
+        }
+      }
+
+      if (payloadPosition != null) {
+        float px = payloadPosition.getX() + 0.5f,
+            py = payloadPosition.getY() + 0.5f,
+            pz = payloadPosition.getZ() + 0.5f;
+        float pr = Constants.PAYLOAD_RADIUS + 0.5f;
+        float tx = (player.getPosition().getX()) / 32f;
+        float ty = (player.getPosition().getY()) / 32f;
+        float tz = (player.getPosition().getZ()) / 32f;
+
+        if (Math.abs(px - tx) < pr && Math.abs(py - ty) < pr && Math.abs(pz - tz) < pr) {
+          if (player.team == 1) {
+            payloadAttackers++;
+          } else if(player.team == 0) {
+            payloadDefenders++;
+          }
+        }
+      }
     }
-    if (((CTFGameMode) World.getWorld().getGameMode()).getMode() == Level.TDM) {
+    if (ctf.getMode() == Level.PAYLOAD ) {
+      if (payloadDefenders == 0) {
+        payloadStep += payloadAttackers;
+        if (payloadStep == 50) {
+          payloadStep = 0;
+          ctf.updatePayload(ctf.payloadPosition + 1);
+        }
+      }
+      showTimer("PayloadTimeLimit", true /* shouldEndGame */, "Payload | " + World.getWorld().getLevel().id);
+
+      double fraction = (double) ctf.payloadPosition / world.getLevel().getPayloadPath().size();
+      int lineWidth = 20;
+      int blueWidth = (int) Math.round(fraction * lineWidth);
+      String message = "&9";
+      for (int i = 0; i < lineWidth; i++) {
+        if (i == blueWidth) {
+          if (payloadDefenders > 0)  {
+            message += "&cX&7";
+          } else if(payloadAttackers > 0) {
+            message += ">&7";
+          } else {
+            message += "o&7";
+          }
+        } else {
+          message += "-";
+        }
+      }
+      if (!message.equals(payloadStatus)) {
+        payloadStatus = message;
+        ctf.setStatusMessage(payloadStatus);
+      }
+    } else if (ctf.getMode() == Level.TDM) {
       showTimer("TDMTimeLimit", true /* shouldEndGame */, "Team Deathmatch");
     } else if(GameSettings.getBoolean("Tournament")) {
       showTimer("TournamentTimeLimit", false /* shouldEndGame */, "Tournament");

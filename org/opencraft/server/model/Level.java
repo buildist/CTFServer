@@ -86,6 +86,8 @@ public final class Level implements Cloneable {
 
   public static final int CTF = 0;
   public static final int TDM = 1;
+  public static final int PAYLOAD = 2;
+
   /**
    * The level width.
    */
@@ -134,6 +136,7 @@ public final class Level implements Cloneable {
    */
   private Position spawnPosition;
   private ArrayList<Position> tdmSpawns = new ArrayList<Position>();
+  private ArrayList<Position> payloadPath = new ArrayList<>();
   private HashSet<Position> solidBlocks = new HashSet<Position>();
   private HashSet<Integer> solidTypes = new HashSet<Integer>();
   private boolean allSolidTypes = false;
@@ -306,7 +309,7 @@ public final class Level implements Cloneable {
         String[] spawnZ = props.getProperty("spawnsZ").split(" ");
         String spawns = "";
         for (int i = 0; i < spawnX.length; i++) {
-          spawns += spawnX[i]+","+spawnY[i]+","+spawnZ[i];
+          spawns += spawnX[i] + "," + spawnY[i] + "," + spawnZ[i];
           if (i != spawnX.length - 1) {
             spawns += " ";
           }
@@ -319,13 +322,24 @@ public final class Level implements Cloneable {
       }
 
       tdmSpawns.clear();
-      if(props.getProperty("tdmSpawns") != null) {
+      if (props.getProperty("tdmSpawns") != null) {
         String[] spawns = props.getProperty("tdmSpawns").split(" ");
-        for(String spawn : spawns) {
+        for (String spawn : spawns) {
           String[] parts = spawn.split(",");
           tdmSpawns.add(new Position(Integer.parseInt(parts[0]) * 32 + 16,
               Integer.parseInt(parts[2]) * 32 + 16, Integer.parseInt(parts[1]) * 32 + 16));
         }
+      }
+    } else if(props.getProperty("isPayload") != null) {
+      mode = PAYLOAD;
+      payloadPath.clear();
+      String[] path = props.getProperty("payloadPath").split(" ");
+      for (String position : path) {
+        String[] parts = position.split(",");
+        payloadPath.add(new Position(
+            Integer.parseInt(parts[0]),
+            Integer.parseInt(parts[1]),
+            Integer.parseInt(parts[2])));
       }
     } else {
       mode = CTF;
@@ -739,6 +753,10 @@ public final class Level implements Cloneable {
             (String) getProp(team + "SpawnY"))) * 32 + 16);
       }
     }
+  }
+
+  public List<Position> getPayloadPath() {
+    return payloadPath;
   }
 
   /**

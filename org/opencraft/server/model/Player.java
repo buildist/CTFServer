@@ -47,6 +47,7 @@ import org.opencraft.server.net.PingList;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -103,6 +104,8 @@ public class Player extends Entity {
   public boolean placeSolid = false;
   public boolean moveFlag = false;
   public boolean isVisible = true;
+  public boolean setPayloadPath = false;
+  public ArrayList<Position> payloadPathPositions = new ArrayList<>();
   public boolean brush = false;
   public boolean hasVoted = false;
   public boolean hasNominated = false;

@@ -12,6 +12,7 @@ public class GameSettings {
     add("Chaos", TYPE_BOOLEAN, false);
     add("MaxMines", TYPE_INT, 2);
     add("TDMTimeLimit", TYPE_INT, 10);
+    add("PayloadTimeLimit", TYPE_INT, 10);
     add("TournamentTimeLimit", TYPE_INT, 40);
     add("EnableStore", TYPE_BOOLEAN, true);
     add("OnlyTDM", TYPE_BOOLEAN, false);

@@ -120,10 +120,11 @@ public final class Constants {
   public static final int BLOCK_MINE_RED = 231;
   public static final int BLOCK_MINE_BLUE = 232;
   public static final int BLOCK_TNT = BlockConstants.TNT;
-  public static final int BLOCK_RED_FLAG = 158;
+  public static final int BLOCK_RED_FLAG = 233;
   public static final int BLOCK_BLUE_FLAG = 234;
   public static final int BLOCK_DETONATOR = 235;
   public static final int BLOCK_CRATE = 64;
+  public static final int BLOCK_PAYLOAD = 47;
 
   public static final int BLOCK_SOLIDITY_WALK_THROUGH = 0;
   public static final int BLOCK_SOLIDITY_SWIM_THROUGH = 1;
@@ -149,6 +150,7 @@ public final class Constants {
   public static final String[] MAP_EXTENSIONS = new String[]{"dat", "lvl", "cw"};
 
   public static final int ICE_MELT_TIME = 60000;
+  public static final int PAYLOAD_RADIUS = 2;
 
   /**
    * The protocol version of Minecraft that this version of OpenCraft is compatible with.
