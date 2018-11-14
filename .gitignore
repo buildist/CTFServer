@@ -1,6 +1,8 @@
 *
 !.gitignore
 !com
+!lib
+!*.jar
 !org
 !FindNullStats.java
 !Main.java
