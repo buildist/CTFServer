@@ -1,0 +1,1 @@
+A Minecraft Classic server software made by Jacob_ based upon OpenCraft 0.2.
