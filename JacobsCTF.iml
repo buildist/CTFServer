@@ -7,6 +7,10 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="lib" level="project" />
+    <orderEntry type="library" name="mina-core" level="application" />
+    <orderEntry type="library" name="minecraft-server" level="application" />
+    <orderEntry type="library" name="slf4j-api" level="application" />
+    <orderEntry type="library" name="slf4j-jdk" level="application" />
+    <orderEntry type="library" name="xstream-core" level="application" />
   </component>
 </module>
