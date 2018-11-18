@@ -277,6 +277,12 @@ public final class World {
       session.close();
     session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c
         .getMessage() + "&0" + (false && player.isOp() ? "+hax" : "-hax"), op);
+    if (!session.isExtensionSupported("HackControl")) {
+      session.getActionSender().sendLoginFailure(
+          "Enable \"Enhanced\" mode in CS launcher settings to play");
+      session.close();
+      return;
+    }
     session.getActionSender().sendHackControl(true);
     LevelGzipper.getLevelGzipper().gzipLevel(session);
     try {
