@@ -57,7 +57,12 @@ public class IgnoreCommand implements Command {
     String name = params.getStringArgument(0);
     Player p = Player.getPlayer(name, player.getActionSender());
     if (p != null) {
-      player.ignore(p);
+      if (!p.isOp()) {
+        player.ignore(p);
+      }
+      else {
+        player.getActionSender().sendChatMessage("- &eYou cannot ignore an OP!");
+      }
     }
   }
 
