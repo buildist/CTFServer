@@ -15,6 +15,7 @@ that is on an issue. In fact, please do, this keeps branch names consistent, and
 when the branch is merged, the issue is also automatically closed.
 5. Merge your branch into master through merge requests (even if you are a maintainer). This helps keep things 
 consistent and helps keep track of what commits go with what issue.
+6. Also, please try to follow [Google's Java Style Guide](https://google.github.io/styleguide/javaguide.html).
 
 
 # Setting up the Development Environment
