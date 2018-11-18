@@ -54,7 +54,7 @@ public class WaterCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.placeBlock == -1) {
+    if (player.placeBlock != 9) {
       player.placeBlock = 9;
       player.getActionSender().sendChatMessage("&e*&fNow placing water.");
     } else {
