@@ -122,7 +122,6 @@ public final class Level implements Cloneable {
    */
   private byte[][][] blocks;
   private byte[] blocks1D;
-  private byte[][] customBlocks;
   /**
    * Light depth array.
    */
@@ -522,7 +521,7 @@ public final class Level implements Cloneable {
             int chunksX = ceilDiv16(width);
             int chunksY = ceilDiv16(height);
             int chunksZ = ceilDiv16(depth);
-            customBlocks = new byte[chunksX * chunksY * chunksZ][];
+            byte[][] customBlocks = new byte[chunksX * chunksY * chunksZ][];
             int index = 0;
             for (int y = 0; y < chunksY; y++) {
               for (int z = 0; z < chunksZ; z++) {

@@ -59,11 +59,10 @@ public class VoteCommand implements Command {
     if (params.getArgumentCount() == 1) {
       if (player.hasVoted)
         player.getActionSender().sendChatMessage("- &eYou have already voted!");
-      else if (World.getWorld().getGameMode().voting == false)
+      else if (!World.getWorld().getGameMode().voting)
         player.getActionSender().sendChatMessage("- &eVoting is not currently open!");
       else {
-        boolean r = MapController.addVote(params.getStringArgument(0));
-        if (r == false)
+        if (!MapController.addVote(params.getStringArgument(0)))
           player.getActionSender().sendChatMessage("- &eUnknown map!");
         else {
           World.getWorld().broadcast("- &aVote cast for " + params.getStringArgument(0));

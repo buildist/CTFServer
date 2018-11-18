@@ -12,7 +12,7 @@ public class PingList {
 
   public int nextData() {
     for (int i = 0; i < entries.length; i++) {
-      if (entries[i].sendTime != 0) continue;;
+      if (entries[i].sendTime != 0) continue;
 
       int prev = i > 0 ? entries[i - 1].data : 0;
       return setPing(i, prev);

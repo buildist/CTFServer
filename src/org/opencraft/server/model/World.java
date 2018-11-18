@@ -263,7 +263,7 @@ public final class World {
     try {
       new LoadPersistenceRequest(player).perform();
     } catch (IOException ex) {
-      System.out.println(ex);
+      Server.log(ex);
     }
 
     if (player.isOp())
@@ -274,8 +274,11 @@ public final class World {
       player.isNewPlayer = true;
     if (player.getAttribute("banned") != null && player.getAttribute("banned").equals("true"))
       session.close();
-    session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c
-        .getMessage() + "&0" + (false && player.isOp() ? "+hax" : "-hax"), op);
+    session.getActionSender().sendLoginResponse(
+        Constants.PROTOCOL_VERSION,
+        c.getName(),
+        c.getMessage() + "&0-hax",
+        op);
     if (!session.isExtensionSupported("HackControl")) {
       session.getActionSender().sendLoginFailure(
           "Enable \"Enhanced\" mode in CS launcher settings to play");

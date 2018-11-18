@@ -134,7 +134,6 @@ public class MapController {
         }
       } catch (Exception ex) {
         ex.printStackTrace();
-        continue;
       }
     }
     return null;

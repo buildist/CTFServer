@@ -69,8 +69,10 @@ public final class LevelGzipper {
   public void gzipLevel(final MinecraftSession session) {
     final Level level = World.getWorld().getLevel();
     if (session.levelSent) {
-      session.getActionSender().sendLoginResponse(Constants.PROTOCOL_VERSION, "Next map: " +
-              level.id, "&0" + (false && session.getPlayer().isOp() ? "+hax" : "-hax"),
+      session.getActionSender().sendLoginResponse(
+          Constants.PROTOCOL_VERSION,
+          "Next map: " + level.id,
+          "&0-hax",
           session.getPlayer().isOp());
       session.getActionSender().sendHackControl(true);
     }

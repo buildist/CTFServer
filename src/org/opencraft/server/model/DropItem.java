@@ -45,12 +45,10 @@ public class DropItem implements Runnable {
   public int posX;
   public int posY;
   public int posZ;
-  private Thread t;
 
   public DropItem(int p) {
     points = p;
-    t = new Thread(this);
-    t.start();
+    new Thread(this).start();
     World.getWorld().broadcast("- &bA crate of points has been dropped somewhere on the map!");
   }
 

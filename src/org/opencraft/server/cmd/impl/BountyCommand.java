@@ -42,13 +42,13 @@ public class BountyCommand implements Command {
         } else {
           if (hunted != null && params.getIntegerArgument(1) >= 50) {
             if (params.getIntegerArgument(1) <= player.getStorePoints()) {
-              if (player.bountyActive == true) {
+              if (player.bountyActive) {
                 player.getActionSender().sendChatMessage("You currently have an active bounty on " +
                     "" + hunted.getColoredName());
                 player.getActionSender().sendChatMessage("Use \"/bounty " + hunted.getName() + " " +
                     "0\" to remove it");
               } else {
-                if (hunted.bountyMode == true) {
+                if (hunted.bountyMode) {
                   player.bountySet = params.getIntegerArgument(1);
                   hunted.bountied = hunted;
                   hunted.bountiedBy = null;

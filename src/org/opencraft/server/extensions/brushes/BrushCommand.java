@@ -105,9 +105,7 @@ public final class BrushCommand implements Command {
           player.getActionSender().sendChatMessage("Brush radius changed");
         } catch (Exception e) {
           player.getActionSender().sendChatMessage("/brush radius [radius]");
-          return;
         }
-
       } else if (action.equals("delete")) {
         String onOff = parameters.getStringArgument(1);
         if (onOff.equals("1")) {

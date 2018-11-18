@@ -49,7 +49,7 @@ public class GhostCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.hasGhost == false)
+    if (!player.hasGhost)
       player.getActionSender().sendChatMessage("- &eYou need to buy ghost mode from the store!");
     else
       player.activateGhost();

@@ -138,11 +138,7 @@ public final class MinecraftSession extends OCSession {
 
 
   public boolean isAuthenticated() {
-    if (player == null) {
-      return false;
-    } else {
-      return true;
-    }
+    return player != null;
   }
 
   public boolean isExtensionSupported(String name) {
@@ -150,10 +146,7 @@ public final class MinecraftSession extends OCSession {
   }
   
   public boolean isExtensionSupported(String name, int version) {
-    if (!ccUser)
-      return false;
-    else
-      return supportedCPEExtensions.containsKey(name)
+      return ccUser && supportedCPEExtensions.containsKey(name)
           && supportedCPEExtensions.get(name) == version;
   }
 

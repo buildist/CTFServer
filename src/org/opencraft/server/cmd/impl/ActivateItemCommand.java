@@ -60,7 +60,7 @@ public class ActivateItemCommand implements Command {
     else if (player.duelPlayer != null)
       player.getActionSender().sendChatMessage("- &eYou can't use the store while dueling!");
     else {
-      if (!(item.name.equals("Brush") && player.brush == true)) {
+      if (!(item.name.equals("Brush") && player.brush)) {
         boolean r = Server.getStore().buy(player, item.name);
         if (r)
           item.activate(player);

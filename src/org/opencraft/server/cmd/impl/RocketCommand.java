@@ -120,7 +120,6 @@ public class RocketCommand implements Command {
           } catch (InterruptedException ex) {
           }
         }
-        return;
       }
     });
     rocketThread.start();

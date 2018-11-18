@@ -73,7 +73,7 @@ public class UpdateTask extends ScheduledTask {
     List<Player> players = world.getPlayerList().getPlayers();
     for (int i = 0; i < players.size(); i++) {
       Player player = players.get(i);
-      Set le = player.getLocalEntities();
+      Set<Entity> le = player.getLocalEntities();
       Object[] localEntities = le.toArray();
       for (Object object : localEntities) {
         Entity localEntity = (Entity) object;
@@ -88,8 +88,7 @@ public class UpdateTask extends ScheduledTask {
           player.getSession().getActionSender().sendUpdateEntity(localEntity);
         }
       }
-      for (int j = 0; j < players.size(); j++) {
-        Player otherEntity = players.get(j);
+      for (Player otherEntity : players) {
         if (!le.contains(otherEntity) && otherEntity != player && otherEntity.isVisible) {
           le.add(otherEntity);
           player.getSession().getActionSender().sendAddPlayer(otherEntity, false);

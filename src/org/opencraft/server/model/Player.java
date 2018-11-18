@@ -361,7 +361,7 @@ public class Player extends Entity {
     attacker.setIfMax("maxKillstreakEnded", killstreak);
     incStat("deaths");
     World.getWorld().getGameMode().checkForUnbalance(this);
-    if (this.bountyMode == true) {
+    if (this.bountyMode) {
       if (this.team == -1) {
         this.bountiedBy.addStorePoints(this.bountyAmount);
         this.bountied = null;
@@ -496,7 +496,7 @@ public class Player extends Entity {
     Level l = World.getWorld().getLevel();
     CTFGameMode ctf = (CTFGameMode) World.getWorld().getGameMode();
     ctf.updateLeaderboard();
-    if (ctf.voting == true)
+    if (ctf.voting)
       return;
     if (this.team == 0)
       ctf.redPlayers--;

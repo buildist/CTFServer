@@ -65,7 +65,7 @@ public class StatusCommand implements Command {
         redPlayers++;
       else if (p.team == 1)
         bluePlayers++;
-      if (p.hasFlag == true) {
+      if (p.hasFlag) {
         if (p.team == player.team)
           hasOtherFlag = p.getName();
         else

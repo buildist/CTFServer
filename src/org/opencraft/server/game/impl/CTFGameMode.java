@@ -960,9 +960,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               resetBlueFlagPos();
               placeBlueFlag();
               World.getWorld().broadcast("- &eThe blue flag has been returned!");
-            } catch (InterruptedException ex) {
-              return;
-            }
+            } catch (InterruptedException ex) {}
           }
         });
         placeBlueFlag();
@@ -982,9 +980,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               resetRedFlagPos();
               placeRedFlag();
               World.getWorld().broadcast("- &eThe red flag has been returned!");
-            } catch (InterruptedException ex) {
-              return;
-            }
+            } catch (InterruptedException ex) {}
           }
         });
         placeRedFlag();
@@ -1114,10 +1110,13 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         int mx = (m.x - 16) / 32;
         int my = (m.y - 16) / 32;
         int mz = (m.z - 16) / 32;
-        if (m.active == true && (p.duelPlayer == null || p.duelPlayer == m.owner) && (m.owner
-            .duelPlayer == null || m.owner.duelPlayer == p) && p.team != -1 && m.team != -1 && p
-            .team != m.team && m.x > x - 96 && m.x < x + 96 && m.y > y - 96 && m.y < y + 96 && m
-            .z > z - 96 && m.z < z + 96 && !p.shield) {
+        if (m.active
+            && (p.duelPlayer == null || p.duelPlayer == m.owner)
+            && (m.owner.duelPlayer == null || m.owner.duelPlayer == p)
+            && p.team != -1 && m.team != -1 && p.team != m.team
+            && m.x > x - 96 && m.x < x + 96 && m.y > y - 96 && m.y < y + 96
+            && m.z > z - 96 && m.z < z + 96
+            && !p.shield) {
           Level level = World.getWorld().getLevel();
           int r = 1;
           level.setBlock(mx, my, mz, 0);

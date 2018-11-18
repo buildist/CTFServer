@@ -161,10 +161,8 @@ public abstract class BrushAdapter extends Brush {
    * @return Returns true if the type is build-able (changeable)
    */
   protected boolean typeIsBuildable(int type) {
-    if (type == BlockConstants.AIR || type == BlockConstants.WATER || type == BlockConstants
-        .STILL_WATER)
-      return true;
-    return false;
+    return type == BlockConstants.AIR || type == BlockConstants.WATER
+        || type == BlockConstants.STILL_WATER;
   }
 
   /**
@@ -196,7 +194,7 @@ public abstract class BrushAdapter extends Brush {
 
   @Override
   public void paint(Player player, Level level, int x, int y, int z, int mode, int type) {
-    boolean add = (mode == 1 ? true : false);
+    boolean add = mode == 1;
     if (add)
       paintBlocks(player, level, x, y, z, add, type);
     else if (useForDelete)
