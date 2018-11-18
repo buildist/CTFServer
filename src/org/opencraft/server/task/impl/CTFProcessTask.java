@@ -84,7 +84,7 @@ public class CTFProcessTask extends ScheduledTask {
           player.flamethrowerEnabled = false;
           World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
           player.flamethrowerTime = System.currentTimeMillis();
-          return;
+          continue;
         } else if (player.flamethrowerUnits % 25 == 0) {
           player.getActionSender().sendChatMessage("- &eFuel: &c" + player.flamethrowerUnits);
         }

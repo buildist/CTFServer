@@ -510,10 +510,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     double vx = Math.cos(Math.toRadians(heading));
     double vz = Math.tan(Math.toRadians(pitch));
     double vy = Math.sin(Math.toRadians(heading));
-    double x = px + vx * 2;
-    double y = py + vy * 2;
-    double z = pz + vz * 2;
-    for (int i = 0; i < 4; i++) {
+    double x = px + vx * GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
+    double y = py + vy * GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
+    double z = pz + vz * GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
+    for (int i = 0; i < GameSettings.getInt("FlameThrowerLength"); i++) {
       int bx = (int) Math.round(x);
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z) + 1;
@@ -541,7 +541,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       x += vx;
       y += vy;
       z += vz;
-      i++;
     }
 
   }
