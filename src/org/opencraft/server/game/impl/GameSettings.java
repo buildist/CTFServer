@@ -3,8 +3,8 @@ package org.opencraft.server.game.impl;
 import java.util.HashMap;
 
 public class GameSettings {
-  public static final int TYPE_INT = 0;
-  public static final int TYPE_BOOLEAN = 1;
+  private static final int TYPE_INT = 0;
+  private static final int TYPE_BOOLEAN = 1;
   private static final HashMap<String, GameSetting> settings = new HashMap<String, GameSetting>();
 
   static {
@@ -18,6 +18,10 @@ public class GameSettings {
     add("OnlyTDM", TYPE_BOOLEAN, false);
     add("Debug", TYPE_BOOLEAN, false);
     add("Tournament", TYPE_BOOLEAN, false);
+    add("FlameThrowerStartDistanceFromPlayer", TYPE_INT, 3);
+    add("FlameThrowerLength", TYPE_INT, 2);
+    add("FlameThrowerRechargeTime", TYPE_INT, 15);
+    add("FlameThrowerDuration", TYPE_INT, 8);
   }
 
   public static Object get(String k) {

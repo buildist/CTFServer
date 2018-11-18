@@ -127,9 +127,10 @@ public class Player extends Entity {
   public int buildMode;
   public Position linePosition;
   public Rotation lineRotation;
-  public boolean flamethrowerEnabled;
-  public int flamethrowerUnits;
-  public long flamethrowerTime;
+  public boolean flamethrowerEnabled = false;
+  public long flamethrowerTime = 0;
+  public long flamethrowerNotify = 0;
+  public float flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
   public long rocketTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
@@ -283,6 +284,12 @@ public class Player extends Entity {
 
   public boolean isIgnored(Player p) {
     return ignorePlayers.contains(p.name);
+  }
+
+  public void sendFuelPercent() {
+    getActionSender().sendChatMessage("- &eFuel: &c" +
+            Math.round(flamethrowerFuel / Constants.FLAME_THROWER_FUEL * 100) + "%");
+    flamethrowerNotify = System.currentTimeMillis();
   }
 
   public void gotKill(Player defender) {

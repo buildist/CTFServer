@@ -39,6 +39,7 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.World;
 
 public class FlamethrowerCommand implements Command {
 
@@ -54,15 +55,18 @@ public class FlamethrowerCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.team == -1 || player.flamethrowerEnabled)
+    if (player.team == -1)
       return;
-    long dt = (System.currentTimeMillis() - player.flamethrowerTime);
-    if (dt < 120000)
-      player.getActionSender().sendChatMessage("- &ePlease wait " + (120 - dt / 1000) + " seconds");
-    else {
+
+    if (player.flamethrowerEnabled) {
+      World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
+      player.flamethrowerEnabled = false;
+      player.getActionSender().sendChatMessage("- &eFlame thrower disabled.");
+    } else {
       player.flamethrowerEnabled = true;
-      player.flamethrowerUnits = 100;
+      player.getActionSender().sendChatMessage("- &eFlame thrower enabled.");
     }
+    player.flamethrowerTime = System.currentTimeMillis();
   }
 
 }

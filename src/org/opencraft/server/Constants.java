@@ -160,4 +160,6 @@ public final class Constants {
   public static int PORT = 25560;
   public static String VERSION = "Capture the Flag";
   public static int SAFE_TIME = 3000;
+
+  public static final int FLAME_THROWER_FUEL = 10000;
 }
