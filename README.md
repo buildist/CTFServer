@@ -1,5 +1,22 @@
 A Minecraft Classic server software made by Jacob_ based upon OpenCraft 0.2.
 
+# Issue Reporting
+Please tag your issue appropriately and give as much information as possible so that dev's will have an easier
+time debugging and fixing the issue. 
+
+
+# Contributing Guidelines
+1. Please make an issue if there is not already one in
+2. When working on an issue, please assign yourself so that others know not to work on it.
+3. Don't take other peoples issues without permission (unless it's been a long time and nothing has been done on it)
+4. Please create a separate branch (off of master), and merge request for that issue when working on it. 
+That way the master branch is always in a working state. You can use the branch/merge request creation tool
+that is on an issue. In fact, please do, this keeps branch names consistent, and will set things up properly so that
+when the branch is merged, the issue is also automatically closed.
+5. Merge your branch into master through merge requests (even if you are a maintainer). This helps keep things 
+consistent and helps keep track of what commits go with what issue.
+
+
 # Setting up the Development Environment
 ## IntelliJ
 ### Importing the project
