@@ -57,13 +57,6 @@ public class KickCommand implements Command {
   private static final KickCommand INSTANCE = new KickCommand();
 
   /**
-   * Default private constructor.
-   */
-  private KickCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

@@ -114,7 +114,7 @@ public class Configuration {
     message = props.getProperty("message", "http://opencraft.sf.net/");
     maximumPlayers = Integer.valueOf(props.getProperty("max_players", "16"));
     publicServer = Boolean.valueOf(props.getProperty("public", "false"));
-    verifyNames = Boolean.valueOf(props.getProperty("verify_names", "false")) /*&& !test*/;
+    verifyNames = Boolean.valueOf(props.getProperty("verify_names", "false"));
     mapFilename = props.getProperty("filename", "server_level.dat");
     spongeRadius = Integer.valueOf(props.getProperty("sponge_radius", "2"));
     gameMode = props.getProperty("game_mode", CTFGameMode.class.getName());

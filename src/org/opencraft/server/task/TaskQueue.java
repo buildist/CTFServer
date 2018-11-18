@@ -58,13 +58,6 @@ public final class TaskQueue {
   private ScheduledExecutorService service = Executors.newScheduledThreadPool(3);
 
   /**
-   * Default private constructor.
-   */
-  private TaskQueue() {
-        /* empty */
-  }
-
-  /**
    * Gets the task queue instance.
    *
    * @return The task queue instance.

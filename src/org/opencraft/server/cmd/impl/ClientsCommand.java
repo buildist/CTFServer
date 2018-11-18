@@ -56,13 +56,6 @@ public class ClientsCommand implements Command {
   private static final ClientsCommand INSTANCE = new ClientsCommand();
 
   /**
-   * Default private constructor.
-   */
-  private ClientsCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

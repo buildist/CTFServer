@@ -69,13 +69,6 @@ public class PacketManager {
   private transient PacketDefinition[] outgoingArray;
 
   /**
-   * Default private constructor.
-   */
-  protected PacketManager() {
-        /* empty */
-  }
-
-  /**
    * Resolves the packet manager after deserialization.
    *
    * @return The resolved object.

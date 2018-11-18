@@ -56,13 +56,6 @@ public class DuelAcceptCommand implements Command {
   private static final DuelAcceptCommand INSTANCE = new DuelAcceptCommand();
 
   /**
-   * Default private constructor.
-   */
-  private DuelAcceptCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

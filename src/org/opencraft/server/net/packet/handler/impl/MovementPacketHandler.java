@@ -78,12 +78,6 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
       if (player.team > -1) {
         if (player.hasFlag)
           World.getWorld().getGameMode().dropFlag(player, true, false);
-                /*if(!(blockPosition.getX() == player.teleportBlockPosition.getX() &&
-                blockPosition.getY() == player.teleportBlockPosition.getY())) {
-                    player.getActionSender().sendTeleport(player.getPosition(), player
-                    .getRotation());
-                    return;
-                }*/
       }
     } else if (player.frozen) { //frozen
       player.getActionSender().sendTeleport(player.getPosition(), player.getRotation());

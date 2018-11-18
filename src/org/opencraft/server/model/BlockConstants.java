@@ -95,12 +95,4 @@ public class BlockConstants {
   public static final int TNT = 46;
   public static final int COBBLESTONE_MOSSY = 48;
   public static final int STAIR_DOUBLE = 43;
-
-  /**
-   * Default private constructor.
-   */
-  private BlockConstants() {
-        /* empty */
-  }
-
 }

@@ -55,13 +55,6 @@ public class TeleportCommand implements Command {
   private static final TeleportCommand INSTANCE = new TeleportCommand();
 
   /**
-   * Default private constructor.
-   */
-  private TeleportCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

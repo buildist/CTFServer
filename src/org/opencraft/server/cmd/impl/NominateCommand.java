@@ -51,13 +51,6 @@ public class NominateCommand implements Command {
   private static final NominateCommand INSTANCE = new NominateCommand();
 
   /**
-   * Default private constructor.
-   */
-  private NominateCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

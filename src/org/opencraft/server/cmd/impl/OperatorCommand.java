@@ -57,13 +57,6 @@ public class OperatorCommand implements Command {
   private static final OperatorCommand INSTANCE = new OperatorCommand();
 
   /**
-   * Default private constructor.
-   */
-  private OperatorCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

@@ -65,7 +65,6 @@ public class HeartbeatManager {
    * Default private constructor.
    */
   private HeartbeatManager() {
-        /* empty */
     TrustManager[] trustAllCerts = new TrustManager[]{
         new X509TrustManager() {
           public java.security.cert.X509Certificate[] getAcceptedIssuers() {
@@ -124,33 +123,6 @@ public class HeartbeatManager {
     boolean success = false;
     while (!success) {
       try {
-                /*URL url2 = new URL(url + "?" + bldr.toString());
-                HttpURLConnection conn = (HttpURLConnection) url2.openConnection();
-                conn.setConnectTimeout(5000);
-                conn.setReadTimeout(10000);
-                conn.setRequestMethod("GET");
-                //conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                //conn.setRequestProperty("Content-Length", String.valueOf(bytes.length));
-                // this emulates the minecraft server exactly.. idk why
-                // notch added this personally
-                //conn.setRequestProperty("Content-Language", "en-US");
-                conn.setUseCaches(false);
-                conn.setDoInput(true);
-                conn.connect();
-                try {
-                    String link;
-                    BufferedReader rdr = new BufferedReader(new InputStreamReader(conn
-                    .getInputStream()));
-                    try {
-                        link = rdr.readLine();
-                        System.out.println("To connect to this server, use : " + link + ".");
-                        sending = false;
-                    } finally {
-                        rdr.close();
-                    }
-                } finally {
-                    conn.disconnect();
-                }*/
         String paramString = bldr.toString();
         String response = Server.httpGet(url + "?" + paramString);
         if (Configuration.getConfiguration().isTest()) {

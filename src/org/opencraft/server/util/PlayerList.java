@@ -66,13 +66,6 @@ public class PlayerList {
   private int size = 0;
 
   /**
-   * Default public constructor.
-   */
-  public PlayerList() {
-        /* empty */
-  }
-
-  /**
    * Gets a list of online players.
    *
    * @return A list of online players.

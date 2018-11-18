@@ -57,13 +57,6 @@ public class DeVIPCommand implements Command {
   private static final DeVIPCommand INSTANCE = new DeVIPCommand();
 
   /**
-   * Default private constructor.
-   */
-  private DeVIPCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

@@ -57,13 +57,6 @@ public class DeOperatorCommand implements Command {
   private static final DeOperatorCommand INSTANCE = new DeOperatorCommand();
 
   /**
-   * Default private constructor.
-   */
-  private DeOperatorCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

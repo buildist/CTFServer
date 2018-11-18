@@ -62,10 +62,6 @@ public final class LevelGzipper {
   private static final LevelGzipper INSTANCE = new LevelGzipper();
   private ExecutorService service = Executors.newCachedThreadPool();
 
-  private LevelGzipper() {
-        /* empty */
-  }
-
   public static LevelGzipper getLevelGzipper() {
     return INSTANCE;
   }

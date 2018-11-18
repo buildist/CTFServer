@@ -54,13 +54,6 @@ public class YesCommand implements Command {
   private static final YesCommand INSTANCE = new YesCommand();
 
   /**
-   * Default private constructor.
-   */
-  private YesCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

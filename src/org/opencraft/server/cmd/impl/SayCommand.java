@@ -57,13 +57,6 @@ public class SayCommand implements Command {
   private static final SayCommand INSTANCE = new SayCommand();
 
   /**
-   * Default private constructor.
-   */
-  private SayCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

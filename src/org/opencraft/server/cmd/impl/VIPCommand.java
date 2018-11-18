@@ -57,13 +57,6 @@ public class VIPCommand implements Command {
   private static final VIPCommand INSTANCE = new VIPCommand();
 
   /**
-   * Default private constructor.
-   */
-  private VIPCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

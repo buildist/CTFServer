@@ -54,13 +54,6 @@ public class NoCommand implements Command {
   private static final NoCommand INSTANCE = new NoCommand();
 
   /**
-   * Default private constructor.
-   */
-  private NoCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

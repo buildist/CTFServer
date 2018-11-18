@@ -64,13 +64,6 @@ public class SavedGameManager {
   private ExecutorService service = Executors.newSingleThreadExecutor();
 
   /**
-   * Creates the saved game manager.
-   */
-  private SavedGameManager() {
-        /* empty */
-  }
-
-  /**
    * Gets the saved game manager instance.
    *
    * @return The saved game manager instance.

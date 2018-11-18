@@ -850,7 +850,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             player.flamethrowerEnabled = false;
             player.flamethrowerTime = 0;
             player.rocketTime = 0;
-            player.sendToTeamSpawn(false);
+            player.sendToTeamSpawn();
           }
           rtvVotes = 0;
           rtvYesPlayers.clear();
@@ -1462,7 +1462,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       } else if ((x == blueFlagX && z == blueFlagY && y == blueFlagZ) && mode == 1 &&
           !blueFlagTaken && !ignore) {
         player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_BLUE_FLAG);
-      } else if (/*type < 50 + 16 && */type > -1) {
+      } else if (type > -1) {
         if (!ignore) {
           level.setBlock(x, y, z, (mode == 1 ? type : 0));
           BlockLog.logBlockChange(player, x, y, z);

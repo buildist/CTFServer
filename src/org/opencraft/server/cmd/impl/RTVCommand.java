@@ -50,13 +50,6 @@ public class RTVCommand implements Command {
   private static final RTVCommand INSTANCE = new RTVCommand();
 
   /**
-   * Default private constructor.
-   */
-  private RTVCommand() {
-            /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

@@ -647,30 +647,12 @@ public class Player extends Entity {
       teamname = "blue";
     else
       teamname = "spec";
-            /*new Thread(new Runnable(){
-                public void run() {
-                    safe = true;
-                    if(delay) {
-                        getActionSender().sendTeleport(World.getWorld().getLevel()
-                        .getSpawnPosition(), new Rotation(0, 0));
-                        getActionSender().sendChatMessage("- &bRespawning in 5 seconds...");
-                        try {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException ex) {
-                        }
-                    }
-                    getActionSender().sendTeleport(World.getWorld().getLevel().getTeamSpawn
-                    (teamname), new Rotation(team == 0 ? 64 : 192, 0));
-                    new Thread(new PlayerUntagger(Player.this)).start();
-                }
-            }).start();*/
     getActionSender().sendTeleport(World.getWorld().getLevel().getTeamSpawn(teamname), new
         Rotation(team == 0 ? 64 : 192, 0));
-    System.out.println(getName() + " is respawning");
   }
 
   public void sendToTeamSpawn() {
-    sendToTeamSpawn(true);
+    sendToTeamSpawn();
   }
 
   /**

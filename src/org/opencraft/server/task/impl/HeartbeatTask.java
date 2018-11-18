@@ -95,17 +95,6 @@ public class HeartbeatTask extends ScheduledTask {
             ".net/server/heartbeat", parameters, name);
       }
     }).start();
-        /*new Thread(new Runnable()
-        {
-            public void run()
-            {
-                Date d = new Date();
-                String name = Configuration.getConfiguration().getName().replace("_d", "(Online
-                "+(d.getMonth()+1)+"/"+d.getDate()+"/"+(d.getYear()-100)+")");
-                HeartbeatManager.getHeartbeatManager().sendHeartbeat("https://minecraft
-                .net/heartbeat.jsp", parameters, name);
-            }
-        }).start();*/
     new Thread(new Runnable() {
       public void run() {
         if (!GameSettings.getBoolean("Tournament"))

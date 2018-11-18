@@ -68,13 +68,6 @@ public final class BlockManager {
   private transient BlockDefinition[] blocksArray;
 
   /**
-   * Default private constructor.
-   */
-  private BlockManager() {
-        /* empty */
-  }
-
-  /**
    * Gets the packet manager instance.
    *
    * @return The packet manager instance.

@@ -56,13 +56,6 @@ public class ChatCommand implements Command {
   private static final ChatCommand INSTANCE = new ChatCommand();
 
   /**
-   * Default private constructor.
-   */
-  private ChatCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

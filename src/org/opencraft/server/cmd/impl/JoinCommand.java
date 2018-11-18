@@ -49,13 +49,6 @@ public class JoinCommand implements Command {
   private static final JoinCommand INSTANCE = new JoinCommand();
 
   /**
-   * Default private constructor.
-   */
-  private JoinCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.

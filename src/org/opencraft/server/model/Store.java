@@ -62,19 +62,6 @@ public class Store {
         "line");
     addItem("Creeper", new SimpleItem("Creeper", 40, "Makes you explode", CreeperCommand
         .getCommand()), "cr");
-    //addItem("RemoteExplode", new SimpleItem("RemoteExplode", 60, "Explodes where you are
-    // looking", RemoteExplodeCommand.getCommand()), "re");
-
-        /*addItem("BigTNT", new BigTNTItem("BigTNT", 0), "bigtnt");
-        addItem("Rocket", new SimpleItem("Rocket", 0, "Shoots a rocket from your face",
-        RocketCommand.getCommand()), "r");
-        addItem("Grenade", new SimpleItem("Grenade", 0, "Throwable TNT", GrenadeCommand
-        .getCommand()), "gr");
-        addItem("Line", new SimpleItem("Line", 0, "Builds a bridge", LineCommand.getCommand()),
-        "line");
-        addItem("Creeper", new SimpleItem("Creeper", 0, "Makes you explode", CreeperCommand
-        .getCommand()), "cr");*/
-
   }
 
   public boolean buy(Player p, String itemname) {

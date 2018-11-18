@@ -57,13 +57,6 @@ public class SetspawnCommand implements Command {
   private static final SetspawnCommand INSTANCE = new SetspawnCommand();
 
   /**
-   * Default private constructor.
-   */
-  private SetspawnCommand() {
-        /* empty */
-  }
-
-  /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
