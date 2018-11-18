@@ -1211,7 +1211,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         1)) {
       type = player.placeBlock;
     }
-    if (player.placeSolid == true && type == 1) {
+    if (player.placeSolid && type == 1) {
       type = 7;
     }
     if (player.buildMode == BuildMode.BOX) {

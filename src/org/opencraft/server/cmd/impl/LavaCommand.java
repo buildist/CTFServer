@@ -54,7 +54,7 @@ public class LavaCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.placeBlock == -1) {
+    if (player.placeBlock != 11) {
       player.placeBlock = 11;
       player.getActionSender().sendChatMessage("&e*&fNow placing lava.");
     } else {
