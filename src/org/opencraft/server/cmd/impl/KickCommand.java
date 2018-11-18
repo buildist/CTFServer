@@ -76,33 +76,39 @@ public class KickCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     // Player using command is OP?
     if ((player.isOp()) || player.isVIP()) {
-      if (params.getArgumentCount() == 1) {
+      if (params.getArgumentCount() > 0) {
+        // Get player
         Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-        if (other != null) {
-          other.getSession().close();
-          Server.log(player.getName() + " kicked " + other.getName());
-          World.getWorld().broadcast("- " + other.parseName() + " has been kicked!");
-          return;
-        }
-        // Player not found
-        player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
-      } else if (params.getArgumentCount() > 1) {
-        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-        if (other != null) {
-          String message = "";
-          for (int i = 1; i < params.getArgumentCount(); i++) {
-            message += " " + params.getStringArgument(i);
+        if (other != null) { // Player found
+          if (!player.isOp() && other.isOp()) { // Does player have correct permissions?
+            player.getActionSender().sendChatMessage("You must be OP to kick another OP");
+            return;
           }
-          other.getActionSender().sendLoginFailure(message);
-          other.getSession().close();
-          Server.log(player.getName() + " kicked " + other.getName() + " :reason: " + message);
-          World.getWorld().broadcast("- " + other.parseName() + " has been kicked! " + message);
-          return;
+          if (params.getArgumentCount() == 1) { // No reason
+            other.getActionSender().sendLoginFailure("You were kicked from the server!");
+            other.getSession().close();
+            Server.log(player.getName() + " kicked " + other.getName());
+            World.getWorld().broadcast("- " + other.parseName() + " has been kicked!");
+          } else { // Kick with reason
+            StringBuilder sb = new StringBuilder();
+            for (int i = 1; i < params.getArgumentCount(); i++) {
+              sb.append(" ").append(params.getStringArgument(i));
+            }
+            String message = sb.toString();
+            other.getActionSender().sendLoginFailure(message);
+            other.getSession().close();
+            Server.log(player.getName() + " kicked " + other.getName() + " :reason: " + message);
+            World.getWorld().broadcast("- " + other.parseName() + " has been kicked! " + message);
+          }
+        } else { // Player not found
+          player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
         }
-      } else
+      } else {
         player.getActionSender().sendChatMessage("Wrong number of arguments");
-      player.getActionSender().sendChatMessage("/kick <name> <message>");
-    } else
+        player.getActionSender().sendChatMessage("/kick <name> <message>");
+      }
+    } else {
       player.getActionSender().sendChatMessage("You must be OP to do that");
+    }
   }
 }

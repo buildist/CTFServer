@@ -60,44 +60,68 @@ public class MuteCommand implements Command {
     return INSTANCE;
   }
 
+  private void mute(Player player, Player otherPlayer, boolean all)
+  {
+    // Mute in game
+    if (!otherPlayer.muted) {
+      otherPlayer.muted = true;
+      ((CTFGameMode) World.getWorld().getGameMode()).mute(otherPlayer);
+      Server.log(player.getName() + " muted " + otherPlayer.getName());
+      World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been muted!");
+      otherPlayer.getActionSender().sendChatMessage("- &eYou have been muted!");
+      player.getActionSender().sendChatMessage("- &eSay /mute [name] again to unmute them");
+    } else {
+      otherPlayer.muted = false;
+      ((CTFGameMode) World.getWorld().getGameMode()).unmute(otherPlayer);
+      Server.log(player.getName() + " unmuted " + otherPlayer.getName());
+      World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been ummuted!");
+      otherPlayer.getActionSender().sendChatMessage("- &eYou are no longer muted");
+    }
+    // Mute them on the website
+    if (!all) {
+      String name = otherPlayer.getName().toLowerCase() + "[website]";
+      if (WebServer.blockedWords.contains(name)) {
+        WebServer.blockedWords.remove(name);
+        player.getActionSender().sendChatMessage("- &eUnmuted " + name);
+      } else {
+        WebServer.blockedWords.add(name);
+        player.getActionSender().sendChatMessage("- &eMuted " + name);
+      }
+    }
+  }
+
   public void execute(Player player, CommandParameters params) {
     if (player.isOp() || player.isVIP()) {
+      boolean muteAll = params.getStringArgument(0).equals("all");
       List<Player> other = new ArrayList<Player>();
-      if (params.getStringArgument(0).equals("all")) {
-        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-          if (!p.isOp() && !p.isVIP()) {
-            other.add(p);
+      // Mute everybody
+      if (muteAll) {
+        // Make sure player is OP before muting all
+        if (player.isOp()) {
+          for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+            // Don't mute VIP's or OP's.
+            if (!p.isOp() && !p.isVIP()) {
+                other.add(p);
+            }
+          }
+        } else { // Doesn't have mute all permissions
+          player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
+        }
+      } else { // Isn't a mute all
+        Player toMute = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+        if (toMute != null) {
+          if (!player.isOp() && toMute.isOp()) { // Does not have permission to mute
+            player.getActionSender().sendChatMessage("- &eYou must be op to mute another op!");
+          } else {
+            other.add(toMute);
           }
         }
-      } else {
-        other.add(Player.getPlayer(params.getStringArgument(0), player.getActionSender()));
       }
+
+      // Go through list
       for (Player otherPlayer : other) {
         if (otherPlayer != null) {
-          if (!otherPlayer.muted) {
-            otherPlayer.muted = true;
-            ((CTFGameMode) World.getWorld().getGameMode()).mute(otherPlayer);
-            Server.log(player.getName() + " muted " + otherPlayer.getName());
-            World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been muted!");
-            otherPlayer.getActionSender().sendChatMessage("- &eYou have been muted!");
-            player.getActionSender().sendChatMessage("- &eSay /mute [name] again to unmute them");
-          } else {
-            otherPlayer.muted = false;
-            ((CTFGameMode) World.getWorld().getGameMode()).unmute(otherPlayer);
-            Server.log(player.getName() + " unmuted " + otherPlayer.getName());
-            World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been ummuted!");
-            otherPlayer.getActionSender().sendChatMessage("- &eYou are no longer muted");
-          }
-        }
-      }
-      if (!params.getStringArgument(0).equals("all")) {
-        String name = params.getStringArgument(0).toLowerCase() + "[website]";
-        if (WebServer.blockedWords.contains(name)) {
-          WebServer.blockedWords.remove(name);
-          player.getActionSender().sendChatMessage("- &eUnmuted " + name);
-        } else {
-          WebServer.blockedWords.add(name);
-          player.getActionSender().sendChatMessage("- &eMuted " + name);
+          mute(player, otherPlayer, muteAll);
         }
       }
     } else {

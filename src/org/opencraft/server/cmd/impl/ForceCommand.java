@@ -58,10 +58,14 @@ public class ForceCommand implements Command {
     if ((player.isOp()) || player.isVIP()) {
       String pname = params.getStringArgument(0);
       String tname = params.getStringArgument(1);
-      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+      Player other = Player.getPlayer(pname, player.getActionSender());
       if (other != null) {
-        Server.log(player.getName() + " forced " + other.getName() + " to " + tname);
-        other.joinTeam(tname);
+        if (!player.isOp() && other.isOp()) {
+          player.getActionSender().sendChatMessage("You cannot force an OP.");
+        } else {
+          Server.log(player.getName() + " forced " + other.getName() + " to " + tname);
+          other.joinTeam(tname);
+        }
       }
     } else
       player.getActionSender().sendChatMessage("You must be OP to do that");
