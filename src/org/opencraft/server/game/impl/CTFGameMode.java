@@ -465,23 +465,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     for (int cx = x - r; cx <= x + r; cx++) {
       for (int cy = y - r; cy <= y + r; cy++) {
         for (int cz = z - r; cz <= z + r; cz++) {
-          int oldBlock = level.getBlock(cx, cy, cz);
-          if (!level.isSolid(cx, cy, cz) && oldBlock != 46 && !(cx == blueFlagX && cz ==
-              blueFlagY && cy == blueFlagZ) && !(cx == redFlagX && cz == redFlagY && cy ==
-              redFlagZ) && !isMine(cx, cy, cz) && !isPayload(cx, cy, cz)) {
+          if (isExplodableBlock(level, cx, cy, cz)) {
             level.setBlock(cx, cy, cz, (byte) 0);
           }
-          if (isMine(cx, cy, cz)) {
-            Mine m = World.getWorld().getMine(cx, cy, cz);
-            if (m.team != p.team) {
-              World.getWorld().removeMine(m);
-              World.getWorld().getLevel().setBlock((m.x - 16) / 32, (m.y - 16) / 32, (m.z - 16) /
-                  32, 0);
-              m.owner.removeMine(m);
-              World.getWorld()
-                  .broadcast("- " + p.parseName() + " defused " + m.owner.parseName() + "'s mine!");
-            }
-          }
+          defuseMineIfCan(p, cx, cy, cz);
         }
       }
     }
@@ -494,6 +481,30 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
   }
 
+  public boolean isExplodableBlock(Level level, int x, int y, int z) {
+    int oldBlock = level.getBlock(x, y, z);
+    return !level.isSolid(x, y, z) && oldBlock != 46 && !(x == blueFlagX && z ==
+            blueFlagY && y == blueFlagZ) && !(x == redFlagX && z == redFlagY && y ==
+            redFlagZ) && !isMine(x, y, z) && !isPayload(x, y, z);
+  }
+
+  private void defuseMineIfCan(Player p, int x, int y, int z) {
+    if (isMine(x, y, z)) {
+      Mine m = World.getWorld().getMine(x, y, z);
+      if (m == null) { // Shouldn't get here, but whatever. Just in case.
+        return;
+      }
+      if (m.team != p.team) {
+        World.getWorld().removeMine(m);
+        World.getWorld().getLevel().setBlock((m.x - 16) / 32, (m.y - 16) / 32, (m.z - 16) /
+                32, 0);
+        m.owner.removeMine(m);
+        World.getWorld()
+                .broadcast("- " + p.parseName() + " defused " + m.owner.parseName() + "'s mine!");
+      }
+    }
+  }
+
   public void explodeTNT(Player p, Level level, int x, int y, int z, int r) {
     explodeTNT(p, level, x, y, z, r, true, false, true, null);
   }
@@ -503,6 +514,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256)) - 90;
     int pitch = 0;
 
+    int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
+    int length = GameSettings.getInt("FlameThrowerLength");
+
     double px = (pos.getX());
     double py = (pos.getY());
     double pz = (pos.getZ()) - 1;
@@ -510,21 +524,42 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     double vx = Math.cos(Math.toRadians(heading));
     double vz = Math.tan(Math.toRadians(pitch));
     double vy = Math.sin(Math.toRadians(heading));
-    double x = px + vx * GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
-    double y = py + vy * GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
-    double z = pz + vz * GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
-    for (int i = 0; i < GameSettings.getInt("FlameThrowerLength"); i++) {
+    double x = px;
+    double y = py;
+    double z = pz;
+    for (int i = 0; i < length + distance; i++) {
       int bx = (int) Math.round(x);
       int by = (int) Math.round(y);
-      int bz = (int) Math.round(z) + 1;
-      int oldBlock = World.getWorld().getLevel().getBlock(bx, by, bz);
-      if (((oldBlock != 0 && oldBlock != 11) || bz > World.getWorld().getLevel().ceiling)) {
+      int bz = (int) Math.round(z);
+
+      // Check to make sure we are not above the build height.
+      if (bz > World.getWorld().getLevel().ceiling) {
         return;
-      } else {
+      }
+
+      int oldBlock = World.getWorld().getLevel().getBlock(bx, by, bz);
+
+      if (i < distance) { // Can't kill people where there's no fire
+        if (oldBlock != 0 && oldBlock != 11) { // If it ain't air (or lava), kill it cause we got to burn through first.
+          return;
+        }
+      } else { // Processing actual fire blocks
+        // Defuse mine if it's there
+        defuseMineIfCan(p, bx, by, bz);
+        // Can't go through sand, glass, obsidian, water, or non explodable blocks
+        if (oldBlock == BlockConstants.WATER ||
+                oldBlock == BlockConstants.STILL_WATER ||
+                oldBlock == BlockConstants.SAND ||
+                oldBlock == BlockConstants.GLASS ||
+                oldBlock == BlockConstants.OBSIDIAN ||
+                !isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
+          return;
+        }
+
         for (Player t : World.getWorld().getPlayerList().getPlayers()) {
           Position blockPos = t.getPosition().toBlockPos();
-          if (blockPos.getX() == bx && blockPos.getY() == by && blockPos.getZ() == bz && (p.team
-              != t.team) && !t.isSafe() && p.canKill(t, false)) {
+          if (blockPos.getX() == bx && blockPos.getY() == by && (blockPos.getZ() == bz + 1 || blockPos.getZ() == bz) &&
+                  (p.team != t.team) && !t.isSafe() && p.canKill(t, false)) {
             World.getWorld().broadcast("- " + p.parseName() + " cooked " + t.getColoredName());
             p.gotKill(t);
             t.sendToTeamSpawn();
@@ -538,6 +573,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           }
         }
       }
+
       x += vx;
       y += vy;
       z += vz;
