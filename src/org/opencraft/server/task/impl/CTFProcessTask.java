@@ -103,7 +103,7 @@ public class CTFProcessTask extends ScheduledTask {
             player.linePosition = player.getPosition();
             player.lineRotation = player.getRotation();
           }
-          ((CTFGameMode) World.getWorld().getGameMode()).processFlamethrower(player, player
+          World.getWorld().getGameMode().processFlamethrower(player, player
                   .linePosition, player.lineRotation);
         }
       } else {
@@ -221,22 +221,22 @@ public class CTFProcessTask extends ScheduledTask {
   
   private void showTimer(String settingName, boolean shouldEndGame, String message) {
     long elapsedTime = System.currentTimeMillis()
-        - ((CTFGameMode) World.getWorld().getGameMode()).gameStartTime;
+        - World.getWorld().getGameMode().gameStartTime;
     if (shouldEndGame && elapsedTime > GameSettings.getInt(settingName) * 60 * 1000) {
-      ((CTFGameMode) World.getWorld().getGameMode()).gameStartTime = System.currentTimeMillis();
-      ((CTFGameMode) World.getWorld().getGameMode()).endGame();
+      World.getWorld().getGameMode().gameStartTime = System.currentTimeMillis();
+      World.getWorld().getGameMode().endGame();
     }
     long remaining =
         Math.max((GameSettings.getInt(settingName) * 60 * 1000 - elapsedTime) / 1000, 0);
-    if (((CTFGameMode) World.getWorld().getGameMode()).voting) {
+    if (World.getWorld().getGameMode().voting) {
       remaining = 0;
-    } else if(!((CTFGameMode) World.getWorld().getGameMode()).tournamentGameStarted) {
+    } else if(!World.getWorld().getGameMode().tournamentGameStarted) {
       remaining = GameSettings.getInt(settingName) * 60;
     }
     if (ticks == 0) {
       for (Player player : world.getPlayerList().getPlayers()) {
         if (player.getSession().isExtensionSupported("MessageTypes")) {
-          ((CTFGameMode) World.getWorld().getGameMode()).sendStatusMessage(player);
+          World.getWorld().getGameMode().sendStatusMessage(player);
           player.getActionSender()
               .sendChatMessage(message + " | " + prettyTime((int) remaining), 1);
         }

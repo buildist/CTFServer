@@ -87,7 +87,7 @@ public class RemoteExplodeCommand implements Command {
       int bz = (int) Math.round(z);
       int block = World.getWorld().getLevel().getBlock(bx, by, bz);
       if (block != 0) {
-        ((CTFGameMode) World.getWorld().getGameMode()).explodeTNT(player, World.getWorld()
+        World.getWorld().getGameMode().explodeTNT(player, World.getWorld()
             .getLevel(), bx, by, bz, 3, true, false, false, null);
         return;
       }

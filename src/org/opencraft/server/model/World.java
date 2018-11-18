@@ -96,14 +96,13 @@ public final class World {
   /**
    * The game mode.
    */
-  private GameMode gameMode;
+  private CTFGameMode gameMode;
 
   /**
    * Default private constructor.
    */
   private World() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
-    gameMode = (GameMode) Class.forName(Configuration.getConfiguration().getGameMode())
-        .newInstance();
+    gameMode = new CTFGameMode();
   }
 
   /**
@@ -167,7 +166,7 @@ public final class World {
    *
    * @return The current game mode.
    */
-  public GameMode getGameMode() {
+  public CTFGameMode getGameMode() {
     return gameMode;
   }
 

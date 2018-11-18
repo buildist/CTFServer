@@ -431,10 +431,10 @@ public final class Level implements Cloneable {
     }
 
     if (World.getWorld().getLevel() == this) {
-      ((CTFGameMode) World.getWorld().getGameMode()).resetRedFlagPos();
-      ((CTFGameMode) World.getWorld().getGameMode()).resetBlueFlagPos();
-      ((CTFGameMode) World.getWorld().getGameMode()).placeRedFlag();
-      ((CTFGameMode) World.getWorld().getGameMode()).placeBlueFlag();
+      World.getWorld().getGameMode().resetRedFlagPos();
+      World.getWorld().getGameMode().resetBlueFlagPos();
+      World.getWorld().getGameMode().placeRedFlag();
+      World.getWorld().getGameMode().placeBlueFlag();
     }
   }
 

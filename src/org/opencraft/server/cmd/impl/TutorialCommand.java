@@ -57,7 +57,7 @@ public class TutorialCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (((CTFGameMode) World.getWorld().getGameMode()).getMode() == Level.CTF)
+    if (World.getWorld().getGameMode().getMode() == Level.CTF)
       player.getActionSender().sendChatMessage("- &eSay /commands for a command list. " +
           Constants.HELP_TEXT);
     else

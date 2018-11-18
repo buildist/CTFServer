@@ -72,31 +72,31 @@ public class RTVCommand implements Command {
       if (World.getWorld().getPlayerList().size() % 2 != 0)
         requiredVotes++;
 
-      if (((CTFGameMode) World.getWorld().getGameMode()).voting)
+      if (World.getWorld().getGameMode().voting)
         player.getActionSender().sendChatMessage("- &eYou can't /rtv during map voting.");
-      else if (((CTFGameMode) World.getWorld().getGameMode()).rtvYesPlayers.contains(player
+      else if (World.getWorld().getGameMode().rtvYesPlayers.contains(player
           .getSession().getIP()))
         player.getActionSender().sendChatMessage("- &eYou have already voted.");
       else if (player.team == -1)
         player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
       else {
-        if (((CTFGameMode) World.getWorld().getGameMode()).rtvNoPlayers.contains(player
+        if (World.getWorld().getGameMode().rtvNoPlayers.contains(player
             .getSession().getIP())) {
-          ((CTFGameMode) World.getWorld().getGameMode()).rtvVotes++;
-          ((CTFGameMode) World.getWorld().getGameMode()).rtvNoPlayers.remove(player.getSession()
+          World.getWorld().getGameMode().rtvVotes++;
+          World.getWorld().getGameMode().rtvNoPlayers.remove(player.getSession()
               .getIP());
         }
 
-        int votes = ++((CTFGameMode) World.getWorld().getGameMode()).rtvVotes;
+        int votes = ++World.getWorld().getGameMode().rtvVotes;
         World.getWorld().broadcast("- " + player.getColoredName() + " &3wants to rock the vote &f" +
             "(" + votes + " votes, " + requiredVotes + " required)");
         World.getWorld().broadcast("- &3/rtv to vote, /nominate [mapname] to nominate a map, /no " +
             "to stay on this map");
-        ((CTFGameMode) World.getWorld().getGameMode()).rtvYesPlayers.add(player.getSession()
+        World.getWorld().getGameMode().rtvYesPlayers.add(player.getSession()
             .getIP());
 
         if (votes >= requiredVotes) {
-          ((CTFGameMode) World.getWorld().getGameMode()).endGame();
+          World.getWorld().getGameMode().endGame();
         }
       }
     }

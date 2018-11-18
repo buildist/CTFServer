@@ -71,7 +71,7 @@ public class NoCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    if (((CTFGameMode) World.getWorld().getGameMode()).voting) {
+    if (World.getWorld().getGameMode().voting) {
       final String mapName = World.getWorld().getLevel().id;
       MapRatings.setPlayerRating(player.getName(), mapName, 0);
       player.getActionSender().sendChatMessage(" - &eThanks for your feedback!");
@@ -103,28 +103,28 @@ public class NoCommand implements Command {
       if (World.getWorld().getPlayerList().size() % 2 != 0)
         requiredVotes++;
 
-      else if (((CTFGameMode) World.getWorld().getGameMode()).rtvNoPlayers.contains(player
+      else if (World.getWorld().getGameMode().rtvNoPlayers.contains(player
           .getSession().getIP()))
         player.getActionSender().sendChatMessage("- &eYou have already voted.");
       else if (player.team == -1)
         player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
       else {
-        if (((CTFGameMode) World.getWorld().getGameMode()).rtvYesPlayers.contains(player.getSession
+        if (World.getWorld().getGameMode().rtvYesPlayers.contains(player.getSession
             ().getIP())) {
-          ((CTFGameMode) World.getWorld().getGameMode()).rtvVotes--;
-          ((CTFGameMode) World.getWorld().getGameMode()).rtvYesPlayers.remove(player.getSession()
+          World.getWorld().getGameMode().rtvVotes--;
+          World.getWorld().getGameMode().rtvYesPlayers.remove(player.getSession()
               .getIP());
         }
 
-        int votes = --((CTFGameMode) World.getWorld().getGameMode()).rtvVotes;
+        int votes = --World.getWorld().getGameMode().rtvVotes;
         World.getWorld().broadcast("- " + player.getColoredName() + " &3doesn't want to rock the " +
             "vote &f(" + votes + " votes, " + requiredVotes + " required)");
         World.getWorld().broadcast("- &3/rtv to vote, /nominate [mapname] to nominate a map, /no to" +
             " stay on this map");
-        ((CTFGameMode) World.getWorld().getGameMode()).rtvNoPlayers.add(player.getSession().getIP());
+        World.getWorld().getGameMode().rtvNoPlayers.add(player.getSession().getIP());
 
         if (votes >= requiredVotes) {
-          ((CTFGameMode) World.getWorld().getGameMode()).endGame();
+          World.getWorld().getGameMode().endGame();
         }
       }
     }

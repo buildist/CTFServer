@@ -295,12 +295,12 @@ public class Player extends Entity {
   public void gotKill(Player defender) {
     if (defender.team == -1 || defender.team == team)
       return;
-    else if (((CTFGameMode) World.getWorld().getGameMode()).getMode() == Level.TDM) {
+    else if (World.getWorld().getGameMode().getMode() == Level.TDM) {
       if (team == 0)
-        ((CTFGameMode) World.getWorld().getGameMode()).redCaptures++;
+        World.getWorld().getGameMode().redCaptures++;
       else
-        ((CTFGameMode) World.getWorld().getGameMode()).blueCaptures++;
-      ((CTFGameMode) World.getWorld().getGameMode()).updateStatusMessage();
+        World.getWorld().getGameMode().blueCaptures++;
+      World.getWorld().getGameMode().updateStatusMessage();
     }
 
     killstreak++;
@@ -360,7 +360,7 @@ public class Player extends Entity {
     killstreak = 0;
     attacker.setIfMax("maxKillstreakEnded", killstreak);
     incStat("deaths");
-    ((CTFGameMode) World.getWorld().getGameMode()).checkForUnbalance(this);
+    World.getWorld().getGameMode().checkForUnbalance(this);
     if (this.bountyMode == true) {
       if (this.team == -1) {
         this.bountiedBy.addStorePoints(this.bountyAmount);
@@ -612,7 +612,7 @@ public class Player extends Entity {
     }
     accumulatedStorePoints += n;
     setAttribute("storepoints", (Integer) getAttribute("storepoints") + n);
-    ((CTFGameMode) World.getWorld().getGameMode()).updateLeaderboard();
+    World.getWorld().getGameMode().updateLeaderboard();
   }
 
   public int getStorePoints() {

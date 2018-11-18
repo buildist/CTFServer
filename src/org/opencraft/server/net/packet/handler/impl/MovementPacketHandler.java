@@ -77,7 +77,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     {
       if (player.team > -1) {
         if (player.hasFlag)
-          ((CTFGameMode) World.getWorld().getGameMode()).dropFlag(player, true, false);
+          World.getWorld().getGameMode().dropFlag(player, true, false);
                 /*if(!(blockPosition.getX() == player.teleportBlockPosition.getX() &&
                 blockPosition.getY() == player.teleportBlockPosition.getY())) {
                     player.getActionSender().sendTeleport(player.getPosition(), player

@@ -77,7 +77,7 @@ public class NewGameCommand implements Command {
           return;
         }
       }
-      ((CTFGameMode) World.getWorld().getGameMode()).startGame(newMap);
+      World.getWorld().getGameMode().startGame(newMap);
     } else
       player.getActionSender().sendChatMessage("You must be OP to do that");
   }

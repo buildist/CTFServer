@@ -61,7 +61,7 @@ public class DropItem implements Runnable {
       World.getWorld().broadcast("- " + p.parseName() + " has found " + points + " points!");
       p.addStorePoints(points);
       World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
-      ((CTFGameMode) World.getWorld().getGameMode()).removeDropItem(this);
+      World.getWorld().getGameMode().removeDropItem(this);
     }
   }
 
@@ -69,7 +69,7 @@ public class DropItem implements Runnable {
     posX = (int) (4 + Math.random() * (World.getWorld().getLevel().getWidth() - 8));
     posY = (int) (4 + Math.random() * (World.getWorld().getLevel().getHeight() - 8));
     posZ = World.getWorld().getLevel().ceiling - 8;
-    ((CTFGameMode) World.getWorld().getGameMode()).addDropItem(this);
+    World.getWorld().getGameMode().addDropItem(this);
     boolean done = false;
     for(int i = 1; i < 1000 && !done; i++) {
       if (World.getWorld().getLevel().getBlock(posX, posY, posZ) != 7)

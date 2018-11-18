@@ -52,7 +52,7 @@ public class ItemDropTask implements Runnable {
       points = 75;
     else
       points = 50;
-    if (((CTFGameMode) World.getWorld().getGameMode()).ready && World.getWorld().getPlayerList()
+    if (World.getWorld().getGameMode().ready && World.getWorld().getPlayerList()
         .size() >= 2 && !GameSettings.getBoolean("Tournament"))
       new DropItem(points);
   }

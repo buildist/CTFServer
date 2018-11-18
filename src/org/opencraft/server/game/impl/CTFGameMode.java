@@ -415,7 +415,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           " (www.classicube.net) for more features.");
     }
     if (player.getSession().isExtensionSupported("MessageTypes")) {
-      ((CTFGameMode) World.getWorld().getGameMode()).sendStatusMessage(player);
+      World.getWorld().getGameMode().sendStatusMessage(player);
       player.getActionSender().sendChatMessage(Constants.SERVER_NAME, 1);
     }
   }
@@ -1503,9 +1503,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     p.clearMines();
 
     if (p.team == 0) {
-      ((CTFGameMode) World.getWorld().getGameMode()).redPlayers--;
+      World.getWorld().getGameMode().redPlayers--;
     } else if (p.team == 1) {
-      ((CTFGameMode) World.getWorld().getGameMode()).bluePlayers--;
+      World.getWorld().getGameMode().bluePlayers--;
     }
     if (p.duelPlayer != null) {
       p.duelPlayer.duelPlayer = null;

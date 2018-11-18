@@ -98,7 +98,7 @@ public class Store {
   public void addItem(String name, StoreItem item, String command) {
     items.put(name, item);
     item.command = command;
-    ((CTFGameMode) World.getWorld().getGameMode()).registerCommand(command, new
+    World.getWorld().getGameMode().registerCommand(command, new
         ActivateItemCommand(item));
   }
 

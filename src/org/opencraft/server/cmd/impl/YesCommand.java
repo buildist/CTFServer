@@ -71,7 +71,7 @@ public class YesCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    if (((CTFGameMode) World.getWorld().getGameMode()).voting) {
+    if (World.getWorld().getGameMode().voting) {
       final String mapName = World.getWorld().getLevel().id;
       MapRatings.setPlayerRating(player.getName(), mapName, 1);
       player.getActionSender().sendChatMessage(" - &eThanks for your feedback!");
