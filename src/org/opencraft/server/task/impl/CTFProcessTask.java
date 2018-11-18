@@ -78,27 +78,51 @@ public class CTFProcessTask extends ScheduledTask {
       }
       ctf.processPlayerMove(player);
       if (player.flamethrowerEnabled) {
-        player.flamethrowerUnits--;
-        if (player.flamethrowerUnits == 0) {
-          player.getActionSender().sendChatMessage("- &eFuel: &c" + player.flamethrowerUnits);
+        int duration = GameSettings.getInt("FlameThrowerDuration");
+        // ticks a second
+        float rate = (float)Constants.FLAME_THROWER_FUEL / duration;
+        long time = System.currentTimeMillis();
+        long dt = time - player.flamethrowerTime;
+        player.flamethrowerFuel -= rate * dt / 1000;
+        player.flamethrowerTime = time;
+        if (player.flamethrowerFuel <= 0) { // Out of fuel
+          player.flamethrowerFuel = 0;
+          player.sendFuelPercent();
           player.flamethrowerEnabled = false;
           World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
-          player.flamethrowerTime = System.currentTimeMillis();
-          continue;
-        } else if (player.flamethrowerUnits % 25 == 0) {
-          player.getActionSender().sendChatMessage("- &eFuel: &c" + player.flamethrowerUnits);
+        } else if ((time - player.flamethrowerNotify) / 1000 >= 1) { // Send fuel percent every second
+          player.sendFuelPercent();
         }
-        if (!player.getPosition().equals(player.linePosition) || !player.getRotation().equals
-            (player.lineRotation)) {
-          if (player.linePosition != null)
-            World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
-          World.getWorld().getLevel().drawFire(player.getPosition(), player.getRotation());
-          player.linePosition = player.getPosition();
-          player.lineRotation = player.getRotation();
+        // Was flame thrower disabled because they ran out of fuel?
+        if (player.flamethrowerEnabled) {
+          if (!player.getPosition().equals(player.linePosition) || !player.getRotation().equals
+                  (player.lineRotation)) {
+            if (player.linePosition != null)
+              World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
+            World.getWorld().getLevel().drawFire(player.getPosition(), player.getRotation());
+            player.linePosition = player.getPosition();
+            player.lineRotation = player.getRotation();
+          }
+          ((CTFGameMode) World.getWorld().getGameMode()).processFlamethrower(player, player
+                  .linePosition, player.lineRotation);
         }
-        ((CTFGameMode) World.getWorld().getGameMode()).processFlamethrower(player, player
-            .linePosition, player.lineRotation);
+      } else {
+        if (player.flamethrowerFuel != (float)Constants.FLAME_THROWER_FUEL) {
+          int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
+          float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
+          long time = System.currentTimeMillis();
+          long dt = time - player.flamethrowerTime;
+          player.flamethrowerFuel += rechargeRate * dt / 1000;
+          player.flamethrowerTime = time;
+          if (player.flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
+            player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+            player.sendFuelPercent();
+          } else if ((time - player.flamethrowerNotify) / 1000 >= 2) {
+            player.sendFuelPercent();
+          }
+        }
       }
+
             /* if(player.hasFlag) {
                 player.headBlockType = player.team == 0 ? 28 : 21;
             }

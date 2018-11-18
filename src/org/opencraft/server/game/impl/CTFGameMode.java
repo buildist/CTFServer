@@ -688,8 +688,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             player.hasNominated = false;
             player.hasFlag = false;
             player.hasTNT = false;
-            player.flamethrowerEnabled = false;
-            player.flamethrowerUnits = 200;
+            player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+            player.flamethrowerNotify = 0;
             player.accumulatedStorePoints = 0;
             for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
               player.getActionSender().sendRemoveBlockDefinition(blockDef.id);

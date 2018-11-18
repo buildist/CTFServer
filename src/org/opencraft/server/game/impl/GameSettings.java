@@ -20,6 +20,8 @@ public class GameSettings {
     add("Tournament", TYPE_BOOLEAN, false);
     add("FlameThrowerStartDistanceFromPlayer", TYPE_INT, 3);
     add("FlameThrowerLength", TYPE_INT, 2);
+    add("FlameThrowerRechargeTime", TYPE_INT, 15);
+    add("FlameThrowerDuration", TYPE_INT, 8);
   }
 
   public static Object get(String k) {
