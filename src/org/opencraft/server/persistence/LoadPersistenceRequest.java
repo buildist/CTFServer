@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.persistence;
-
 
 import com.thoughtworks.xstream.XStream;
 
@@ -64,26 +63,17 @@ public class LoadPersistenceRequest extends PersistenceRequest {
   }
 
   private void setDefaultStats(Player player) {
-    if (player.getAttribute("storepoints") == null)
-      player.setAttribute("storepoints", 0);
-    if (player.getAttribute("ragequits") == null)
-      player.setAttribute("ragequits", 0);
-    if (player.getAttribute("duelWins") == null)
-      player.setAttribute("duelWins", 0);
-    if (player.getAttribute("duelLosses") == null)
-      player.setAttribute("duelLosses", 0);
-    if (player.getAttribute("deaths") == null)
-      player.setAttribute("deaths", 0);
-    if (player.getAttribute("maxKillstreak") == null)
-      player.setAttribute("maxKillstreak", 0);
+    if (player.getAttribute("storepoints") == null) player.setAttribute("storepoints", 0);
+    if (player.getAttribute("ragequits") == null) player.setAttribute("ragequits", 0);
+    if (player.getAttribute("duelWins") == null) player.setAttribute("duelWins", 0);
+    if (player.getAttribute("duelLosses") == null) player.setAttribute("duelLosses", 0);
+    if (player.getAttribute("deaths") == null) player.setAttribute("deaths", 0);
+    if (player.getAttribute("maxKillstreak") == null) player.setAttribute("maxKillstreak", 0);
     if (player.getAttribute("maxKillstreakEnded") == null)
       player.setAttribute("maxKillstreakEnded", 0);
-    if (player.getAttribute("domination") == null)
-      player.setAttribute("domination", 0);
-    if (player.getAttribute("revenge") == null)
-      player.setAttribute("revenge", 0);
-    if (player.getAttribute("stalemateTags") == null)
-      player.setAttribute("stalemateTags", 0);
+    if (player.getAttribute("domination") == null) player.setAttribute("domination", 0);
+    if (player.getAttribute("revenge") == null) player.setAttribute("revenge", 0);
+    if (player.getAttribute("stalemateTags") == null) player.setAttribute("stalemateTags", 0);
   }
 
   @SuppressWarnings("unchecked")
@@ -94,8 +84,8 @@ public class LoadPersistenceRequest extends PersistenceRequest {
     final File file = new File(mgr.getPath(player));
     if (file.exists()) {
       try {
-        Map<String, Object> attributes = (Map<String, Object>) xs.fromXML(new FileInputStream
-            (file));
+        Map<String, Object> attributes =
+            (Map<String, Object>) xs.fromXML(new FileInputStream(file));
         for (Map.Entry<String, Object> entry : attributes.entrySet()) {
           if (entry.getKey().equals("storepoints") && GameSettings.getBoolean("Tournament")) {
             player.setAttribute(entry.getKey(), 0);
@@ -118,13 +108,10 @@ public class LoadPersistenceRequest extends PersistenceRequest {
         player.setAttribute("games", 0);
       }
       setDefaultStats(player);
-    } else
-      throw new IOException();
-
+    } else throw new IOException();
   }
 
   public void perform() throws IOException {
     perform(true);
   }
-
 }

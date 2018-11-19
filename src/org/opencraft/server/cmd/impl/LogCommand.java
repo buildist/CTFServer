@@ -42,9 +42,7 @@ import org.opencraft.server.model.Player;
 
 public class LogCommand implements Command {
 
-  /**
-   * The instance of this command.
-   */
+  /** The instance of this command. */
   private static final LogCommand INSTANCE = new LogCommand();
 
   /**
@@ -61,7 +59,6 @@ public class LogCommand implements Command {
     // Player using command is OP?
     if (player.isOp()) {
       player.sendCommandLog = !player.sendCommandLog;
-    } else
-      player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that");
   }
 }

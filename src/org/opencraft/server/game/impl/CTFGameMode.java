@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -308,8 +308,15 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
     String redFlag = redFlagTaken ? " &6[!]" : "";
     String blueFlag = blueFlagTaken ? " &6[!]" : "";
-    setStatusMessage("Map: " + map.id
-        + " | &cRed: " + redCaptures + redFlag + " &f| &9Blue: " + blueCaptures + blueFlag);
+    setStatusMessage(
+        "Map: "
+            + map.id
+            + " | &cRed: "
+            + redCaptures
+            + redFlag
+            + " &f| &9Blue: "
+            + blueCaptures
+            + blueFlag);
   }
 
   public void setStatusMessage(String message) {
@@ -329,17 +336,19 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public void sendAnnouncement(final Player p, final String message) {
     if (p.getSession().isExtensionSupported("MessageTypes")) {
-      new Thread(new Runnable() {
+      new Thread(
+              new Runnable() {
 
-        public void run() {
-          try {
-              p.getActionSender().sendChatMessage(message, 100);
-              Thread.sleep(4000);
-              p.getActionSender().sendChatMessage("", 100);
-          } catch (InterruptedException ex) {
-          }
-        }
-      }).start();
+                public void run() {
+                  try {
+                    p.getActionSender().sendChatMessage(message, 100);
+                    Thread.sleep(4000);
+                    p.getActionSender().sendChatMessage("", 100);
+                  } catch (InterruptedException ex) {
+                  }
+                }
+              })
+          .start();
     }
   }
 
@@ -351,18 +360,24 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public void playerConnected(final Player player) {
     Server.log(player.getName() + " (" + player.getSession().getIP() + ") joined the game");
     if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
-      WebServer.run(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            String urlMessage = URLEncoder.encode("[b][color=#00aa00]" + player.getName() + " " +
-                "joined the game[/color][/b]", "UTF-8");
-            Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-          } catch (Exception ex) {
+      WebServer.run(
+          new Runnable() {
+            @Override
+            public void run() {
+              try {
+                String urlMessage =
+                    URLEncoder.encode(
+                        "[b][color=#00aa00]"
+                            + player.getName()
+                            + " "
+                            + "joined the game[/color][/b]",
+                        "UTF-8");
+                Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
+              } catch (Exception ex) {
 
-          }
-        }
-      });
+              }
+            }
+          });
     }
 
     player.setAttribute("ip", player.getSession().getIP());
@@ -384,35 +399,46 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       if (welcome != null && !welcome.equals("null")) {
         player.getActionSender().sendChatMessage("&a" + welcome);
       }
-      player.getActionSender().sendChatMessage("&bSay /join to start playing, or /spec to " +
-          "spectate");
+      player
+          .getActionSender()
+          .sendChatMessage("&bSay /join to start playing, or /spec to " + "spectate");
       if (getMode() == Level.CTF) {
         player.getActionSender().sendChatMessage("&aSay /help to learn how to play");
       } else if (getMode() == Level.PAYLOAD) {
 
       } else {
-        player.getActionSender().sendChatMessage("&aThis is a Team Deathmatch map. Say /help to " +
-            "learn how to play");
+        player
+            .getActionSender()
+            .sendChatMessage(
+                "&aThis is a Team Deathmatch map. Say /help to " + "learn how to play");
       }
       player.getActionSender().sendChatMessage("&aSay /rules to read the rules");
     } else {
       String helpText;
       if (getMode() == Level.CTF) {
-        player.getActionSender().sendChatMessage("&bWelcome to Capture the Flag! Here's how you " +
-            "play.");
+        player
+            .getActionSender()
+            .sendChatMessage("&bWelcome to Capture the Flag! Here's how you " + "play.");
         helpText = Constants.HELP_TEXT;
       } else {
-        player.getActionSender().sendChatMessage("&bWelcome to Team Deathmatch! Here's how you " +
-            "play.");
+        player
+            .getActionSender()
+            .sendChatMessage("&bWelcome to Team Deathmatch! Here's how you " + "play.");
         helpText = Constants.TDM_HELP_TEXT;
       }
       player.getActionSender().sendChatMessage("&e" + helpText);
-      player.getActionSender().sendChatMessage("&bSay /join to start playing or /spec to spectate" +
-          ". /help will show these instructions again.");
+      player
+          .getActionSender()
+          .sendChatMessage(
+              "&bSay /join to start playing or /spec to spectate"
+                  + ". /help will show these instructions again.");
     }
     if (!player.getSession().ccUser) {
-      player.getActionSender().sendChatMessage("-- &bWe recommend using the &aClassiCube &bclient" +
-          " (www.classicube.net) for more features.");
+      player
+          .getActionSender()
+          .sendChatMessage(
+              "-- &bWe recommend using the &aClassiCube &bclient"
+                  + " (www.classicube.net) for more features.");
     }
     if (player.getSession().isExtensionSupported("MessageTypes")) {
       World.getWorld().getGameMode().sendStatusMessage(player);
@@ -420,8 +446,17 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
   }
 
-  public void explodeTNT(Player p, Level level, int x, int y, int z, int r, boolean lethal,
-                         boolean tk, boolean deleteSelf, String type) {
+  public void explodeTNT(
+      Player p,
+      Level level,
+      int x,
+      int y,
+      int z,
+      int r,
+      boolean lethal,
+      boolean tk,
+      boolean deleteSelf,
+      String type) {
     if (deleteSelf) {
       level.setBlock(x, y, z, 0);
     }
@@ -440,18 +475,26 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         float tx = (t.getPosition().getX()) / 32f;
         float ty = (t.getPosition().getY()) / 32f;
         float tz = (t.getPosition().getZ()) / 32f;
-        if (Math.abs(px - tx) < pr && Math.abs(py - ty) < pr && Math.abs(pz - tz) < pr && (p.team
-            != t.team || (tk && (t == p || !t.hasFlag))) && !t.isSafe() && p.canKill(t, true) && t
-            .isVisible) {
+        if (Math.abs(px - tx) < pr
+            && Math.abs(py - ty) < pr
+            && Math.abs(pz - tz) < pr
+            && (p.team != t.team || (tk && (t == p || !t.hasFlag)))
+            && !t.isSafe()
+            && p.canKill(t, true)
+            && t.isVisible) {
           t.markSafe();
           n++;
-          World.getWorld().broadcast("- " + p.parseName() + " exploded " + t.getColoredName()
-              + (type == null ? "" : " &f(" + type + ")"));
+          World.getWorld()
+              .broadcast(
+                  "- "
+                      + p.parseName()
+                      + " exploded "
+                      + t.getColoredName()
+                      + (type == null ? "" : " &f(" + type + ")"));
           p.gotKill(t);
           t.sendToTeamSpawn();
           t.died(p);
-          if (!tk)
-            checkFirstBlood(p, t);
+          if (!tk) checkFirstBlood(p, t);
           if (t.team != -1 && t.team != p.team) {
             p.setAttribute("explodes", (Integer) p.getAttribute("explodes") + 1);
             p.addStorePoints(5);
@@ -483,9 +526,12 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public boolean isExplodableBlock(Level level, int x, int y, int z) {
     int oldBlock = level.getBlock(x, y, z);
-    return !level.isSolid(x, y, z) && oldBlock != 46 && !(x == blueFlagX && z ==
-            blueFlagY && y == blueFlagZ) && !(x == redFlagX && z == redFlagY && y ==
-            redFlagZ) && !isMine(x, y, z) && !isPayload(x, y, z);
+    return !level.isSolid(x, y, z)
+        && oldBlock != 46
+        && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)
+        && !(x == redFlagX && z == redFlagY && y == redFlagZ)
+        && !isMine(x, y, z)
+        && !isPayload(x, y, z);
   }
 
   private void defuseMineIfCan(Player p, int x, int y, int z) {
@@ -496,11 +542,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       }
       if (m.team != p.team) {
         World.getWorld().removeMine(m);
-        World.getWorld().getLevel().setBlock((m.x - 16) / 32, (m.y - 16) / 32, (m.z - 16) /
-                32, 0);
+        World.getWorld().getLevel().setBlock((m.x - 16) / 32, (m.y - 16) / 32, (m.z - 16) / 32, 0);
         m.owner.removeMine(m);
         World.getWorld()
-                .broadcast("- " + p.parseName() + " defused " + m.owner.parseName() + "'s mine!");
+            .broadcast("- " + p.parseName() + " defused " + m.owner.parseName() + "'s mine!");
       }
     }
   }
@@ -511,8 +556,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public void processFlamethrower(Player p, Position pos, Rotation r) {
     pos = pos.toBlockPos();
-    double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-    double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
+    double heading =
+        Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+    double pitch =
+        Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
     int length = GameSettings.getInt("FlameThrowerLength");
@@ -523,8 +570,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     double py = (pos.getY());
     double pz = (pos.getZ()) - 1;
 
-    double vx = Math.cos(heading)*Math.cos(pitch);
-    double vy = Math.sin(heading)*Math.cos(pitch);
+    double vx = Math.cos(heading) * Math.cos(pitch);
+    double vy = Math.sin(heading) * Math.cos(pitch);
     double vz = Math.sin(pitch);
     double x = px;
     double y = py;
@@ -544,19 +591,23 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       // Defuse mine if it's there
       defuseMineIfCan(p, bx, by, bz);
       // Can't go through sand, glass, obsidian, water, or non explodable blocks
-      if (oldBlock == BlockConstants.WATER ||
-              oldBlock == BlockConstants.STILL_WATER ||
-              oldBlock == BlockConstants.SAND ||
-              oldBlock == BlockConstants.GLASS ||
-              oldBlock == BlockConstants.OBSIDIAN ||
-              !isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
+      if (oldBlock == BlockConstants.WATER
+          || oldBlock == BlockConstants.STILL_WATER
+          || oldBlock == BlockConstants.SAND
+          || oldBlock == BlockConstants.GLASS
+          || oldBlock == BlockConstants.OBSIDIAN
+          || !isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
         return;
       }
 
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
         Position blockPos = t.getPosition().toBlockPos();
-        if (blockPos.getX() == bx && blockPos.getY() == by && (blockPos.getZ() == bz + 1 || blockPos.getZ() == bz) &&
-                (p.team != t.team) && !t.isSafe() && p.canKill(t, false)) {
+        if (blockPos.getX() == bx
+            && blockPos.getY() == by
+            && (blockPos.getZ() == bz + 1 || blockPos.getZ() == bz)
+            && (p.team != t.team)
+            && !t.isSafe()
+            && p.canKill(t, false)) {
           World.getWorld().broadcast("- " + p.parseName() + " cooked " + t.getColoredName());
           p.gotKill(t);
           t.sendToTeamSpawn();
@@ -580,17 +631,27 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         z += vz * side;
       }
     }
-
   }
 
   public void showScore() {
     if (getMode() == Level.TDM) {
-      World.getWorld().broadcast("- Current score: Red has " + redCaptures + " kills; blue has "
-          + blueCaptures + " kills");
+      World.getWorld()
+          .broadcast(
+              "- Current score: Red has "
+                  + redCaptures
+                  + " kills; blue has "
+                  + blueCaptures
+                  + " kills");
 
-    } else if (getMode() == Level.CTF){
-      World.getWorld().broadcast("- Current score: Red has " + redCaptures + " captures; blue has" +
-          " " + blueCaptures + " captures");
+    } else if (getMode() == Level.CTF) {
+      World.getWorld()
+          .broadcast(
+              "- Current score: Red has "
+                  + redCaptures
+                  + " captures; blue has"
+                  + " "
+                  + blueCaptures
+                  + " captures");
     }
   }
 
@@ -610,7 +671,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public void placeBlueFlag() {
     if (getMode() == Level.CTF) {
-      World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, Constants.BLOCK_BLUE_FLAG);
+      World.getWorld()
+          .getLevel()
+          .setBlock(blueFlagX, blueFlagZ, blueFlagY, Constants.BLOCK_BLUE_FLAG);
     }
   }
 
@@ -646,12 +709,16 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public void updatePayload(int nextPosition) {
     if (payloadPosition != -1) {
-      World.getWorld().getLevel().setBlock(
-          World.getWorld().getLevel().getPayloadPath().get(payloadPosition), 0);
+      World.getWorld()
+          .getLevel()
+          .setBlock(World.getWorld().getLevel().getPayloadPath().get(payloadPosition), 0);
     }
     payloadPosition = nextPosition;
-    World.getWorld().getLevel().setBlock(
-        World.getWorld().getLevel().getPayloadPath().get(payloadPosition), Constants.BLOCK_PAYLOAD);
+    World.getWorld()
+        .getLevel()
+        .setBlock(
+            World.getWorld().getLevel().getPayloadPath().get(payloadPosition),
+            Constants.BLOCK_PAYLOAD);
   }
 
   public void openSpawns() {
@@ -678,70 +745,73 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     previousMap = currentMap;
     currentMap = map.id;
     MoveLog.getInstance().logMapChange(map.id);
-    new Thread(new Runnable() {
+    new Thread(
+            new Runnable() {
 
-      public void run() {
-        try {
-          gameStartTime = System.currentTimeMillis();
-          tournamentGameStarted = !GameSettings.getBoolean("Tournament");
-          for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-            player.team = -1;
-            player.hasVoted = false;
-            player.hasNominated = false;
-            player.hasFlag = false;
-            player.hasTNT = false;
-            player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-            player.flamethrowerNotify = 0;
-            player.accumulatedStorePoints = 0;
-            for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
-              player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
-            }
-          }
-          World.getWorld().clearMines();
-          startNewMap = null;
-          blockSpawnX = (map.getSpawnPosition().getX() - 16) / 32;
-          blockSpawnY = (map.getSpawnPosition().getY() - 16) / 32;
-          blockSpawnZ = (map.getSpawnPosition().getZ() - 16) / 32;
-          redPlayers = 0;
-          bluePlayers = 0;
-          World.getWorld().setLevel(map);
-          resetRedFlagPos();
-          resetBlueFlagPos();
-          updateStatusMessage();
-          updateLeaderboard();
-          voting = false;
-          rtvVotes = 0;
-          rtvYesPlayers.clear();
-          rtvNoPlayers.clear();
-          nominatedMaps.clear();
-          isFirstBlood = true;
-          for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-            p.joinTeam("spec", false);
-          }
-          try {
-            Thread.sleep(5 * 1000);
-          } catch (InterruptedException ex) {
-          }
-          World.getWorld().broadcast("- &6Say /join to start playing, or /spec to spectate.");
-          redFlagTaken = false;
-          blueFlagTaken = false;
-          redCaptures = 0;
-          blueCaptures = 0;
-          ready = true;
-          updateStatusMessage();
-          placeBlueFlag();
-          placeRedFlag();
-          if (getMode() == Level.PAYLOAD) {
-            payloadPosition = -1;
-            updatePayload(0);
-          }
-          openSpawns();
-        } catch (Exception ex) {
-          Server.log(ex);
-          voting = false;
-        }
-      }
-    }).start();
+              public void run() {
+                try {
+                  gameStartTime = System.currentTimeMillis();
+                  tournamentGameStarted = !GameSettings.getBoolean("Tournament");
+                  for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+                    player.team = -1;
+                    player.hasVoted = false;
+                    player.hasNominated = false;
+                    player.hasFlag = false;
+                    player.hasTNT = false;
+                    player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+                    player.flamethrowerNotify = 0;
+                    player.accumulatedStorePoints = 0;
+                    for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
+                      player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
+                    }
+                  }
+                  World.getWorld().clearMines();
+                  startNewMap = null;
+                  blockSpawnX = (map.getSpawnPosition().getX() - 16) / 32;
+                  blockSpawnY = (map.getSpawnPosition().getY() - 16) / 32;
+                  blockSpawnZ = (map.getSpawnPosition().getZ() - 16) / 32;
+                  redPlayers = 0;
+                  bluePlayers = 0;
+                  World.getWorld().setLevel(map);
+                  resetRedFlagPos();
+                  resetBlueFlagPos();
+                  updateStatusMessage();
+                  updateLeaderboard();
+                  voting = false;
+                  rtvVotes = 0;
+                  rtvYesPlayers.clear();
+                  rtvNoPlayers.clear();
+                  nominatedMaps.clear();
+                  isFirstBlood = true;
+                  for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                    p.joinTeam("spec", false);
+                  }
+                  try {
+                    Thread.sleep(5 * 1000);
+                  } catch (InterruptedException ex) {
+                  }
+                  World.getWorld()
+                      .broadcast("- &6Say /join to start playing, or /spec to spectate.");
+                  redFlagTaken = false;
+                  blueFlagTaken = false;
+                  redCaptures = 0;
+                  blueCaptures = 0;
+                  ready = true;
+                  updateStatusMessage();
+                  placeBlueFlag();
+                  placeRedFlag();
+                  if (getMode() == Level.PAYLOAD) {
+                    payloadPosition = -1;
+                    updatePayload(0);
+                  }
+                  openSpawns();
+                } catch (Exception ex) {
+                  Server.log(ex);
+                  voting = false;
+                }
+              }
+            })
+        .start();
     Server.saveLog();
   }
 
@@ -795,113 +865,136 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public void endGame() {
-    new Thread(new Runnable() {
-      public void run() {
-        try {
-          String winner = null;
-          int winnerID = -2;
-          if (redCaptures > blueCaptures) {
-            winner = "red";
-            winnerID = 0;
-          } else if (blueCaptures > redCaptures) {
-            winner = "blue";
-            winnerID = 1;
-          }
-          if (winner == null) {
-            World.getWorld().broadcast("- &6The game ended in a tie!");
-          } else {
-            World.getWorld().broadcast("- &6The game has ended; the " + winner + " team wins!");
-          }
-          if (getMode() == Level.CTF) {
-            World.getWorld().broadcast("- &6Red had " + redCaptures + " captures, blue had " +
-                blueCaptures + ".");
-          } else {
-            World.getWorld().broadcast("- &6Red had " + redCaptures + " kills, blue had " +
-                blueCaptures + ".");
-          }
-          for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-            if (p.team != -1) {
-              p.setAttribute("games", (Integer) p.getAttribute("games") + 1);
-            }
-            if (p.team == winnerID) {
-              p.setAttribute("wins", (Integer) p.getAttribute("wins") + 1);
-            }
-            p.hasVoted = false;
-            p.hasNominated = false;
-          }
-          Player[] top = getTopPlayers();
-          World.getWorld().broadcast("- &3Top players for the round:");
-          if (top[0] == null) {
-            World.getWorld().broadcast("- &3Nobody");
-          }
-          for (int j = 0; j < 3; j++) {
-            Player p = top[j];
-            if (p == null) {
-              break;
-            }
-            World.getWorld().broadcast("- &2" + p.getName() + " - " + p.accumulatedStorePoints);
-
-          }
-          for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-            player.team = -1;
-            player.hasFlag = false;
-            player.hasTNT = false;
-            if (player.flamethrowerEnabled) {
-              World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
-            }
-            player.flamethrowerEnabled = false;
-            player.flamethrowerTime = 0;
-            player.rocketTime = 0;
-            player.sendToTeamSpawn();
-          }
-          rtvVotes = 0;
-          rtvYesPlayers.clear();
-          rtvNoPlayers.clear();
-          if (GameSettings.getBoolean("Tournament"))
-            return;
-          World.getWorld().broadcast("- &aMap voting is now open for 40 seconds...");
-          World.getWorld().broadcast("- &aSay /vote [mapname] to select the next map!");
-          MapController.resetVotes();
-          voting = true;
-          int count = nominatedMaps.size();
-          if (count > 3) {
-            count = 3;
-          }
-          ArrayList<String> mapNames = MapController.getRandomMapNames(3 - count, new
-              String[]{currentMap, previousMap});
-          mapNames.addAll(nominatedMaps);
-          String msg = "";
-          for (String map : mapNames) {
-            msg += map + ", ";
-          }
-          World.getWorld().broadcast("- &a" + msg);
-          World.getWorld().broadcast("- &3Did you like the map you just played (" + currentMap +")? Say /yes or /no followed by a reason (optional) to vote!");
-          new Thread(new Runnable() {
-            public void run() {
-              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+    new Thread(
+            new Runnable() {
+              public void run() {
                 try {
-                  new SavePersistenceRequest(p).perform();
-                } catch (IOException ex) {
+                  String winner = null;
+                  int winnerID = -2;
+                  if (redCaptures > blueCaptures) {
+                    winner = "red";
+                    winnerID = 0;
+                  } else if (blueCaptures > redCaptures) {
+                    winner = "blue";
+                    winnerID = 1;
+                  }
+                  if (winner == null) {
+                    World.getWorld().broadcast("- &6The game ended in a tie!");
+                  } else {
+                    World.getWorld()
+                        .broadcast("- &6The game has ended; the " + winner + " team wins!");
+                  }
+                  if (getMode() == Level.CTF) {
+                    World.getWorld()
+                        .broadcast(
+                            "- &6Red had "
+                                + redCaptures
+                                + " captures, blue had "
+                                + blueCaptures
+                                + ".");
+                  } else {
+                    World.getWorld()
+                        .broadcast(
+                            "- &6Red had "
+                                + redCaptures
+                                + " kills, blue had "
+                                + blueCaptures
+                                + ".");
+                  }
+                  for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                    if (p.team != -1) {
+                      p.setAttribute("games", (Integer) p.getAttribute("games") + 1);
+                    }
+                    if (p.team == winnerID) {
+                      p.setAttribute("wins", (Integer) p.getAttribute("wins") + 1);
+                    }
+                    p.hasVoted = false;
+                    p.hasNominated = false;
+                  }
+                  Player[] top = getTopPlayers();
+                  World.getWorld().broadcast("- &3Top players for the round:");
+                  if (top[0] == null) {
+                    World.getWorld().broadcast("- &3Nobody");
+                  }
+                  for (int j = 0; j < 3; j++) {
+                    Player p = top[j];
+                    if (p == null) {
+                      break;
+                    }
+                    World.getWorld()
+                        .broadcast("- &2" + p.getName() + " - " + p.accumulatedStorePoints);
+                  }
+                  for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+                    player.team = -1;
+                    player.hasFlag = false;
+                    player.hasTNT = false;
+                    if (player.flamethrowerEnabled) {
+                      World.getWorld()
+                          .getLevel()
+                          .clearFire(player.linePosition, player.lineRotation);
+                    }
+                    player.flamethrowerEnabled = false;
+                    player.flamethrowerTime = 0;
+                    player.rocketTime = 0;
+                    player.sendToTeamSpawn();
+                  }
+                  rtvVotes = 0;
+                  rtvYesPlayers.clear();
+                  rtvNoPlayers.clear();
+                  if (GameSettings.getBoolean("Tournament")) return;
+                  World.getWorld().broadcast("- &aMap voting is now open for 40 seconds...");
+                  World.getWorld().broadcast("- &aSay /vote [mapname] to select the next map!");
+                  MapController.resetVotes();
+                  voting = true;
+                  int count = nominatedMaps.size();
+                  if (count > 3) {
+                    count = 3;
+                  }
+                  ArrayList<String> mapNames =
+                      MapController.getRandomMapNames(
+                          3 - count, new String[] {currentMap, previousMap});
+                  mapNames.addAll(nominatedMaps);
+                  String msg = "";
+                  for (String map : mapNames) {
+                    msg += map + ", ";
+                  }
+                  World.getWorld().broadcast("- &a" + msg);
+                  World.getWorld()
+                      .broadcast(
+                          "- &3Did you like the map you just played ("
+                              + currentMap
+                              + ")? Say /yes or /no followed by a reason (optional) to vote!");
+                  new Thread(
+                          new Runnable() {
+                            public void run() {
+                              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                                try {
+                                  new SavePersistenceRequest(p).perform();
+                                } catch (IOException ex) {
+                                }
+                              }
+                            }
+                          })
+                      .start();
+                  Thread.sleep(40 * 1000);
+                  Level newLevel = MapController.getMostVotedForMap();
+                  ready = false;
+                  String rating = MapRatings.getRating(currentMap);
+                  World.getWorld().broadcast("- &3This map's approval rating is now " + rating);
+                  World.getWorld()
+                      .broadcast("- &3See the ratings at http://jacobsc.tf/mapratings.");
+                  World.getWorld()
+                      .broadcast(
+                          "- &e" + newLevel.id + " had the most votes. Starting new " + "game!");
+                  Thread.sleep(7 * 1000);
+                  startGame(newLevel);
+                } catch (Exception ex) {
+                  voting = false;
+                  Server.log(ex);
                 }
               }
-            }
-          }).start();
-          Thread.sleep(40 * 1000);
-          Level newLevel = MapController.getMostVotedForMap();
-          ready = false;
-          String rating = MapRatings.getRating(currentMap);
-          World.getWorld().broadcast("- &3This map's approval rating is now " + rating);
-          World.getWorld().broadcast("- &3See the ratings at http://jacobsc.tf/mapratings.");
-          World.getWorld().broadcast("- &e" + newLevel.id + " had the most votes. Starting new " +
-              "game!");
-          Thread.sleep(7 * 1000);
-          startGame(newLevel);
-        } catch (Exception ex) {
-          voting = false;
-          Server.log(ex);
-        }
-      }
-    }).start();
+            })
+        .start();
   }
 
   public void checkForStalemate() {
@@ -915,12 +1008,12 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public void checkForUnbalance(Player p) {
     if (!GameSettings.getBoolean("Tournament")) {
       if (redPlayers < bluePlayers - 2 && p.team == 1) {
-        World.getWorld().broadcast("- " + p.parseName() + " was moved to red team for game " +
-            "balance.");
+        World.getWorld()
+            .broadcast("- " + p.parseName() + " was moved to red team for game " + "balance.");
         p.joinTeam("red");
       } else if (bluePlayers < redPlayers - 2 && p.team == 0) {
-        World.getWorld().broadcast("- " + p.parseName() + " was moved to blue team for game " +
-            "balance.");
+        World.getWorld()
+            .broadcast("- " + p.parseName() + " was moved to blue team for game " + "balance.");
         p.joinTeam("blue");
       }
     }
@@ -951,40 +1044,46 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         blueFlagTaken = false;
         blueFlagDropped = true;
         setBlueFlagPos(playerPos.getX(), playerPos.getZ() - 1, playerPos.getY());
-        blueFlagDroppedThread = new Thread(new Runnable() {
-          @Override
-          public void run() {
-            try {
-              if ((!_antiStalemate && !instant) || isVoluntary) {
-                Thread.sleep(10 * 1000);
-              }
-              World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, 0);
-              resetBlueFlagPos();
-              placeBlueFlag();
-              World.getWorld().broadcast("- &eThe blue flag has been returned!");
-            } catch (InterruptedException ex) {}
-          }
-        });
+        blueFlagDroppedThread =
+            new Thread(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    try {
+                      if ((!_antiStalemate && !instant) || isVoluntary) {
+                        Thread.sleep(10 * 1000);
+                      }
+                      World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, 0);
+                      resetBlueFlagPos();
+                      placeBlueFlag();
+                      World.getWorld().broadcast("- &eThe blue flag has been returned!");
+                    } catch (InterruptedException ex) {
+                    }
+                  }
+                });
         placeBlueFlag();
         blueFlagDroppedThread.start();
       } else {
         redFlagTaken = false;
         redFlagDropped = true;
         setRedFlagPos(playerPos.getX(), playerPos.getZ() - 1, playerPos.getY());
-        redFlagDroppedThread = new Thread(new Runnable() {
-          @Override
-          public void run() {
-            try {
-              if ((!_antiStalemate && !instant) || isVoluntary) {
-                Thread.sleep(10 * 1000);
-              }
-              World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, 0);
-              resetRedFlagPos();
-              placeRedFlag();
-              World.getWorld().broadcast("- &eThe red flag has been returned!");
-            } catch (InterruptedException ex) {}
-          }
-        });
+        redFlagDroppedThread =
+            new Thread(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    try {
+                      if ((!_antiStalemate && !instant) || isVoluntary) {
+                        Thread.sleep(10 * 1000);
+                      }
+                      World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, 0);
+                      resetRedFlagPos();
+                      placeRedFlag();
+                      World.getWorld().broadcast("- &eThe red flag has been returned!");
+                    } catch (InterruptedException ex) {
+                    }
+                  }
+                });
         placeRedFlag();
         redFlagDroppedThread.start();
       }
@@ -995,19 +1094,21 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     if (x == redFlagX && y == redFlagY && z == redFlagZ) {
       if (p.team == 1) {
         if (!redFlagTaken) {
-          //red flag taken
+          // red flag taken
           if (getRedPlayers() == 0 || getBluePlayers() == 0) {
             placeRedFlag();
-            p.getActionSender().sendChatMessage("- &eFlag can't be captured when one team has 0 " +
-                "people");
+            p.getActionSender()
+                .sendChatMessage("- &eFlag can't be captured when one team has 0 " + "people");
           } else if (p.duelPlayer != null) {
             placeRedFlag();
             p.getActionSender().sendChatMessage("- &eYou can't take the flag while dueling");
           } else {
             World.getWorld().broadcast("- &eRed flag taken by " + p.parseName() + "!");
             sendAnnouncement("&eRed flag taken by " + p.parseName() + "!");
-            p.getActionSender().sendChatMessage("- &eClick your own flag to capture, or use /fd " +
-                "to drop the flag and pass to a teammate,");
+            p.getActionSender()
+                .sendChatMessage(
+                    "- &eClick your own flag to capture, or use /fd "
+                        + "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             redFlagTaken = true;
             checkForStalemate();
@@ -1017,13 +1118,12 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               redFlagDroppedThread.interrupt();
             }
           }
-
         }
       } else {
-        //blue flag returned
+        // blue flag returned
         if (p.hasFlag && !redFlagTaken && !redFlagDropped) {
-          World.getWorld().broadcast("- &eBlue flag captured by " + p.parseName() + " for the red" +
-              " team!");
+          World.getWorld()
+              .broadcast("- &eBlue flag captured by " + p.parseName() + " for the red" + " team!");
           sendAnnouncement("&eBlue flag captured by " + p.parseName() + "!");
           redCaptures++;
           p.hasFlag = false;
@@ -1047,19 +1147,21 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     if (x == blueFlagX && y == blueFlagY && z == blueFlagZ) {
       if (p.team == 0) {
         if (!blueFlagTaken) {
-          //blue flag taken
+          // blue flag taken
           if (getRedPlayers() == 0 || getBluePlayers() == 0) {
             placeBlueFlag();
-            p.getActionSender().sendChatMessage("- &eFlag can't be captured when one team has 0 " +
-                "people");
+            p.getActionSender()
+                .sendChatMessage("- &eFlag can't be captured when one team has 0 " + "people");
           } else if (p.duelPlayer != null) {
             placeBlueFlag();
             p.getActionSender().sendChatMessage("- &eYou can't take the flag while dueling");
           } else {
             World.getWorld().broadcast("- &eBlue flag taken by " + p.parseName() + "!");
             sendAnnouncement("&eBlue flag taken by " + p.parseName() + "!");
-            p.getActionSender().sendChatMessage("- &eClick your own flag to capture, or use /fd " +
-                "to drop the flag and pass to a teammate,");
+            p.getActionSender()
+                .sendChatMessage(
+                    "- &eClick your own flag to capture, or use /fd "
+                        + "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             blueFlagTaken = true;
             checkForStalemate();
@@ -1071,10 +1173,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           }
         }
       } else {
-        //red flag returned
+        // red flag returned
         if (p.hasFlag && !blueFlagTaken && !blueFlagDropped) {
-          World.getWorld().broadcast("- &eRed flag captured by " + p.parseName() + " for the blue" +
-              " team!");
+          World.getWorld()
+              .broadcast("- &eRed flag captured by " + p.parseName() + " for the blue" + " team!");
           sendAnnouncement("&eRed flag captured by " + p.parseName() + "!");
           blueCaptures++;
           p.hasFlag = false;
@@ -1115,9 +1217,15 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         if (m.active
             && (p.duelPlayer == null || p.duelPlayer == m.owner)
             && (m.owner.duelPlayer == null || m.owner.duelPlayer == p)
-            && p.team != -1 && m.team != -1 && p.team != m.team
-            && m.x > x - 96 && m.x < x + 96 && m.y > y - 96 && m.y < y + 96
-            && m.z > z - 96 && m.z < z + 96
+            && p.team != -1
+            && m.team != -1
+            && p.team != m.team
+            && m.x > x - 96
+            && m.x < x + 96
+            && m.y > y - 96
+            && m.y < y + 96
+            && m.z > z - 96
+            && m.z < z + 96
             && !p.shield) {
           Level level = World.getWorld().getLevel();
           int r = 1;
@@ -1126,9 +1234,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             for (int cy = my - r; cy <= my + r; cy++) {
               for (int cz = mz - r; cz <= mz + r; cz++) {
                 int oldBlock = level.getBlock(cx, cy, cz);
-                if (!level.isSolid(cx, cy, cz) && oldBlock != 46 && !(cx == blueFlagX && cz ==
-                    blueFlagY && cy == blueFlagZ) && !(cx == redFlagX && cz == redFlagY && cy ==
-                    redFlagZ)) {
+                if (!level.isSolid(cx, cy, cz)
+                    && oldBlock != 46
+                    && !(cx == blueFlagX && cz == blueFlagY && cy == blueFlagZ)
+                    && !(cx == redFlagX && cz == redFlagY && cy == redFlagZ)) {
                   level.setBlock(cx, cy, cz, (byte) 0);
                 }
               }
@@ -1159,9 +1268,12 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
     if (getMode() == Level.CTF && tournamentGameStarted) {
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
-        if (t.getPosition().getX() > x - 64 && t.getPosition().getX() < x + 64 && t.getPosition()
-            .getY() > y - 64 && t.getPosition().getY() < y + 64 && t.getPosition().getZ() > z -
-            64 && t.getPosition().getZ() < z + 64) {
+        if (t.getPosition().getX() > x - 64
+            && t.getPosition().getX() < x + 64
+            && t.getPosition().getY() > y - 64
+            && t.getPosition().getY() < y + 64
+            && t.getPosition().getZ() > z - 64
+            && t.getPosition().getZ() < z + 64) {
           processTag(p, t, x, y, z);
         }
       }
@@ -1182,8 +1294,12 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         tagged = p2;
         tagger = p1;
       }
-      if (t1 != t2 && tagged != null && tagger != null && tagger.canKill(tagged, false) &&
-          !tagged.isSafe() && !tagged.shield) {
+      if (t1 != t2
+          && tagged != null
+          && tagger != null
+          && tagger.canKill(tagged, false)
+          && !tagged.isSafe()
+          && !tagged.shield) {
         World.getWorld()
             .broadcast("- " + tagger.parseName() + " tagged " + tagged.parseName() + ".");
         tagger.gotKill(tagged);
@@ -1243,8 +1359,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     if (mode == 0) {
       type = 0x00;
     }
-    if (player.placeBlock != -1 && (player.placeBlock != 7 || player.placeBlock == 7 && type ==
-        1)) {
+    if (player.placeBlock != -1
+        && (player.placeBlock != 7 || player.placeBlock == 7 && type == 1)) {
       type = player.placeBlock;
     }
     if (player.placeSolid && type == 1) {
@@ -1304,8 +1420,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       if (info == null) {
         player.getActionSender().sendChatMessage("- &aNo one has changed this block yet.");
       } else {
-        player.getActionSender().sendChatMessage("- &aBlock last changed by: " + info.player
-            .getName());
+        player
+            .getActionSender()
+            .sendChatMessage("- &aBlock last changed by: " + info.player.getName());
       }
       player.getActionSender().sendBlock(x, y, z, (byte) oldType);
       player.buildMode = BuildMode.NORMAL;
@@ -1318,7 +1435,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         } else {
           player.getActionSender().sendBlock(x, y, z, (byte) 0);
         }
-      } else if(!tournamentGameStarted) {
+      } else if (!tournamentGameStarted) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &aThe game has not started yet.");
         if (mode == 0) {
@@ -1326,7 +1443,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         } else {
           player.getActionSender().sendBlock(x, y, z, (byte) 0);
         }
-       
+
       } else if (!(x < playerX + MAX_DISTANCE
           && x > playerX - MAX_DISTANCE
           && y < playerY + MAX_DISTANCE
@@ -1339,8 +1456,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         player.getActionSender().sendChatMessage("- &eYou're not allowed to build this high!");
         player.outOfBoundsBlockChanges++;
         if (player.outOfBoundsBlockChanges == 10) {
-          player.getActionSender().sendChatMessage("- &cWARNING: You will be kicked automatically" +
-              " if you continue building here.");
+          player
+              .getActionSender()
+              .sendChatMessage(
+                  "- &cWARNING: You will be kicked automatically"
+                      + " if you continue building here.");
         } else if (player.outOfBoundsBlockChanges == 16) {
           player.getActionSender().sendLoginFailure("\"Lag pillaring\" is not allowed");
           player.getSession().close();
@@ -1350,8 +1470,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         } else {
           player.getActionSender().sendBlock(x, y, z, (byte) 0);
         }
-      } else if (player.headBlockPosition != null && x == player.headBlockPosition.getX() && y ==
-          player.headBlockPosition.getY() && z == player.headBlockPosition.getZ()) {
+      } else if (player.headBlockPosition != null
+          && x == player.headBlockPosition.getX()
+          && y == player.headBlockPosition.getY()
+          && z == player.headBlockPosition.getZ()) {
         ignore = true;
         player.getActionSender().sendBlock(x, y, z, (byte) oldType);
       } else if (player.brush && type != 46) {
@@ -1364,34 +1486,39 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                   && !isTNT(offsetX + x, offsetY + y, offsetZ + z)
                   && !isMine(offsetX + x, offsetY + y, offsetZ + z)
                   && !isPayload(offsetX + x, offsetY + y, offsetZ + z)
-                  && !(x + offsetX == redFlagX && z + offsetZ == redFlagY && y + offsetY == redFlagZ)
-                  && !(x + offsetX == blueFlagX && z + offsetZ == blueFlagY && y + offsetY == blueFlagZ)
-                  && Math.abs(offsetX) + Math.abs(offsetY) + Math.abs (offsetZ) <= Math.abs(radius)) {
+                  && !(x + offsetX == redFlagX
+                      && z + offsetZ == redFlagY
+                      && y + offsetY == redFlagZ)
+                  && !(x + offsetX == blueFlagX
+                      && z + offsetZ == blueFlagY
+                      && y + offsetY == blueFlagZ)
+                  && Math.abs(offsetX) + Math.abs(offsetY) + Math.abs(offsetZ)
+                      <= Math.abs(radius)) {
                 level.setBlock(offsetX + x, offsetY + y, offsetZ + z, type);
               }
             }
           }
         }
-      } else if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT)
-      {
+      } else if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
         int radius = player.tntRadius;
-        explodeTNT(player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ,
-            radius);
+        explodeTNT(
+            player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
         player.getActionSender().sendBlock(x, y, z, (byte) oldType);
         player.hasTNT = false;
         player.tntX = 0;
         player.tntY = 0;
         player.tntZ = 0;
-      } else if (level.isSolid(x, y, z) && (!player.isOp() || !player.placeSolid) &&
-          !GameSettings.getBoolean("Chaos")) {
+      } else if (level.isSolid(x, y, z)
+          && (!player.isOp() || !player.placeSolid)
+          && !GameSettings.getBoolean("Chaos")) {
         player.getActionSender().sendBlock(x, y, z, (byte) level.getBlock(x, y, z));
-      } else if (isTNT(x, y, z) && !ignore) { //Deleting tnt
+      } else if (isTNT(x, y, z) && !ignore) { // Deleting tnt
         player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_TNT);
       } else if (isMine(x, y, z) && !ignore) { // Deleting mines
         player.getActionSender().sendBlock(x, y, z, (byte) oldType);
       } else if (isPayload(x, y, z) && !ignore) {
         player.getActionSender().sendBlock(x, y, z, (byte) oldType);
-      } else if (type == 46 && mode == 1 && !ignore) //Placing tnt
+      } else if (type == 46 && mode == 1 && !ignore) // Placing tnt
       {
         if (player.getAttribute("explodes").toString().equals("0")) {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
@@ -1401,52 +1528,51 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
         } else {
           if (mode == 1) {
-            if (!player.hasTNT && !(x == redFlagX && z == redFlagY && y == redFlagZ) && !(x ==
-                blueFlagX && z == blueFlagY && y == blueFlagZ)) {
+            if (!player.hasTNT
+                && !(x == redFlagX && z == redFlagY && y == redFlagZ)
+                && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
               player.hasTNT = true;
               player.tntX = x;
               player.tntY = y;
               player.tntZ = z;
               level.setBlock(x, y, z, type);
-            } else if (
-                !isTNT(x, y, z)
+            } else if (!isTNT(x, y, z)
                 && !isPayload(x, y, z)
                 && !(x == redFlagX && z == redFlagY && y == redFlagZ)
                 && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
               player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
-            } else if ((x == redFlagX && z == redFlagY && y == redFlagZ) || (x == blueFlagX && z
-                == blueFlagY && y == blueFlagZ)) {
+            } else if ((x == redFlagX && z == redFlagY && y == redFlagZ)
+                || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
               player.getActionSender().sendBlock(x, y, z, (byte) oldType);
             }
           }
         }
-      } else if (type == Constants.BLOCK_MINE && mode == 1 && !ignore) { //Placing mines
+      } else if (type == Constants.BLOCK_MINE && mode == 1 && !ignore) { // Placing mines
         if (player.team == -1) {
           player.getActionSender().sendChatMessage("- &eYou need to join a team to place mines!");
           player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
         } else {
-          if (player.mines.size() < GameSettings.getInt("MaxMines") && !(x == redFlagX && z ==
-              redFlagY && y == redFlagZ) && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
+          if (player.mines.size() < GameSettings.getInt("MaxMines")
+              && !(x == redFlagX && z == redFlagY && y == redFlagZ)
+              && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
             final Mine mine = new Mine(x, y, z, player.team, player);
             player.mines.add(mine);
             player.getActionSender().sendChatMessage("- Say /d to defuse the mine.");
-            level.setBlock(x, y, z,
-                player.team == 0 ? Constants.BLOCK_MINE_RED : Constants.BLOCK_MINE_BLUE);
+            level.setBlock(
+                x, y, z, player.team == 0 ? Constants.BLOCK_MINE_RED : Constants.BLOCK_MINE_BLUE);
             World.getWorld().addMine(mine);
             new Thread(new MineActivator(mine, player)).start();
-          } else if (
-              !isMine(x, y, z)
+          } else if (!isMine(x, y, z)
               && !isPayload(x, y, z)
               && !(x == redFlagX && z == redFlagY && y == redFlagZ)
               && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
             player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
-          } else if ((x == redFlagX && z == redFlagY && y == redFlagZ) || (x == blueFlagX && z ==
-              blueFlagY && y == blueFlagZ)) {
+          } else if ((x == redFlagX && z == redFlagY && y == redFlagZ)
+              || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
             player.getActionSender().sendBlock(x, y, z, (byte) oldType);
           }
         }
-      } else if (
-          (type == BlockConstants.LAVA
+      } else if ((type == BlockConstants.LAVA
               || type == BlockConstants.WATER
               || type == BlockConstants.ADMINIUM
               || type == Constants.BLOCK_MINE_RED
@@ -1457,11 +1583,15 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       } else if (getDropItem(x, y, z) != null) {
         DropItem i = getDropItem(x, y, z);
         i.pickUp(player);
-      } else if ((x == redFlagX && z == redFlagY && y == redFlagZ) && mode == 1 && !redFlagTaken
+      } else if ((x == redFlagX && z == redFlagY && y == redFlagZ)
+          && mode == 1
+          && !redFlagTaken
           && !ignore) {
         player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_RED_FLAG);
-      } else if ((x == blueFlagX && z == blueFlagY && y == blueFlagZ) && mode == 1 &&
-          !blueFlagTaken && !ignore) {
+      } else if ((x == blueFlagX && z == blueFlagY && y == blueFlagZ)
+          && mode == 1
+          && !blueFlagTaken
+          && !ignore) {
         player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_BLUE_FLAG);
       } else if (type > -1) {
         if (!ignore) {
@@ -1478,24 +1608,26 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         processBlockRemove(player, x, y, z);
       }
     }
-
   }
 
   public void playerDisconnected(final Player p) {
     Server.log(p.getName() + " left the game");
     if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
-      WebServer.run(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            String urlMessage = URLEncoder.encode("[b][color=#00aa00]" + p.getName() + " left the" +
-                " game[/color][/b]", "UTF-8");
-            Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-          } catch (Exception ex) {
+      WebServer.run(
+          new Runnable() {
+            @Override
+            public void run() {
+              try {
+                String urlMessage =
+                    URLEncoder.encode(
+                        "[b][color=#00aa00]" + p.getName() + " left the" + " game[/color][/b]",
+                        "UTF-8");
+                Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
+              } catch (Exception ex) {
 
-          }
-        }
-      });
+              }
+            }
+          });
     }
     if (p.hasFlag) {
       dropFlag(p);
@@ -1514,45 +1646,54 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
     World.getWorld().broadcast("&a" + p.getName() + " left the game");
 
-    if (World.getWorld().getPlayerList().size() == 0)
-      rtvVotes = 0;
+    if (World.getWorld().getPlayerList().size() == 0) rtvVotes = 0;
   }
 
   public void broadcastChatMessage(final Player player, final String message) {
-    if (player.lastMessage != null && message.equals(player.lastMessage) && System
-        .currentTimeMillis() - player.lastMessageTime < 750) {
+    if (player.lastMessage != null
+        && message.equals(player.lastMessage)
+        && System.currentTimeMillis() - player.lastMessageTime < 750) {
       player.getActionSender().sendChatMessage("&7Duplicate chat message not sent.");
       return;
     }
     player.lastMessage = message;
     player.lastMessageTime = System.currentTimeMillis();
-    
+
     // Toggle chat mode ("#", "$", "@player").
     if (message.equals("#") && player.isOp()) {
-      if(player.chatMode != ChatMode.OPERATOR) {
+      if (player.chatMode != ChatMode.OPERATOR) {
         player.chatMode = ChatMode.OPERATOR;
-        player.getActionSender().sendChatMessage("&7Switched to op chat, say # again to return to normal.");
+        player
+            .getActionSender()
+            .sendChatMessage("&7Switched to op chat, say # again to return to normal.");
       } else {
         player.chatMode = ChatMode.DEFAULT;
-        player.getActionSender().sendChatMessage("&7Switched to normal chat.");        
+        player.getActionSender().sendChatMessage("&7Switched to normal chat.");
       }
       return;
-    } else if(message.equals("$")) {
-      if(player.chatMode != ChatMode.TEAM) {
+    } else if (message.equals("$")) {
+      if (player.chatMode != ChatMode.TEAM) {
         player.chatMode = ChatMode.TEAM;
-        player.getActionSender().sendChatMessage("&7Switched to team chat, say $ again to return to normal.");
+        player
+            .getActionSender()
+            .sendChatMessage("&7Switched to team chat, say $ again to return to normal.");
       } else {
         player.chatMode = ChatMode.DEFAULT;
-        player.getActionSender().sendChatMessage("&7Switched to normal chat.");        
+        player.getActionSender().sendChatMessage("&7Switched to normal chat.");
       }
       return;
-    } else if(message.startsWith("@") && message.trim().split(" ").length == 1) {
+    } else if (message.startsWith("@") && message.trim().split(" ").length == 1) {
       if (message.length() > 1) {
         Player messagePlayer = Player.getPlayer(message.substring(1), player.getActionSender());
         if (messagePlayer != null) {
           player.chatMode = ChatMode.PRIVATE;
           player.chatPlayer = messagePlayer;
-          player.getActionSender().sendChatMessage("&7Switched to private chat with " + messagePlayer.getName() + ", say @ to return to normal.");
+          player
+              .getActionSender()
+              .sendChatMessage(
+                  "&7Switched to private chat with "
+                      + messagePlayer.getName()
+                      + ", say @ to return to normal.");
         } else {
           player.getActionSender().sendChatMessage("- &ePlayer not found.");
         }
@@ -1564,11 +1705,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       }
       return;
     }
-    
+
     ChatMode messageChatMode = player.chatMode;
     String messageToSend = message;
     Player messagePlayer = player.chatPlayer;
-    
+
     // Set temp chat mode for this message("#message", "$message", "@player message").
     if (message.startsWith("@") && message.length() > 1 && message.trim().split(" ").length > 1) {
       String[] parts = message.split(" ");
@@ -1595,7 +1736,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       messageChatMode = player.chatMode == ChatMode.TEAM ? ChatMode.DEFAULT : ChatMode.TEAM;
       messageToSend = message.substring(1);
     }
-    
+
     switch (messageChatMode) {
       case TEAM:
         World.getWorld().sendTeamChat(player, messageToSend);
@@ -1615,20 +1756,22 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           player.getActionSender().sendChatMessage("- &e" + error);
         } else {
           World.getWorld().sendChat(player, messageToSend);
-          if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
-            WebServer.run(new Runnable() {
-              @Override
-              public void run() {
-                try {
-                  String urlMessage = URLEncoder.encode(message, "UTF-8");
-                  String urlName = URLEncoder.encode(player.getName(), "UTF-8");
-                  Server.httpGet(Constants.URL_SENDCHAT + "&username=" + urlName + "&msg=" +
-                      urlMessage);
-                } catch (UnsupportedEncodingException ex) {
-                  Server.log(ex);
-                }
-              }
-            });
+          if (!Configuration.getConfiguration().isTest()
+              && !GameSettings.getBoolean("Tournament")) {
+            WebServer.run(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    try {
+                      String urlMessage = URLEncoder.encode(message, "UTF-8");
+                      String urlName = URLEncoder.encode(player.getName(), "UTF-8");
+                      Server.httpGet(
+                          Constants.URL_SENDCHAT + "&username=" + urlName + "&msg=" + urlMessage);
+                    } catch (UnsupportedEncodingException ex) {
+                      Server.log(ex);
+                    }
+                  }
+                });
           }
         }
         Server.log(player.getName() + ": " + message);

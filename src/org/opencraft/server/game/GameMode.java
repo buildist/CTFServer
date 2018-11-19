@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.game;
-
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.model.Level;
@@ -58,9 +57,7 @@ public interface GameMode<P extends Player> {
    */
   public Map<String, Command> getCommands();
 
-  /**
-   * Called every 100ms BEFORE each tick.
-   */
+  /** Called every 100ms BEFORE each tick. */
   public void tick();
 
   /**
@@ -81,16 +78,16 @@ public interface GameMode<P extends Player> {
    * Handles block adding and removing
    *
    * @param player The player setting the block
-   * @param level  The level
-   * @param mode   1/0 adding/removing
-   * @param type   typeId of the block
+   * @param level The level
+   * @param mode 1/0 adding/removing
+   * @param type typeId of the block
    */
   public void setBlock(P player, Level level, int x, int y, int z, int mode, int type);
 
   /**
    * Broadcasts a chat message.
    *
-   * @param player  The sending player.
+   * @param player The sending player.
    * @param message The chat message.
    */
   public void broadcastChatMessage(P player, String message);

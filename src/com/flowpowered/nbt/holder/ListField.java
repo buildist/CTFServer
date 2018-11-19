@@ -29,35 +29,36 @@ import java.util.List;
 import com.flowpowered.nbt.ListTag;
 import com.flowpowered.nbt.Tag;
 
-/**
- * Represents a field that contains a list of other tags (all tags are of the same type)
- */
+/** Represents a field that contains a list of other tags (all tags are of the same type) */
 public class ListField<T> implements Field<List<T>> {
-    private final Field<T> backingField;
+  private final Field<T> backingField;
 
-    public ListField(Field<T> field) {
-        this.backingField = field;
+  public ListField(Field<T> field) {
+    this.backingField = field;
+  }
+
+  public List<T> getValue(Tag<?> tag) throws IllegalArgumentException {
+    ListTag<?> listTag = FieldUtils.checkTagCast(tag, ListTag.class);
+    List<T> result = new ArrayList<T>();
+    for (Tag<?> element : listTag.getValue()) {
+      result.add(backingField.getValue(element));
+    }
+    return result;
+  }
+
+  @SuppressWarnings("unchecked")
+  public Tag<?> getValue(String name, List<T> value) {
+    List<Tag<?>> tags = new ArrayList<Tag<?>>();
+    Class tagClazz =
+        Tag
+            .class; // Generics suck (I had to move this comment 3 times while finding the right
+                    // place to nuke generics too)
+    for (T element : value) {
+      Tag<?> tag = backingField.getValue("", element);
+      tagClazz = tag.getClass();
+      tags.add(tag);
     }
 
-    public List<T> getValue(Tag<?> tag) throws IllegalArgumentException {
-        ListTag<?> listTag = FieldUtils.checkTagCast(tag, ListTag.class);
-        List<T> result = new ArrayList<T>();
-        for (Tag<?> element : listTag.getValue()) {
-            result.add(backingField.getValue(element));
-        }
-        return result;
-    }
-
-    @SuppressWarnings ("unchecked")
-    public Tag<?> getValue(String name, List<T> value) {
-        List<Tag<?>> tags = new ArrayList<Tag<?>>();
-        Class tagClazz = Tag.class; // Generics suck (I had to move this comment 3 times while finding the right place to nuke generics too)
-        for (T element : value) {
-            Tag<?> tag = backingField.getValue("", element);
-            tagClazz = tag.getClass();
-            tags.add(tag);
-        }
-
-        return new ListTag<Tag<?>>(name, tagClazz, tags);
-    }
+    return new ListTag<Tag<?>>(name, tagClazz, tags);
+  }
 }

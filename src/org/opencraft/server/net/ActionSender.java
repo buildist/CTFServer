@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -59,9 +59,7 @@ import org.opencraft.server.task.TaskQueue;
  */
 public class ActionSender {
 
-  /**
-   * The session.
-   */
+  /** The session. */
   private MinecraftSession session;
 
   /**
@@ -82,8 +80,8 @@ public class ActionSender {
    * @param op Operator flag.
    */
   public void sendLoginResponse(int protocolVersion, String name, String message, boolean op) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(0));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(0));
     bldr.putByte("protocol_version", protocolVersion);
     bldr.putString("server_name", name);
     bldr.putString("server_message", message);
@@ -98,20 +96,18 @@ public class ActionSender {
    */
   public void sendLoginFailure(String message) {
     Server.d("Disconencting " + session.getIP() + " (" + session.username + ") " + message);
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(14));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(14));
     bldr.putString("reason", message);
     session.send(bldr.toPacket());
     session.close();
   }
 
-  /**
-   * Sends the level init packet.
-   */
+  /** Sends the level init packet. */
   public void sendLevelInit() {
     session.setAuthenticated();
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(2));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(2));
     session.send(bldr.toPacket());
   }
 
@@ -123,45 +119,57 @@ public class ActionSender {
    * @param percent The percentage.
    */
   public void sendLevelBlock(int len, byte[] chunk, int percent) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(3));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(3));
     bldr.putShort("chunk_length", len);
     bldr.putByteArray("chunk_data", chunk);
     bldr.putByte("percent", percent);
     session.send(bldr.toPacket());
   }
 
-  /**
-   * Sends the level finish packet.
-   */
+  /** Sends the level finish packet. */
   public void sendLevelFinish() {
-    TaskQueue.getTaskQueue().push(new Task() {
-      public void execute() {
-        try {
-          // for thread safety
-          final Level level = World.getWorld().getLevel();
-          PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-              .getOutgoingPacket(4));
-          bldr.putShort("width", level.getWidth());
-          bldr.putShort("height", level.getHeight());
-          bldr.putShort("depth", level.getDepth());
-          session.send(bldr.toPacket());
-          Position spawn = level.getSpawnPosition();
-          Rotation r = level.getSpawnRotation();
-          sendSpawn((byte) -1, session.getPlayer().nameId, session.getPlayer().getColoredName(),
-              session.getPlayer().getTeamName(), session.getPlayer().getName(), spawn.getX(), spawn
-                  .getY(), spawn.getZ(), (byte) r.getRotation(), (byte) r.getLook(), false);
-          // now load the player's game (TODO in the future do this in parallel with loading the
-          // level)
-          SavedGameManager.getSavedGameManager().queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
+    TaskQueue.getTaskQueue()
+        .push(
+            new Task() {
+              public void execute() {
+                try {
+                  // for thread safety
+                  final Level level = World.getWorld().getLevel();
+                  PacketBuilder bldr =
+                      new PacketBuilder(
+                          PersistingPacketManager.getPacketManager().getOutgoingPacket(4));
+                  bldr.putShort("width", level.getWidth());
+                  bldr.putShort("height", level.getHeight());
+                  bldr.putShort("depth", level.getDepth());
+                  session.send(bldr.toPacket());
+                  Position spawn = level.getSpawnPosition();
+                  Rotation r = level.getSpawnRotation();
+                  sendSpawn(
+                      (byte) -1,
+                      session.getPlayer().nameId,
+                      session.getPlayer().getColoredName(),
+                      session.getPlayer().getTeamName(),
+                      session.getPlayer().getName(),
+                      spawn.getX(),
+                      spawn.getY(),
+                      spawn.getZ(),
+                      (byte) r.getRotation(),
+                      (byte) r.getLook(),
+                      false);
+                  // now load the player's game (TODO in the future do this in parallel with loading
+                  // the
+                  // level)
+                  SavedGameManager.getSavedGameManager()
+                      .queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
 
-          session.setReady();
-          World.getWorld().completeRegistration(session);
-        } catch (Exception ex) {
-          Server.log(ex);
-        }
-      }
-    });
+                  session.setReady();
+                  World.getWorld().completeRegistration(session);
+                } catch (Exception ex) {
+                  Server.log(ex);
+                }
+              }
+            });
   }
 
   /**
@@ -171,8 +179,8 @@ public class ActionSender {
    * @param rotation The new rotation.
    */
   public void sendTeleport(Position position, Rotation rotation) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(8));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(8));
     bldr.putByte("id", -1);
     bldr.putShort("x", position.getX());
     bldr.putShort("y", position.getY());
@@ -183,21 +191,40 @@ public class ActionSender {
   }
 
   public void sendAddPlayer(Player player, boolean isSelf) {
-    sendSpawn((byte) player.getId(), (byte) player.nameId, player.getColoredName(), player
-        .getTeamName(), player.getName(), player.getPosition().getX(), player.getPosition().getY(), player.getPosition().getZ(), (byte) player.getRotation().getRotation(), (byte) player
-        .getRotation().getLook(), isSelf);
+    sendSpawn(
+        (byte) player.getId(),
+        (byte) player.nameId,
+        player.getColoredName(),
+        player.getTeamName(),
+        player.getName(),
+        player.getPosition().getX(),
+        player.getPosition().getY(),
+        player.getPosition().getZ(),
+        (byte) player.getRotation().getRotation(),
+        (byte) player.getRotation().getLook(),
+        isSelf);
   }
 
-  public void sendSpawn(byte id, short nameId, String colorName, String teamName, String name,
-      int x, int y, int z, byte rotation, byte look, boolean isSelf) {
+  public void sendSpawn(
+      byte id,
+      short nameId,
+      String colorName,
+      String teamName,
+      String name,
+      int x,
+      int y,
+      int z,
+      byte rotation,
+      byte look,
+      boolean isSelf) {
     if (session.isExtensionSupported("ExtPlayerList", 2)) {
       sendAddPlayerName(nameId, name, colorName, teamName, (byte) 1);
       if (!isSelf) {
         sendExtSpawn(id, colorName, name, x, y, z, rotation, look);
       }
     } else if (!isSelf) {
-      PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-          .getOutgoingPacket(7));
+      PacketBuilder bldr =
+          new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(7));
       bldr.putByte("id", id);
       bldr.putString("name", colorName);
       bldr.putShort("x", x);
@@ -209,9 +236,10 @@ public class ActionSender {
     }
   }
 
-  public void sendAddPlayerName(short id, String name, String listName, String groupName, byte groupRank) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(22));
+  public void sendAddPlayerName(
+      short id, String name, String listName, String groupName, byte groupRank) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(22));
     bldr.putShort("id", id);
     bldr.putString("player_name", name);
     bldr.putString("list_name", listName);
@@ -221,15 +249,16 @@ public class ActionSender {
   }
 
   public void sendRemovePlayerName(short id) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(24));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(24));
     bldr.putShort("id", id);
     session.send(bldr.toPacket());
   }
 
-  public void sendExtSpawn(byte id, String name, String skinName, int x, int y, int z, byte rotation, byte look) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(33));
+  public void sendExtSpawn(
+      byte id, String name, String skinName, int x, int y, int z, byte rotation, byte look) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(33));
     bldr.putByte("id", id);
     bldr.putString("name", name);
     bldr.putString("skin_name", skinName);
@@ -260,13 +289,19 @@ public class ActionSender {
     final int deltaRotation = -oldRotation.getRotation() - rotation.getRotation();
     final int deltaLook = -oldRotation.getLook() - rotation.getLook();
     if (deltaX != 0 || deltaY != 0 || deltaZ != 0) {
-      if (deltaX > Byte.MAX_VALUE || deltaX < Byte.MIN_VALUE || deltaY > Byte.MAX_VALUE || deltaY
-          < Byte.MIN_VALUE || deltaZ > Byte.MAX_VALUE || deltaZ < Byte.MIN_VALUE || deltaRotation
-          > Byte.MAX_VALUE || deltaRotation < Byte.MIN_VALUE || deltaLook > Byte.MAX_VALUE
+      if (deltaX > Byte.MAX_VALUE
+          || deltaX < Byte.MIN_VALUE
+          || deltaY > Byte.MAX_VALUE
+          || deltaY < Byte.MIN_VALUE
+          || deltaZ > Byte.MAX_VALUE
+          || deltaZ < Byte.MIN_VALUE
+          || deltaRotation > Byte.MAX_VALUE
+          || deltaRotation < Byte.MIN_VALUE
+          || deltaLook > Byte.MAX_VALUE
           || deltaLook < Byte.MIN_VALUE) {
         // teleport
-        PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-            .getOutgoingPacket(8));
+        PacketBuilder bldr =
+            new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(8));
         bldr.putByte("id", entity.getId());
         bldr.putShort("x", position.getX());
         bldr.putShort("y", position.getY());
@@ -276,8 +311,8 @@ public class ActionSender {
         session.send(bldr.toPacket());
       } else {
         // send move and rotate packet
-        PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-            .getOutgoingPacket(9));
+        PacketBuilder bldr =
+            new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(9));
         bldr.putByte("id", entity.getId());
         bldr.putByte("delta_x", deltaX);
         bldr.putByte("delta_y", deltaY);
@@ -295,8 +330,8 @@ public class ActionSender {
    * @param entity The entity being removed.
    */
   public void sendRemoveEntity(Entity entity) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(12));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(12));
     bldr.putByte("id", entity.getOldId());
     session.send(bldr.toPacket());
   }
@@ -309,45 +344,45 @@ public class ActionSender {
   }
 
   public void sendExtInfo() {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(16));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(16));
     bldr.putString("app_name", "OpenCraftCTF");
     bldr.putShort("extension_count", Constants.NUM_CPE_EXTENSIONS);
     session.send(bldr.toPacket());
   }
 
   public void sendExtEntry(String name, int version) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(17));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(17));
     bldr.putString("ext_name", name);
     bldr.putInt("ext_version", version);
     session.send(bldr.toPacket());
   }
 
   public void sendCustomBlockSupport() {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(19));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(19));
     bldr.putByte("support_level", Constants.CUSTOM_BLOCK_LEVEL);
     session.send(bldr.toPacket());
   }
 
   public void sendHoldThis(int slot, byte block) {
-    final byte[] slots = new byte[]{1, 4, 45, 3, 5, 17, 18, 2, 44};
+    final byte[] slots = new byte[] {1, 4, 45, 3, 5, 17, 18, 2, 44};
     sendHoldThis(block);
     sendHoldThis(slots[slot]);
   }
 
   public void sendHoldThis(byte block) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(20));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(20));
     bldr.putByte("block_to_hold", block);
     bldr.putByte("prevent_change", (byte) 0);
     session.send(bldr.toPacket());
   }
 
   public void sendHackControl(boolean enableHacks) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(32));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(32));
     bldr.putByte("flying", enableHacks ? (byte) 1 : (byte) 0);
     bldr.putByte("noclip", enableHacks ? (byte) 1 : (byte) 0);
     bldr.putByte("speeding", enableHacks ? (byte) 1 : (byte) 0);
@@ -365,8 +400,8 @@ public class ActionSender {
   }
 
   public void sendMapAppearanceV1() {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(30));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(30));
     bldr.putString("texture_url", Configuration.getConfiguration().getEnvTexturePack());
     bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
     bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
@@ -375,8 +410,8 @@ public class ActionSender {
   }
 
   public void sendMapAppearanceV2(String textureUrl) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(30));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(30));
     bldr.putString("texture_url", textureUrl);
     bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
     bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
@@ -387,8 +422,8 @@ public class ActionSender {
   }
 
   private void sendMapColor(int id, short r, short g, short b) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(25));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(25));
     bldr.putByte("color", id);
     bldr.putShort("r", r);
     bldr.putShort("g", g);
@@ -413,15 +448,14 @@ public class ActionSender {
   }
 
   public void sendPing(boolean serverToClient, int data) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(43));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(43));
     bldr.putByte("server_to_client", serverToClient ? 1 : 0);
     bldr.putShort("data", data);
     session.send(bldr.toPacket());
   }
 
-  public void sendDefineBlock(
-      CustomBlockDefinition block) {
+  public void sendDefineBlock(CustomBlockDefinition block) {
     sendDefineBlock(
         block.id,
         block.name,
@@ -441,8 +475,7 @@ public class ActionSender {
         block.fogB);
   }
 
-  public void sendDefineBlockExt(
-      CustomBlockDefinition block) {
+  public void sendDefineBlockExt(CustomBlockDefinition block) {
     sendDefineBlockExt(
         block.id,
         block.name,
@@ -468,7 +501,7 @@ public class ActionSender {
         block.fogR,
         block.fogG,
         block.fogB);
-    //sendInventoryOrder(block.id, block.inventoryOrder);
+    // sendInventoryOrder(block.id, block.inventoryOrder);
   }
 
   private void sendDefineBlock(
@@ -615,8 +648,8 @@ public class ActionSender {
    * @param type BlockDefinition type.
    */
   public void sendBlock(int x, int y, int z, byte type) {
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(6));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(6));
     bldr.putShort("x", x);
     bldr.putShort("y", y);
     bldr.putShort("z", z);
@@ -634,8 +667,8 @@ public class ActionSender {
     if (messageType != 0 && !session.ccUser) {
       return;
     }
-    PacketBuilder bldr = new PacketBuilder(PersistingPacketManager.getPacketManager()
-        .getOutgoingPacket(13));
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(13));
     String message2 = "";
     int maxLength = 64;
     if (message.length() > maxLength) {

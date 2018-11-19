@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -61,15 +61,17 @@ public class LineCommand implements Command {
     Position pos = player.getPosition().toBlockPos();
     Rotation r = player.getRotation();
 
-    double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-    double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
+    double heading =
+        Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+    double pitch =
+        Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     double px = pos.getX();
     double py = pos.getY();
     double pz = pos.getZ();
 
-    double vx = Math.cos(heading)*Math.cos(pitch);
-    double vy = Math.sin(heading)*Math.cos(pitch);
+    double vx = Math.cos(heading) * Math.cos(pitch);
+    double vy = Math.sin(heading) * Math.cos(pitch);
     double vz = Math.sin(pitch);
     double x = px;
     double y = py;
@@ -79,10 +81,8 @@ public class LineCommand implements Command {
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z);
       int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-      if ((block != 0 && block != 20) || World.getWorld().getLevel().ceiling < bz)
-        return;
-      else if (i > 0)
-        World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
+      if ((block != 0 && block != 20) || World.getWorld().getLevel().ceiling < bz) return;
+      else if (i > 0) World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
       x += vx;
       y += vy;
       z += vz;

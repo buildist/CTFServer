@@ -82,7 +82,8 @@ public class CustomBlockDefinition {
     this.inventoryOrder = inventoryOrder;
   }
 
-  public CustomBlockDefinition(int id, String name, int texture, int walkSound, int inventoryOrder) {
+  public CustomBlockDefinition(
+      int id, String name, int texture, int walkSound, int inventoryOrder) {
     this(
         id,
         name,
@@ -108,8 +109,7 @@ public class CustomBlockDefinition {
         0,
         0,
         0,
-        inventoryOrder
-    );
+        inventoryOrder);
   }
 
   public CustomBlockDefinition(
@@ -146,8 +146,7 @@ public class CustomBlockDefinition {
         0,
         0,
         0,
-        inventoryOrder
-    );
+        inventoryOrder);
   }
 
   public CustomBlockDefinition(
@@ -188,65 +187,48 @@ public class CustomBlockDefinition {
         0,
         0,
         0,
-        inventoryOrder
-    );
+        inventoryOrder);
   }
 
-  public static final CustomBlockDefinition PURPLE = new CustomBlockDefinition(
-      Constants.BLOCK_DETONATOR,
-      "Detonator",
-      245,
-      Constants.BLOCK_WALK_SOUND_METAL,
-      1);
-  public static final CustomBlockDefinition MINE = new CustomBlockDefinition(
-      Constants.BLOCK_MINE,
-      "Mine",
-      242,
-      Constants.BLOCK_WALK_SOUND_METAL,
-      2);
-  public static final CustomBlockDefinition MINE_RED = new CustomBlockDefinition(
-      Constants.BLOCK_MINE_RED,
-      "Mine",
-      240,
-      Constants.BLOCK_WALK_SOUND_METAL,
-      -1);
-  public static final CustomBlockDefinition MINE_BLUE = new CustomBlockDefinition(
-      Constants.BLOCK_MINE_BLUE,
-      "Mine",
-      241,
-      Constants.BLOCK_WALK_SOUND_METAL,
-      -1);
-  public static final CustomBlockDefinition FLAG_RED = new CustomBlockDefinition(
-      Constants.BLOCK_RED_FLAG,
-      "Red Flag",
-      243,
-      2,
-      2,
-      2,
-      14,
-      14,
-      14,
-      Constants.BLOCK_WALK_SOUND_WOOL,
-      -1);
-  public static final CustomBlockDefinition FLAG_BLUE = new CustomBlockDefinition(
-      Constants.BLOCK_BLUE_FLAG,
-      "Blue Flag",
-      244,
-      2,
-      2,
-      2,
-      14,
-      14,
-      14,
-      Constants.BLOCK_WALK_SOUND_WOOL,
-      -1);
+  public static final CustomBlockDefinition PURPLE =
+      new CustomBlockDefinition(
+          Constants.BLOCK_DETONATOR, "Detonator", 245, Constants.BLOCK_WALK_SOUND_METAL, 1);
+  public static final CustomBlockDefinition MINE =
+      new CustomBlockDefinition(
+          Constants.BLOCK_MINE, "Mine", 242, Constants.BLOCK_WALK_SOUND_METAL, 2);
+  public static final CustomBlockDefinition MINE_RED =
+      new CustomBlockDefinition(
+          Constants.BLOCK_MINE_RED, "Mine", 240, Constants.BLOCK_WALK_SOUND_METAL, -1);
+  public static final CustomBlockDefinition MINE_BLUE =
+      new CustomBlockDefinition(
+          Constants.BLOCK_MINE_BLUE, "Mine", 241, Constants.BLOCK_WALK_SOUND_METAL, -1);
+  public static final CustomBlockDefinition FLAG_RED =
+      new CustomBlockDefinition(
+          Constants.BLOCK_RED_FLAG,
+          "Red Flag",
+          243,
+          2,
+          2,
+          2,
+          14,
+          14,
+          14,
+          Constants.BLOCK_WALK_SOUND_WOOL,
+          -1);
+  public static final CustomBlockDefinition FLAG_BLUE =
+      new CustomBlockDefinition(
+          Constants.BLOCK_BLUE_FLAG,
+          "Blue Flag",
+          244,
+          2,
+          2,
+          2,
+          14,
+          14,
+          14,
+          Constants.BLOCK_WALK_SOUND_WOOL,
+          -1);
 
-  public static final CustomBlockDefinition[] CUSTOM_BLOCKS = new CustomBlockDefinition[]{
-      PURPLE,
-      MINE,
-      MINE_RED,
-      MINE_BLUE,
-      FLAG_RED,
-      FLAG_BLUE
-  };
+  public static final CustomBlockDefinition[] CUSTOM_BLOCKS =
+      new CustomBlockDefinition[] {PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE};
 }

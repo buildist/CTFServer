@@ -23,48 +23,43 @@
  */
 package com.flowpowered.nbt;
 
-/**
- * A class which contains NBT-related utility methods.
- */
+/** A class which contains NBT-related utility methods. */
 public final class NBTUtils {
-    /**
-     * Gets the type name of a tag.
-     *
-     * @param clazz The tag class.
-     * @return The type name.
-     */
-    @Deprecated
-    public static String getTypeName(Class<? extends Tag<?>> clazz) {
-        return TagType.getByTagClass(clazz).getTypeName();
-    }
+  /**
+   * Gets the type name of a tag.
+   *
+   * @param clazz The tag class.
+   * @return The type name.
+   */
+  @Deprecated
+  public static String getTypeName(Class<? extends Tag<?>> clazz) {
+    return TagType.getByTagClass(clazz).getTypeName();
+  }
 
-    /**
-     * Gets the type code of a tag class.
-     *
-     * @param clazz The tag class.
-     * @return The type code.
-     * @throws IllegalArgumentException if the tag class is invalid.
-     */
-    @Deprecated
-    public static int getTypeCode(Class<? extends Tag<?>> clazz) {
-        return TagType.getByTagClass(clazz).getId();
-    }
+  /**
+   * Gets the type code of a tag class.
+   *
+   * @param clazz The tag class.
+   * @return The type code.
+   * @throws IllegalArgumentException if the tag class is invalid.
+   */
+  @Deprecated
+  public static int getTypeCode(Class<? extends Tag<?>> clazz) {
+    return TagType.getByTagClass(clazz).getId();
+  }
 
-    /**
-     * Gets the class of a type of tag.
-     *
-     * @param type The type.
-     * @return The class.
-     * @throws IllegalArgumentException if the tag type is invalid.
-     */
-    @Deprecated
-    public static Class<? extends Tag> getTypeClass(int type) {
-        return TagType.getById(type).getTagClass();
-    }
+  /**
+   * Gets the class of a type of tag.
+   *
+   * @param type The type.
+   * @return The class.
+   * @throws IllegalArgumentException if the tag type is invalid.
+   */
+  @Deprecated
+  public static Class<? extends Tag> getTypeClass(int type) {
+    return TagType.getById(type).getTagClass();
+  }
 
-    /**
-     * Default private constructor.
-     */
-    private NBTUtils() {
-    }
+  /** Default private constructor. */
+  private NBTUtils() {}
 }

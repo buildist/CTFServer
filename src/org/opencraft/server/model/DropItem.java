@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -38,7 +38,6 @@ package org.opencraft.server.model;
 
 import org.opencraft.server.Constants;
 import org.opencraft.server.game.impl.CTFGameMode;
-
 
 public class DropItem implements Runnable {
   public int points;
@@ -69,12 +68,13 @@ public class DropItem implements Runnable {
     posZ = World.getWorld().getLevel().ceiling - 8;
     World.getWorld().getGameMode().addDropItem(this);
     boolean done = false;
-    for(int i = 1; i < 1000 && !done; i++) {
+    for (int i = 1; i < 1000 && !done; i++) {
       if (World.getWorld().getLevel().getBlock(posX, posY, posZ) != 7)
         World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
       posZ--;
-      if (World.getWorld().getLevel().getBlock(posX, posY, posZ) != 0 && World.getWorld()
-          .getLevel().getBlock(posX, posY, posZ) != 11 || posZ < 0) {
+      if (World.getWorld().getLevel().getBlock(posX, posY, posZ) != 0
+              && World.getWorld().getLevel().getBlock(posX, posY, posZ) != 11
+          || posZ < 0) {
         done = true;
         posZ++;
         World.getWorld().getLevel().setBlock(posX, posY, posZ, Constants.BLOCK_CRATE);

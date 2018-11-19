@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -57,8 +57,7 @@ public class MessageTask extends ScheduledTask {
       String text = Server.readFileAsString("messages.txt");
       String[] lines = text.split("\n");
       for (int i = 0; i < lines.length; i++) {
-        if (!lines[i].isEmpty())
-          messages.add(lines[i].trim());
+        if (!lines[i].isEmpty()) messages.add(lines[i].trim());
       }
     } catch (IOException ex) {
       ex.printStackTrace();
@@ -73,5 +72,4 @@ public class MessageTask extends ScheduledTask {
     String msg = messages.get(id);
     World.getWorld().broadcast("- &e" + msg);
   }
-
 }

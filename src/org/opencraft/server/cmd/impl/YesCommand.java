@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -48,9 +48,7 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
 public class YesCommand implements Command {
-  /**
-   * The instance of this command.
-   */
+  /** The instance of this command. */
   private static final YesCommand INSTANCE = new YesCommand();
 
   /**
@@ -77,19 +75,25 @@ public class YesCommand implements Command {
           }
         }
       }
-      final String message = player.getName() + " voted Yes: " + text + "\n\nCurrent rating: "
-          + MapRatings.getRating(mapName);
-      WebServer.run(new Runnable() {
-        @Override
-        public void run() {
-          try {
-          String urlMessage = URLEncoder.encode(message, "UTF-8");
-          Server.httpGet(Constants.URL_MAP_COMMENT + "&map=" + mapName + "&message=" + urlMessage);
-          } catch(Exception ex) {
-            Server.log(ex);
-          }
-        }
-      });  
+      final String message =
+          player.getName()
+              + " voted Yes: "
+              + text
+              + "\n\nCurrent rating: "
+              + MapRatings.getRating(mapName);
+      WebServer.run(
+          new Runnable() {
+            @Override
+            public void run() {
+              try {
+                String urlMessage = URLEncoder.encode(message, "UTF-8");
+                Server.httpGet(
+                    Constants.URL_MAP_COMMENT + "&map=" + mapName + "&message=" + urlMessage);
+              } catch (Exception ex) {
+                Server.log(ex);
+              }
+            }
+          });
     }
   }
 }

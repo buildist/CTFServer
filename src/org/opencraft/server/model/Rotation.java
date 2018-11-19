@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.model;
 
-
 /**
  * Represents a rotation in the game world.
  *
@@ -44,21 +43,17 @@ package org.opencraft.server.model;
  */
 public final class Rotation {
 
-  /**
-   * The rotation.
-   */
+  /** The rotation. */
   private final int rotation;
 
-  /**
-   * The look.
-   */
+  /** The look. */
   private final int look;
 
   /**
    * Creates the rotation.
    *
    * @param rotation The rotation.
-   * @param look     The look value.
+   * @param look The look value.
    */
   public Rotation(int rotation, int look) {
     this.rotation = rotation;
@@ -87,5 +82,4 @@ public final class Rotation {
   public String toString() {
     return rotation + "," + look;
   }
-
 }

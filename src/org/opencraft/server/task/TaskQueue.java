@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -48,13 +48,9 @@ import org.opencraft.server.Server;
  */
 public final class TaskQueue {
 
-  /**
-   * The task queue singleton.
-   */
+  /** The task queue singleton. */
   private static final TaskQueue INSTANCE = new TaskQueue();
-  /**
-   * The scheduled executor service backing this task queue.
-   */
+  /** The scheduled executor service backing this task queue. */
   private ScheduledExecutorService service = Executors.newScheduledThreadPool(3);
 
   /**
@@ -72,16 +68,17 @@ public final class TaskQueue {
    * @param task The task to be executed.
    */
   public void push(final Task task) {
-    service.submit(new Runnable() {
-      public void run() {
-        try {
-          task.execute();
-        } catch (Throwable t) {
-          Server.log("[E] Error during task execution." + t);
-          Server.log(t);
-        }
-      }
-    });
+    service.submit(
+        new Runnable() {
+          public void run() {
+            try {
+              task.execute();
+            } catch (Throwable t) {
+              Server.log("[E] Error during task execution." + t);
+              Server.log(t);
+            }
+          }
+        });
   }
 
   /**
@@ -96,30 +93,32 @@ public final class TaskQueue {
   /**
    * Internally schedules the task.
    *
-   * @param task  The task.
+   * @param task The task.
    * @param delay The remaining delay.
    */
   private void schedule(final ScheduledTask task, final long delay) {
-    service.schedule(new Runnable() {
-      public void run() {
-        long start = System.currentTimeMillis();
-        try {
-          task.execute();
-        } catch (Throwable t) {
-          System.err.println("Error during task execution." + t);
-          Server.log(t);
-        }
-        if (!task.isRunning()) {
-          return;
-        }
-        long elapsed = System.currentTimeMillis() - start;
-        long waitFor = task.getDelay() - elapsed;
-        if (waitFor < 0) {
-          waitFor = 0;
-        }
-        schedule(task, waitFor);
-      }
-    }, delay, TimeUnit.MILLISECONDS);
+    service.schedule(
+        new Runnable() {
+          public void run() {
+            long start = System.currentTimeMillis();
+            try {
+              task.execute();
+            } catch (Throwable t) {
+              System.err.println("Error during task execution." + t);
+              Server.log(t);
+            }
+            if (!task.isRunning()) {
+              return;
+            }
+            long elapsed = System.currentTimeMillis() - start;
+            long waitFor = task.getDelay() - elapsed;
+            if (waitFor < 0) {
+              waitFor = 0;
+            }
+            schedule(task, waitFor);
+          }
+        },
+        delay,
+        TimeUnit.MILLISECONDS);
   }
-
 }

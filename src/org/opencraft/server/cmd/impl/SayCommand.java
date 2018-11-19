@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.cmd.impl;
 
-
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
@@ -48,12 +47,9 @@ import org.opencraft.server.model.World;
  *
  * @author S�ren Enevoldsen
  */
-
 public class SayCommand implements Command {
 
-  /**
-   * The instance of this command.
-   */
+  /** The instance of this command. */
   private static final SayCommand INSTANCE = new SayCommand();
 
   /**
@@ -79,9 +75,7 @@ public class SayCommand implements Command {
         text += " " + params.getStringArgument(i);
       }
       Server.log(player.getName() + " /said " + text);
-      if (!text.equals(""))
-        World.getWorld().broadcast("* &e" + text);
-    } else
-      player.getActionSender().sendChatMessage("You must be OP to do that");
+      if (!text.equals("")) World.getWorld().broadcast("* &e" + text);
+    } else player.getActionSender().sendChatMessage("You must be OP to do that");
   }
 }

@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -56,30 +56,25 @@ import javax.net.ssl.X509TrustManager;
  * @author Graham Edgecombe
  */
 public class HeartbeatManager {
-  /**
-   * The singleton instance.
-   */
+  /** The singleton instance. */
   private static final HeartbeatManager INSTANCE = new HeartbeatManager();
 
-  /**
-   * Default private constructor.
-   */
+  /** Default private constructor. */
   private HeartbeatManager() {
-    TrustManager[] trustAllCerts = new TrustManager[]{
-        new X509TrustManager() {
-          public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-            return null;
-          }
+    TrustManager[] trustAllCerts =
+        new TrustManager[] {
+          new X509TrustManager() {
+            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+              return null;
+            }
 
-          public void checkClientTrusted(
-              java.security.cert.X509Certificate[] certs, String authType) {
-          }
+            public void checkClientTrusted(
+                java.security.cert.X509Certificate[] certs, String authType) {}
 
-          public void checkServerTrusted(
-              java.security.cert.X509Certificate[] certs, String authType) {
+            public void checkServerTrusted(
+                java.security.cert.X509Certificate[] certs, String authType) {}
           }
-        }
-    };
+        };
     try {
       SSLContext sc = SSLContext.getInstance("SSL");
       sc.init(null, trustAllCerts, new java.security.SecureRandom());
@@ -139,9 +134,7 @@ public class HeartbeatManager {
         Thread.sleep(5000);
       } catch (InterruptedException ex1) {
       }
-      if (!success) {
-
-      }
+      if (!success) {}
     }
     return "";
   }

@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -88,18 +88,13 @@ public final class Level implements Cloneable {
   public static final int TDM = 1;
   public static final int PAYLOAD = 2;
 
-  /**
-   * The level width.
-   */
+  /** The level width. */
   public int width;
-  /**
-   * The level height.
-   */
+  /** The level height. */
   public int height;
-  /**
-   * The level depth.
-   */
+  /** The level depth. */
   public int depth;
+
   public Properties props;
   public int divider;
   public int ceiling;
@@ -116,49 +111,36 @@ public final class Level implements Cloneable {
   public short viewDistance = 0;
   public short[][] colors = new short[Constants.DEFAULT_COLORS.length][3];
   public HashSet<Integer> blockTypes = new HashSet<Integer>();
-  
-  /**
-   * The blocks.
-   */
+
+  /** The blocks. */
   private byte[][][] blocks;
+
   private byte[] blocks1D;
-  /**
-   * Light depth array.
-   */
+  /** Light depth array. */
   private short[][] lightDepths;
-  /**
-   * The spawn rotation.
-   */
+  /** The spawn rotation. */
   private Rotation spawnRotation;
-  /**
-   * The spawn position.
-   */
+  /** The spawn position. */
   private Position spawnPosition;
+
   private ArrayList<Position> tdmSpawns = new ArrayList<Position>();
   private ArrayList<Position> payloadPath = new ArrayList<>();
   private HashSet<Position> solidBlocks = new HashSet<Position>();
   private HashSet<Integer> solidTypes = new HashSet<Integer>();
   private boolean allSolidTypes = false;
-  public final ArrayList<CustomBlockDefinition> customBlockDefinitions = new ArrayList<CustomBlockDefinition>();
-  /**
-   * The active "thinking" blocks on the map.
-   */
-  private Map<Integer, ArrayDeque<Position>> activeBlocks = new HashMap<Integer,
-      ArrayDeque<Position>>();
-  /**
-   * The timers for the active "thinking" blocks on the map.
-   */
+  public final ArrayList<CustomBlockDefinition> customBlockDefinitions =
+      new ArrayList<CustomBlockDefinition>();
+  /** The active "thinking" blocks on the map. */
+  private Map<Integer, ArrayDeque<Position>> activeBlocks =
+      new HashMap<Integer, ArrayDeque<Position>>();
+  /** The timers for the active "thinking" blocks on the map. */
   private Map<Integer, Long> activeTimers = new HashMap<Integer, Long>();
-  /**
-   * A queue of positions to update at the next tick.
-   */
+  /** A queue of positions to update at the next tick. */
   private final Queue<Position> updateQueue = new ArrayDeque<Position>();
 
   private final Queue<UpdateBlock> iceBlocks = new LinkedList<>();
 
-  /**
-   * Generates a level.
-   */
+  /** Generates a level. */
   public Level() {
     this.width = 256;
     this.height = 256;
@@ -174,7 +156,7 @@ public final class Level implements Cloneable {
       }
     }
     recalculateAllLightDepths();
-    for (int i = 0 ; i < colors.length; i++) {
+    for (int i = 0; i < colors.length; i++) {
       for (int j = 0; j < 3; j++) {
         colors[i][j] = Constants.DEFAULT_COLORS[i][j];
       }
@@ -184,8 +166,10 @@ public final class Level implements Cloneable {
 
   public void drawFire(Position pos, Rotation r) {
     pos = pos.toBlockPos();
-    double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-    double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
+    double heading =
+        Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+    double pitch =
+        Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
     int length = GameSettings.getInt("FlameThrowerLength");
@@ -196,8 +180,8 @@ public final class Level implements Cloneable {
     double py = (pos.getY());
     double pz = (pos.getZ()) - 1;
 
-    double vx = Math.cos(heading)*Math.cos(pitch);
-    double vy = Math.sin(heading)*Math.cos(pitch);
+    double vx = Math.cos(heading) * Math.cos(pitch);
+    double vy = Math.sin(heading) * Math.cos(pitch);
     double vz = Math.sin(pitch);
     double x = px;
     double y = py;
@@ -221,12 +205,12 @@ public final class Level implements Cloneable {
       }
 
       // Can't go through sand, glass, obsidian, water, or non explodable blocks
-      if (oldBlock == BlockConstants.WATER ||
-              oldBlock == BlockConstants.STILL_WATER ||
-              oldBlock == BlockConstants.SAND ||
-              oldBlock == BlockConstants.GLASS ||
-              oldBlock == BlockConstants.OBSIDIAN ||
-              !ctf.isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
+      if (oldBlock == BlockConstants.WATER
+          || oldBlock == BlockConstants.STILL_WATER
+          || oldBlock == BlockConstants.SAND
+          || oldBlock == BlockConstants.GLASS
+          || oldBlock == BlockConstants.OBSIDIAN
+          || !ctf.isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
         return;
       }
 
@@ -252,8 +236,10 @@ public final class Level implements Cloneable {
 
   public void clearFire(Position pos, Rotation r) {
     pos = pos.toBlockPos();
-    double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-    double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
+    double heading =
+        Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+    double pitch =
+        Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
     int length = GameSettings.getInt("FlameThrowerLength");
@@ -263,8 +249,8 @@ public final class Level implements Cloneable {
     double py = (pos.getY());
     double pz = (pos.getZ()) - 1;
 
-    double vx = Math.cos(heading)*Math.cos(pitch);
-    double vy = Math.sin(heading)*Math.cos(pitch);
+    double vx = Math.cos(heading) * Math.cos(pitch);
+    double vy = Math.sin(heading) * Math.cos(pitch);
     double vz = Math.sin(pitch);
     double x = px + vx * distance;
     double y = py + vy * distance;
@@ -298,12 +284,13 @@ public final class Level implements Cloneable {
   }
 
   public void loadProps() {
-    props = new Properties() {
-      @Override
-      public synchronized Enumeration<Object> keys() {
-        return Collections.enumeration(new TreeSet<Object>(super.keySet()));
-      }
-    };
+    props =
+        new Properties() {
+          @Override
+          public synchronized Enumeration<Object> keys() {
+            return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+          }
+        };
     try {
       String propsPath = filename.substring(0, filename.indexOf(".")) + ".properties";
       boolean newMap = false;
@@ -363,20 +350,24 @@ public final class Level implements Cloneable {
         String[] spawns = props.getProperty("tdmSpawns").split(" ");
         for (String spawn : spawns) {
           String[] parts = spawn.split(",");
-          tdmSpawns.add(new Position(Integer.parseInt(parts[0]) * 32 + 16,
-              Integer.parseInt(parts[2]) * 32 + 16, Integer.parseInt(parts[1]) * 32 + 16));
+          tdmSpawns.add(
+              new Position(
+                  Integer.parseInt(parts[0]) * 32 + 16,
+                  Integer.parseInt(parts[2]) * 32 + 16,
+                  Integer.parseInt(parts[1]) * 32 + 16));
         }
       }
-    } else if(props.getProperty("isPayload") != null) {
+    } else if (props.getProperty("isPayload") != null) {
       mode = PAYLOAD;
       payloadPath.clear();
       String[] path = props.getProperty("payloadPath").split(" ");
       for (String position : path) {
         String[] parts = position.split(",");
-        payloadPath.add(new Position(
-            Integer.parseInt(parts[0]),
-            Integer.parseInt(parts[1]),
-            Integer.parseInt(parts[2])));
+        payloadPath.add(
+            new Position(
+                Integer.parseInt(parts[0]),
+                Integer.parseInt(parts[1]),
+                Integer.parseInt(parts[2])));
       }
     } else {
       mode = CTF;
@@ -397,42 +388,45 @@ public final class Level implements Cloneable {
 
     setMapColors();
 
-    if(props.getProperty("viewDistance") != null) {
+    if (props.getProperty("viewDistance") != null) {
       try {
         viewDistance = (short) Integer.parseInt(props.getProperty("viewDistance"));
-      } catch(NumberFormatException ex) {
+      } catch (NumberFormatException ex) {
         viewDistance = 0;
       }
     }
 
-    if(props.getProperty("sideBlock") != null) {
+    if (props.getProperty("sideBlock") != null) {
       try {
         sideBlock = (short) Integer.parseInt(props.getProperty("sideBlock"));
-      } catch(NumberFormatException ex) {
+      } catch (NumberFormatException ex) {
         sideBlock = 7;
       }
     }
 
-    if(props.getProperty("edgeBlock") != null) {
+    if (props.getProperty("edgeBlock") != null) {
       try {
         edgeBlock = (short) Integer.parseInt(props.getProperty("edgeBlock"));
-      } catch(NumberFormatException ex) {
+      } catch (NumberFormatException ex) {
         edgeBlock = 8;
       }
     }
 
-    if(props.getProperty("sideLevel") != null) {
+    if (props.getProperty("sideLevel") != null) {
       try {
         sideLevel = (short) Integer.parseInt(props.getProperty("sideLevel"));
-      } catch(NumberFormatException ex) {
-        sideLevel = depth/2;
+      } catch (NumberFormatException ex) {
+        sideLevel = depth / 2;
       }
     }
 
     if (props.getProperty("spawnPosition") != null) {
       String[] parts = props.getProperty("spawnPosition").split(",");
-      spawnPosition = new Position(Integer.parseInt(parts[0]) * 32 + 16,
-          Integer.parseInt(parts[1]) * 32 + 16, Integer.parseInt(parts[2]) * 32 + 16);
+      spawnPosition =
+          new Position(
+              Integer.parseInt(parts[0]) * 32 + 16,
+              Integer.parseInt(parts[1]) * 32 + 16,
+              Integer.parseInt(parts[2]) * 32 + 16);
     }
 
     if (props.getProperty("spawnRotation") != null) {
@@ -455,14 +449,14 @@ public final class Level implements Cloneable {
     setMapColor("ambientColor", 3);
     setMapColor("diffuseColor", 4);
   }
-  
+
   private void setMapColor(String propertyName, int id) {
     if (props.getProperty(propertyName) != null) {
       String hexColor = props.getProperty(propertyName);
       Color color;
       try {
         color = Color.decode(hexColor);
-      } catch(NumberFormatException ex) {
+      } catch (NumberFormatException ex) {
         colors[id][0] = -1;
         colors[id][1] = -1;
         colors[id][2] = -1;
@@ -547,7 +541,8 @@ public final class Level implements Cloneable {
               }
             }
           }
-        } catch (EOFException ex) {}
+        } catch (EOFException ex) {
+        }
         gzis.close();
         fis.close();
       } catch (IOException ex) {
@@ -588,7 +583,8 @@ public final class Level implements Cloneable {
       depth = (short) l.depth;
       blocks = new byte[width][height][depth];
       blocks1D = new byte[width * height * depth];
-      this.spawnPosition = new Position(l.xSpawn * 32 + 16, (l.zSpawn) * 32 + 16, l.ySpawn  * 32 + 16);
+      this.spawnPosition =
+          new Position(l.xSpawn * 32 + 16, (l.zSpawn) * 32 + 16, l.ySpawn * 32 + 16);
 
       Server.log("Loading map: " + id);
       loadProps();
@@ -604,20 +600,20 @@ public final class Level implements Cloneable {
 
         CompoundMap classicWorld = ((CompoundTag) nbtIn.readTag()).getValue();
 
-        width = ((ShortTag)classicWorld.get("X")).getValue();
-        height = ((ShortTag)classicWorld.get("Z")).getValue();
-        depth = ((ShortTag)classicWorld.get("Y")).getValue();
+        width = ((ShortTag) classicWorld.get("X")).getValue();
+        height = ((ShortTag) classicWorld.get("Z")).getValue();
+        depth = ((ShortTag) classicWorld.get("Y")).getValue();
         blocks = new byte[width][height][depth];
         blocks1D = new byte[width * height * depth];
 
-        byte[] tmpBlocks = ((ByteArrayTag)classicWorld.get("BlockArray")).getValue();
+        byte[] tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
 
-        CompoundMap spawn = ((CompoundTag)classicWorld.get("Spawn")).getValue();
-        int spawnX = ((ShortTag)spawn.get("X")).getValue();
-        int spawnY = ((ShortTag)spawn.get("Y")).getValue();
-        int spawnZ = ((ShortTag)spawn.get("Z")).getValue();
-        int spawnH = ((ByteTag)spawn.get("H")).getValue();
-        int spawnP = ((ByteTag)spawn.get("P")).getValue();
+        CompoundMap spawn = ((CompoundTag) classicWorld.get("Spawn")).getValue();
+        int spawnX = ((ShortTag) spawn.get("X")).getValue();
+        int spawnY = ((ShortTag) spawn.get("Y")).getValue();
+        int spawnZ = ((ShortTag) spawn.get("Z")).getValue();
+        int spawnH = ((ByteTag) spawn.get("H")).getValue();
+        int spawnP = ((ByteTag) spawn.get("P")).getValue();
         this.spawnPosition = new Position(spawnX * 32 + 16, spawnZ * 32 + 16, spawnY * 32 + 16);
         this.spawnRotation = new Rotation(spawnH, spawnP);
 
@@ -625,7 +621,7 @@ public final class Level implements Cloneable {
         loadProps();
 
         loadBlocks(tmpBlocks);
-        loadMetadata(((CompoundTag)classicWorld.get("Metadata")).getValue());
+        loadMetadata(((CompoundTag) classicWorld.get("Metadata")).getValue());
 
       } catch (IOException ex) {
         ex.printStackTrace();
@@ -653,8 +649,8 @@ public final class Level implements Cloneable {
               type = 7;
             }
           }
-          if ((allSolidTypes && type != 0 && type != 8 && type != 9 && type != 10 && type !=
-              11) || solidTypes.contains(type)) {
+          if ((allSolidTypes && type != 0 && type != 8 && type != 9 && type != 10 && type != 11)
+              || solidTypes.contains(type)) {
             solidBlocks.add(new Position(x, y, z));
           }
           blocks[x][y][z] = (byte) type;
@@ -665,7 +661,7 @@ public final class Level implements Cloneable {
   }
 
   private void loadMetadata(CompoundMap metadata) {
-    CompoundMap cpe = ((CompoundTag)metadata.get("CPE")).getValue();
+    CompoundMap cpe = ((CompoundTag) metadata.get("CPE")).getValue();
 
     if (cpe.containsKey("BlockDefinitions")) {
       CompoundMap blockDefinitions = ((CompoundTag) cpe.get("BlockDefinitions")).getValue();
@@ -686,34 +682,35 @@ public final class Level implements Cloneable {
         int transmitsLight = (Byte) block.get("TransmitsLight").getValue();
         int walkSound = (Byte) block.get("WalkSound").getValue();
 
-        //if (!blockTypes.contains(id)) continue;
+        // if (!blockTypes.contains(id)) continue;
 
-        CustomBlockDefinition blockDef = new CustomBlockDefinition(
-            Server.getUnsigned(id),
-            name,
-            collideType,
-            128,
-            textures[0],
-            textures[2],
-            textures[3],
-            textures[4],
-            textures[5],
-            textures[1],
-            transmitsLight == 1,
-            walkSound,
-            fullBright == 1,
-            coords[0],
-            coords[1],
-            coords[2],
-            coords[3],
-            coords[4],
-            coords[5],
-            blockDraw,
-            fog[0],
-            fog[1],
-            fog[2],
-            fog[3],
-            -1);
+        CustomBlockDefinition blockDef =
+            new CustomBlockDefinition(
+                Server.getUnsigned(id),
+                name,
+                collideType,
+                128,
+                textures[0],
+                textures[2],
+                textures[3],
+                textures[4],
+                textures[5],
+                textures[1],
+                transmitsLight == 1,
+                walkSound,
+                fullBright == 1,
+                coords[0],
+                coords[1],
+                coords[2],
+                coords[3],
+                coords[4],
+                coords[5],
+                blockDraw,
+                fog[0],
+                fog[1],
+                fog[2],
+                fog[3],
+                -1);
         customBlockDefinitions.add(blockDef);
         BlockManager.getBlockManager().addCustomBlock(blockDef);
       }
@@ -721,11 +718,11 @@ public final class Level implements Cloneable {
 
     if (cpe.containsKey("EnvColors")) {
       CompoundMap envColors = ((CompoundTag) cpe.get("EnvColors")).getValue();
-      String ambient = getColor(((CompoundTag)envColors.get("Ambient")).getValue());
-      String cloud = getColor(((CompoundTag)envColors.get("Cloud")).getValue());
-      String fog = getColor(((CompoundTag)envColors.get("Fog")).getValue());
-      String sky = getColor(((CompoundTag)envColors.get("Sky")).getValue());
-      String sunlight = getColor(((CompoundTag)envColors.get("Sunlight")).getValue());
+      String ambient = getColor(((CompoundTag) envColors.get("Ambient")).getValue());
+      String cloud = getColor(((CompoundTag) envColors.get("Cloud")).getValue());
+      String fog = getColor(((CompoundTag) envColors.get("Fog")).getValue());
+      String sky = getColor(((CompoundTag) envColors.get("Sky")).getValue());
+      String sunlight = getColor(((CompoundTag) envColors.get("Sunlight")).getValue());
       props.put("ambientColor", ambient);
       props.put("cloudColor", cloud);
       props.put("fogColor", fog);
@@ -735,7 +732,7 @@ public final class Level implements Cloneable {
     }
 
     if (cpe.containsKey("EnvMapAppearance")) {
-      CompoundMap envMapAppearance = ((CompoundTag)cpe.get("EnvMapAppearance")).getValue();
+      CompoundMap envMapAppearance = ((CompoundTag) cpe.get("EnvMapAppearance")).getValue();
       this.edgeBlock = (Byte) envMapAppearance.get("EdgeBlock").getValue();
       this.sideBlock = (Byte) envMapAppearance.get("SideBlock").getValue();
       this.sideLevel = (Short) envMapAppearance.get("SideLevel").getValue();
@@ -755,8 +752,9 @@ public final class Level implements Cloneable {
 
   public void saveProps() {
     try {
-      props.store(new FileOutputStream(filename.substring(0, filename.indexOf(".")) + "" +
-          ".properties"), filename);
+      props.store(
+          new FileOutputStream(filename.substring(0, filename.indexOf(".")) + "" + ".properties"),
+          filename);
     } catch (IOException ex) {
       Server.log(ex);
     }
@@ -785,9 +783,10 @@ public final class Level implements Cloneable {
       if (team.equals("spec")) {
         return Math.random() < 0.5 ? getTeamSpawn("red") : getTeamSpawn("blue");
       } else {
-        return new Position(Integer.parseInt((String) getProp(team + "SpawnX")) * 32 + 16,
-            Integer.parseInt((String) getProp(team + "SpawnZ")) * 32 + 16, (Integer.parseInt(
-            (String) getProp(team + "SpawnY"))) * 32 + 16);
+        return new Position(
+            Integer.parseInt((String) getProp(team + "SpawnX")) * 32 + 16,
+            Integer.parseInt((String) getProp(team + "SpawnZ")) * 32 + 16,
+            (Integer.parseInt((String) getProp(team + "SpawnY"))) * 32 + 16);
       }
     }
   }
@@ -827,8 +826,8 @@ public final class Level implements Cloneable {
   /**
    * Manually assign a light depth to a given Cartesian coordinate.
    *
-   * @param x     The X coordinate.
-   * @param y     The Y coordinate.
+   * @param x The X coordinate.
+   * @param y The Y coordinate.
    * @param depth The lowest-lit block.
    */
   public void assignLightDepth(int x, int y, int depth) {
@@ -849,9 +848,7 @@ public final class Level implements Cloneable {
     return lightDepths[x][y];
   }
 
-  /**
-   * Performs physics updates on queued blocks.
-   */
+  /** Performs physics updates on queued blocks. */
   public void applyBlockBehaviour() {
     Queue<Position> currentQueue;
     synchronized (updateQueue) {
@@ -859,17 +856,18 @@ public final class Level implements Cloneable {
       updateQueue.clear();
     }
     for (Position pos : currentQueue) {
-      BlockManager.getBlockManager().getBlock(this.getBlock(pos.getX(), pos.getY(), pos.getZ()))
+      BlockManager.getBlockManager()
+          .getBlock(this.getBlock(pos.getX(), pos.getY(), pos.getZ()))
           .behavePassive(this, pos.getX(), pos.getY(), pos.getZ());
     }
     // we only process up to 500 of each type of thinking block every tick,
     // or we'd probably be here all day.
     for (int type = 0; type < 256; type++) {
       if (activeBlocks.containsKey(type)) {
-        if (System.currentTimeMillis() - activeTimers.get(type) > BlockManager.getBlockManager()
-            .getBlock(type).getTimer()) {
-          int cyclesThisTick = (activeBlocks.get(type).size() > 500 ? 500 : activeBlocks.get(type)
-              .size());
+        if (System.currentTimeMillis() - activeTimers.get(type)
+            > BlockManager.getBlockManager().getBlock(type).getTimer()) {
+          int cyclesThisTick =
+              (activeBlocks.get(type).size() > 500 ? 500 : activeBlocks.get(type).size());
           for (int i = 0; i < cyclesThisTick; i++) {
             Position pos = activeBlocks.get(type).poll();
             if (pos == null) {
@@ -880,8 +878,9 @@ public final class Level implements Cloneable {
             if (this.getBlock(pos.getX(), pos.getY(), pos.getZ()) == type) {
               // World.getWorld().broadcast("Processing thinker at ("+pos.getX()+","+pos.getY()
               // +","+pos.getZ()+")");
-              BlockManager.getBlockManager().getBlock(type).behaveSchedule(this, pos.getX(), pos
-                  .getY(), pos.getZ());
+              BlockManager.getBlockManager()
+                  .getBlock(type)
+                  .behaveSchedule(this, pos.getX(), pos.getY(), pos.getZ());
             }
           }
           activeTimers.put(type, System.currentTimeMillis());
@@ -949,9 +948,9 @@ public final class Level implements Cloneable {
   /**
    * Sets a block and updates the neighbours.
    *
-   * @param x    The x coordinate.
-   * @param y    The y coordinate.
-   * @param z    The z coordinate.
+   * @param x The x coordinate.
+   * @param y The y coordinate.
+   * @param z The z coordinate.
    * @param type The type id.
    */
   public void setBlock(int x, int y, int z, int type) {
@@ -961,10 +960,10 @@ public final class Level implements Cloneable {
   /**
    * Sets a block.
    *
-   * @param x          The x coordinate.
-   * @param y          The y coordinate.
-   * @param z          The z coordinate.
-   * @param type       The type id.
+   * @param x The x coordinate.
+   * @param y The y coordinate.
+   * @param z The z coordinate.
+   * @param type The type id.
    * @param updateSelf Update self flag.
    */
   public void setBlock(int x, int y, int z, int type, boolean updateSelf) {
@@ -986,8 +985,8 @@ public final class Level implements Cloneable {
       BlockManager.getBlockManager().getBlock(formerBlock).behaveDestruct(this, x, y, z);
       updateNeighboursAt(x, y, z);
       if (this.getLightDepth(x, y) == z) {
-        //this.recalculateLightDepth(x, y);
-        //this.scheduleZPlantThink(x, y, z);
+        // this.recalculateLightDepth(x, y);
+        // this.scheduleZPlantThink(x, y, z);
       }
     }
     Position position = new Position(x, y, z);
@@ -1035,7 +1034,7 @@ public final class Level implements Cloneable {
     queueTileUpdate(x, y + 1, z);
     queueTileUpdate(x, y, z - 1);
     queueTileUpdate(x, y, z + 1);
-    //recalculateLightDepth(x, y);
+    // recalculateLightDepth(x, y);
   }
 
   /**

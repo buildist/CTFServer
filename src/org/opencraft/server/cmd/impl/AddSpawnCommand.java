@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.cmd.impl;
 
-
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
@@ -56,12 +55,13 @@ public class AddSpawnCommand implements Command {
     // Player using command is OP?
     if (player.isOp()) {
       Position position = player.getPosition().toBlockPos();
-      String existing = World.getWorld().getLevel().getProp("tdmSpawns") != null
-          ? World.getWorld().getLevel().getProp("tdmSpawns")+" "
-          : "";
+      String existing =
+          World.getWorld().getLevel().getProp("tdmSpawns") != null
+              ? World.getWorld().getLevel().getProp("tdmSpawns") + " "
+              : "";
       MapSetCommand.doPropertyChange(
-          "tdmSpawns", existing+(position.getX()+","+position.getZ()+","+position.getY()));
-    } else
-      player.getActionSender().sendChatMessage("You must be OP to do that");
+          "tdmSpawns",
+          existing + (position.getX() + "," + position.getZ() + "," + position.getY()));
+    } else player.getActionSender().sendChatMessage("You must be OP to do that");
   }
 }

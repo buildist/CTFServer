@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -57,7 +57,7 @@ public class MapListCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if(params.getArgumentCount() == 1) {
+    if (params.getArgumentCount() == 1) {
       File dir = new File(Constants.ROOT_PATH + "/maps/more");
       String[] maps = dir.list();
       String msg = "&eAll maps: &a";
@@ -65,8 +65,7 @@ public class MapListCommand implements Command {
       for (String mapName : maps) {
         String[] parts = mapName.split("\\.");
         if (parts.length == 2 && !parts[1].equals("properties")) {
-          if (i > 0)
-            msg += ", ";
+          if (i > 0) msg += ", ";
           msg += parts[0];
           i++;
         }
@@ -77,8 +76,7 @@ public class MapListCommand implements Command {
     String msg = "&eAvailable maps: &a";
     int i = 0;
     for (String map : MapController.levelNames) {
-      if (i > 0)
-        msg += ", ";
+      if (i > 0) msg += ", ";
       msg += map;
       i++;
     }

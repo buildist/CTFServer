@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -143,8 +143,7 @@ public class MapController {
     if (voteList.contains(id)) {
       levelVotes.put(id, levelVotes.get(id) + 1);
       return true;
-    } else
-      return false;
+    } else return false;
   }
 
   public static void resetVotes() {
@@ -154,19 +153,16 @@ public class MapController {
   }
 
   public static ArrayList<String> getRandomMapNames(int n, String[] ignore) {
-    if (levelNames.size() == 1)
-      return levelNames;
+    if (levelNames.size() == 1) return levelNames;
     ArrayList<String> names = new ArrayList<String>();
     names.addAll(levelNames);
     for (String name : ignore) {
-      if (name != null && names.contains(name))
-        names.remove(name);
+      if (name != null && names.contains(name)) names.remove(name);
     }
     if (GameSettings.getBoolean("OnlyTDM")) {
       Iterator<String> itr = names.iterator();
       while (itr.hasNext()) {
-        if (!itr.next().startsWith("tdm_"))
-          itr.remove();
+        if (!itr.next().startsWith("tdm_")) itr.remove();
       }
     }
     ArrayList<String> r = new ArrayList<String>(n);
@@ -189,9 +185,7 @@ public class MapController {
         highestVotes = votes;
       }
     }
-    if (highest == null)
-      return randomLevel();
-    else
-      return getLevel(highest);
+    if (highest == null) return randomLevel();
+    else return getLevel(highest);
   }
 }

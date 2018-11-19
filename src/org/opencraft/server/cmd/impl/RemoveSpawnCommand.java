@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.cmd.impl;
 
-
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
@@ -57,13 +56,15 @@ public class RemoveSpawnCommand implements Command {
       if (params.getArgumentCount() == 1) {
         MapSetCommand.doPropertyChange(
             "tdmSpawns",
-            World.getWorld().getLevel().getProp("tdmSpawns").toString()
-                .replace(params.getStringArgument(0)+" ", "")
+            World.getWorld()
+                .getLevel()
+                .getProp("tdmSpawns")
+                .toString()
+                .replace(params.getStringArgument(0) + " ", "")
                 .replace(params.getStringArgument(0), ""));
-      }  else {
+      } else {
         player.getActionSender().sendChatMessage("/removespawn x,y,z");
       }
-    } else
-      player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that");
   }
 }

@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -42,21 +42,20 @@ import org.opencraft.server.net.packet.handler.PacketHandlerManager;
 
 import java.util.Map;
 
-/**
- * @author Mark Farrell The persisting packet handler manager for opencraft.
- */
+/** @author Mark Farrell The persisting packet handler manager for opencraft. */
 public final class PersistingHandlerManager extends PacketHandlerManager {
 
   private static final PacketHandlerManager INSTANCE = new PersistingHandlerManager();
 
   @SuppressWarnings("unchecked")
   private PersistingHandlerManager() {
-    super((Map<Integer, String>) PersistenceManager.getPersistenceManager().load(Constants
-        .ROOT_PATH + "/packetHandlers.xml"));
+    super(
+        (Map<Integer, String>)
+            PersistenceManager.getPersistenceManager()
+                .load(Constants.ROOT_PATH + "/packetHandlers.xml"));
   }
 
   public static PacketHandlerManager getPacketHandlerManager() {
     return INSTANCE;
   }
-
 }

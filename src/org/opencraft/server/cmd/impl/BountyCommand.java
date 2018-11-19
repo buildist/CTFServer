@@ -33,20 +33,30 @@ public class BountyCommand implements Command {
               hunted.bountyMode = false;
             }
             player.bountyActive = false;
-            World.getWorld().broadcast("- " + player.getColoredName() + " &ehas removed their " +
-                "bounty on " + hunted.getColoredName());
+            World.getWorld()
+                .broadcast(
+                    "- "
+                        + player.getColoredName()
+                        + " &ehas removed their "
+                        + "bounty on "
+                        + hunted.getColoredName());
           } else {
-            player.getActionSender().sendChatMessage("You do not have an active bounty on this " +
-                "player!");
+            player
+                .getActionSender()
+                .sendChatMessage("You do not have an active bounty on this " + "player!");
           }
         } else {
           if (hunted != null && params.getIntegerArgument(1) >= 50) {
             if (params.getIntegerArgument(1) <= player.getStorePoints()) {
               if (player.bountyActive) {
-                player.getActionSender().sendChatMessage("You currently have an active bounty on " +
-                    "" + hunted.getColoredName());
-                player.getActionSender().sendChatMessage("Use \"/bounty " + hunted.getName() + " " +
-                    "0\" to remove it");
+                player
+                    .getActionSender()
+                    .sendChatMessage(
+                        "You currently have an active bounty on " + "" + hunted.getColoredName());
+                player
+                    .getActionSender()
+                    .sendChatMessage(
+                        "Use \"/bounty " + hunted.getName() + " " + "0\" to remove it");
               } else {
                 if (hunted.bountyMode) {
                   player.bountySet = params.getIntegerArgument(1);
@@ -56,13 +66,28 @@ public class BountyCommand implements Command {
                   hunted.bountyMode = true;
                   player.bountyActive = true;
                   player.addStorePoints(-params.getIntegerArgument(1));
-                  World.getWorld().broadcast("- " + player.getColoredName() + " &ehas added " +
-                      params.getIntegerArgument(1) + " on " + hunted.getColoredName() + "&e's " +
-                      "bounty! The bounty is now " + hunted.bountyAmount);
+                  World.getWorld()
+                      .broadcast(
+                          "- "
+                              + player.getColoredName()
+                              + " &ehas added "
+                              + params.getIntegerArgument(1)
+                              + " on "
+                              + hunted.getColoredName()
+                              + "&e's "
+                              + "bounty! The bounty is now "
+                              + hunted.bountyAmount);
                 } else {
-                  World.getWorld().broadcast("- " + player.getColoredName() + " &ehas set a " +
-                      "bounty of " + params.getIntegerArgument(1) + " on " + hunted
-                      .getColoredName() + "! &4KILL &ethem five times to collect the bounty.");
+                  World.getWorld()
+                      .broadcast(
+                          "- "
+                              + player.getColoredName()
+                              + " &ehas set a "
+                              + "bounty of "
+                              + params.getIntegerArgument(1)
+                              + " on "
+                              + hunted.getColoredName()
+                              + "! &4KILL &ethem five times to collect the bounty.");
                   player.bountySet = params.getIntegerArgument(1);
                   hunted.bountied = hunted;
                   hunted.bountiedBy = player;

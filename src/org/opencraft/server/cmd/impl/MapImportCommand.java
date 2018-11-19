@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -64,30 +64,36 @@ public class MapImportCommand implements Command {
   public void execute(final Player player, final CommandParameters params) {
     if (player.isOp()) {
       player.getActionSender().sendChatMessage("Downloading map...");
-      new Thread(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            String mapName = params.getStringArgument(0);
-            String urlString = "https://persignum.com/download.php?password=IJobS0d3Mb&mapname="
-                + URLEncoder.encode(mapName, "UTF-8");
-            URL url = new URL(urlString);
-            ReadableByteChannel ch = Channels.newChannel(url.openStream());
-            if (mapName.contains("/"))
-              mapName = mapName.substring(mapName.indexOf("/") + 1);
-            String path = "maps/more/" + mapName + ".lvl";
-            FileOutputStream out = new FileOutputStream(path);
-            out.getChannel().transferFrom(ch, 0, Long.MAX_VALUE);
-            player.getActionSender().sendChatMessage("Saved to " + path);
-            player.getActionSender().sendChatMessage("Use /newgame more/" + mapName + " to switch" +
-                " to it");
-          } catch (Exception ex) {
-            player.getActionSender().sendChatMessage("Error downloading map. Blame Jacob_ or Jack");
-            player.getActionSender().sendChatMessage(ex.toString());
-            Server.log(ex);
-          }
-        }
-      }).start();
+      new Thread(
+              new Runnable() {
+                @Override
+                public void run() {
+                  try {
+                    String mapName = params.getStringArgument(0);
+                    String urlString =
+                        "https://persignum.com/download.php?password=IJobS0d3Mb&mapname="
+                            + URLEncoder.encode(mapName, "UTF-8");
+                    URL url = new URL(urlString);
+                    ReadableByteChannel ch = Channels.newChannel(url.openStream());
+                    if (mapName.contains("/"))
+                      mapName = mapName.substring(mapName.indexOf("/") + 1);
+                    String path = "maps/more/" + mapName + ".lvl";
+                    FileOutputStream out = new FileOutputStream(path);
+                    out.getChannel().transferFrom(ch, 0, Long.MAX_VALUE);
+                    player.getActionSender().sendChatMessage("Saved to " + path);
+                    player
+                        .getActionSender()
+                        .sendChatMessage("Use /newgame more/" + mapName + " to switch" + " to it");
+                  } catch (Exception ex) {
+                    player
+                        .getActionSender()
+                        .sendChatMessage("Error downloading map. Blame Jacob_ or Jack");
+                    player.getActionSender().sendChatMessage(ex.toString());
+                    Server.log(ex);
+                  }
+                }
+              })
+          .start();
     } else {
       player.getActionSender().sendChatMessage("You need to be op to do that!");
     }

@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -64,66 +64,92 @@ public class GrenadeCommand implements Command {
   }
 
   public void execute(final Player player, CommandParameters params) {
-    rocketThread = new Thread(new Runnable() {
-      public void run() {
-        Position pos = player.getPosition().toBlockPos();
-        Rotation r = player.getRotation();
+    rocketThread =
+        new Thread(
+            new Runnable() {
+              public void run() {
+                Position pos = player.getPosition().toBlockPos();
+                Rotation r = player.getRotation();
 
-        double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-        double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
+                double heading =
+                    Math.toRadians(
+                        (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+                double pitch =
+                    Math.toRadians(
+                        (int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
-        double px = pos.getX();
-        double py = pos.getY();
-        double pz = pos.getZ();
+                double px = pos.getX();
+                double py = pos.getY();
+                double pz = pos.getZ();
 
-        double vx = Math.cos(heading)*Math.cos(pitch);
-        double vy = Math.sin(heading)*Math.cos(pitch);
-        double vz = Math.sin(pitch);
-        double length = Math.sqrt(vx * vx + vy * vy + vz * vz) / 1.25;
-        vx /= length;
-        vz /= length;
-        vy /= length;
-        double x = px;
-        double y = py;
-        double z = pz;
-        double lastX = px;
-        double lastY = py;
-        double lastZ = pz;
-        for (int i = 0; i < 256; i++) {
-          x += vx;
-          y += vy;
-          z += vz;
-          int bx = (int) Math.round(x);
-          int by = (int) Math.round(y);
-          int bz = (int) Math.round(z);
-          int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-          if (block != 0 && block != 46) {
-            World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY)
-                , (int) Math.round(lastZ), 0);
-            World.getWorld().getGameMode().explodeTNT(player, World.getWorld()
-                .getLevel(), bx, by, bz, 2, true, false, false, "Samsung Galaxy Note 7");
-            break;
-          } else {
-            World.getWorld().getLevel().setBlock((int) Math.round(lastX), (int) Math.round(lastY)
-                , (int) Math.round(lastZ), 0);
-            if (block == 0)
-              World.getWorld().getLevel().setBlock(bx, by, bz, Constants.BLOCK_TNT);
-          }
-          lastX = x;
-          lastY = y;
-          lastZ = z;
-          i++;
-          if (vz > (double) -2)
-            vz -= 0.15;
-          vx *= 0.95;
-          vy *= 0.95;
-          try {
-            Thread.sleep(100);
-          } catch (InterruptedException ex) {
-          }
-        }
-      }
-    });
+                double vx = Math.cos(heading) * Math.cos(pitch);
+                double vy = Math.sin(heading) * Math.cos(pitch);
+                double vz = Math.sin(pitch);
+                double length = Math.sqrt(vx * vx + vy * vy + vz * vz) / 1.25;
+                vx /= length;
+                vz /= length;
+                vy /= length;
+                double x = px;
+                double y = py;
+                double z = pz;
+                double lastX = px;
+                double lastY = py;
+                double lastZ = pz;
+                for (int i = 0; i < 256; i++) {
+                  x += vx;
+                  y += vy;
+                  z += vz;
+                  int bx = (int) Math.round(x);
+                  int by = (int) Math.round(y);
+                  int bz = (int) Math.round(z);
+                  int block = World.getWorld().getLevel().getBlock(bx, by, bz);
+                  if (block != 0 && block != 46) {
+                    World.getWorld()
+                        .getLevel()
+                        .setBlock(
+                            (int) Math.round(lastX),
+                            (int) Math.round(lastY),
+                            (int) Math.round(lastZ),
+                            0);
+                    World.getWorld()
+                        .getGameMode()
+                        .explodeTNT(
+                            player,
+                            World.getWorld().getLevel(),
+                            bx,
+                            by,
+                            bz,
+                            2,
+                            true,
+                            false,
+                            false,
+                            "Samsung Galaxy Note 7");
+                    break;
+                  } else {
+                    World.getWorld()
+                        .getLevel()
+                        .setBlock(
+                            (int) Math.round(lastX),
+                            (int) Math.round(lastY),
+                            (int) Math.round(lastZ),
+                            0);
+                    if (block == 0)
+                      World.getWorld().getLevel().setBlock(bx, by, bz, Constants.BLOCK_TNT);
+                  }
+                  lastX = x;
+                  lastY = y;
+                  lastZ = z;
+                  i++;
+                  if (vz > (double) -2) vz -= 0.15;
+                  vx *= 0.95;
+                  vy *= 0.95;
+                  try {
+                    Thread.sleep(100);
+                  } catch (InterruptedException ex) {
+                  }
+                }
+              }
+            });
     rocketThread.start();
   }
 }

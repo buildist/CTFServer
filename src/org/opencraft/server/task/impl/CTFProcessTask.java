@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -68,9 +68,10 @@ public class CTFProcessTask extends ScheduledTask {
     }
 
     for (Player player : world.getPlayerList().getPlayers()) {
-      if (World.getWorld().getPlayerList().size() >= Configuration.getConfiguration()
-          .getMaximumPlayers() && System.currentTimeMillis() - player.moveTime > 5 * 60 * 1000 &&
-          player.moveTime != 0) {
+      if (World.getWorld().getPlayerList().size()
+              >= Configuration.getConfiguration().getMaximumPlayers()
+          && System.currentTimeMillis() - player.moveTime > 5 * 60 * 1000
+          && player.moveTime != 0) {
         World.getWorld().broadcast("- " + player.parseName() + " was kicked for being AFK");
         player.getActionSender().sendLoginFailure("You were kicked for being AFK");
         player.getSession().close();
@@ -80,7 +81,7 @@ public class CTFProcessTask extends ScheduledTask {
       if (player.flamethrowerEnabled) {
         int duration = GameSettings.getInt("FlameThrowerDuration");
         // ticks a second
-        float rate = (float)Constants.FLAME_THROWER_FUEL / duration;
+        float rate = (float) Constants.FLAME_THROWER_FUEL / duration;
         long time = System.currentTimeMillis();
         long dt = time - player.flamethrowerTime;
         player.flamethrowerFuel -= rate * dt / 1000;
@@ -90,24 +91,26 @@ public class CTFProcessTask extends ScheduledTask {
           player.sendFuelPercent();
           player.flamethrowerEnabled = false;
           World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
-        } else if ((time - player.flamethrowerNotify) / 1000 >= 1) { // Send fuel percent every second
+        } else if ((time - player.flamethrowerNotify) / 1000
+            >= 1) { // Send fuel percent every second
           player.sendFuelPercent();
         }
         // Was flame thrower disabled because they ran out of fuel?
         if (player.flamethrowerEnabled) {
-          if (!player.getPosition().equals(player.linePosition) || !player.getRotation().equals
-                  (player.lineRotation)) {
+          if (!player.getPosition().equals(player.linePosition)
+              || !player.getRotation().equals(player.lineRotation)) {
             if (player.linePosition != null)
               World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
             World.getWorld().getLevel().drawFire(player.getPosition(), player.getRotation());
             player.linePosition = player.getPosition();
             player.lineRotation = player.getRotation();
           }
-          World.getWorld().getGameMode().processFlamethrower(player, player
-                  .linePosition, player.lineRotation);
+          World.getWorld()
+              .getGameMode()
+              .processFlamethrower(player, player.linePosition, player.lineRotation);
         }
       } else {
-        if (player.flamethrowerFuel != (float)Constants.FLAME_THROWER_FUEL) {
+        if (player.flamethrowerFuel != (float) Constants.FLAME_THROWER_FUEL) {
           int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
           float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
           long time = System.currentTimeMillis();
@@ -123,10 +126,10 @@ public class CTFProcessTask extends ScheduledTask {
         }
       }
 
-            /* if(player.hasFlag) {
-                player.headBlockType = player.team == 0 ? 28 : 21;
-            }
-            else */
+      /* if(player.hasFlag) {
+          player.headBlockType = player.team == 0 ? 28 : 21;
+      }
+      else */
       if (player.duelPlayer != null) {
         player.headBlockType = 41;
       } else {
@@ -154,7 +157,7 @@ public class CTFProcessTask extends ScheduledTask {
         Position currentPosition = player.getPosition().toBlockPos();
         if (player.payloadPathPositions.isEmpty()
             || !currentPosition.equals(
-                player.payloadPathPositions.get(player.payloadPathPositions.size()-1))) {
+                player.payloadPathPositions.get(player.payloadPathPositions.size() - 1))) {
           player.payloadPathPositions.add(currentPosition);
         }
       }
@@ -171,13 +174,13 @@ public class CTFProcessTask extends ScheduledTask {
         if (Math.abs(px - tx) < pr && Math.abs(py - ty) < pr && Math.abs(pz - tz) < pr) {
           if (player.team == 1) {
             payloadAttackers++;
-          } else if(player.team == 0) {
+          } else if (player.team == 0) {
             payloadDefenders++;
           }
         }
       }
     }
-    if (ctf.getMode() == Level.PAYLOAD ) {
+    if (ctf.getMode() == Level.PAYLOAD) {
       if (payloadDefenders == 0) {
         payloadStep += payloadAttackers;
         if (payloadStep == 50) {
@@ -185,7 +188,10 @@ public class CTFProcessTask extends ScheduledTask {
           ctf.updatePayload(ctf.payloadPosition + 1);
         }
       }
-      showTimer("PayloadTimeLimit", true /* shouldEndGame */, "Payload | " + World.getWorld().getLevel().id);
+      showTimer(
+          "PayloadTimeLimit",
+          true /* shouldEndGame */,
+          "Payload | " + World.getWorld().getLevel().id);
 
       double fraction = (double) ctf.payloadPosition / world.getLevel().getPayloadPath().size();
       int lineWidth = 20;
@@ -193,9 +199,9 @@ public class CTFProcessTask extends ScheduledTask {
       String message = "&9";
       for (int i = 0; i < lineWidth; i++) {
         if (i == blueWidth) {
-          if (payloadDefenders > 0)  {
+          if (payloadDefenders > 0) {
             message += "&cX&7";
-          } else if(payloadAttackers > 0) {
+          } else if (payloadAttackers > 0) {
             message += ">&7";
           } else {
             message += "o&7";
@@ -210,7 +216,7 @@ public class CTFProcessTask extends ScheduledTask {
       }
     } else if (ctf.getMode() == Level.TDM) {
       showTimer("TDMTimeLimit", true /* shouldEndGame */, "Team Deathmatch");
-    } else if(GameSettings.getBoolean("Tournament")) {
+    } else if (GameSettings.getBoolean("Tournament")) {
       showTimer("TournamentTimeLimit", false /* shouldEndGame */, "Tournament");
     }
     ticks++;
@@ -218,10 +224,9 @@ public class CTFProcessTask extends ScheduledTask {
       ticks = 0;
     }
   }
-  
+
   private void showTimer(String settingName, boolean shouldEndGame, String message) {
-    long elapsedTime = System.currentTimeMillis()
-        - World.getWorld().getGameMode().gameStartTime;
+    long elapsedTime = System.currentTimeMillis() - World.getWorld().getGameMode().gameStartTime;
     if (shouldEndGame && elapsedTime > GameSettings.getInt(settingName) * 60 * 1000) {
       World.getWorld().getGameMode().gameStartTime = System.currentTimeMillis();
       World.getWorld().getGameMode().endGame();
@@ -230,14 +235,15 @@ public class CTFProcessTask extends ScheduledTask {
         Math.max((GameSettings.getInt(settingName) * 60 * 1000 - elapsedTime) / 1000, 0);
     if (World.getWorld().getGameMode().voting) {
       remaining = 0;
-    } else if(!World.getWorld().getGameMode().tournamentGameStarted) {
+    } else if (!World.getWorld().getGameMode().tournamentGameStarted) {
       remaining = GameSettings.getInt(settingName) * 60;
     }
     if (ticks == 0) {
       for (Player player : world.getPlayerList().getPlayers()) {
         if (player.getSession().isExtensionSupported("MessageTypes")) {
           World.getWorld().getGameMode().sendStatusMessage(player);
-          player.getActionSender()
+          player
+              .getActionSender()
               .sendChatMessage(message + " | " + prettyTime((int) remaining), 1);
         }
       }

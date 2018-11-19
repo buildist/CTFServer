@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -59,44 +59,43 @@ public class MoveLog {
   }
 
   public void logPosition(Player p) {
-        /*if(p.getPosition().equals(p.getOldPosition()))
-            return;
-        synchronized(writer) {
-            String l = p.getName()+" "+p.team+" "+p.getPosition()+" "+p.hasFlag;
-            try {
-                writer.write(l+"\n");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }*/
+    /*if(p.getPosition().equals(p.getOldPosition()))
+        return;
+    synchronized(writer) {
+        String l = p.getName()+" "+p.team+" "+p.getPosition()+" "+p.hasFlag;
+        try {
+            writer.write(l+"\n");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }*/
   }
 
   public void logMapChange(String name) {
-        /*synchronized(writer) {
-            String l = name;
-            try {
-                writer.flush();
-                writer.write(l+"\n");
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }*/
+    /*synchronized(writer) {
+        String l = name;
+        try {
+            writer.flush();
+            writer.write(l+"\n");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }*/
   }
 
   public void flush() {
-        /*synchronized(writer) {
-            try {
-                writer.flush();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }*/
+    /*synchronized(writer) {
+        try {
+            writer.flush();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }*/
   }
 
   public void finalize() {
     try {
-      if (writer != null)
-        writer.close();
+      if (writer != null) writer.close();
     } catch (IOException ex) {
       ex.printStackTrace();
     }

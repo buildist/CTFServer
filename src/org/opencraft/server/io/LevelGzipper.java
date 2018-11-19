@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.io;
-
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.opencraft.server.Configuration;
@@ -69,11 +68,13 @@ public final class LevelGzipper {
   public void gzipLevel(final MinecraftSession session) {
     final Level level = World.getWorld().getLevel();
     if (session.levelSent) {
-      session.getActionSender().sendLoginResponse(
-          Constants.PROTOCOL_VERSION,
-          "Next map: " + level.id,
-          "&0-hax",
-          session.getPlayer().isOp());
+      session
+          .getActionSender()
+          .sendLoginResponse(
+              Constants.PROTOCOL_VERSION,
+              "Next map: " + level.id,
+              "&0-hax",
+              session.getPlayer().isOp());
       session.getActionSender().sendHackControl(true);
     }
     session.levelSent = true;
@@ -88,59 +89,66 @@ public final class LevelGzipper {
     for (CustomBlockDefinition blockDef : CustomBlockDefinition.CUSTOM_BLOCKS) {
       session.getActionSender().sendDefineBlockExt(blockDef);
     }
-    service.submit(new Runnable() {
-      @Override
-      public void run() {
-        try {
-          ByteArrayOutputStream out = new ByteArrayOutputStream();
-          int size = width * height * depth;
-          DataOutputStream os = new DataOutputStream(new GZIPOutputStream(out));
-          os.writeInt(size);
-          os.write(level.getBlocks1D());
-          os.close();
-          byte[] data = out.toByteArray();
-          IoBuffer buf = IoBuffer.allocate(data.length);
-          buf.put(data);
-          buf.flip();
-          while (buf.hasRemaining()) {
-            int len = buf.remaining();
-            if (len > 1024) {
-              len = 1024;
+    service.submit(
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              ByteArrayOutputStream out = new ByteArrayOutputStream();
+              int size = width * height * depth;
+              DataOutputStream os = new DataOutputStream(new GZIPOutputStream(out));
+              os.writeInt(size);
+              os.write(level.getBlocks1D());
+              os.close();
+              byte[] data = out.toByteArray();
+              IoBuffer buf = IoBuffer.allocate(data.length);
+              buf.put(data);
+              buf.flip();
+              while (buf.hasRemaining()) {
+                int len = buf.remaining();
+                if (len > 1024) {
+                  len = 1024;
+                }
+                byte[] chunk = new byte[len];
+                buf.get(chunk);
+                int percent = (int) ((double) buf.position() / (double) buf.limit() * 255D);
+                session.getActionSender().sendLevelBlock(len, chunk, percent);
+              }
+              String texturePack =
+                  (level.textureUrl != null && !level.textureUrl.isEmpty())
+                      ? level.textureUrl
+                      : Configuration.getConfiguration().getEnvTexturePack();
+              if (session.isExtensionSupported("EnvMapAppearance", 2))
+                session.getActionSender().sendMapAppearanceV2(texturePack);
+              else if (session.isExtensionSupported("EnvMapAppearance", 1))
+                session.getActionSender().sendMapAppearanceV1();
+              if (session.isExtensionSupported("EnvColors"))
+                session.getActionSender().sendMapColors();
+              session.getActionSender().sendLevelFinish();
+
+              session.getActionSender().sendBlockPermissions(0, true, true);
+              session.getActionSender().sendBlockPermissions(7, false, false);
+              session.getActionSender().sendBlockPermissions(8, false, false);
+              session.getActionSender().sendBlockPermissions(10, false, false);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE, true, false);
+              session
+                  .getActionSender()
+                  .sendBlockPermissions(Constants.BLOCK_MINE_RED, false, false);
+              session
+                  .getActionSender()
+                  .sendBlockPermissions(Constants.BLOCK_MINE_BLUE, false, false);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_RED_FLAG, false, true);
+              session
+                  .getActionSender()
+                  .sendBlockPermissions(Constants.BLOCK_BLUE_FLAG, false, true);
+
+              session.getPlayer().getLocalEntities().clear();
+            } catch (IOException ex) {
+              session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");
             }
-            byte[] chunk = new byte[len];
-            buf.get(chunk);
-            int percent = (int) ((double) buf.position() / (double) buf.limit() * 255D);
-            session.getActionSender().sendLevelBlock(len, chunk, percent);
           }
-          String texturePack = (level.textureUrl != null && !level.textureUrl.isEmpty())
-              ? level.textureUrl
-              : Configuration.getConfiguration().getEnvTexturePack();
-          if (session.isExtensionSupported("EnvMapAppearance", 2))
-            session.getActionSender().sendMapAppearanceV2(texturePack);
-          else if (session.isExtensionSupported("EnvMapAppearance", 1))
-            session.getActionSender().sendMapAppearanceV1();
-          if (session.isExtensionSupported("EnvColors"))
-            session.getActionSender().sendMapColors();
-          session.getActionSender().sendLevelFinish();
-
-          session.getActionSender().sendBlockPermissions(0, true, true);
-          session.getActionSender().sendBlockPermissions(7, false, false);
-          session.getActionSender().sendBlockPermissions(8, false, false);
-          session.getActionSender().sendBlockPermissions(10, false, false);
-          session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE, true, false);
-          session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_RED, false, false);
-          session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_BLUE, false, false);
-          session.getActionSender().sendBlockPermissions(Constants.BLOCK_RED_FLAG, false, true);
-          session.getActionSender().sendBlockPermissions(Constants.BLOCK_BLUE_FLAG, false, true);
-
-          session.getPlayer().getLocalEntities().clear();
-        } catch (IOException ex) {
-          session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");
-        }
-      }
-    });
+        });
     // if(session.isExtensionSupported("HackControl"))
     //      session.getActionSender().sendHackControl(session.getPlayer().isOp());
   }
-
 }

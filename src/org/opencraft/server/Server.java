@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in thedebug
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -74,7 +74,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
 
-//import org.opencraft.server.model.IRC;
+// import org.opencraft.server.model.IRC;
 
 /**
  * The core class of the OpenCraft server.
@@ -91,15 +91,13 @@ public final class Server {
   private static Server instance;
 
   private static LinkedList<ConsoleMessage> messages = new LinkedList<ConsoleMessage>();
-  /**
-   * The socket acceptor.
-   */
+  /** The socket acceptor. */
   private final NioSocketAcceptor acceptor = new NioSocketAcceptor();
 
   /**
    * Creates the server.
    *
-   * @throws IOException           if an I/O error occurs.
+   * @throws IOException if an I/O error occurs.
    * @throws FileNotFoundException if the configuration file is not found.
    */
   public Server() throws FileNotFoundException, IOException {
@@ -132,13 +130,11 @@ public final class Server {
     TaskQueue.getTaskQueue().schedule(new PingTask());
     new Thread(new ConsoleTask()).start();
     new Thread(new ItemDropTask()).start();
-    //new Thread(new RenderMapTask()).start();
+    // new Thread(new RenderMapTask()).start();
     log("Initializing game...");
   }
 
-  /**
-   * The entry point of the server application.
-   */
+  /** The entry point of the server application. */
   public static void log(Throwable e) {
     Server.log("[E] Exception occured: " + e.toString());
     if (e.getStackTrace() != null) {
@@ -153,20 +149,22 @@ public final class Server {
   }
 
   public static void main(String[] args) {
-    Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHandler() {
+    Thread.setDefaultUncaughtExceptionHandler(
+        new UncaughtExceptionHandler() {
 
-      @Override
-      public void uncaughtException(Thread t, Throwable e) {
-        try {
-          if (!(e instanceof IndexOutOfBoundsException || e instanceof ThreadDeath || e
-              instanceof InterruptedException)) {
-            log(e);
+          @Override
+          public void uncaughtException(Thread t, Throwable e) {
+            try {
+              if (!(e instanceof IndexOutOfBoundsException
+                  || e instanceof ThreadDeath
+                  || e instanceof InterruptedException)) {
+                log(e);
+              }
+            } catch (Exception ex) {
+
+            }
           }
-        } catch (Exception ex) {
-
-        }
-      }
-    });
+        });
     try {
       instance = new Server();
       instance.start();
@@ -283,11 +281,9 @@ public final class Server {
     }
   }
 
-  public static String readFileAsString(String filePath)
-      throws java.io.IOException {
+  public static String readFileAsString(String filePath) throws java.io.IOException {
     StringBuilder fileData = new StringBuilder(1000);
-    BufferedReader reader = new BufferedReader(
-        new FileReader(filePath));
+    BufferedReader reader = new BufferedReader(new FileReader(filePath));
     char[] buf = new char[1024];
     int numRead = 0;
     while ((numRead = reader.read(buf)) != -1) {
@@ -306,8 +302,8 @@ public final class Server {
           msg2 += c;
         } else if (i == msg.length() - 2) {
           msg2 += c;
-        } else if (!((msg.charAt(i + 1) >= '0' && msg.charAt(i + 1) <= '9') || (msg.charAt(i + 1)
-            >= 'a' && msg.charAt(i + 1) <= 'f'))) {
+        } else if (!((msg.charAt(i + 1) >= '0' && msg.charAt(i + 1) <= '9')
+            || (msg.charAt(i + 1) >= 'a' && msg.charAt(i + 1) <= 'f'))) {
           msg2 += c;
         } else {
           msg2 += '&';
@@ -336,8 +332,7 @@ public final class Server {
   public static String getConsoleMessages(long minTime) {
     StringBuilder text = new StringBuilder();
     for (ConsoleMessage message : messages) {
-      if (message.date.getTime() < minTime)
-        break;
+      if (message.date.getTime() < minTime) break;
       text.append(message.message).append("\n");
     }
     return text.toString();
@@ -354,10 +349,10 @@ public final class Server {
     acceptor.bind(new InetSocketAddress(Constants.PORT));
     log("Ready for connections.");
     createStore();
-    //irc = new IRC();
-    //if (!Configuration.getConfiguration().isTest()) {
+    // irc = new IRC();
+    // if (!Configuration.getConfiguration().isTest()) {
     WebServer.init();
-    //}
+    // }
   }
 
   public void createStore() {

@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -44,15 +44,13 @@ import org.opencraft.server.model.Player;
 /**
  * Official /deop command **NEEDS PERSISTENCE
  *
- * *
+ * <p>*
  *
  * @author S�ren Enevoldsen
  */
 public class DuelCommand implements Command {
 
-  /**
-   * The instance of this command.
-   */
+  /** The instance of this command. */
   private static final DuelCommand INSTANCE = new DuelCommand();
 
   /**
@@ -67,8 +65,7 @@ public class DuelCommand implements Command {
   @Override
   public void execute(final Player player, CommandParameters params) {
     if (!GameSettings.getBoolean("Tournament")) {
-      if (params.getArgumentCount() == 0)
-        player.getActionSender().sendChatMessage("/duel [name]");
+      if (params.getArgumentCount() == 0) player.getActionSender().sendChatMessage("/duel [name]");
       else {
         Player p = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
         if (p == null) {
@@ -77,10 +74,11 @@ public class DuelCommand implements Command {
           player.getActionSender().sendChatMessage("- &eYou must be on opposite teams to duel.");
         } else {
           p.duelChallengedBy = player;
-          p.getActionSender().sendChatMessage("- " + player.getColoredName() + " &bhas challenged" +
-              " you to a duel!");
-          p.getActionSender().sendChatMessage("- &bSay /accept if you would like to accept their " +
-              "challenge");
+          p.getActionSender()
+              .sendChatMessage(
+                  "- " + player.getColoredName() + " &bhas challenged" + " you to a duel!");
+          p.getActionSender()
+              .sendChatMessage("- &bSay /accept if you would like to accept their " + "challenge");
         }
       }
     }

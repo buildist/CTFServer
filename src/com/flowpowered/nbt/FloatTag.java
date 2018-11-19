@@ -23,42 +23,38 @@
  */
 package com.flowpowered.nbt;
 
-/**
- * The {@code TAG_Float} tag.
- */
+/** The {@code TAG_Float} tag. */
 public final class FloatTag extends Tag<Float> {
-    /**
-     * The value.
-     */
-    private final float value;
+  /** The value. */
+  private final float value;
 
-    /**
-     * Creates the tag.
-     *
-     * @param name The name.
-     * @param value The value.
-     */
-    public FloatTag(String name, float value) {
-        super(TagType.TAG_FLOAT, name);
-        this.value = value;
-    }
+  /**
+   * Creates the tag.
+   *
+   * @param name The name.
+   * @param value The value.
+   */
+  public FloatTag(String name, float value) {
+    super(TagType.TAG_FLOAT, name);
+    this.value = value;
+  }
 
-    @Override
-    public Float getValue() {
-        return value;
-    }
+  @Override
+  public Float getValue() {
+    return value;
+  }
 
-    @Override
-    public String toString() {
-        String name = getName();
-        String append = "";
-        if (name != null && !name.equals("")) {
-            append = "(\"" + this.getName() + "\")";
-        }
-        return "TAG_Float" + append + ": " + value;
+  @Override
+  public String toString() {
+    String name = getName();
+    String append = "";
+    if (name != null && !name.equals("")) {
+      append = "(\"" + this.getName() + "\")";
     }
+    return "TAG_Float" + append + ": " + value;
+  }
 
-    public FloatTag clone() {
-        return new FloatTag(getName(), value);
-    }
+  public FloatTag clone() {
+    return new FloatTag(getName(), value);
+  }
 }

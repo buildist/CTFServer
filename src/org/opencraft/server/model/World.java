@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.model;
-
 
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
@@ -64,14 +63,10 @@ import java.util.Vector;
  */
 public final class World {
 
-  /**
-   * The singleton instance.
-   */
+  /** The singleton instance. */
   private static final World INSTANCE;
 
-  /**
-   * Static initializer.
-   */
+  /** Static initializer. */
   static {
     World w = null;
     try {
@@ -83,24 +78,17 @@ public final class World {
     w.gameMode.startGame(null);
   }
 
-  /**
-   * The player list.
-   */
+  /** The player list. */
   private final PlayerList playerList = new PlayerList();
+
   private Vector<Mine> mines = new Vector<Mine>(64);
   private Vector<Teleporter> teleporters = new Vector<Teleporter>(64);
-  /**
-   * The level.
-   */
+  /** The level. */
   private Level level;
-  /**
-   * The game mode.
-   */
+  /** The game mode. */
   private CTFGameMode gameMode;
 
-  /**
-   * Default private constructor.
-   */
+  /** Default private constructor. */
   private World() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
     gameMode = new CTFGameMode();
   }
@@ -151,8 +139,7 @@ public final class World {
     Enumeration en = mines.elements();
     while (en.hasMoreElements()) {
       Mine m = (Mine) en.nextElement();
-      if ((m.x - 16) / 32 == x && (m.y - 16) / 32 == y && (m.z - 16) / 32 == z)
-        return m;
+      if ((m.x - 16) / 32 == x && (m.y - 16) / 32 == y && (m.z - 16) / 32 == z) return m;
     }
     return null;
   }
@@ -199,8 +186,8 @@ public final class World {
   /**
    * Registers a session.
    *
-   * @param session         The session.
-   * @param username        The username.
+   * @param session The session.
+   * @param username The username.
    * @param verificationKey The verification key.
    */
   public void register(MinecraftSession session, String username, String verificationKey) {
@@ -266,22 +253,18 @@ public final class World {
       Server.log(ex);
     }
 
-    if (player.isOp())
-      op = true;
-    else
-      op = false;
-    if (player.getAttribute("rules") == null)
-      player.isNewPlayer = true;
+    if (player.isOp()) op = true;
+    else op = false;
+    if (player.getAttribute("rules") == null) player.isNewPlayer = true;
     if (player.getAttribute("banned") != null && player.getAttribute("banned").equals("true"))
       session.close();
-    session.getActionSender().sendLoginResponse(
-        Constants.PROTOCOL_VERSION,
-        c.getName(),
-        c.getMessage() + "&0-hax",
-        op);
+    session
+        .getActionSender()
+        .sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c.getMessage() + "&0-hax", op);
     if (!session.isExtensionSupported("HackControl")) {
-      session.getActionSender().sendLoginFailure(
-          "Enable \"Enhanced\" mode in CS launcher settings to play");
+      session
+          .getActionSender()
+          .sendLoginFailure("Enable \"Enhanced\" mode in CS launcher settings to play");
       session.close();
       return;
     }
@@ -313,8 +296,8 @@ public final class World {
     if (session.isAuthenticated()) {
       playerList.remove(session.getPlayer());
       World.getWorld().getGameMode().playerDisconnected(session.getPlayer());
-      SavedGameManager.getSavedGameManager().queuePersistenceRequest(new SavePersistenceRequest
-          (session.getPlayer()));
+      SavedGameManager.getSavedGameManager()
+          .queuePersistenceRequest(new SavePersistenceRequest(session.getPlayer()));
       session.setPlayer(null);
     }
   }
@@ -336,11 +319,9 @@ public final class World {
   /**
    * Broadcasts a chat message.
    *
-   * @param player  The source player.
+   * @param player The source player.
    * @param message The message.
    */
-
-
   public void broadcast(Player player, String message) {
     for (Player otherPlayer : playerList.getPlayers()) {
       otherPlayer.getSession().getActionSender().sendChatMessage(message);
@@ -349,8 +330,7 @@ public final class World {
 
   public void broadcastOp(String message) {
     for (Player otherPlayer : playerList.getPlayers()) {
-      if (otherPlayer.isOp())
-        otherPlayer.getSession().getActionSender().sendChatMessage(message);
+      if (otherPlayer.isOp()) otherPlayer.getSession().getActionSender().sendChatMessage(message);
     }
   }
 
@@ -366,8 +346,7 @@ public final class World {
         other.getActionSender().sendChatMessage("&5(PM) " + player.parseName() + ">&f" + text);
         player.getActionSender().sendChatMessage("&5-->" + other.parseName() + ">&f" + text);
         Server.log(player.getName() + "-->" + other.getName() + ": " + text);
-      } else
-        player.getActionSender().sendChatMessage("- &ePlease include a message.");
+      } else player.getActionSender().sendChatMessage("- &ePlease include a message.");
     }
   }
 

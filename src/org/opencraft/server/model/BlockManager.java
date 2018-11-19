@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.model;
 
-
 import org.opencraft.server.Constants;
 import org.opencraft.server.io.PersistenceManager;
 
@@ -53,18 +52,13 @@ import static org.opencraft.server.model.CustomBlockDefinition.CUSTOM_BLOCKS;
  */
 public final class BlockManager {
 
-  /**
-   * The packet manager instance.
-   */
-  private static final BlockManager INSTANCE = (BlockManager) PersistenceManager
-      .getPersistenceManager().load(Constants.ROOT_PATH + "/blocks.xml");
-  /**
-   * A list of the blocks.
-   */
+  /** The packet manager instance. */
+  private static final BlockManager INSTANCE =
+      (BlockManager)
+          PersistenceManager.getPersistenceManager().load(Constants.ROOT_PATH + "/blocks.xml");
+  /** A list of the blocks. */
   private List<BlockDefinition> blockList = new LinkedList<BlockDefinition>();
-  /**
-   * The block array (faster access by opcode than list iteration).
-   */
+  /** The block array (faster access by opcode than list iteration). */
   private transient BlockDefinition[] blocksArray;
 
   /**
@@ -104,18 +98,19 @@ public final class BlockManager {
 
   public void addCustomBlock(CustomBlockDefinition customBlockDefinition) {
     try {
-      blocksArray[customBlockDefinition.id] = new BlockDefinition(
-          customBlockDefinition.name,
-          customBlockDefinition.id,
-          customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SOLID,
-          customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SWIM_THROUGH,
-          customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SOLID,
-          false,
-          false,
-          false,
-          0,
-          0,
-          "");
+      blocksArray[customBlockDefinition.id] =
+          new BlockDefinition(
+              customBlockDefinition.name,
+              customBlockDefinition.id,
+              customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SOLID,
+              customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SWIM_THROUGH,
+              customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SOLID,
+              false,
+              false,
+              false,
+              0,
+              0,
+              "");
     } catch (Exception ex) {
       ex.printStackTrace();
     }

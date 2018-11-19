@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.net.packet;
 
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -47,25 +46,16 @@ import java.util.List;
  */
 public class PacketManager {
 
-
-  /**
-   * Incoming packets.
-   */
+  /** Incoming packets. */
   private List<PacketDefinition> incoming = new LinkedList<PacketDefinition>();
 
-  /**
-   * Outgoing packets.
-   */
+  /** Outgoing packets. */
   private List<PacketDefinition> outgoing = new LinkedList<PacketDefinition>();
 
-  /**
-   * The incoming packet array (faster access by opcode than list iteration).
-   */
+  /** The incoming packet array (faster access by opcode than list iteration). */
   private transient PacketDefinition[] incomingArray;
 
-  /**
-   * The outgoing packet array (faster access by opcode than list iteration).
-   */
+  /** The outgoing packet array (faster access by opcode than list iteration). */
   private transient PacketDefinition[] outgoingArray;
 
   /**
@@ -104,5 +94,4 @@ public class PacketManager {
   public PacketDefinition getOutgoingPacket(int opcode) {
     return outgoingArray[opcode];
   }
-
 }

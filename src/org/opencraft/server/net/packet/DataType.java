@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.net.packet;
 
-
 /**
  * Holds the different Minecraft data types.
  *
@@ -44,44 +43,28 @@ package org.opencraft.server.net.packet;
  */
 public enum DataType {
 
-  /**
-   * Standard byte data type.
-   */
+  /** Standard byte data type. */
   BYTE(1),
 
-  /**
-   * Standard short data type.
-   */
+  /** Standard short data type. */
   SHORT(2),
 
-  /**
-   * Standard integer data type.
-   */
+  /** Standard integer data type. */
   INT(4),
 
-  /**
-   * Standard long data type.
-   */
+  /** Standard long data type. */
   LONG(8),
 
-  /**
-   * Fixed-length (1024) byte array data type.
-   */
+  /** Fixed-length (1024) byte array data type. */
   BYTE_ARRAY(1024),
 
-  /**
-   * Fixed length (64 ASCII bytes) string data type.
-   */
+  /** Fixed length (64 ASCII bytes) string data type. */
   STRING(64);
 
-  /**
-   * The length of the data type, in bytes.
-   */
+  /** The length of the data type, in bytes. */
   private int length;
 
-  /**
-   * Creates the data type.
-   */
+  /** Creates the data type. */
   private DataType(int length) {
     this.length = length;
   }
@@ -94,5 +77,4 @@ public enum DataType {
   public int getLength() {
     return length;
   }
-
 }

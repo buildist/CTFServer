@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.task.impl;
 
-
 import org.opencraft.server.Server;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Player;
@@ -54,14 +53,10 @@ import java.util.Set;
  */
 public class UpdateTask extends ScheduledTask {
 
-  /**
-   * The delay.
-   */
+  /** The delay. */
   private static final long DELAY = 150;
 
-  /**
-   * Creates the update task with a delay of 100ms.
-   */
+  /** Creates the update task with a delay of 100ms. */
   public UpdateTask() {
     super(DELAY);
   }
@@ -81,8 +76,7 @@ public class UpdateTask extends ScheduledTask {
           le.remove(localEntity);
           if (localEntity instanceof Player)
             player.getSession().getActionSender().sendRemovePlayer((Player) localEntity);
-          else
-            player.getSession().getActionSender().sendRemoveEntity(localEntity);
+          else player.getSession().getActionSender().sendRemoveEntity(localEntity);
           Server.d("Removing " + localEntity.getName() + " from " + player.getName());
         } else {
           player.getSession().getActionSender().sendUpdateEntity(localEntity);
@@ -95,8 +89,8 @@ public class UpdateTask extends ScheduledTask {
           Server.d("Adding " + otherEntity.getName() + " to " + player.getName());
         }
       }
-      if (player.lastPacketTime != 0 && System.currentTimeMillis() - player.lastPacketTime >
-          30000) {
+      if (player.lastPacketTime != 0
+          && System.currentTimeMillis() - player.lastPacketTime > 30000) {
         player.getActionSender().sendLoginFailure("Too much lag`");
         player.getSession().close();
       }
@@ -106,9 +100,8 @@ public class UpdateTask extends ScheduledTask {
     }
     try {
       world.getLevel().applyBlockBehaviour();
-    } catch(ConcurrentModificationException ex) {
+    } catch (ConcurrentModificationException ex) {
       Server.log(ex);
     }
   }
-
 }

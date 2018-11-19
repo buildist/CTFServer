@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.model;
 
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,39 +46,24 @@ import java.util.Set;
  */
 public abstract class Entity {
 
-  /**
-   * A collection of local entities.
-   */
+  /** A collection of local entities. */
   private final Set<Entity> localEntities = new HashSet<Entity>();
+
   public Position goodPosition;
-  /**
-   * The old position.
-   */
+  /** The old position. */
   private Position oldPosition;
-  /**
-   * The current position.
-   */
+  /** The current position. */
   private Position position;
-  /**
-   * The old rotation.
-   */
+  /** The old rotation. */
   private Rotation oldRotation;
-  /**
-   * The current rotation.
-   */
+  /** The current rotation. */
   private Rotation rotation;
-  /**
-   * The current id.
-   */
+  /** The current id. */
   private int id = -1;
-  /**
-   * The old id.
-   */
+  /** The old id. */
   private int oldId = -1;
 
-  /**
-   * Default public constructor.
-   */
+  /** Default public constructor. */
   public Entity() {
     position = new Position(0, 0, 0);
     rotation = new Rotation(0, 0);
@@ -110,8 +94,7 @@ public abstract class Entity {
    * @param id The id.
    */
   public void setId(int id) {
-    if (id != -1)
-      this.oldId = id;
+    if (id != -1) this.oldId = id;
     this.id = id;
   }
 
@@ -178,9 +161,7 @@ public abstract class Entity {
     return oldRotation;
   }
 
-  /**
-   * Resets the old position and rotation data.
-   */
+  /** Resets the old position and rotation data. */
   public void resetOldPositionAndRotation() {
     oldPosition = position;
     oldRotation = rotation;
@@ -194,5 +175,4 @@ public abstract class Entity {
   public abstract String getName();
 
   public abstract String getColoredName();
-
 }

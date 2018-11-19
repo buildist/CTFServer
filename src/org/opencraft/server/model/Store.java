@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -53,15 +53,21 @@ public class Store {
 
   public Store() {
     addItem("BigTNT", new BigTNTItem("BigTNT", 70), "bigtnt");
-    //addItem("Ghost", new GhostItem("Ghost", 275), "g");
-    addItem("Rocket", new SimpleItem("Rocket", 50, "Shoots a rocket from your face",
-        RocketCommand.getCommand()), "r");
-    addItem("Grenade", new SimpleItem("Grenade", 20, "Throwable TNT", GrenadeCommand.getCommand()
-    ), "gr");
-    addItem("Line", new SimpleItem("Line", 30, "Builds a bridge", LineCommand.getCommand()),
-        "line");
-    addItem("Creeper", new SimpleItem("Creeper", 40, "Makes you explode", CreeperCommand
-        .getCommand()), "cr");
+    // addItem("Ghost", new GhostItem("Ghost", 275), "g");
+    addItem(
+        "Rocket",
+        new SimpleItem("Rocket", 50, "Shoots a rocket from your face", RocketCommand.getCommand()),
+        "r");
+    addItem(
+        "Grenade",
+        new SimpleItem("Grenade", 20, "Throwable TNT", GrenadeCommand.getCommand()),
+        "gr");
+    addItem(
+        "Line", new SimpleItem("Line", 30, "Builds a bridge", LineCommand.getCommand()), "line");
+    addItem(
+        "Creeper",
+        new SimpleItem("Creeper", 40, "Makes you explode", CreeperCommand.getCommand()),
+        "cr");
   }
 
   public boolean buy(Player p, String itemname) {
@@ -85,8 +91,7 @@ public class Store {
   public void addItem(String name, StoreItem item, String command) {
     items.put(name, item);
     item.command = command;
-    World.getWorld().getGameMode().registerCommand(command, new
-        ActivateItemCommand(item));
+    World.getWorld().getGameMode().registerCommand(command, new ActivateItemCommand(item));
   }
 
   public Object[] getItems() {

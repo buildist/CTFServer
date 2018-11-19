@@ -26,27 +26,29 @@ package com.flowpowered.nbt.holder;
 import com.flowpowered.nbt.Tag;
 
 /**
- * Utility classes for field handling. Idiot Java doesn't allow concrete static methods in interfaces.
+ * Utility classes for field handling. Idiot Java doesn't allow concrete static methods in
+ * interfaces.
  */
 public class FieldUtils {
-    private FieldUtils() {
-    }
+  private FieldUtils() {}
 
-    /**
-     * Checks that a tag is not null and of the required type
-     *
-     * @param tag The tag to check
-     * @param type The type of tag required
-     * @param <T> The type parameter of {@code type}
-     * @return The casted tag
-     * @throws IllegalArgumentException if the tag is null or not of the required type
-     */
-    public static <T extends Tag<?>> T checkTagCast(Tag<?> tag, Class<T> type) throws IllegalArgumentException {
-        if (tag == null) {
-            throw new IllegalArgumentException("Expected tag of type " + type.getName() + ", was null");
-        } else if (!type.isInstance(tag)) {
-            throw new IllegalArgumentException("Expected tag to be a " + type.getName() + ", was a " + tag.getClass().getName());
-        }
-        return type.cast(tag);
+  /**
+   * Checks that a tag is not null and of the required type
+   *
+   * @param tag The tag to check
+   * @param type The type of tag required
+   * @param <T> The type parameter of {@code type}
+   * @return The casted tag
+   * @throws IllegalArgumentException if the tag is null or not of the required type
+   */
+  public static <T extends Tag<?>> T checkTagCast(Tag<?> tag, Class<T> type)
+      throws IllegalArgumentException {
+    if (tag == null) {
+      throw new IllegalArgumentException("Expected tag of type " + type.getName() + ", was null");
+    } else if (!type.isInstance(tag)) {
+      throw new IllegalArgumentException(
+          "Expected tag to be a " + type.getName() + ", was a " + tag.getClass().getName());
     }
+    return type.cast(tag);
+  }
 }

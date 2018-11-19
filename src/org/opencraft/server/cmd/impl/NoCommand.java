@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -48,9 +48,7 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
 public class NoCommand implements Command {
-  /**
-   * The instance of this command.
-   */
+  /** The instance of this command. */
   private static final NoCommand INSTANCE = new NoCommand();
 
   /**
@@ -77,43 +75,53 @@ public class NoCommand implements Command {
           }
         }
       }
-      final String message = player.getName() + " voted No: " + text + "\n\nCurrent rating: "
-          + MapRatings.getRating(mapName);
-      WebServer.run(new Runnable() {
-        @Override
-        public void run() {
-          try {
-          String urlMessage = URLEncoder.encode(message, "UTF-8");
-          Server.httpGet(Constants.URL_MAP_COMMENT + "&map=" + mapName + "&message=" + urlMessage);
-          } catch(Exception ex) {
-            Server.log(ex);
-          }
-        }
-      });
-    }
-    else {
+      final String message =
+          player.getName()
+              + " voted No: "
+              + text
+              + "\n\nCurrent rating: "
+              + MapRatings.getRating(mapName);
+      WebServer.run(
+          new Runnable() {
+            @Override
+            public void run() {
+              try {
+                String urlMessage = URLEncoder.encode(message, "UTF-8");
+                Server.httpGet(
+                    Constants.URL_MAP_COMMENT + "&map=" + mapName + "&message=" + urlMessage);
+              } catch (Exception ex) {
+                Server.log(ex);
+              }
+            }
+          });
+    } else {
       int requiredVotes = World.getWorld().getPlayerList().size() / 2;
-      if (World.getWorld().getPlayerList().size() % 2 != 0)
-        requiredVotes++;
-
-      else if (World.getWorld().getGameMode().rtvNoPlayers.contains(player
-          .getSession().getIP()))
+      if (World.getWorld().getPlayerList().size() % 2 != 0) requiredVotes++;
+      else if (World.getWorld().getGameMode().rtvNoPlayers.contains(player.getSession().getIP()))
         player.getActionSender().sendChatMessage("- &eYou have already voted.");
       else if (player.team == -1)
         player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
       else {
-        if (World.getWorld().getGameMode().rtvYesPlayers.contains(player.getSession
-            ().getIP())) {
+        if (World.getWorld().getGameMode().rtvYesPlayers.contains(player.getSession().getIP())) {
           World.getWorld().getGameMode().rtvVotes--;
-          World.getWorld().getGameMode().rtvYesPlayers.remove(player.getSession()
-              .getIP());
+          World.getWorld().getGameMode().rtvYesPlayers.remove(player.getSession().getIP());
         }
 
         int votes = --World.getWorld().getGameMode().rtvVotes;
-        World.getWorld().broadcast("- " + player.getColoredName() + " &3doesn't want to rock the " +
-            "vote &f(" + votes + " votes, " + requiredVotes + " required)");
-        World.getWorld().broadcast("- &3/rtv to vote, /nominate [mapname] to nominate a map, /no to" +
-            " stay on this map");
+        World.getWorld()
+            .broadcast(
+                "- "
+                    + player.getColoredName()
+                    + " &3doesn't want to rock the "
+                    + "vote &f("
+                    + votes
+                    + " votes, "
+                    + requiredVotes
+                    + " required)");
+        World.getWorld()
+            .broadcast(
+                "- &3/rtv to vote, /nominate [mapname] to nominate a map, /no to"
+                    + " stay on this map");
         World.getWorld().getGameMode().rtvNoPlayers.add(player.getSession().getIP());
 
         if (votes >= requiredVotes) {

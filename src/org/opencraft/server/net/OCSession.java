@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -41,15 +41,10 @@ import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.net.packet.Packet;
 
-/**
- * @author Mark Farrell The base class for all sessions .
- */
+/** @author Mark Farrell The base class for all sessions . */
 public abstract class OCSession extends Connectable {
 
-
-  /**
-   * The <code>IoSession</code> associated with this <code>MinecraftSession</code>.
-   */
+  /** The <code>IoSession</code> associated with this <code>MinecraftSession</code>. */
   protected final IoSession session;
 
   /**
@@ -61,17 +56,12 @@ public abstract class OCSession extends Connectable {
     this.session = session;
   }
 
-
-  /**
-   * Sets the state to authenticated.
-   */
+  /** Sets the state to authenticated. */
   public void setAuthenticated() {
     this.state = State.AUTHENTICATED;
   }
 
-  /**
-   * Sets the state to ready.
-   */
+  /** Sets the state to ready. */
   public void setReady() {
     this.state = State.READY;
   }
@@ -83,24 +73,21 @@ public abstract class OCSession extends Connectable {
    */
   public void send(Packet packet) {
     this.send(packet, session);
-    if (GameSettings.getBoolean("Debug") && packet.definition.getOpcode() != 8 && packet.definition.getOpcode() != 43) {
+    if (GameSettings.getBoolean("Debug")
+        && packet.definition.getOpcode() != 8
+        && packet.definition.getOpcode() != 43) {
       Server.d(packet.definition.getOpcode() + " --> " + session.getRemoteAddress());
       Server.d(packet.toString());
     }
   }
 
-  /**
-   * Closes this session.
-   */
+  /** Closes this session. */
   public void close() {
     session.close(false);
   }
 
-  /**
-   * Called when this session is to be destroyed, should release any resources.
-   */
+  /** Called when this session is to be destroyed, should release any resources. */
   public abstract void destroy();
-
 
   /**
    * Handles a packet.

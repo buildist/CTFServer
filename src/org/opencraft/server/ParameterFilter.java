@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -58,15 +58,13 @@ public class ParameterFilter extends Filter {
   }
 
   @Override
-  public void doFilter(HttpExchange exchange, Chain chain)
-      throws IOException {
+  public void doFilter(HttpExchange exchange, Chain chain) throws IOException {
     parseGetParameters(exchange);
     parsePostParameters(exchange);
     chain.doFilter(exchange);
   }
 
-  private void parseGetParameters(HttpExchange exchange)
-      throws UnsupportedEncodingException {
+  private void parseGetParameters(HttpExchange exchange) throws UnsupportedEncodingException {
 
     Map<String, Object> parameters = new HashMap<String, Object>();
     URI requestedUri = exchange.getRequestURI();
@@ -75,15 +73,12 @@ public class ParameterFilter extends Filter {
     exchange.setAttribute("parameters", parameters);
   }
 
-  private void parsePostParameters(HttpExchange exchange)
-      throws IOException {
+  private void parsePostParameters(HttpExchange exchange) throws IOException {
 
     if ("post".equalsIgnoreCase(exchange.getRequestMethod())) {
       @SuppressWarnings("unchecked")
-      Map<String, Object> parameters
-          = (Map<String, Object>) exchange.getAttribute("parameters");
-      InputStreamReader isr
-          = new InputStreamReader(exchange.getRequestBody(), "utf-8");
+      Map<String, Object> parameters = (Map<String, Object>) exchange.getAttribute("parameters");
+      InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), "utf-8");
       BufferedReader br = new BufferedReader(isr);
       String query = br.readLine();
       parseQuery(query, parameters);
@@ -103,13 +98,11 @@ public class ParameterFilter extends Filter {
         String key = null;
         String value = null;
         if (param.length > 0) {
-          key = URLDecoder.decode(param[0],
-              System.getProperty("file.encoding"));
+          key = URLDecoder.decode(param[0], System.getProperty("file.encoding"));
         }
 
         if (param.length > 1) {
-          value = URLDecoder.decode(param[1],
-              System.getProperty("file.encoding"));
+          value = URLDecoder.decode(param[1], System.getProperty("file.encoding"));
         }
 
         if (parameters.containsKey(key)) {

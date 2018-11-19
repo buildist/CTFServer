@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -55,15 +55,15 @@ public class BanIPCommand implements Command {
     return INSTANCE;
   }
 
-
   @Override
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
       if (params.getStringArgument(0).contains(".")) {
         Server.log(player.getName() + " IP banned " + params.getStringArgument(0));
         Server.banIP(params.getStringArgument(0));
-        player.getActionSender().sendChatMessage(params.getStringArgument(0) + " has been IP " +
-            "banned.");
+        player
+            .getActionSender()
+            .sendChatMessage(params.getStringArgument(0) + " has been IP " + "banned.");
       } else
         for (Player other : World.getWorld().getPlayerList().getPlayers()) {
           if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
@@ -71,13 +71,13 @@ public class BanIPCommand implements Command {
             Server.log(player.getName() + " IP banned " + other.getName());
             other.getActionSender().sendLoginFailure("You were banned!");
             other.getSession().close();
-            player.getActionSender().sendChatMessage(other.getSession().getIP() + " has been IP " +
-                "banned.");
+            player
+                .getActionSender()
+                .sendChatMessage(other.getSession().getIP() + " has been IP " + "banned.");
             World.getWorld().broadcast("- " + other.parseName() + " has been banned!");
             return;
           }
         }
-    } else
-      player.getActionSender().sendChatMessage("You need to be op to do that!");
+    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
   }
 }

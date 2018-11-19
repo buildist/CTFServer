@@ -27,16 +27,17 @@ import com.flowpowered.nbt.ByteTag;
 import com.flowpowered.nbt.Tag;
 
 /**
- * Field to represent a Boolean - These are a bit of a special case in NBT since they're just bytes, which is a PITA
+ * Field to represent a Boolean - These are a bit of a special case in NBT since they're just bytes,
+ * which is a PITA
  */
 public class BooleanField implements Field<Boolean> {
-    public static final BooleanField INSTANCE = new BooleanField();
+  public static final BooleanField INSTANCE = new BooleanField();
 
-    public Boolean getValue(Tag<?> tag) throws IllegalArgumentException {
-        return FieldUtils.checkTagCast(tag, ByteTag.class).getBooleanValue();
-    }
+  public Boolean getValue(Tag<?> tag) throws IllegalArgumentException {
+    return FieldUtils.checkTagCast(tag, ByteTag.class).getBooleanValue();
+  }
 
-    public Tag<?> getValue(String name, Boolean value) {
-        return new ByteTag(name, value);
-    }
+  public Tag<?> getValue(String name, Boolean value) {
+    return new ByteTag(name, value);
+  }
 }

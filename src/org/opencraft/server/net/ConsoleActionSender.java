@@ -10,7 +10,6 @@ public class ConsoleActionSender extends ActionSender {
 
   @Override
   public void sendChatMessage(String message, int messageType) {
-    if (messageType == 0)
-      Server.log(">> " + message);
+    if (messageType == 0) Server.log(">> " + message);
   }
 }

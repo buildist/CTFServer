@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.net;
 
-
 import org.apache.mina.core.session.IoSession;
 import org.opencraft.server.Constants;
 import org.opencraft.server.model.Player;
@@ -53,12 +52,10 @@ import java.util.HashMap;
  */
 public final class MinecraftSession extends OCSession {
 
-
   private final ActionSender actionSender = new ActionSender(this);
-  /**
-   * The action sender associated with this session.
-   */
+  /** The action sender associated with this session. */
   public boolean levelSent = false;
+
   public boolean ccUser = false;
   public String client = "Minecraft.net";
   public String username;
@@ -71,13 +68,8 @@ public final class MinecraftSession extends OCSession {
   public int customBlockLevel = 0;
   private String ip;
 
-
-
-  /**
-   * The player associated with this session.
-   */
+  /** The player associated with this session. */
   private Player player;
-
 
   public MinecraftSession(IoSession sess) {
     super(sess);
@@ -127,15 +119,11 @@ public final class MinecraftSession extends OCSession {
     PersistingHandlerManager.getPacketHandlerManager().handlePacket(this, packet);
   }
 
-
-  /**
-   * Called when this session is to be destroyed, should release any resources.
-   */
+  /** Called when this session is to be destroyed, should release any resources. */
   @Override
   public void destroy() {
     World.getWorld().unregister(this);
   }
-
 
   public boolean isAuthenticated() {
     return player != null;
@@ -144,16 +132,17 @@ public final class MinecraftSession extends OCSession {
   public boolean isExtensionSupported(String name) {
     return isExtensionSupported(name, 1);
   }
-  
+
   public boolean isExtensionSupported(String name, int version) {
-      return ccUser && supportedCPEExtensions.containsKey(name)
-          && supportedCPEExtensions.get(name) == version;
+    return ccUser
+        && supportedCPEExtensions.containsKey(name)
+        && supportedCPEExtensions.get(name) == version;
   }
 
   public void addExtension(String name) {
     addExtension(name, 1);
   }
-  
+
   public void addExtension(String name, int version) {
     supportedCPEExtensions.put(name, version);
   }

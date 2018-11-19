@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.model;
 
-
 /**
  * Represents an individual block type.
  *
@@ -44,66 +43,47 @@ package org.opencraft.server.model;
  */
 public class BlockDefinition {
 
-  /**
-   * The block name.
-   */
+  /** The block name. */
   private String name;
-  /**
-   * The block ID.
-   */
+  /** The block ID. */
   private int bid;
-  /**
-   * The block's solidity.
-   */
+  /** The block's solidity. */
   private boolean solid;
-  /**
-   * The block's fluidity.
-   */
+  /** The block's fluidity. */
   private boolean liquid;
-  /**
-   * The block's transparency.
-   */
+  /** The block's transparency. */
   private boolean blocksLight;
-  /**
-   * The block's size.
-   */
+  /** The block's size. */
   private boolean halfBlock;
-  /**
-   * The block's "full" version if it is a halfblock.
-   */
+  /** The block's "full" version if it is a halfblock. */
   private int fullCounterpart;
-  /**
-   * The block's behaviour, as a string.
-   */
+  /** The block's behaviour, as a string. */
   private String behaviourName;
-  /**
-   * The block's behaviour.
-   */
+  /** The block's behaviour. */
   private transient BlockBehaviour behaviour;
-  /**
-   * The block's periodic physics check state.
-   */
+  /** The block's periodic physics check state. */
   private boolean doesThink;
-  /**
-   * Whether this block is a plant (whether it cares about the blocks above it)
-   */
+  /** Whether this block is a plant (whether it cares about the blocks above it) */
   private boolean isPlant;
-  /**
-   * The timer, in milliseconds, on which this block thinks.
-   */
+  /** The timer, in milliseconds, on which this block thinks. */
   private long thinkTimer;
 
-  /**
-   * Constructor.
-   */
-  public BlockDefinition() {
+  /** Constructor. */
+  public BlockDefinition() {}
 
-  }
-
-  public BlockDefinition(String name, int bid, boolean solid, boolean liquid, boolean
-      blocksLight, boolean halfBlock, boolean doesThink, boolean isPlant, long thinkTimer, int
-      fullCounterpart, String behaviourName) throws InstantiationException,
-      IllegalAccessException, ClassNotFoundException {
+  public BlockDefinition(
+      String name,
+      int bid,
+      boolean solid,
+      boolean liquid,
+      boolean blocksLight,
+      boolean halfBlock,
+      boolean doesThink,
+      boolean isPlant,
+      long thinkTimer,
+      int fullCounterpart,
+      String behaviourName)
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
     this.name = name;
     this.bid = bid;
     this.solid = solid;
@@ -135,10 +115,20 @@ public class BlockDefinition {
    *
    * @return A resolved object.
    */
-  private Object readResolve() throws InstantiationException, IllegalAccessException,
-      ClassNotFoundException {
-    return new BlockDefinition(name, bid, solid, liquid, blocksLight, halfBlock, doesThink,
-        isPlant, thinkTimer, fullCounterpart, behaviourName);
+  private Object readResolve()
+      throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+    return new BlockDefinition(
+        name,
+        bid,
+        solid,
+        liquid,
+        blocksLight,
+        halfBlock,
+        doesThink,
+        isPlant,
+        thinkTimer,
+        fullCounterpart,
+        behaviourName);
   }
 
   /**
@@ -208,9 +198,9 @@ public class BlockDefinition {
    * Apply passive physics.
    *
    * @param level The level.
-   * @param x     The x coordinate.
-   * @param y     The y coordinate.
-   * @param z     The z coordinate.
+   * @param x The x coordinate.
+   * @param y The y coordinate.
+   * @param z The z coordinate.
    */
   public void behavePassive(Level level, int x, int y, int z) {
     if (behaviour == null) {
@@ -223,9 +213,9 @@ public class BlockDefinition {
    * Apply physics on block destruction.
    *
    * @param level The level.
-   * @param x     The x coordinate.
-   * @param y     The y coordinate.
-   * @param z     The z coordinate.
+   * @param x The x coordinate.
+   * @param y The y coordinate.
+   * @param z The z coordinate.
    */
   public void behaveDestruct(Level level, int x, int y, int z) {
     if (behaviour == null) {
@@ -238,9 +228,9 @@ public class BlockDefinition {
    * Apply periodic physics.
    *
    * @param level The level.
-   * @param x     The x coordinate.
-   * @param y     The y coordinate.
-   * @param z     The z coordinate.
+   * @param x The x coordinate.
+   * @param y The y coordinate.
+   * @param z The z coordinate.
    */
   public void behaveSchedule(Level level, int x, int y, int z) {
     if (behaviour == null) {

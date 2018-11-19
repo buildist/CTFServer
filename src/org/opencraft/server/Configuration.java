@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -51,47 +51,29 @@ import java.util.Properties;
  */
 public class Configuration {
 
-  /**
-   * The configuration instance.
-   */
+  /** The configuration instance. */
   private static Configuration configuration;
-  /**
-   * The filename of the map file.
-   */
+  /** The filename of the map file. */
   private static String mapFilename;
-  /**
-   * The server name.
-   */
+  /** The server name. */
   private String name;
+
   private String longName;
-  /**
-   * The server MOTD.
-   */
+  /** The server MOTD. */
   private String message;
-  /**
-   * The maximum allowed player count.
-   */
+  /** The maximum allowed player count. */
   private int maximumPlayers;
-  /**
-   * The radius of a sponge's effectiveness.
-   */
+  /** The radius of a sponge's effectiveness. */
   private int spongeRadius;
-  /**
-   * Public server flag.
-   */
+  /** Public server flag. */
   private boolean publicServer;
-  /**
-   * Verify names flag.
-   */
+  /** Verify names flag. */
   private boolean verifyNames;
-  /**
-   * The game mode.
-   */
+  /** The game mode. */
   private String gameMode;
-  /**
-   * The script name.
-   */
+  /** The script name. */
   private String scriptName;
+
   private String statsPostURL;
   private String welcomeMessage;
   private int rankLimit;
@@ -134,7 +116,7 @@ public class Configuration {
    * Reads and parses the configuration.
    *
    * @throws FileNotFoundException if the configuration file is not present.
-   * @throws IOException           if an I/O error occurs.
+   * @throws IOException if an I/O error occurs.
    */
   public static void readConfiguration() throws FileNotFoundException, IOException {
     synchronized (Configuration.class) {

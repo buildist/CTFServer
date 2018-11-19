@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.model;
 
-
 /**
  * Represents a location in the game world.
  *
@@ -44,19 +43,13 @@ package org.opencraft.server.model;
  */
 public final class Position {
 
-  /**
-   * X position.
-   */
+  /** X position. */
   private final int x;
 
-  /**
-   * Y position.
-   */
+  /** Y position. */
   private final int y;
 
-  /**
-   * Z position.
-   */
+  /** Z position. */
   private final int z;
 
   /**
@@ -100,13 +93,13 @@ public final class Position {
   }
 
   public Position toBlockPos() {
-    return new Position(Math.round((x - 16) / 32f), Math.round((y - 16) / 32f), Math.round((z -
-        16) / 32f));
+    return new Position(
+        Math.round((x - 16) / 32f), Math.round((y - 16) / 32f), Math.round((z - 16) / 32f));
   }
 
   public Position toFloatPos() {
-    return new Position(Math.round(x * 32f + 16), Math.round(y * 32f + 16), Math.round(z * 32f +
-        16));
+    return new Position(
+        Math.round(x * 32f + 16), Math.round(y * 32f + 16), Math.round(z * 32f + 16));
   }
 
   public double dist2(Position blockPos) {
@@ -122,8 +115,7 @@ public final class Position {
 
   @Override
   public boolean equals(Object obj) {
-    if (!(obj instanceof Position))
-      return false;
+    if (!(obj instanceof Position)) return false;
     Position p = (Position) obj;
     return p.x == x && p.y == y && p.z == z;
   }

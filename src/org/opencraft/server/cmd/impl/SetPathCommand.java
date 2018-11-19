@@ -22,17 +22,18 @@ public class SetPathCommand implements Command {
         player.setPayloadPath = false;
         String positions = "";
         for (Position position : player.payloadPathPositions) {
-          positions += position.getX()+","+position.getY()+","+position.getZ()+" ";
+          positions += position.getX() + "," + position.getY() + "," + position.getZ() + " ";
         }
         MapSetCommand.doPropertyChange("payloadPath", positions);
         World.getWorld().getGameMode().updatePayload(0);
       } else {
         player.setPayloadPath = true;
         player.payloadPathPositions.clear();
-        player.getActionSender().sendChatMessage(
-            "- &eWalk from the start point to the end point. Use /setpath again when done.");
+        player
+            .getActionSender()
+            .sendChatMessage(
+                "- &eWalk from the start point to the end point. Use /setpath again when done.");
       }
-    } else
-      player.getActionSender().sendChatMessage("You need to be op to do that!");
+    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
   }
 }

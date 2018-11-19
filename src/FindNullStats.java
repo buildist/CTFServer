@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -40,30 +40,25 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
-/**
- * Looks for broken player attribute files.
- */
-
+/** Looks for broken player attribute files. */
 public class FindNullStats {
   public static void main(String[] args) {
     File d = new File("./savedGames");
     for (String filename : d.list()) {
       try {
         String contents = readFileAsString("./savedGames/" + filename);
-        if (!contents.contains("wins") || !contents.contains("captures") || !contents.contains
-            ("mines"))
-          System.out.println(filename);
+        if (!contents.contains("wins")
+            || !contents.contains("captures")
+            || !contents.contains("mines")) System.out.println(filename);
       } catch (IOException ex) {
         System.err.println("Error reading " + filename);
       }
     }
   }
 
-  public static String readFileAsString(String filePath)
-      throws java.io.IOException {
+  public static String readFileAsString(String filePath) throws java.io.IOException {
     StringBuilder fileData = new StringBuilder(1000);
-    BufferedReader reader = new BufferedReader(
-        new FileReader(filePath));
+    BufferedReader reader = new BufferedReader(new FileReader(filePath));
     char[] buf = new char[1024];
     int numRead = 0;
     while ((numRead = reader.read(buf)) != -1) {

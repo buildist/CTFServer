@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.io;
-
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -57,18 +56,12 @@ import java.io.FileOutputStream;
  */
 public final class PersistenceManager {
 
-  /**
-   * The singleton instance.
-   */
+  /** The singleton instance. */
   private static final PersistenceManager INSTANCE = new PersistenceManager();
-  /**
-   * The XStream object.
-   */
+  /** The XStream object. */
   private final XStream xstream = new XStream(new DomDriver());
 
-  /**
-   * Initializes the persistence manager.
-   */
+  /** Initializes the persistence manager. */
   private PersistenceManager() {
     xstream.alias("packets", PacketManager.class);
     xstream.alias("packet", PacketDefinition.class);
@@ -104,7 +97,7 @@ public final class PersistenceManager {
    * Saves an object to an XML file.
    *
    * @param file The file.
-   * @param o    The object.
+   * @param o The object.
    */
   public void save(String file, Object o) {
     try {
@@ -122,5 +115,4 @@ public final class PersistenceManager {
   public XStream getXStream() {
     return xstream;
   }
-
 }

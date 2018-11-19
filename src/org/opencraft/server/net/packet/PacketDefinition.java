@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.net.packet;
 
-
 /**
  * Represents a type of packet.
  *
@@ -44,31 +43,23 @@ package org.opencraft.server.net.packet;
  */
 public final class PacketDefinition {
 
-  /**
-   * The opcode of this packet.
-   */
+  /** The opcode of this packet. */
   private final int opcode;
 
-  /**
-   * The name of this packet.
-   */
+  /** The name of this packet. */
   private final String name;
 
-  /**
-   * The fields in this packet.
-   */
+  /** The fields in this packet. */
   private final PacketField[] fields;
 
-  /**
-   * The length of this packet.
-   */
+  /** The length of this packet. */
   private final transient int length;
 
   /**
    * Creates the packet definition.
    *
    * @param opcode The opcode.
-   * @param name   The name.
+   * @param name The name.
    * @param fields The fields.
    */
   public PacketDefinition(int opcode, String name, PacketField[] fields) {
@@ -128,5 +119,4 @@ public final class PacketDefinition {
   public int getLength() {
     return length;
   }
-
 }
