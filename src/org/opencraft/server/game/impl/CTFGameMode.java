@@ -1268,12 +1268,19 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
     if (getMode() == Level.CTF && tournamentGameStarted) {
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
-        if (t.getPosition().getX() > x - 64
-            && t.getPosition().getX() < x + 64
-            && t.getPosition().getY() > y - 64
-            && t.getPosition().getY() < y + 64
-            && t.getPosition().getZ() > z - 64
-            && t.getPosition().getZ() < z + 64) {
+        Position op = t.getPosition();
+        // Blocks are 32 "chunks" on a side... I think. Don't quote me on that.
+        // 49 blocks in each direction except up because you have to account for feet
+        // 49 is enough to not be able to tag through walls, while being as nice as possible
+        // to laggy players. 57 is just enough in the z direction to not be able to tag through
+        // 2 up jumping into roof.
+        // These numbers were determined experimentally.
+        if (op.getX() > x - 49
+            && op.getX() < x + 49
+            && op.getY() > y - 49
+            && op.getY() < y + 49
+            && op.getZ() > z - 57
+            && op.getZ() < z + 57) {
           processTag(p, t, x, y, z);
         }
       }
@@ -1286,7 +1293,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     if (t1 != -1 && t2 != -1) {
       Player tagged = null;
       Player tagger = null;
-      int x2 = Math.round((x - 16) / 32);
+      int x2 = Math.round((float) (x - 16) / 32);
       if ((x2 > map.divider && t1 == 0) || (x2 < map.divider && t1 == 1) && t2 != t1) {
         tagged = p1;
         tagger = p2;
