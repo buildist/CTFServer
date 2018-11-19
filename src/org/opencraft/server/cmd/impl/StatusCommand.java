@@ -98,9 +98,9 @@ public class StatusCommand implements Command {
       player.getActionSender().sendChatMessage("- &c" + othermsg);
     player.getActionSender().sendChatMessage("&a" + hasOtherFlag + " has the other flag.");
     player.getActionSender().sendChatMessage("&a" + hasOurFlag + " has your flag.");
-    player.getActionSender().sendChatMessage("&cRed: " + ((CTFGameMode) World.getWorld()
-        .getGameMode()).getRedCaptures() + " -- Blue: " + ((CTFGameMode) World.getWorld()
-        .getGameMode()).getBlueCaptures());
+    player.getActionSender().sendChatMessage("&cRed: " + World.getWorld()
+        .getGameMode().getRedCaptures() + " -- Blue: " + World.getWorld()
+        .getGameMode().getBlueCaptures());
   }
 
 }

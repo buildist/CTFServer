@@ -65,8 +65,8 @@ public class NominateCommand implements Command {
       if (params.getArgumentCount() == 1) {
         String mapname = params.getStringArgument(0);
         if (!player.hasNominated && World.getWorld().getGameMode().rtvVotes > 0
-            && MapController.getLevel(mapname) != null && !((CTFGameMode) World.getWorld()
-            .getGameMode()).nominatedMaps.contains(mapname)
+            && MapController.getLevel(mapname) != null && !World.getWorld()
+            .getGameMode().nominatedMaps.contains(mapname)
             && !mapname.equals(World.getWorld().getGameMode().currentMap) &&
             !mapname.equals(World.getWorld().getGameMode().previousMap)) {
           World.getWorld().getGameMode().nominatedMaps.add(mapname);

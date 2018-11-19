@@ -80,7 +80,7 @@ public final class World {
       throw new ExceptionInInitializerError(t);
     }
     INSTANCE = w;
-    ((CTFGameMode) w.gameMode).startGame(null);
+    w.gameMode.startGame(null);
   }
 
   /**

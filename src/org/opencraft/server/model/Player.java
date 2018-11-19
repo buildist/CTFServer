@@ -361,6 +361,7 @@ public class Player extends Entity {
     attacker.setIfMax("maxKillstreakEnded", killstreak);
     incStat("deaths");
     World.getWorld().getGameMode().checkForUnbalance(this);
+    flamethrowerEnabled = false;
     if (this.bountyMode) {
       if (this.team == -1) {
         this.bountiedBy.addStorePoints(this.bountyAmount);
@@ -463,7 +464,7 @@ public class Player extends Entity {
   }
 
   public void autoJoinTeam() {
-    CTFGameMode ctf = (CTFGameMode) World.getWorld().getGameMode();
+    CTFGameMode ctf = World.getWorld().getGameMode();
     String team;
     if (ctf.redPlayers > ctf.bluePlayers)
       team = "blue";
@@ -494,7 +495,7 @@ public class Player extends Entity {
       isVisible = true;
     }
     Level l = World.getWorld().getLevel();
-    CTFGameMode ctf = (CTFGameMode) World.getWorld().getGameMode();
+    CTFGameMode ctf = World.getWorld().getGameMode();
     ctf.updateLeaderboard();
     if (ctf.voting)
       return;
@@ -639,7 +640,10 @@ public class Player extends Entity {
     World.getWorld().broadcast("- &e" + getName() + " was kicked for hacking!");
   }
 
-  public void sendToTeamSpawn(final boolean delay) {
+  public void sendToTeamSpawn() {
+    // If player dies while flamethrower is on, don't leave remnants on the map.
+    if (flamethrowerEnabled)
+      World.getWorld().getLevel().clearFire(linePosition, lineRotation);
     final String teamname;
     if (team == 0)
       teamname = "red";
@@ -649,10 +653,6 @@ public class Player extends Entity {
       teamname = "spec";
     getActionSender().sendTeleport(World.getWorld().getLevel().getTeamSpawn(teamname), new
         Rotation(team == 0 ? 64 : 192, 0));
-  }
-
-  public void sendToTeamSpawn() {
-    sendToTeamSpawn();
   }
 
   /**

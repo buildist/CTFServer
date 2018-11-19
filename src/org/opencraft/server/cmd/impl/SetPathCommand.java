@@ -25,7 +25,7 @@ public class SetPathCommand implements Command {
           positions += position.getX()+","+position.getY()+","+position.getZ()+" ";
         }
         MapSetCommand.doPropertyChange("payloadPath", positions);
-        ((CTFGameMode)World.getWorld().getGameMode()).updatePayload(0);
+        World.getWorld().getGameMode().updatePayload(0);
       } else {
         player.setPayloadPath = true;
         player.payloadPathPositions.clear();

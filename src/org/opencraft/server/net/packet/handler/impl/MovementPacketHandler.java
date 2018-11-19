@@ -99,7 +99,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
         World.getWorld().broadcast("- " + player.parseName() + " died!");
         player.sendToTeamSpawn();
         if (player.hasFlag) {
-          CTFGameMode ctf = (CTFGameMode) World.getWorld().getGameMode();
+          CTFGameMode ctf = World.getWorld().getGameMode();
           ctf.dropFlag(player, true, false);
         }
       }

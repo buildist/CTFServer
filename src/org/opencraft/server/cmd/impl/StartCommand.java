@@ -24,8 +24,8 @@ public class StartCommand implements Command {
           try {
             Thread.sleep(10 * 1000);
           } catch (InterruptedException ex) {}
-          ((CTFGameMode)World.getWorld().getGameMode()).tournamentGameStarted = true;
-          ((CTFGameMode)World.getWorld().getGameMode()).gameStartTime = System.currentTimeMillis();
+          World.getWorld().getGameMode().tournamentGameStarted = true;
+          World.getWorld().getGameMode().gameStartTime = System.currentTimeMillis();
           for (Player other : World.getWorld().getPlayerList().getPlayers()) {
             if (other.team != -1) {
               other.sendToTeamSpawn();
