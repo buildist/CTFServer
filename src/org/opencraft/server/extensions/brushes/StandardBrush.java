@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.extensions.brushes;
 
-
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 
@@ -45,7 +44,6 @@ import org.opencraft.server.model.Player;
  *
  * @author S�ren Enevoldsen
  */
-
 public class StandardBrush extends BrushAdapter {
 
   public StandardBrush() {
@@ -57,9 +55,8 @@ public class StandardBrush extends BrushAdapter {
   }
 
   @Override
-  protected void paintBlocks(Player player, Level level, int x, int y, int z, boolean add, int
-      type) {
-    if ((positionIsBuildable(x, y, z) == add))
-      level.setBlock(x, y, z, type);
+  protected void paintBlocks(
+      Player player, Level level, int x, int y, int z, boolean add, int type) {
+    if ((positionIsBuildable(x, y, z) == add)) level.setBlock(x, y, z, type);
   }
 }

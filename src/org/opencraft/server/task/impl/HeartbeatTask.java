@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.task.impl;
-
 
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
@@ -56,14 +55,10 @@ import java.util.Map;
  */
 public class HeartbeatTask extends ScheduledTask {
 
-  /**
-   * The delay.
-   */
+  /** The delay. */
   private static final long DELAY = 30000;
 
-  /**
-   * Creates the heartbeat task with a 45s delay.
-   */
+  /** Creates the heartbeat task with a 45s delay. */
   public HeartbeatTask() {
     super(0);
   }
@@ -74,11 +69,10 @@ public class HeartbeatTask extends ScheduledTask {
       setDelay(DELAY);
     }
     final int players;
-    if (PlayerCommand.playerCount == 0 || PlayerCommand.playerCount < World.getWorld()
-        .getPlayerList().size())
+    if (PlayerCommand.playerCount == 0
+        || PlayerCommand.playerCount < World.getWorld().getPlayerList().size())
       players = World.getWorld().getPlayerList().size();
-    else
-      players = PlayerCommand.playerCount;
+    else players = PlayerCommand.playerCount;
     final Map<String, String> parameters = new HashMap<String, String>();
     parameters.put("users", String.valueOf(players));
     parameters.put("max", String.valueOf(Configuration.getConfiguration().getMaximumPlayers()));
@@ -87,20 +81,31 @@ public class HeartbeatTask extends ScheduledTask {
     parameters.put("salt", String.valueOf(HeartbeatManager.getHeartbeatManager().getSalt()));
     parameters.put("version", String.valueOf(Constants.PROTOCOL_VERSION));
     parameters.put("software", Constants.VERSION);
-    new Thread(new Runnable() {
-      public void run() {
-        String name = Configuration.getConfiguration().getLongName().replace("_m", World.getWorld
-            ().getLevel().id);
-        HeartbeatManager.getHeartbeatManager().sendHeartbeat("http://www.classicube" +
-            ".net/server/heartbeat", parameters, name);
-      }
-    }).start();
-    new Thread(new Runnable() {
-      public void run() {
-        if (!GameSettings.getBoolean("Tournament"))
-          Server.httpGet(Constants.URL_SERVER_STATUS + "?status[players]=" + World.getWorld()
-              .getPlayerList().size() + "&status[map]=" + World.getWorld().getLevel().id);
-      }
-    }).start();
+    new Thread(
+            new Runnable() {
+              public void run() {
+                String name =
+                    Configuration.getConfiguration()
+                        .getLongName()
+                        .replace("_m", World.getWorld().getLevel().id);
+                HeartbeatManager.getHeartbeatManager()
+                    .sendHeartbeat(
+                        "http://www.classicube" + ".net/server/heartbeat", parameters, name);
+              }
+            })
+        .start();
+    new Thread(
+            new Runnable() {
+              public void run() {
+                if (!GameSettings.getBoolean("Tournament"))
+                  Server.httpGet(
+                      Constants.URL_SERVER_STATUS
+                          + "?status[players]="
+                          + World.getWorld().getPlayerList().size()
+                          + "&status[map]="
+                          + World.getWorld().getLevel().id);
+              }
+            })
+        .start();
   }
 }

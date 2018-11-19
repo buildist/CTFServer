@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.model;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.CTFGameMode;
@@ -143,6 +144,7 @@ public class Player extends Entity {
   private ActionSender actionSender = null;
   private Player instance;
   private Thread followThread;
+  private AtomicBoolean follow = new AtomicBoolean(false);
   public ChatMode chatMode = ChatMode.DEFAULT;
   public Player chatPlayer;
   public boolean sendCommandLog = false;
@@ -324,21 +326,28 @@ public class Player extends Entity {
   }
 
   public void follow(final Player p) {
-    if (p == null && followThread != null) followThread.stop();
-    else {
-      if (followThread != null) followThread.stop();
+    if (p == null && followThread != null) follow.set(false);
+    else if (p != null) {
+      if (followThread != null) {
+        follow.set(false);
+        followThread.interrupt();
+        try {
+          followThread.join(1);
+        } catch (InterruptedException ex) {
+          return;
+        }
+      }
+      follow.set(true);
       followThread =
           new Thread(
-              new Runnable() {
-                public void run() {
-                  while (true) {
-                    Position pos = p.getPosition();
-                    Rotation r = p.getRotation();
-                    try {
-                      Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
-                    }
-                    getActionSender().sendTeleport(pos, r);
+              () -> {
+                while (follow.get()) {
+                  Position pos = p.getPosition();
+                  Rotation r = p.getRotation();
+                  getActionSender().sendTeleport(pos, r);
+                  try {
+                    Thread.sleep(1000);
+                  } catch (InterruptedException ex) {
                   }
                 }
               });

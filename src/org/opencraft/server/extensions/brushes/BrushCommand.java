@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -44,19 +44,14 @@ import org.opencraft.server.model.Player;
  * @author S�ren Enevoldsen
  * @author Graham Edgecombe
  */
-
 public final class BrushCommand implements Command {
 
-  /**
-   * The instance of this command.
-   */
+  /** The instance of this command. */
   private static final BrushCommand INSTANCE = new BrushCommand();
 
-  /**
-   * Default private constructor.
-   */
+  /** Default private constructor. */
   private BrushCommand() {
-        /* empty */
+    /* empty */
   }
 
   /**
@@ -85,8 +80,7 @@ public final class BrushCommand implements Command {
       if (action.equals("default") || action.equals("standard")) {
         player.setAttribute("brush", new StandardBrush());
         player.getActionSender().sendChatMessage("Now using standard brush");
-      } else
-        usage(player);
+      } else usage(player);
     }
 
     // If no brush then return
@@ -114,8 +108,7 @@ public final class BrushCommand implements Command {
         } else if (onOff.equals("0")) {
           ((Brush) player.getAttribute("brush")).useForDelete(false);
           player.getActionSender().sendChatMessage("Using standard brush to delete");
-        } else
-          player.getActionSender().sendChatMessage("/brush delete [1|0]");
+        } else player.getActionSender().sendChatMessage("/brush delete [1|0]");
       } else if (action.equals("type")) {
         String brush = parameters.getStringArgument(1).toLowerCase();
         int bRadius = ((Brush) player.getAttribute("brush")).getRadius();
@@ -123,16 +116,11 @@ public final class BrushCommand implements Command {
         if (player.getAttribute("brush").getClass() != StandardBrush.class)
           delete = ((Brush) player.getAttribute("brush")).getUseForDelete();
         Brush newBrush;
-        if (brush.equals("square"))
-          newBrush = new SquareBrush();
-        else if (brush.equals("diamond"))
-          newBrush = new DiamondBrush();
-        else if (brush.equals("line"))
-          newBrush = new LineBrush();
-        else if (brush.equals("flat"))
-          newBrush = new FlatBrush();
-        else if (brush.equals("box"))
-          newBrush = new BoxBrush();
+        if (brush.equals("square")) newBrush = new SquareBrush();
+        else if (brush.equals("diamond")) newBrush = new DiamondBrush();
+        else if (brush.equals("line")) newBrush = new LineBrush();
+        else if (brush.equals("flat")) newBrush = new FlatBrush();
+        else if (brush.equals("box")) newBrush = new BoxBrush();
         else {
           player.getActionSender().sendChatMessage("/brush type [square|diamond|line|flat]");
           return;
@@ -141,8 +129,7 @@ public final class BrushCommand implements Command {
         newBrush.useForDelete(delete);
         player.setAttribute("brush", newBrush);
         player.getActionSender().sendChatMessage("Brush type changed to " + brush);
-      } else
-        usage(player);
+      } else usage(player);
 
     } else if (parameters.getArgumentCount() == 3) {
       if (action.equals("dim")) {
@@ -162,10 +149,8 @@ public final class BrushCommand implements Command {
           brush.setWidth(newSize);
         } else if (axis.equals("height")) {
           brush.setHeight(newSize);
-        } else
-          player.getActionSender().sendChatMessage("/brush dim [width|height|length] x");
-      } else
-        usage(player);
+        } else player.getActionSender().sendChatMessage("/brush dim [width|height|length] x");
+      } else usage(player);
     } else if (parameters.getArgumentCount() == 4) {
       if (action.equals("dim")) {
         int w, h, l;
@@ -183,7 +168,6 @@ public final class BrushCommand implements Command {
         brush.setHeight(h);
         brush.setLength(l);
       }
-    } else
-      usage(player);
+    } else usage(player);
   }
 }

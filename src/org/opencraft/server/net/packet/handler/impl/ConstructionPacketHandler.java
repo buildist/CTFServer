@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.net.packet.handler.impl;
-
 
 import org.opencraft.server.Server;
 import org.opencraft.server.model.Player;
@@ -60,8 +59,7 @@ public class ConstructionPacketHandler implements PacketHandler<MinecraftSession
     Player p = session.getPlayer();
     long time = new Date().getTime() - p.lastBlockTimestamp;
     int type = Server.getUnsigned(packet.getNumericField("type").intValue());
-    if (time < 5 && type == 22)
-      p.kickForHacking();
+    if (time < 5 && type == 22) p.kickForHacking();
     else {
       int x = packet.getNumericField("x").intValue();
       int y = packet.getNumericField("y").intValue();

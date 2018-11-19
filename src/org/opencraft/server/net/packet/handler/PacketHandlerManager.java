@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.net.packet.handler;
 
-
 import org.opencraft.server.Server;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.OCSession;
@@ -52,21 +51,17 @@ import org.opencraft.server.game.impl.GameSettings;
  */
 public class PacketHandlerManager<SessionType extends OCSession> {
 
-  /**
-   * An array of packet handlers.
-   */
+  /** An array of packet handlers. */
   private PacketHandler[] handlers = new PacketHandler[256];
 
-  /**
-   * Default private constructor.
-   */
+  /** Default private constructor. */
   @SuppressWarnings("unchecked")
   protected PacketHandlerManager(Map<Integer, String> map) {
     try {
       Map<Integer, String> handlers = map;
       for (Map.Entry<Integer, String> handler : handlers.entrySet()) {
-        this.handlers[handler.getKey()] = (PacketHandler) Class.forName(handler.getValue())
-            .newInstance();
+        this.handlers[handler.getKey()] =
+            (PacketHandler) Class.forName(handler.getValue()).newInstance();
       }
     } catch (Exception ex) {
       throw new ExceptionInInitializerError(ex);
@@ -77,11 +72,13 @@ public class PacketHandlerManager<SessionType extends OCSession> {
    * Handles a packet.
    *
    * @param session The session.
-   * @param packet  The packet.
+   * @param packet The packet.
    */
   public void handlePacket(SessionType session, Packet packet) {
     PacketHandler handler = handlers[packet.getDefinition().getOpcode()];
-    if (GameSettings.getBoolean("Debug") && packet.definition.getOpcode() != 8 && packet.definition.getOpcode() != 43) {
+    if (GameSettings.getBoolean("Debug")
+        && packet.definition.getOpcode() != 8
+        && packet.definition.getOpcode() != 43) {
       Server.d(packet.definition.getOpcode() + " <--  " + ((MinecraftSession) session).getIP());
       Server.d(packet.toString());
     }
@@ -91,5 +88,4 @@ public class PacketHandlerManager<SessionType extends OCSession> {
       Server.log("[E] Unhandled packet : " + packet + ".");
     }
   }
-
 }

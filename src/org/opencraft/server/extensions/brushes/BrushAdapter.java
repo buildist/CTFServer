@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.extensions.brushes;
-
 
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Level;
@@ -83,9 +82,7 @@ public abstract class BrushAdapter extends Brush {
   protected int zOffStart;
   protected int zOffEnd;
 
-  /**
-   * Creates the brush adapter with the default radius.
-   */
+  /** Creates the brush adapter with the default radius. */
   public BrushAdapter() {
     setRadius(1);
   }
@@ -102,7 +99,7 @@ public abstract class BrushAdapter extends Brush {
   /**
    * Creates the brush adapter with the specified width, length and height.
    *
-   * @param width  The width.
+   * @param width The width.
    * @param length The length.
    * @param height The height.
    */
@@ -120,10 +117,8 @@ public abstract class BrushAdapter extends Brush {
    * @max Maximum value
    */
   protected int clamp(int value, int min, int max) {
-    if (value > max)
-      return max;
-    if (value < min)
-      return min;
+    if (value > max) return max;
+    if (value < min) return min;
     return value;
   }
 
@@ -161,7 +156,8 @@ public abstract class BrushAdapter extends Brush {
    * @return Returns true if the type is build-able (changeable)
    */
   protected boolean typeIsBuildable(int type) {
-    return type == BlockConstants.AIR || type == BlockConstants.WATER
+    return type == BlockConstants.AIR
+        || type == BlockConstants.WATER
         || type == BlockConstants.STILL_WATER;
   }
 
@@ -195,19 +191,14 @@ public abstract class BrushAdapter extends Brush {
   @Override
   public void paint(Player player, Level level, int x, int y, int z, int mode, int type) {
     boolean add = mode == 1;
-    if (add)
-      paintBlocks(player, level, x, y, z, add, type);
-    else if (useForDelete)
-      paintBlocks(player, level, x, y, z, add, BlockConstants.AIR);
-    else
-      World.getWorld().getLevel().setBlock(x, y, z, BlockConstants.AIR);
+    if (add) paintBlocks(player, level, x, y, z, add, type);
+    else if (useForDelete) paintBlocks(player, level, x, y, z, add, BlockConstants.AIR);
+    else World.getWorld().getLevel().setBlock(x, y, z, BlockConstants.AIR);
   }
 
-  /**
-   * Paints the blocks Should be implemented
-   */
-  protected abstract void paintBlocks(Player player, Level level, int x, int y, int z, boolean
-      add, int type);
+  /** Paints the blocks Should be implemented */
+  protected abstract void paintBlocks(
+      Player player, Level level, int x, int y, int z, boolean add, int type);
 
   @Override
   public int setHeight(int newHeight) {
@@ -274,9 +265,9 @@ public abstract class BrushAdapter extends Brush {
 
     int rotation = player.getRotation().getRotation();
 
-		/*
+    /*
      * START HAVE TO BE LOWEST
-		 */
+     */
     // looking x-pos forward y-pos right
     if (rotation >= 32 && rotation < 96) {
       xOffStart = -offBack;
@@ -305,7 +296,5 @@ public abstract class BrushAdapter extends Brush {
       yOffStart = -offBack;
       yOffEnd = offForward;
     }
-
   }
-
 }

@@ -14,8 +14,8 @@ public class CheckCpuUsageTask extends ScheduledTask {
 
   public CheckCpuUsageTask() {
     super(0);
-    osBean = (com.sun.management.OperatingSystemMXBean) ManagementFactory
-        .getOperatingSystemMXBean();
+    osBean =
+        (com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean();
   }
 
   @Override
@@ -29,5 +29,4 @@ public class CheckCpuUsageTask extends ScheduledTask {
       Server.log("[E] CPU load: " + load);
     }
   }
-
 }

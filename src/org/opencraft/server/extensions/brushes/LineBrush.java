@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.extensions.brushes;
 
-
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 
@@ -45,14 +44,11 @@ import org.opencraft.server.model.Player;
  *
  * @author S�ren Enevoldsen
  */
-
 public class LineBrush extends BrushAdapter {
 
   private static int BLOCKSIZE = 32;
 
-  public LineBrush() {
-
-  }
+  public LineBrush() {}
 
   public LineBrush(int radius) {
 
@@ -60,10 +56,14 @@ public class LineBrush extends BrushAdapter {
   }
 
   @Override
-  protected void paintBlocks(Player player, Level level, int x, int y, int z, boolean adding, int
-      type) {
-    int[] playerPosition = new int[]{player.getPosition().getX() / BLOCKSIZE, player.getPosition
-        ().getY() / BLOCKSIZE, player.getPosition().getZ() / BLOCKSIZE};
+  protected void paintBlocks(
+      Player player, Level level, int x, int y, int z, boolean adding, int type) {
+    int[] playerPosition =
+        new int[] {
+          player.getPosition().getX() / BLOCKSIZE,
+          player.getPosition().getY() / BLOCKSIZE,
+          player.getPosition().getZ() / BLOCKSIZE
+        };
 
     int dx = x - playerPosition[0];
     int dy = y - playerPosition[1];
@@ -76,20 +76,17 @@ public class LineBrush extends BrushAdapter {
     int offsetY = 0;
     int offsetX = 0;
 
-    if (adx > Math.max(ady, adz) && adx >= 1)
-      offsetX = clamp(dx, -1, 1);
-    else if (ady > Math.max(adx, adz) && ady >= 1)
-      offsetY = clamp(dy, -1, 1);
-    else if (adz > Math.max(adx, ady) && adz >= 1)
-      offsetZ = clamp(dz, -1, 1);
-    else
-      return;
+    if (adx > Math.max(ady, adz) && adx >= 1) offsetX = clamp(dx, -1, 1);
+    else if (ady > Math.max(adx, adz) && ady >= 1) offsetY = clamp(dy, -1, 1);
+    else if (adz > Math.max(adx, ady) && adz >= 1) offsetZ = clamp(dz, -1, 1);
+    else return;
 
     for (int nthBlock = 0; nthBlock <= radius; nthBlock++)
-      if (positionIsBuildable(offsetX * nthBlock + x, offsetY * nthBlock + y, offsetZ * nthBlock
-          + z) == adding && Math.abs(offsetX) + Math.abs(offsetY) + Math.abs(offsetZ) <= Math.abs
-          (radius))
-        level.setBlock(offsetX * nthBlock + x, offsetY * nthBlock + y, offsetZ * nthBlock + z,
-            type);
+      if (positionIsBuildable(
+                  offsetX * nthBlock + x, offsetY * nthBlock + y, offsetZ * nthBlock + z)
+              == adding
+          && Math.abs(offsetX) + Math.abs(offsetY) + Math.abs(offsetZ) <= Math.abs(radius))
+        level.setBlock(
+            offsetX * nthBlock + x, offsetY * nthBlock + y, offsetZ * nthBlock + z, type);
   }
 }

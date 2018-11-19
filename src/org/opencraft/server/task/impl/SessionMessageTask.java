@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.task.impl;
 
-
 import org.apache.mina.core.session.IoSession;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
@@ -49,21 +48,17 @@ import org.opencraft.server.task.Task;
  */
 public final class SessionMessageTask implements Task {
 
-  /**
-   * The session.
-   */
+  /** The session. */
   private final IoSession session;
 
-  /**
-   * The packet.
-   */
+  /** The packet. */
   private final Packet packet;
 
   /**
    * Creates the session message task.
    *
    * @param session The session.
-   * @param packet  The packet.
+   * @param packet The packet.
    */
   public SessionMessageTask(IoSession session, Packet packet) {
     this.session = session;

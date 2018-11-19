@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.model.impl;
-
 
 import org.opencraft.server.Configuration;
 import org.opencraft.server.model.BlockBehaviour;
@@ -56,9 +55,7 @@ public class WaterBehaviour implements BlockBehaviour {
   }
 
   @Override
-  public void handleDestroy(Level level, int x, int y, int z, int type) {
-
-  }
+  public void handleDestroy(Level level, int x, int y, int z, int type) {}
 
   @Override
   public void handleScheduledBehaviour(Level level, int x, int y, int z, int type) {
@@ -75,9 +72,8 @@ public class WaterBehaviour implements BlockBehaviour {
       for (int spongeX = (-1 * spongeRadius); spongeX <= spongeRadius; spongeX++) {
         for (int spongeY = (-1 * spongeRadius); spongeY <= spongeRadius; spongeY++) {
           for (int spongeZ = (-1 * spongeRadius); spongeZ <= spongeRadius; spongeZ++) {
-            if (level.getBlock(x + spongeX, y + spongeY, offsetZ + spongeZ) == BlockConstants
-                .SPONGE)
-              break OUTERMOST_DOWNWARD;
+            if (level.getBlock(x + spongeX, y + spongeY, offsetZ + spongeZ)
+                == BlockConstants.SPONGE) break OUTERMOST_DOWNWARD;
           }
         }
       }
@@ -87,37 +83,44 @@ public class WaterBehaviour implements BlockBehaviour {
       // check for lava
       if (thisBlock == BlockConstants.LAVA || thisBlock == BlockConstants.STILL_LAVA) {
         level.setBlock(x, y, offsetZ, BlockConstants.STONE);
-      } else if (!BlockManager.getBlockManager().getBlock(thisBlock).isSolid() && !BlockManager
-          .getBlockManager().getBlock(thisBlock).isLiquid()) {
+      } else if (!BlockManager.getBlockManager().getBlock(thisBlock).isSolid()
+          && !BlockManager.getBlockManager().getBlock(thisBlock).isLiquid()) {
         level.setBlock(x, y, offsetZ, BlockConstants.WATER);
-      } else
-        break;
+      } else break;
     }
 
     // then, spread outward
     OUTERMOST_OUTWARD:
     for (int i = 0; i <= spreadRules.length - 1; i++) {
-      int thisOutwardBlock = level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z +
-          spreadRules[i][2]);
+      int thisOutwardBlock =
+          level.getBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2]);
 
       for (int spongeX = (-1 * spongeRadius); spongeX <= spongeRadius; spongeX++) {
         for (int spongeY = (-1 * spongeRadius); spongeY <= spongeRadius; spongeY++) {
           for (int spongeZ = (-1 * spongeRadius); spongeZ <= spongeRadius; spongeZ++) {
-            if (level.getBlock(x + spreadRules[i][0] + spongeX, y + spreadRules[i][1] + spongeY,
-                z + spreadRules[i][2] + spongeZ) == BlockConstants.SPONGE)
-              break OUTERMOST_OUTWARD;
+            if (level.getBlock(
+                    x + spreadRules[i][0] + spongeX,
+                    y + spreadRules[i][1] + spongeY,
+                    z + spreadRules[i][2] + spongeZ)
+                == BlockConstants.SPONGE) break OUTERMOST_OUTWARD;
           }
         }
       }
 
       // check for lava
-      if (thisOutwardBlock == BlockConstants.LAVA || thisOutwardBlock == BlockConstants
-          .STILL_LAVA) {
-        level.setBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2],
+      if (thisOutwardBlock == BlockConstants.LAVA
+          || thisOutwardBlock == BlockConstants.STILL_LAVA) {
+        level.setBlock(
+            x + spreadRules[i][0],
+            y + spreadRules[i][1],
+            z + spreadRules[i][2],
             BlockConstants.STONE);
-      } else if (!BlockManager.getBlockManager().getBlock(thisOutwardBlock).isSolid() &&
-          !BlockManager.getBlockManager().getBlock(thisOutwardBlock).isLiquid()) {
-        level.setBlock(x + spreadRules[i][0], y + spreadRules[i][1], z + spreadRules[i][2],
+      } else if (!BlockManager.getBlockManager().getBlock(thisOutwardBlock).isSolid()
+          && !BlockManager.getBlockManager().getBlock(thisOutwardBlock).isLiquid()) {
+        level.setBlock(
+            x + spreadRules[i][0],
+            y + spreadRules[i][1],
+            z + spreadRules[i][2],
             BlockConstants.WATER);
       }
     }

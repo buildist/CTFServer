@@ -50,9 +50,8 @@ public class ListField<T> implements Field<List<T>> {
   public Tag<?> getValue(String name, List<T> value) {
     List<Tag<?>> tags = new ArrayList<Tag<?>>();
     Class tagClazz =
-        Tag
-            .class; // Generics suck (I had to move this comment 3 times while finding the right
-                    // place to nuke generics too)
+        Tag.class; // Generics suck (I had to move this comment 3 times while finding the right
+    // place to nuke generics too)
     for (T element : value) {
       Tag<?> tag = backingField.getValue("", element);
       tagClazz = tag.getClass();

@@ -44,9 +44,8 @@ public class BasicTagField<T> implements Field<T> {
           (Constructor)
               ByteTag.class.getConstructor(
                   String.class,
-                  byte
-                      .class)); // ByteTag has a constructor that takes a boolean too, we don't want
-                                // to use that
+                  byte.class)); // ByteTag has a constructor that takes a boolean too, we don't want
+      // to use that
     } catch (NoSuchMethodException e) {
       throw new ExceptionInInitializerError(e);
     }

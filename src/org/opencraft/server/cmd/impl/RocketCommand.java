@@ -51,7 +51,6 @@ public class RocketCommand implements Command {
 
   private static final RocketCommand INSTANCE = new RocketCommand();
   private static final int TIMEOUT = 10;
-  Thread rocketThread;
 
   /**
    * Gets the singleton instance of this command.
@@ -63,86 +62,92 @@ public class RocketCommand implements Command {
   }
 
   public void execute(final Player player, CommandParameters params) {
+    Thread rocketThread;
     rocketThread =
         new Thread(
-            new Runnable() {
-              public void run() {
-                long dt = (System.currentTimeMillis() - player.rocketTime);
-                if (dt < TIMEOUT * 1000) {
-                  player
-                      .getActionSender()
-                      .sendChatMessage(
-                          "- &ePlease wait " + (TIMEOUT - dt / 1000) + "" + " seconds");
-                  if (!GameSettings.getBoolean("Chaos")) {
-                    player.addStorePoints(50);
-                  }
-                  return;
+            () -> {
+              long dt = (System.currentTimeMillis() - player.rocketTime);
+              if (dt < TIMEOUT * 1000) {
+                player
+                    .getActionSender()
+                    .sendChatMessage("- &ePlease wait " + (TIMEOUT - dt / 1000) + "" + " seconds");
+                if (!GameSettings.getBoolean("Chaos")) {
+                  player.addStorePoints(50);
                 }
-                player.rocketTime = System.currentTimeMillis();
-                Position pos = player.getPosition().toBlockPos();
-                Rotation r = player.getRotation();
+                return;
+              }
+              player.rocketTime = System.currentTimeMillis();
+              Position pos = player.getPosition().toBlockPos();
+              Rotation r = player.getRotation();
 
-                double heading =
-                    Math.toRadians(
-                        (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-                double pitch =
-                    Math.toRadians(
-                        (int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
+              double heading =
+                  Math.toRadians(
+                      (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+              double pitch =
+                  Math.toRadians(
+                      (int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
-                double px = pos.getX();
-                double py = pos.getY();
-                double pz = pos.getZ();
+              double px = pos.getX();
+              double py = pos.getY();
+              double pz = pos.getZ();
 
-                double vx = Math.cos(heading) * Math.cos(pitch);
-                double vy = Math.sin(heading) * Math.cos(pitch);
-                double vz = Math.sin(pitch);
-                double x = px;
-                double y = py;
-                double z = pz;
-                double lastX = px;
-                double lastY = py;
-                double lastZ = pz;
-                for (int i = 0; i < 256; i++) {
-                  x += vx;
-                  y += vy;
-                  z += vz;
-                  int bx = (int) Math.round(x);
-                  int by = (int) Math.round(y);
-                  int bz = (int) Math.round(z);
-                  int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                  if (block != 0 && block != 49) {
-                    World.getWorld()
-                        .getGameMode()
-                        .explodeTNT(
-                            player,
-                            World.getWorld().getLevel(),
-                            bx,
-                            by,
-                            bz,
-                            2,
-                            true,
-                            false,
-                            false,
-                            "rocket");
-                    break;
-                  } else {
-                    World.getWorld()
-                        .getLevel()
-                        .setBlock(
-                            (int) Math.round(lastX),
-                            (int) Math.round(lastY),
-                            (int) Math.round(lastZ),
-                            0);
-                    World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.OBSIDIAN);
-                  }
-                  lastX = x;
-                  lastY = y;
-                  lastZ = z;
-                  i++;
-                  try {
-                    Thread.sleep(25);
-                  } catch (InterruptedException ex) {
-                  }
+              double vx = Math.cos(heading) * Math.cos(pitch);
+              double vy = Math.sin(heading) * Math.cos(pitch);
+              double vz = Math.sin(pitch);
+              double x = px;
+              double y = py;
+              double z = pz;
+              double lastX = px;
+              double lastY = py;
+              double lastZ = pz;
+              for (int i = 0; i < 256; i++) {
+                x += vx;
+                y += vy;
+                z += vz;
+                int bx = (int) Math.round(x);
+                int by = (int) Math.round(y);
+                int bz = (int) Math.round(z);
+                int block = World.getWorld().getLevel().getBlock(bx, by, bz);
+                if (block != 0 && block != 49) {
+                  World.getWorld()
+                      .getGameMode()
+                      .explodeTNT(
+                          player,
+                          World.getWorld().getLevel(),
+                          bx,
+                          by,
+                          bz,
+                          2,
+                          true,
+                          false,
+                          false,
+                          "rocket");
+                  break;
+                } else {
+                  World.getWorld()
+                      .getLevel()
+                      .setBlock(
+                          (int) Math.round(lastX),
+                          (int) Math.round(lastY),
+                          (int) Math.round(lastZ),
+                          0);
+                  World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.OBSIDIAN);
+                }
+                lastX = x;
+                lastY = y;
+                lastZ = z;
+                i++;
+                try {
+                  Thread.sleep(25);
+                } catch (InterruptedException ex) {
+                  World.getWorld()
+                      .getLevel()
+                      .setBlock(
+                          (int) Math.round(lastX),
+                          (int) Math.round(lastY),
+                          (int) Math.round(lastZ),
+                          0);
+                  return;
                 }
               }
             });

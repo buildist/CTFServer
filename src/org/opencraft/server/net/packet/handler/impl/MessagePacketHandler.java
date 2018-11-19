@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -35,7 +35,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 package org.opencraft.server.net.packet.handler.impl;
-
 
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
@@ -69,8 +68,8 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
       return;
     }
 
-    if (message.charAt(message.length() - 1) == '>' || message.charAt(message.length() - 1) ==
-        '<') {
+    if (message.charAt(message.length() - 1) == '>'
+        || message.charAt(message.length() - 1) == '<') {
       message = message.substring(0, message.length() - 1);
       session.getPlayer().appendingChat = true;
       session.getPlayer().partialChatMessage += message + " ";
@@ -100,7 +99,8 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
         c.execute(session.getPlayer(), new CommandParameters(parts));
         for (Player p : World.getWorld().getPlayerList().getPlayers()) {
           if (p.sendCommandLog) {
-            p.getActionSender().sendChatMessage("&2" + session.getPlayer().getName() + " issued " + message);
+            p.getActionSender()
+                .sendChatMessage("&2" + session.getPlayer().getName() + " issued " + message);
           }
         }
       } else {
@@ -110,5 +110,4 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
       World.getWorld().getGameMode().broadcastChatMessage(session.getPlayer(), message);
     }
   }
-
 }

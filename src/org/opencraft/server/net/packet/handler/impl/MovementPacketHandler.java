@@ -4,7 +4,7 @@
  * Based on OpenCraft v0.2
  *
  * OpenCraft License
- * 
+ *
  * Copyright (c) 2009 Graham Edgecombe, S�ren Enevoldsen and Brett Russell.
  * All rights reserved.
  *
@@ -13,11 +13,11 @@
  *
  *     * Distributions of source code must retain the above copyright notice,
  *       this list of conditions and the following disclaimer.
- *       
+ *
  *     * Distributions in binary form must reproduce the above copyright
  *       notice, this list of conditions and the following disclaimer in the
  *       documentation and/or other materials provided with the distribution.
- *       
+ *
  *     * Neither the name of the OpenCraft nor the names of its
  *       contributors may be used to endorse or promote products derived from
  *       this software without specific prior written permission.
@@ -73,27 +73,30 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     int dx = Math.abs(x - oldX);
     int dy = Math.abs(y - oldY);
     int dz = Math.abs(z - oldZ);
-    if ((dx > 400 || dy > 400 || dz > 400)) //respawning
+    if ((dx > 400 || dy > 400 || dz > 400)) // respawning
     {
       if (player.team > -1) {
-        if (player.hasFlag)
-          World.getWorld().getGameMode().dropFlag(player, true, false);
+        if (player.hasFlag) World.getWorld().getGameMode().dropFlag(player, true, false);
       }
-    } else if (player.frozen) { //frozen
+    } else if (player.frozen) { // frozen
       player.getActionSender().sendTeleport(player.getPosition(), player.getRotation());
       return;
     }
 
-    if (dx != 0 || dy != 0 || dz != 0) { //for AFK kick
+    if (dx != 0 || dy != 0 || dz != 0) { // for AFK kick
       player.moveTime = System.currentTimeMillis();
     }
 
-    //kill floor
+    // kill floor
     if ((z - 16) / 32 < World.getWorld().getLevel().floor && !player.isSafe()) {
       if (World.getWorld().getLevel().id.equals("tdm_abyss")) {
         player.markSafe();
-        player.getActionSender().sendTeleport(new Position(player.getPosition().getX(), player
-            .getPosition().getY(), 128 * 32 + 16), player.getRotation());
+        player
+            .getActionSender()
+            .sendTeleport(
+                new Position(
+                    player.getPosition().getX(), player.getPosition().getY(), 128 * 32 + 16),
+                player.getRotation());
       } else {
         player.markSafe();
         World.getWorld().broadcast("- " + player.parseName() + " died!");
@@ -112,5 +115,4 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     if (session.isExtensionSupported("HeldBlock"))
       player.heldBlock = packet.getNumericField("id").byteValue();
   }
-
 }
