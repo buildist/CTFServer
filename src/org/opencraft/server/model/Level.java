@@ -526,17 +526,17 @@ public final class Level implements Cloneable {
             int chunksX = ceilDiv16(width);
             int chunksY = ceilDiv16(height);
             int chunksZ = ceilDiv16(depth);
-            byte[][] customBlocks = new byte[chunksX * chunksY * chunksZ][];
-            int index = 0;
+            // byte[][] customBlocks = new byte[chunksX * chunksY * chunksZ][];
+            // int index = 0;
             for (int y = 0; y < chunksY; y++) {
               for (int z = 0; z < chunksZ; z++) {
                 for (int x = 0; x < chunksX; x++) {
                   if (inputstream.readByte() == 1) {
                     byte[] chunk = new byte[16 * 16 * 16];
                     inputstream.readFully(chunk);
-                    customBlocks[index] = chunk;
+                    // customBlocks[index] = chunk;
                   }
-                  index++;
+                  // index++;
                 }
               }
             }
