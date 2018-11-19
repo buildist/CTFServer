@@ -361,7 +361,8 @@ public class Player extends Entity {
     attacker.setIfMax("maxKillstreakEnded", killstreak);
     incStat("deaths");
     ((CTFGameMode) World.getWorld().getGameMode()).checkForUnbalance(this);
-    if (this.bountyMode == true) {
+    flamethrowerEnabled = false;
+    if (this.bountyMode) {
       if (this.team == -1) {
         this.bountiedBy.addStorePoints(this.bountyAmount);
         this.bountied = null;
@@ -670,6 +671,9 @@ public class Player extends Entity {
   }
 
   public void sendToTeamSpawn() {
+    // If player dies while flamethrower is on, don't leave remnants on the map.
+    if (flamethrowerEnabled)
+      World.getWorld().getLevel().clearFire(linePosition, lineRotation);
     sendToTeamSpawn(true);
   }
 

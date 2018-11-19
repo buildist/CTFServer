@@ -185,23 +185,25 @@ public final class Level implements Cloneable {
 
   public void drawFire(Position pos, Rotation r) {
     pos = pos.toBlockPos();
-    int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256)) - 90;
-    int pitch = 0;
+    double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+    double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
     int length = GameSettings.getInt("FlameThrowerLength");
+    int side = Integer.signum(length);
+    int dir = Integer.signum(distance);
 
     double px = (pos.getX());
     double py = (pos.getY());
     double pz = (pos.getZ()) - 1;
 
-    double vx = Math.cos(Math.toRadians(heading));
-    double vz = Math.tan(Math.toRadians(pitch));
-    double vy = Math.sin(Math.toRadians(heading));
+    double vx = Math.cos(heading)*Math.cos(pitch);
+    double vy = Math.sin(heading)*Math.cos(pitch);
+    double vz = Math.sin(pitch);
     double x = px;
     double y = py;
     double z = pz;
-    for (int i = 0; i < length + distance; i++) {
+    for (int i = 0; i < Math.abs(length) + Math.abs(distance); i++) {
       int bx = (int) Math.round(x);
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z);
@@ -212,54 +214,63 @@ public final class Level implements Cloneable {
       }
 
       int oldBlock = getBlock(bx, by, bz);
+      CTFGameMode ctf = (CTFGameMode) World.getWorld().getGameMode();
 
-      if (i < distance) {
-        if (oldBlock != 0 && oldBlock != BlockConstants.STILL_LAVA) {
-          return;
-        }
+      // Turn sand into glass.
+      if (oldBlock == BlockConstants.SAND) {
+        World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
+      }
+
+      // Can't go through sand, glass, obsidian, water, or non explodable blocks
+      if (oldBlock == BlockConstants.WATER ||
+              oldBlock == BlockConstants.STILL_WATER ||
+              oldBlock == BlockConstants.SAND ||
+              oldBlock == BlockConstants.GLASS ||
+              oldBlock == BlockConstants.OBSIDIAN ||
+              !ctf.isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
+        return;
+      }
+
+      if (i < Math.abs(distance)) {
+        // Make it air
+        World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.AIR);
       } else {
-        // Turn sand into glass.
-        if (oldBlock == BlockConstants.SAND) {
-          World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
-        }
-        CTFGameMode ctf = (CTFGameMode) World.getWorld().getGameMode();
-        // Can't go through sand, glass, obsidian, water, or non explodable blocks
-        if (oldBlock == BlockConstants.WATER ||
-                oldBlock == BlockConstants.STILL_WATER ||
-                oldBlock == BlockConstants.SAND ||
-                oldBlock == BlockConstants.GLASS ||
-                oldBlock == BlockConstants.OBSIDIAN ||
-                !ctf.isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
-          return;
-        }
+        // Make it lava
         World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.STILL_LAVA);
       }
 
-      x += vx;
-      y += vy;
-      z += vz;
+      if (i < Math.abs(distance)) {
+        x += vx * dir;
+        y += vy * dir;
+        z += vz * dir;
+      } else {
+        x += vx * side;
+        y += vy * side;
+        z += vz * side;
+      }
     }
   }
 
   public void clearFire(Position pos, Rotation r) {
     pos = pos.toBlockPos();
-    int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256)) - 90;
-    int pitch = 0;
+    double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+    double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
     int length = GameSettings.getInt("FlameThrowerLength");
+    int side = Integer.signum(length);
 
     double px = (pos.getX());
     double py = (pos.getY());
     double pz = (pos.getZ()) - 1;
 
-    double vx = Math.cos(Math.toRadians(heading));
-    double vz = Math.tan(Math.toRadians(pitch));
-    double vy = Math.sin(Math.toRadians(heading));
+    double vx = Math.cos(heading)*Math.cos(pitch);
+    double vy = Math.sin(heading)*Math.cos(pitch);
+    double vz = Math.sin(pitch);
     double x = px + vx * distance;
     double y = py + vy * distance;
     double z = pz + vz * distance;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < Math.abs(length); i++) {
       int bx = (int) Math.round(x);
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z);
@@ -267,9 +278,9 @@ public final class Level implements Cloneable {
       if (oldBlock == BlockConstants.STILL_LAVA) {
         World.getWorld().getLevel().setBlock(bx, by, bz, 0);
       }
-      x += vx;
-      y += vy;
-      z += vz;
+      x += vx * side;
+      y += vy * side;
+      z += vz * side;
     }
   }
 

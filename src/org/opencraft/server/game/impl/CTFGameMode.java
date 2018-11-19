@@ -511,23 +511,25 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public void processFlamethrower(Player p, Position pos, Rotation r) {
     pos = pos.toBlockPos();
-    int heading = (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256)) - 90;
-    int pitch = 0;
+    double heading = Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
+    double pitch = Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
     int length = GameSettings.getInt("FlameThrowerLength");
+    int side = Integer.signum(length);
+    int dir = Integer.signum(distance);
 
     double px = (pos.getX());
     double py = (pos.getY());
     double pz = (pos.getZ()) - 1;
 
-    double vx = Math.cos(Math.toRadians(heading));
-    double vz = Math.tan(Math.toRadians(pitch));
-    double vy = Math.sin(Math.toRadians(heading));
+    double vx = Math.cos(heading)*Math.cos(pitch);
+    double vy = Math.sin(heading)*Math.cos(pitch);
+    double vz = Math.sin(pitch);
     double x = px;
     double y = py;
     double z = pz;
-    for (int i = 0; i < length + distance; i++) {
+    for (int i = 0; i < Math.abs(length) + Math.abs(distance); i++) {
       int bx = (int) Math.round(x);
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z);
@@ -539,44 +541,44 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
       int oldBlock = World.getWorld().getLevel().getBlock(bx, by, bz);
 
-      if (i < distance) { // Can't kill people where there's no fire
-        if (oldBlock != 0 && oldBlock != 11) { // If it ain't air (or lava), kill it cause we got to burn through first.
-          return;
-        }
-      } else { // Processing actual fire blocks
-        // Defuse mine if it's there
-        defuseMineIfCan(p, bx, by, bz);
-        // Can't go through sand, glass, obsidian, water, or non explodable blocks
-        if (oldBlock == BlockConstants.WATER ||
-                oldBlock == BlockConstants.STILL_WATER ||
-                oldBlock == BlockConstants.SAND ||
-                oldBlock == BlockConstants.GLASS ||
-                oldBlock == BlockConstants.OBSIDIAN ||
-                !isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
-          return;
-        }
+      // Defuse mine if it's there
+      defuseMineIfCan(p, bx, by, bz);
+      // Can't go through sand, glass, obsidian, water, or non explodable blocks
+      if (oldBlock == BlockConstants.WATER ||
+              oldBlock == BlockConstants.STILL_WATER ||
+              oldBlock == BlockConstants.SAND ||
+              oldBlock == BlockConstants.GLASS ||
+              oldBlock == BlockConstants.OBSIDIAN ||
+              !isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
+        return;
+      }
 
-        for (Player t : World.getWorld().getPlayerList().getPlayers()) {
-          Position blockPos = t.getPosition().toBlockPos();
-          if (blockPos.getX() == bx && blockPos.getY() == by && (blockPos.getZ() == bz + 1 || blockPos.getZ() == bz) &&
-                  (p.team != t.team) && !t.isSafe() && p.canKill(t, false)) {
-            World.getWorld().broadcast("- " + p.parseName() + " cooked " + t.getColoredName());
-            p.gotKill(t);
-            t.sendToTeamSpawn();
-            t.markSafe();
-            t.died(p);
-            checkFirstBlood(p, t);
-            p.addStorePoints(5);
-            if (t.hasFlag) {
-              dropFlag(t.team);
-            }
+      for (Player t : World.getWorld().getPlayerList().getPlayers()) {
+        Position blockPos = t.getPosition().toBlockPos();
+        if (blockPos.getX() == bx && blockPos.getY() == by && (blockPos.getZ() == bz + 1 || blockPos.getZ() == bz) &&
+                (p.team != t.team) && !t.isSafe() && p.canKill(t, false)) {
+          World.getWorld().broadcast("- " + p.parseName() + " cooked " + t.getColoredName());
+          p.gotKill(t);
+          t.sendToTeamSpawn();
+          t.markSafe();
+          t.died(p);
+          checkFirstBlood(p, t);
+          p.addStorePoints(5);
+          if (t.hasFlag) {
+            dropFlag(t.team);
           }
         }
       }
 
-      x += vx;
-      y += vy;
-      z += vz;
+      if (i < Math.abs(distance)) {
+        x += vx * dir;
+        y += vy * dir;
+        z += vz * dir;
+      } else {
+        x += vx * side;
+        y += vy * side;
+        z += vz * side;
+      }
     }
 
   }

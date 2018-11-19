@@ -18,9 +18,9 @@ public class GameSettings {
     add("OnlyTDM", TYPE_BOOLEAN, false);
     add("Debug", TYPE_BOOLEAN, false);
     add("Tournament", TYPE_BOOLEAN, false);
-    add("FlameThrowerStartDistanceFromPlayer", TYPE_INT, 3);
+    add("FlameThrowerStartDistanceFromPlayer", TYPE_INT, 4);
     add("FlameThrowerLength", TYPE_INT, 2);
-    add("FlameThrowerRechargeTime", TYPE_INT, 15);
+    add("FlameThrowerRechargeTime", TYPE_INT, 30);
     add("FlameThrowerDuration", TYPE_INT, 8);
   }
 
