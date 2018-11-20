@@ -1508,9 +1508,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         }
       } else if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
         int radius = player.tntRadius;
+        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
         explodeTNT(
             player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
-        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
         player.hasTNT = false;
         player.tntX = 0;
         player.tntY = 0;
