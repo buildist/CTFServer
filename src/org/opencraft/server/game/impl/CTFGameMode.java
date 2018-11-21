@@ -118,6 +118,7 @@ import org.opencraft.server.cmd.impl.WarnCommand;
 import org.opencraft.server.cmd.impl.WaterCommand;
 import org.opencraft.server.cmd.impl.XBanCommand;
 import org.opencraft.server.cmd.impl.YesCommand;
+import org.opencraft.server.cmd.impl.LeaderBoardCommand;
 import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.BlockLog;
@@ -279,6 +280,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("warn", WarnCommand.getCommand());
     registerCommand("who", StatusCommand.getCommand());
     registerCommand("yes", YesCommand.getCommand());
+    registerCommand("lb", LeaderBoardCommand.getCommand());
   }
 
   public int getRedPlayers() {
@@ -824,7 +826,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
   }
 
-  private Player[] getTopPlayers() {
+  public Player[] getTopPlayers(int number) {
     HashMap<Integer, Player> leaderboard = new HashMap<Integer, Player>(16);
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.team != -1) {
@@ -834,7 +836,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
     NavigableSet<Integer> set = new TreeSet<Integer>(leaderboard.keySet());
     Iterator<Integer> itr = set.descendingIterator();
-    Player[] top = new Player[3];
+    Player[] top = new Player[number];
     int i = 0;
     while (itr.hasNext()) {
       top[i] = leaderboard.get(itr.next());
@@ -847,7 +849,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public void updateLeaderboard() {
-    Player[] top = getTopPlayers();
+    Player[] top = getTopPlayers(3);
     for (int i = 0; i < 3; i++) {
       String msg;
       if (top[i] != null) {
@@ -911,7 +913,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                     p.hasVoted = false;
                     p.hasNominated = false;
                   }
-                  Player[] top = getTopPlayers();
+                  Player[] top = getTopPlayers(3);
                   World.getWorld().broadcast("- &3Top players for the round:");
                   if (top[0] == null) {
                     World.getWorld().broadcast("- &3Nobody");
