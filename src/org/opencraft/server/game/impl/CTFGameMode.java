@@ -189,6 +189,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public ArrayList<String> mutedPlayers = new ArrayList<String>();
   public int rtvVotes = 0;
   public ArrayList<String> nominatedMaps = new ArrayList<String>();
+  private ArrayList<String> killFeed = new ArrayList<String>();
   public String currentMap = null;
   public String previousMap = null;
   private Level map;
@@ -486,16 +487,14 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             && t.isVisible) {
           t.markSafe();
           n++;
-          World.getWorld()
-              .broadcast(
-                  "- "
-                      + p.parseName()
-                      + " exploded "
-                      + t.getColoredName()
-                      + (type == null ? "" : " &f(" + type + ")"));
           p.gotKill(t);
           t.sendToTeamSpawn();
           t.died(p);
+          updateKillFeed(
+              p.parseName()
+                  + " exploded "
+                  + t.getColoredName()
+                  + (type == null ? "" : " &f(" + type + ")"));
           if (!tk) checkFirstBlood(p, t);
           if (t.team != -1 && t.team != p.team) {
             p.setAttribute("explodes", (Integer) p.getAttribute("explodes") + 1);
@@ -518,11 +517,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       }
     }
     if (n == 2) {
-      World.getWorld().broadcast("- &bDouble Kill");
+      World.getWorld().broadcast("- " + p.parseName() + " &egot a &bDouble Kill");
     } else if (n == 3) {
-      World.getWorld().broadcast("- &bTriple Kill");
+      World.getWorld().broadcast("- " + p.parseName() + " &egot a &bTriple Kill");
     } else if (n > 3) {
-      World.getWorld().broadcast("- &b" + n + "x Kill");
+      World.getWorld().broadcast("- " + p.parseName() + " &egot a &b" + n + "x Kill");
     }
   }
 
@@ -610,11 +609,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             && (p.team != t.team)
             && !t.isSafe()
             && p.canKill(t, false)) {
-          World.getWorld().broadcast("- " + p.parseName() + " cooked " + t.getColoredName());
           p.gotKill(t);
           t.sendToTeamSpawn();
           t.markSafe();
           t.died(p);
+          updateKillFeed(p.parseName() + " cooked " + t.getColoredName());
           checkFirstBlood(p, t);
           p.addStorePoints(5);
           if (t.hasFlag) {
@@ -777,8 +776,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                   World.getWorld().setLevel(map);
                   resetRedFlagPos();
                   resetBlueFlagPos();
+                  killFeed.clear();
+                  updateKillFeed("");
                   updateStatusMessage();
-                  updateLeaderboard();
                   voting = false;
                   rtvVotes = 0;
                   rtvYesPlayers.clear();
@@ -848,21 +848,22 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     return top;
   }
 
-  public void updateLeaderboard() {
-    Player[] top = getTopPlayers(3);
-    for (int i = 0; i < 3; i++) {
-      String msg;
-      if (top[i] != null) {
-        msg = (i + 1) + ". " + top[i].getColoredName() + " &f- " + top[i].accumulatedStorePoints;
-      } else {
-        msg = "";
-      }
-      int type = 10 + (3 - i);
+  public void updateKillFeed(String killmsg) {
+    if (!killmsg.equals("")) {
+      killFeed.add(killmsg);
+    }
+    if (killFeed.size() > 3) {
+      killFeed.remove(0);
+    }
+
+    int i = 2;
+    for (String msg : killFeed) {
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
         if (p.getSession().isExtensionSupported("MessageTypes")) {
-          p.getActionSender().sendChatMessage(msg, type);
+          p.getActionSender().sendChatMessage(msg, 11 + i);
         }
       }
+      i--;
     }
   }
 
@@ -1245,7 +1246,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               }
             }
           }
-          World.getWorld().broadcast("- " + m.owner.parseName() + " mined " + p.parseName() + ".");
           m.owner.gotKill(p);
           p.sendToTeamSpawn();
           checkFirstBlood(m.owner, p);
@@ -1256,6 +1256,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             dropFlag(p.team);
           }
           p.died(m.owner);
+          updateKillFeed(m.owner.parseName() + " mined " + p.parseName() + ".");
         }
       }
     }
@@ -1309,8 +1310,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           && tagger.canKill(tagged, false)
           && !tagged.isSafe()
           && !tagged.shield) {
-        World.getWorld()
-            .broadcast("- " + tagger.parseName() + " tagged " + tagged.parseName() + ".");
         tagger.gotKill(tagged);
         tagged.sendToTeamSpawn();
         tagged.markSafe();
@@ -1324,6 +1323,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         tagged.died(tagger);
         tagger.setAttribute("tags", (Integer) tagger.getAttribute("tags") + 1);
         tagger.addStorePoints(5);
+        updateKillFeed(tagger.parseName() + " tagged " + tagged.parseName() + ".");
       }
     }
   }

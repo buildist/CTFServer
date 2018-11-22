@@ -506,7 +506,7 @@ public class Player extends Entity {
     }
     Level l = World.getWorld().getLevel();
     CTFGameMode ctf = World.getWorld().getGameMode();
-    ctf.updateLeaderboard();
+    ctf.updateKillFeed("");
     if (ctf.voting) return;
     if (this.team == 0) ctf.redPlayers--;
     else if (this.team == 1) ctf.bluePlayers--;
@@ -618,7 +618,6 @@ public class Player extends Entity {
     }
     accumulatedStorePoints += n;
     setAttribute("storepoints", (Integer) getAttribute("storepoints") + n);
-    World.getWorld().getGameMode().updateLeaderboard();
   }
 
   public int getStorePoints() {
