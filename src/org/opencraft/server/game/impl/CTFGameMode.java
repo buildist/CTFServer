@@ -445,7 +445,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
     if (player.getSession().isExtensionSupported("MessageTypes")) {
       World.getWorld().getGameMode().sendStatusMessage(player);
-      player.getActionSender().sendChatMessage(Constants.SERVER_NAME, 1);
+      World.getWorld().getGameMode().sendKillFeed(player);
     }
   }
 
@@ -859,10 +859,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     return top;
   }
 
-  public void updateKillFeed(String killmsg) {
+  private void updateKillFeed(String killmsg) {
     if (!killmsg.equals("")) {
       killFeed.add(killmsg);
     }
+
     if (killFeed.size() > 3) {
       killFeed.remove(0);
     }
@@ -875,6 +876,18 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         }
       }
       i--;
+    }
+  }
+
+  private void sendKillFeed(Player p) {
+    if (p != null) {
+      int i = 2;
+      if (p.getSession().isExtensionSupported("MessageTypes")) {
+        for (String msg : killFeed) {
+          p.getActionSender().sendChatMessage(msg, 11 + i);
+          i--;
+        }
+      }
     }
   }
 

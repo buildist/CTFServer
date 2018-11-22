@@ -244,7 +244,7 @@ public class CTFProcessTask extends ScheduledTask {
           World.getWorld().getGameMode().sendStatusMessage(player);
           player
               .getActionSender()
-              .sendChatMessage(message + " | " + prettyTime((int) remaining), 1);
+              .sendChatMessage(message + " | " + prettyTime((int) remaining), 2);
         }
       }
     }

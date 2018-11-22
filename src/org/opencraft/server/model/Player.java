@@ -506,7 +506,6 @@ public class Player extends Entity {
     }
     Level l = World.getWorld().getLevel();
     CTFGameMode ctf = World.getWorld().getGameMode();
-    ctf.updateKillFeed("");
     if (ctf.voting) return;
     if (this.team == 0) ctf.redPlayers--;
     else if (this.team == 1) ctf.bluePlayers--;
