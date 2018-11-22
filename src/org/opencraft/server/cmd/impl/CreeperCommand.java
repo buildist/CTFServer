@@ -65,6 +65,7 @@ public class CreeperCommand implements Command {
     int px = (pos.getX() - 16) / 32;
     int py = (pos.getY() - 16) / 32;
     int pz = ((pos.getZ() - 16) / 32);
+    World.getWorld().broadcast("- " + player.parseName() + " &eisn't feeling so good...");
     World.getWorld().broadcast("- &esssssssSSSSSSSSS");
     World.getWorld()
         .getGameMode()

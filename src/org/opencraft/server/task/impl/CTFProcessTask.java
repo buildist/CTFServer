@@ -78,25 +78,21 @@ public class CTFProcessTask extends ScheduledTask {
         player.moveTime = System.currentTimeMillis();
       }
       ctf.processPlayerMove(player);
-      if (player.flamethrowerEnabled) {
+      if (player.isFlamethrowerEnabled()) {
         int duration = GameSettings.getInt("FlameThrowerDuration");
         // ticks a second
         float rate = (float) Constants.FLAME_THROWER_FUEL / duration;
         long time = System.currentTimeMillis();
         long dt = time - player.flamethrowerTime;
+        // Rate in seconds, dt in milliseconds
         player.flamethrowerFuel -= rate * dt / 1000;
         player.flamethrowerTime = time;
         if (player.flamethrowerFuel <= 0) { // Out of fuel
+          player.disableFlameThrower();
           player.flamethrowerFuel = 0;
-          player.sendFuelPercent();
-          player.flamethrowerEnabled = false;
-          World.getWorld().getLevel().clearFire(player.linePosition, player.lineRotation);
-        } else if ((time - player.flamethrowerNotify) / 1000
-            >= 1) { // Send fuel percent every second
-          player.sendFuelPercent();
         }
         // Was flame thrower disabled because they ran out of fuel?
-        if (player.flamethrowerEnabled) {
+        if (player.isFlamethrowerEnabled()) {
           if (!player.getPosition().equals(player.linePosition)
               || !player.getRotation().equals(player.lineRotation)) {
             if (player.linePosition != null)
@@ -109,20 +105,21 @@ public class CTFProcessTask extends ScheduledTask {
               .getGameMode()
               .processFlamethrower(player, player.linePosition, player.lineRotation);
         }
+        player.sendFlamethrowerFuel();
       } else {
         if (player.flamethrowerFuel != (float) Constants.FLAME_THROWER_FUEL) {
           int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
           float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
           long time = System.currentTimeMillis();
           long dt = time - player.flamethrowerTime;
+          // Recharge rate in seconds, dt in milliseconds
           player.flamethrowerFuel += rechargeRate * dt / 1000;
           player.flamethrowerTime = time;
           if (player.flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
             player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-            player.sendFuelPercent();
-          } else if ((time - player.flamethrowerNotify) / 1000 >= 2) {
-            player.sendFuelPercent();
+            player.getActionSender().sendChatMessage("- &eFlame thrower charged.");
           }
+          player.sendFlamethrowerFuel();
         }
       }
 
@@ -244,7 +241,7 @@ public class CTFProcessTask extends ScheduledTask {
           World.getWorld().getGameMode().sendStatusMessage(player);
           player
               .getActionSender()
-              .sendChatMessage(message + " | " + prettyTime((int) remaining), 1);
+              .sendChatMessage(message + " | " + prettyTime((int) remaining), 3);
         }
       }
     }

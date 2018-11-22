@@ -38,22 +38,47 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.World;
 
-public class FlamethrowerCommand implements Command {
-
-  private static final FlamethrowerCommand INSTANCE = new FlamethrowerCommand();
+public class LeaderBoardCommand implements Command {
+  private static final LeaderBoardCommand INSTANCE = new LeaderBoardCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static FlamethrowerCommand getCommand() {
+  public static LeaderBoardCommand getCommand() {
     return INSTANCE;
   }
 
   public void execute(Player player, CommandParameters params) {
-    player.toggleFlameThrower();
+    int number = 10;
+    if (params.getArgumentCount() > 0) {
+      number = params.getIntegerArgument(0);
+      if (number > 16) {
+        number = 16;
+      }
+      if (number <= 0) {
+        player.getActionSender().sendChatMessage("- &eCan't get " + number + " players this round.");
+        return;
+      }
+    }
+    CTFGameMode ctf = World.getWorld().getGameMode();
+    Player[] topPlayers = ctf.getTopPlayers(number);
+    player.getActionSender().sendChatMessage("- &eTop " + number + " players this round:");
+    for (int i = 0; i < number; i++) {
+      if (topPlayers[i] != null) {
+        String msg =
+            (i + 1)
+                + ". "
+                + topPlayers[i].getColoredName()
+                + " &f- "
+                + topPlayers[i].accumulatedStorePoints;
+        player.getActionSender().sendChatMessage(msg);
+      }
+    }
   }
 }

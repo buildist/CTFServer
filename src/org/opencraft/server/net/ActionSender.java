@@ -635,7 +635,7 @@ public class ActionSender {
       message = message.substring(0, maxLength);
     }
     if (session.isExtensionSupported("MessageTypes")) {
-      this.sendChatMessage(message, 2);
+      this.sendChatMessage(message, 1);
     }
   }
 
