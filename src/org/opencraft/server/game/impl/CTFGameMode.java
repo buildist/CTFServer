@@ -522,6 +522,17 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bTriple Kill");
     } else if (n > 3) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &b" + n + "x Kill");
+      for (Player t : World.getWorld().getPlayerList().getPlayers()) {
+        // Brodcast multi kills greater than 3 here because they won't all show up
+        // in the kill feed.
+        World.getWorld()
+            .broadcast(
+                "- "
+                    + p.parseName()
+                    + " exploded "
+                    + t.getColoredName()
+                    + (type == null ? "" : " &f(" + type + ")"));
+      }
     }
   }
 
