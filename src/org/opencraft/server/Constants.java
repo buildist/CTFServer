@@ -118,6 +118,7 @@ public final class Constants {
   public static final int BLOCK_DETONATOR = 235;
   public static final int BLOCK_CRATE = 64;
   public static final int BLOCK_PAYLOAD = 47;
+  public static final int BLOCK_FLAMETHROWER = BlockConstants.COAL;
 
   public static final int BLOCK_SOLIDITY_WALK_THROUGH = 0;
   public static final int BLOCK_SOLIDITY_SWIM_THROUGH = 1;

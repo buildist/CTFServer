@@ -60,7 +60,6 @@ import java.util.Map;
  */
 public class Player extends Entity {
 
-  public static final int maxFlamethrowerUnits = 100;
   public static short NAME_ID = 0;
   // public Mine mine = null;
   public final LinkedList<Mine> mines = new LinkedList<Mine>();
@@ -121,10 +120,9 @@ public class Player extends Entity {
   public int buildMode;
   public Position linePosition;
   public Rotation lineRotation;
-  public boolean flamethrowerEnabled = false;
   public long flamethrowerTime = 0;
-  public long flamethrowerNotify = 0;
   public float flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+  private boolean flamethrowerEnabled = false;
   public long rocketTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
@@ -276,13 +274,45 @@ public class Player extends Entity {
     return ignorePlayers.contains(p.name);
   }
 
-  public void sendFuelPercent() {
-    getActionSender()
-        .sendChatMessage(
-            "- &eFuel: &c"
-                + Math.round(flamethrowerFuel / Constants.FLAME_THROWER_FUEL * 100)
-                + "%");
-    flamethrowerNotify = System.currentTimeMillis();
+  public void toggleFlameThrower() {
+    if (team == -1) return;
+
+    if (isFlamethrowerEnabled()) {
+      disableFlameThrower();
+    } else {
+      enableFlameThrower();
+    }
+    flamethrowerTime = System.currentTimeMillis();
+  }
+
+  public void enableFlameThrower() {
+    this.flamethrowerEnabled = true;
+    this.getActionSender().sendChatMessage("- &eFlame thrower enabled.");
+  }
+
+  public void disableFlameThrower() {
+    World.getWorld().getLevel().clearFire(this.linePosition, this.lineRotation);
+    this.flamethrowerEnabled = false;
+    this.getActionSender().sendChatMessage("- &eFlame thrower disabled.");
+  }
+
+  public boolean isFlamethrowerEnabled() {
+    return this.flamethrowerEnabled;
+  }
+
+  public void sendFlamethrowerFuel() {
+    int slots = 20;
+    StringBuilder fuelSB = new StringBuilder("&c");
+    float percentPerSlot = 100f / slots;
+    float percent = Math.round(flamethrowerFuel / Constants.FLAME_THROWER_FUEL * 100);
+    int show = (int)Math.floor(Math.abs(percent / percentPerSlot));
+    for (int i = 0; i < slots; i++) {
+      if (show == i) {
+        fuelSB.append("&f");
+      }
+      fuelSB.append('-');
+    }
+    getActionSender().sendChatMessage("Fuel: [" + fuelSB.toString() + "&f]", 2);
   }
 
   public void gotKill(Player defender) {
@@ -369,7 +399,9 @@ public class Player extends Entity {
     attacker.setIfMax("maxKillstreakEnded", killstreak);
     incStat("deaths");
     World.getWorld().getGameMode().checkForUnbalance(this);
-    flamethrowerEnabled = false;
+    if (isFlamethrowerEnabled()) {
+      disableFlameThrower();
+    }
     if (this.bountyMode) {
       if (this.team == -1) {
         this.bountiedBy.addStorePoints(this.bountyAmount);
@@ -645,7 +677,7 @@ public class Player extends Entity {
 
   public void sendToTeamSpawn() {
     // If player dies while flamethrower is on, don't leave remnants on the map.
-    if (flamethrowerEnabled) World.getWorld().getLevel().clearFire(linePosition, lineRotation);
+    if (isFlamethrowerEnabled()) World.getWorld().getLevel().clearFire(linePosition, lineRotation);
     final String teamname;
     if (team == 0) teamname = "red";
     else if (team == 1) teamname = "blue";

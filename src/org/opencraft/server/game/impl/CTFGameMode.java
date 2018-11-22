@@ -446,6 +446,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     if (player.getSession().isExtensionSupported("MessageTypes")) {
       World.getWorld().getGameMode().sendStatusMessage(player);
       World.getWorld().getGameMode().sendKillFeed(player);
+      player.sendFlamethrowerFuel();
     }
   }
 
@@ -771,7 +772,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                     player.hasFlag = false;
                     player.hasTNT = false;
                     player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-                    player.flamethrowerNotify = 0;
                     player.accumulatedStorePoints = 0;
                     for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
                       player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
@@ -955,12 +955,12 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                     player.team = -1;
                     player.hasFlag = false;
                     player.hasTNT = false;
-                    if (player.flamethrowerEnabled) {
+                    if (player.isFlamethrowerEnabled()) {
                       World.getWorld()
                           .getLevel()
                           .clearFire(player.linePosition, player.lineRotation);
+                      player.disableFlameThrower();
                     }
-                    player.flamethrowerEnabled = false;
                     player.flamethrowerTime = 0;
                     player.rocketTime = 0;
                     player.sendToTeamSpawn();
@@ -1580,6 +1580,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             }
           }
         }
+      } else if (type == Constants.BLOCK_FLAMETHROWER
+          && mode == 1
+          && !ignore) { // Toggle flamethrower
+        player.toggleFlameThrower();
+        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
       } else if (type == Constants.BLOCK_MINE && mode == 1 && !ignore) { // Placing mines
         if (player.team == -1) {
           player.getActionSender().sendChatMessage("- &eYou need to join a team to place mines!");
