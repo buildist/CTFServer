@@ -42,23 +42,15 @@ import com.flowpowered.nbt.CompoundMap;
 import com.flowpowered.nbt.CompoundTag;
 import com.flowpowered.nbt.ShortTag;
 import com.flowpowered.nbt.Tag;
-import com.flowpowered.nbt.TagType;
 import com.flowpowered.nbt.stream.NBTInputStream;
 
 import java.awt.Color;
 
-import org.apache.mina.util.byteaccess.ByteArray;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 
-import java.io.DataInputStream;
-import java.io.EOFException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayDeque;
@@ -73,6 +65,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.TreeSet;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
 import java.util.zip.GZIPInputStream;
 import org.opencraft.server.Constants;
 
@@ -113,9 +107,12 @@ public final class Level implements Cloneable {
   public HashSet<Integer> blockTypes = new HashSet<Integer>();
 
   /** The blocks. */
-  private byte[][][] blocks;
+  private short[][][] blocks;
 
-  private byte[] blocks1D;
+  private byte[] blocks0;
+  private byte[] blocks1;
+  private byte[] compressedBlocks0;
+  private byte[] compressedBlocks1;
   /** Light depth array. */
   private short[][] lightDepths;
   /** The spawn rotation. */
@@ -145,7 +142,7 @@ public final class Level implements Cloneable {
     this.width = 256;
     this.height = 256;
     this.depth = 64;
-    this.blocks = new byte[width][height][depth];
+    this.blocks = new short[width][height][depth];
     this.lightDepths = new short[width][height];
     this.spawnRotation = new Rotation(0, 0);
     for (int i = 0; i < 256; i++) {
@@ -508,8 +505,9 @@ public final class Level implements Cloneable {
         width = vars[0];
         height = vars[1];
         depth = vars[2];
-        blocks = new byte[width][height][depth];
-        blocks1D = new byte[width * height * depth];
+        blocks = new short[width][height][depth];
+        blocks0 = new byte[width * height * depth];
+        blocks1 = new byte[width * height * depth];
         byte[] tmpBlocks = new byte[width * height * depth];
         inputstream.readFully(tmpBlocks);
         this.spawnPosition = new Position(vars[3] * 32 + 16, vars[4] * 32 + 16, vars[5] * 32 + 16);
@@ -581,8 +579,9 @@ public final class Level implements Cloneable {
       width = (short) l.width;
       height = (short) l.height;
       depth = (short) l.depth;
-      blocks = new byte[width][height][depth];
-      blocks1D = new byte[width * height * depth];
+      blocks = new short[width][height][depth];
+      blocks0 = new byte[width * height * depth];
+      blocks1 = new byte[width * height * depth];
       this.spawnPosition =
           new Position(l.xSpawn * 32 + 16, (l.zSpawn) * 32 + 16, l.ySpawn * 32 + 16);
 
@@ -603,9 +602,9 @@ public final class Level implements Cloneable {
         width = ((ShortTag) classicWorld.get("X")).getValue();
         height = ((ShortTag) classicWorld.get("Z")).getValue();
         depth = ((ShortTag) classicWorld.get("Y")).getValue();
-        blocks = new byte[width][height][depth];
-        blocks1D = new byte[width * height * depth];
-
+        blocks = new short[width][height][depth];
+        blocks0 = new byte[width * height * depth];
+        blocks1 = new byte[width * height * depth];
         byte[] tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
 
         CompoundMap spawn = ((CompoundTag) classicWorld.get("Spawn")).getValue();
@@ -654,7 +653,7 @@ public final class Level implements Cloneable {
             solidBlocks.add(new Position(x, y, z));
           }
           blocks[x][y][z] = (byte) type;
-          blocks1D[(z * height + y) * width + x] = (byte) type;
+          blocks0[(z * height + y) * width + x] = (byte) type;
         }
       }
     }
@@ -901,17 +900,27 @@ public final class Level implements Cloneable {
     }
   }
 
-  /**
-   * Gets all of the blocks.
-   *
-   * @return All of the blocks.
-   */
-  public byte[][][] getBlocks() {
-    return blocks;
+  public byte[] getCompressedBlocks0() throws IOException {
+    if (compressedBlocks0 == null) {
+      compressedBlocks0 = compressBytes(blocks0);
+    }
+    return compressedBlocks0;
   }
 
-  public byte[] getBlocks1D() {
-    return blocks1D;
+  public byte[] getCompressedBlocks1() throws IOException{
+    if (compressedBlocks1 == null) {
+      compressedBlocks1 = compressBytes(blocks1);
+    }
+    return compressedBlocks1;
+  }
+
+  private static byte[] compressBytes(byte[] bytes) throws IOException {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    Deflater def = new Deflater(Deflater.DEFAULT_COMPRESSION, true);
+    DataOutputStream os = new DataOutputStream(new DeflaterOutputStream(out, def));
+    os.write(bytes);
+    os.close();
+    return out.toByteArray();
   }
 
   /**
@@ -970,12 +979,18 @@ public final class Level implements Cloneable {
     if (x < 0 || y < 0 || z < 0 || x >= width || y >= height || z >= depth) {
       return;
     }
-    blocks1D[(z * this.height + y) * this.width + x] = (byte) type;
+    int index = (z * this.height + y) * this.width + x;
+    blocks0[index] = (byte) (type & 0x00FF);
+    compressedBlocks0 = null;
+    if (type > 255) {
+      blocks1[index] = (byte) ((type & 0xFF00) >> 8);
+      compressedBlocks1 = null;
+    }
     int formerBlock = this.getBlock(x, y, z);
-    blocks[x][y][z] = (byte) type;
+    blocks[x][y][z] = (short) type;
     if (type != formerBlock) {
       for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-        player.getSession().getActionSender().sendBlock(x, y, z, (byte) type);
+        player.getSession().getActionSender().sendBlock(x, y, z, (short) type);
       }
     }
     if (updateSelf) {
@@ -1081,7 +1096,7 @@ public final class Level implements Cloneable {
    */
   public int getBlock(int x, int y, int z) {
     if (x >= 0 && y >= 0 && z >= 0 && x < width && y < height && z < depth) {
-      return Server.getUnsigned(blocks[x][y][z]);
+      return blocks[x][y][z];
     } else {
       return 0;
     }

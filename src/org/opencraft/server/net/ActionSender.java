@@ -104,10 +104,11 @@ public class ActionSender {
   }
 
   /** Sends the level init packet. */
-  public void sendLevelInit() {
+  public void sendLevelInit(int size) {
     session.setAuthenticated();
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(2));
+    bldr.putInt("size", size);
     session.send(bldr.toPacket());
   }
 
@@ -366,16 +367,16 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
-  public void sendHoldThis(int slot, byte block) {
-    final byte[] slots = new byte[] {1, 4, 45, 3, 5, 17, 18, 2, 44};
+  public void sendHoldThis(int slot, short block) {
+    final short[] slots = new short[] {1, 4, 45, 3, 5, 17, 18, 2, 44};
     sendHoldThis(block);
     sendHoldThis(slots[slot]);
   }
 
-  public void sendHoldThis(byte block) {
+  public void sendHoldThis(short block) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(20));
-    bldr.putByte("block_to_hold", block);
+    bldr.putShort("block_to_hold", block);
     bldr.putByte("prevent_change", (byte) 0);
     session.send(bldr.toPacket());
   }
@@ -455,26 +456,6 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
-  public void sendDefineBlock(CustomBlockDefinition block) {
-    sendDefineBlock(
-        block.id,
-        block.name,
-        block.solid,
-        block.movementSpeed,
-        block.textureTop,
-        block.textureFront,
-        block.textureBottom,
-        block.emitsLight,
-        block.walkSound,
-        block.fullBright,
-        16,
-        block.blockDraw,
-        block.fogDensity,
-        block.fogR,
-        block.fogG,
-        block.fogB);
-  }
-
   public void sendDefineBlockExt(CustomBlockDefinition block) {
     sendDefineBlockExt(
         block.id,
@@ -501,45 +482,6 @@ public class ActionSender {
         block.fogR,
         block.fogG,
         block.fogB);
-    // sendInventoryOrder(block.id, block.inventoryOrder);
-  }
-
-  private void sendDefineBlock(
-      int id,
-      String name,
-      int solid,
-      int movementSpeed,
-      int textureTop,
-      int textureSide,
-      int textureBottom,
-      boolean emitsLight,
-      int walkSound,
-      boolean fullBright,
-      int shape,
-      int blockDraw,
-      int fogDensity,
-      int fogR,
-      int fogG,
-      int fogB) {
-    PacketBuilder bldr =
-        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(35));
-    bldr.putByte("id", id);
-    bldr.putString("name", name);
-    bldr.putByte("solid", solid);
-    bldr.putByte("movement_speed", movementSpeed);
-    bldr.putByte("texture_top", textureTop);
-    bldr.putByte("texture_side", textureSide);
-    bldr.putByte("texture_bottom", textureBottom);
-    bldr.putByte("emits_light", emitsLight ? 1 : 0);
-    bldr.putByte("walk_sound", walkSound);
-    bldr.putByte("full_bright", fullBright ? 1 : 0);
-    bldr.putByte("shape", shape);
-    bldr.putByte("block_draw", blockDraw);
-    bldr.putByte("fog_density", fogDensity);
-    bldr.putByte("fog_r", fogR);
-    bldr.putByte("fog_g", fogG);
-    bldr.putByte("fog_b", fogB);
-    session.send(bldr.toPacket());
   }
 
   public void sendDefineBlockExt(
@@ -569,16 +511,16 @@ public class ActionSender {
       int fogB) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(37));
-    bldr.putByte("id", id);
+    bldr.putShort("id", id);
     bldr.putString("name", name);
     bldr.putByte("solid", solid);
     bldr.putByte("movement_speed", movementSpeed);
-    bldr.putByte("texture_top", textureTop);
-    bldr.putByte("texture_left", textureLeft);
-    bldr.putByte("texture_right", textureRight);
-    bldr.putByte("texture_front", textureFront);
-    bldr.putByte("texture_back", textureBack);
-    bldr.putByte("texture_bottom", textureBottom);
+    bldr.putShort("texture_top", textureTop);
+    bldr.putShort("texture_left", textureLeft);
+    bldr.putShort("texture_right", textureRight);
+    bldr.putShort("texture_front", textureFront);
+    bldr.putShort("texture_back", textureBack);
+    bldr.putShort("texture_bottom", textureBottom);
     bldr.putByte("emits_light", emitsLight ? 1 : 0);
     bldr.putByte("walk_sound", walkSound);
     bldr.putByte("full_bright", fullBright ? 1 : 0);
@@ -599,7 +541,7 @@ public class ActionSender {
   public void sendBlockPermissions(int id, boolean place, boolean delete) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(28));
-    bldr.putByte("id", id);
+    bldr.putShort("id", id);
     bldr.putByte("place", place ? 1 : 0);
     bldr.putByte("delete", delete ? 1 : 0);
     session.send(bldr.toPacket());
@@ -608,14 +550,14 @@ public class ActionSender {
   public void sendRemoveBlockDefinition(int id) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(36));
-    bldr.putByte("id", id);
+    bldr.putShort("id", id);
     session.send(bldr.toPacket());
   }
 
-  private void sendInventoryOrder(int id, int order) {
+  public void sendInventoryOrder(int id, int order) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(44));
-    bldr.putByte("id", id);
+    bldr.putShort("id", id);
     bldr.putByte("order", order);
     session.send(bldr.toPacket());
   }
@@ -647,13 +589,13 @@ public class ActionSender {
    * @param z Z coordinate.
    * @param type BlockDefinition type.
    */
-  public void sendBlock(int x, int y, int z, byte type) {
+  public void sendBlock(int x, int y, int z, short type) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(6));
     bldr.putShort("x", x);
     bldr.putShort("y", y);
     bldr.putShort("z", z);
-    bldr.putByte("type", type);
+    bldr.putShort("type", type);
     session.send(bldr.toPacket());
   }
 

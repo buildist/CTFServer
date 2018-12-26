@@ -97,7 +97,7 @@ public class GrenadeCommand implements Command {
                 int by = (int) Math.round(y);
                 int bz = (int) Math.round(z);
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                if (block != 0 && block != 46) {
+                if (block != 0 && block != Constants.BLOCK_TNT) {
                   World.getWorld()
                       .getLevel()
                       .setBlock(

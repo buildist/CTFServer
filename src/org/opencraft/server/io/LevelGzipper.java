@@ -36,20 +36,18 @@
  */
 package org.opencraft.server.io;
 
-import org.apache.mina.core.buffer.IoBuffer;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.ActionSender;
 import org.opencraft.server.net.MinecraftSession;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * A utility class for gzipping levels.
@@ -81,7 +79,8 @@ public final class LevelGzipper {
     final int width = level.getWidth();
     final int height = level.getHeight();
     final int depth = level.getDepth();
-    session.getActionSender().sendLevelInit();
+    int length = width * height * depth;
+    session.getActionSender().sendLevelInit(length);
 
     for (CustomBlockDefinition blockDef : level.customBlockDefinitions) {
       session.getActionSender().sendDefineBlockExt(blockDef);
@@ -94,26 +93,9 @@ public final class LevelGzipper {
           @Override
           public void run() {
             try {
-              ByteArrayOutputStream out = new ByteArrayOutputStream();
-              int size = width * height * depth;
-              DataOutputStream os = new DataOutputStream(new GZIPOutputStream(out));
-              os.writeInt(size);
-              os.write(level.getBlocks1D());
-              os.close();
-              byte[] data = out.toByteArray();
-              IoBuffer buf = IoBuffer.allocate(data.length);
-              buf.put(data);
-              buf.flip();
-              while (buf.hasRemaining()) {
-                int len = buf.remaining();
-                if (len > 1024) {
-                  len = 1024;
-                }
-                byte[] chunk = new byte[len];
-                buf.get(chunk);
-                int percent = (int) ((double) buf.position() / (double) buf.limit() * 255D);
-                session.getActionSender().sendLevelBlock(len, chunk, percent);
-              }
+              sendBlocks(level.getCompressedBlocks0(), session.getActionSender(), false);
+              sendBlocks(level.getCompressedBlocks1(), session.getActionSender(), true);
+
               String texturePack =
                   (level.textureUrl != null && !level.textureUrl.isEmpty())
                       ? level.textureUrl
@@ -141,6 +123,15 @@ public final class LevelGzipper {
               session
                   .getActionSender()
                   .sendBlockPermissions(Constants.BLOCK_BLUE_FLAG, false, true);
+              session
+                  .getActionSender()
+                  .sendBlockPermissions(Constants.BLOCK_TNT, true, true);
+              session
+                  .getActionSender()
+                  .sendBlockPermissions(Constants.BLOCK_DETONATOR, true, true);
+              session
+                  .getActionSender()
+                  .sendBlockPermissions(Constants.BLOCK_MINE, true, true);
 
               session.getPlayer().getLocalEntities().clear();
             } catch (IOException ex) {
@@ -148,7 +139,15 @@ public final class LevelGzipper {
             }
           }
         });
-    // if(session.isExtensionSupported("HackControl"))
-    //      session.getActionSender().sendHackControl(session.getPlayer().isOp());
+  }
+
+  private static void sendBlocks(byte[] bytes, ActionSender sender, boolean isHighBytes) {
+    int i = 0;
+    while (i < bytes.length) {
+      int len = Math.min(1024, bytes.length - 1);
+      byte[] chunk = Arrays.copyOfRange(bytes, i, i + len);
+      sender.sendLevelBlock(len, chunk, isHighBytes ? 1 : 0);
+      i += len;
+    }
   }
 }

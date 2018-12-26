@@ -58,7 +58,7 @@ public class ConstructionPacketHandler implements PacketHandler<MinecraftSession
     }
     Player p = session.getPlayer();
     long time = new Date().getTime() - p.lastBlockTimestamp;
-    int type = Server.getUnsigned(packet.getNumericField("type").intValue());
+    int type = packet.getNumericField("type").intValue();
     if (time < 5 && type == 22) p.kickForHacking();
     else {
       int x = packet.getNumericField("x").intValue();

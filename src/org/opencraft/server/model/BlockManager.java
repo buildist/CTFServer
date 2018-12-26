@@ -76,7 +76,7 @@ public final class BlockManager {
    * @return The resolved object.
    */
   private Object readResolve() {
-    blocksArray = new BlockDefinition[256];
+    blocksArray = new BlockDefinition[1024];
     for (BlockDefinition def : blockList) {
       blocksArray[def.getId()] = def;
     }

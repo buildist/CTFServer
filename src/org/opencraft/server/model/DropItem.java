@@ -53,7 +53,7 @@ public class DropItem implements Runnable {
 
   public void pickUp(Player p) {
     if (p.team == -1) {
-      p.getActionSender().sendBlock(posX, posY, posZ, (byte) Constants.BLOCK_CRATE);
+      p.getActionSender().sendBlock(posX, posY, posZ, (short) Constants.BLOCK_CRATE);
     } else {
       World.getWorld().broadcast("- " + p.parseName() + " has found " + points + " points!");
       p.addStorePoints(points);

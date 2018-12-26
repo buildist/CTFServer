@@ -511,7 +511,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       for (int cy = y - r; cy <= y + r; cy++) {
         for (int cz = z - r; cz <= z + r; cz++) {
           if (isExplodableBlock(level, cx, cy, cz)) {
-            level.setBlock(cx, cy, cz, (byte) 0);
+            level.setBlock(cx, cy, cz, 0);
           }
           defuseMineIfCan(p, cx, cy, cz);
         }
@@ -540,7 +540,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public boolean isExplodableBlock(Level level, int x, int y, int z) {
     int oldBlock = level.getBlock(x, y, z);
     return !level.isSolid(x, y, z)
-        && oldBlock != 46
+        && oldBlock != Constants.BLOCK_TNT
         && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)
         && !(x == redFlagX && z == redFlagY && y == redFlagZ)
         && !isMine(x, y, z)
@@ -743,8 +743,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       int rDoorX = Integer.parseInt(map.props.getProperty("redSpawnX"));
       int rDoorY = Integer.parseInt(map.props.getProperty("redSpawnY")) - 2;
       int rDoorZ = Integer.parseInt(map.props.getProperty("redSpawnZ"));
-      map.setBlock(rDoorX, rDoorZ, rDoorY, (byte) 0x00);
-      map.setBlock(bDoorX, bDoorZ, bDoorY, (byte) 0x00);
+      map.setBlock(rDoorX, rDoorZ, rDoorY, 0);
+      map.setBlock(bDoorX, bDoorZ, bDoorY, 0);
     }
   }
 
@@ -813,8 +813,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                   updateStatusMessage();
                   placeBlueFlag();
                   placeRedFlag();
+                  payloadPosition = -1;
                   if (getMode() == Level.PAYLOAD) {
-                    payloadPosition = -1;
                     updatePayload(0);
                   }
                   openSpawns();
@@ -1262,10 +1262,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               for (int cz = mz - r; cz <= mz + r; cz++) {
                 int oldBlock = level.getBlock(cx, cy, cz);
                 if (!level.isSolid(cx, cy, cz)
-                    && oldBlock != 46
+                    && oldBlock != Constants.BLOCK_TNT
                     && !(cx == blueFlagX && cz == blueFlagY && cy == blueFlagZ)
                     && !(cx == redFlagX && cz == redFlagY && cy == redFlagZ)) {
-                  level.setBlock(cx, cy, cz, (byte) 0);
+                  level.setBlock(cx, cy, cz, 0);
                 }
               }
             }
@@ -1457,24 +1457,24 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             .getActionSender()
             .sendChatMessage("- &aBlock last changed by: " + info.player.getName());
       }
-      player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+      player.getActionSender().sendBlock(x, y, z, (short) oldType);
       player.buildMode = BuildMode.NORMAL;
     } else {
       if (player.team == -1 && !(player.isOp()) && !player.isVIP()) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &eYou must join a team to build!");
         if (mode == 0) {
-          player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
         } else {
-          player.getActionSender().sendBlock(x, y, z, (byte) 0);
+          player.getActionSender().sendBlock(x, y, z, (short) 0);
         }
       } else if (!tournamentGameStarted) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &aThe game has not started yet.");
         if (mode == 0) {
-          player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
         } else {
-          player.getActionSender().sendBlock(x, y, z, (byte) 0);
+          player.getActionSender().sendBlock(x, y, z, (short) 0);
         }
 
       } else if (!(x < playerX + MAX_DISTANCE
@@ -1499,17 +1499,17 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           player.getSession().close();
         }
         if (mode == 0) {
-          player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
         } else {
-          player.getActionSender().sendBlock(x, y, z, (byte) 0);
+          player.getActionSender().sendBlock(x, y, z, (short) 0);
         }
       } else if (player.headBlockPosition != null
           && x == player.headBlockPosition.getX()
           && y == player.headBlockPosition.getY()
           && z == player.headBlockPosition.getZ()) {
         ignore = true;
-        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
-      } else if (player.brush && type != 46) {
+        player.getActionSender().sendBlock(x, y, z, (short) oldType);
+      } else if (player.brush && type != Constants.BLOCK_TNT) {
         int height = 3;
         int radius = 3;
         for (int offsetZ = -height; offsetZ <= radius; offsetZ++) {
@@ -1534,7 +1534,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         }
       } else if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
         int radius = player.tntRadius;
-        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+        player.getActionSender().sendBlock(x, y, z, (short) oldType);
         explodeTNT(
             player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
         player.hasTNT = false;
@@ -1544,21 +1544,21 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       } else if (level.isSolid(x, y, z)
           && (!player.isOp() || !player.placeSolid)
           && !GameSettings.getBoolean("Chaos")) {
-        player.getActionSender().sendBlock(x, y, z, (byte) level.getBlock(x, y, z));
+        player.getActionSender().sendBlock(x, y, z, (short) level.getBlock(x, y, z));
       } else if (isTNT(x, y, z) && !ignore) { // Deleting tnt
-        player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_TNT);
+        player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_TNT);
       } else if (isMine(x, y, z) && !ignore) { // Deleting mines
-        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+        player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if (isPayload(x, y, z) && !ignore) {
-        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
-      } else if (type == 46 && mode == 1 && !ignore) // Placing tnt
+        player.getActionSender().sendBlock(x, y, z, (short) oldType);
+      } else if (type == Constants.BLOCK_TNT && mode == 1 && !ignore) // Placing tnt
       {
         if (player.getAttribute("explodes").toString().equals("0")) {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
         if (player.team == -1) {
           player.getActionSender().sendChatMessage("- &eYou need to join a team to place TNT!");
-          player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
         } else {
           if (mode == 1) {
             if (!player.hasTNT
@@ -1573,10 +1573,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                 && !isPayload(x, y, z)
                 && !(x == redFlagX && z == redFlagY && y == redFlagZ)
                 && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
-              player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
+              player.getActionSender().sendBlock(x, y, z, (short) 0x00);
             } else if ((x == redFlagX && z == redFlagY && y == redFlagZ)
                 || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
-              player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+              player.getActionSender().sendBlock(x, y, z, (short) oldType);
             }
           }
         }
@@ -1584,11 +1584,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           && mode == 1
           && !ignore) { // Toggle flamethrower
         player.toggleFlameThrower();
-        player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+        player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if (type == Constants.BLOCK_MINE && mode == 1 && !ignore) { // Placing mines
         if (player.team == -1) {
           player.getActionSender().sendChatMessage("- &eYou need to join a team to place mines!");
-          player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
         } else {
           if (player.mines.size() < GameSettings.getInt("MaxMines")
               && !(x == redFlagX && z == redFlagY && y == redFlagZ)
@@ -1604,10 +1604,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               && !isPayload(x, y, z)
               && !(x == redFlagX && z == redFlagY && y == redFlagZ)
               && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
-            player.getActionSender().sendBlock(x, y, z, (byte) 0x00);
+            player.getActionSender().sendBlock(x, y, z, (short) 0x00);
           } else if ((x == redFlagX && z == redFlagY && y == redFlagZ)
               || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
-            player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+            player.getActionSender().sendBlock(x, y, z, (short) oldType);
           }
         }
       } else if ((type == BlockConstants.LAVA
@@ -1616,7 +1616,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               || type == Constants.BLOCK_MINE_RED
               || type == Constants.BLOCK_MINE_BLUE)
           && !player.isOp()) {
-        player.getActionSender().sendBlock(x, y, z, (byte) 0);
+        player.getActionSender().sendBlock(x, y, z, (short) 0);
         player.getActionSender().sendChatMessage("- &eYou can't place this block type!");
       } else if (getDropItem(x, y, z) != null) {
         DropItem i = getDropItem(x, y, z);
@@ -1625,18 +1625,18 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           && mode == 1
           && !redFlagTaken
           && !ignore) {
-        player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_RED_FLAG);
+        player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_RED_FLAG);
       } else if ((x == blueFlagX && z == blueFlagY && y == blueFlagZ)
           && mode == 1
           && !blueFlagTaken
           && !ignore) {
-        player.getActionSender().sendBlock(x, y, z, (byte) Constants.BLOCK_BLUE_FLAG);
+        player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_BLUE_FLAG);
       } else if (type > -1) {
         if (!ignore) {
           level.setBlock(x, y, z, (mode == 1 ? type : 0));
           BlockLog.logBlockChange(player, x, y, z);
         } else {
-          player.getActionSender().sendBlock(x, y, z, (byte) oldType);
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
         }
       }
       if (z <= level.ceiling) {

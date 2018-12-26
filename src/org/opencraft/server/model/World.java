@@ -276,14 +276,14 @@ public final class World {
       ex.printStackTrace();
     }
     if (session.isExtensionSupported("HeldBlock")) {
-      session.getActionSender().sendHoldThis(1, (byte) Constants.BLOCK_DETONATOR);
-      session.getActionSender().sendHoldThis(2, (byte) Constants.BLOCK_MINE);
-      session.getActionSender().sendHoldThis(3, (byte) 1);
-      session.getActionSender().sendHoldThis(5, (byte) 20);
-      session.getActionSender().sendHoldThis(6, (byte) 45);
-      session.getActionSender().sendHoldThis(7, (byte) 21);
-      session.getActionSender().sendHoldThis(8, (byte) 29);
-      session.getActionSender().sendHoldThis((byte) 46);
+      session.getActionSender().sendHoldThis(1, (short) Constants.BLOCK_DETONATOR);
+      session.getActionSender().sendHoldThis(2, (short) Constants.BLOCK_MINE);
+      session.getActionSender().sendHoldThis(3, (short) 1);
+      session.getActionSender().sendHoldThis(5, (short) 20);
+      session.getActionSender().sendHoldThis(6, (short) 45);
+      session.getActionSender().sendHoldThis(7, (short) 21);
+      session.getActionSender().sendHoldThis(8, (short) 29);
+      session.getActionSender().sendHoldThis((short) Constants.BLOCK_TNT);
     }
   }
 

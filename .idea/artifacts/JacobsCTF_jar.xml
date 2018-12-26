@@ -3,12 +3,11 @@
     <output-path>$PROJECT_DIR$/out/artifacts/JacobsCTF_jar</output-path>
     <root id="archive" name="JacobsCTF.jar">
       <element id="module-output" name="JacobsCTF" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/xstream-core.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/minecraft-server.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/slf4j-jdk.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/slf4j-api.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/xstream-core.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/lib/mina-core.jar" path-in-jar="/" />
-      <element id="library" level="project" name="lib" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/minecraft-server.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

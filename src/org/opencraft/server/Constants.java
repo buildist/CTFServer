@@ -80,10 +80,13 @@ public final class Constants {
     "BlockDefinitions",
     "BlockDefinitionsExt",
     "BlockPermissions",
-    "InventoryOrder"
+    "InventoryOrder",
+    "ExtendedBlocks",
+    "ExtendedTextures",
+    "FastMap",
   };
   // CPE versions
-  public static final int[] CPE_EXT_VERSIONS = {1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1};
+  public static final int[] CPE_EXT_VERSIONS = {1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
   public static final int COLOR_CLOUD = 1;
@@ -109,16 +112,16 @@ public final class Constants {
   public static final String URL_MAP_COMMENT =
       "http://buildism.net/mc/server/mapComment.php?k=" + SECRET;
 
-  public static final int BLOCK_MINE = 230;
-  public static final int BLOCK_MINE_RED = 231;
-  public static final int BLOCK_MINE_BLUE = 232;
-  public static final int BLOCK_TNT = BlockConstants.TNT;
-  public static final int BLOCK_RED_FLAG = 233;
-  public static final int BLOCK_BLUE_FLAG = 234;
-  public static final int BLOCK_DETONATOR = 235;
-  public static final int BLOCK_CRATE = 64;
-  public static final int BLOCK_PAYLOAD = 47;
-  public static final int BLOCK_FLAMETHROWER = BlockConstants.COAL;
+  public static final int BLOCK_MINE = 600;
+  public static final int BLOCK_MINE_RED = 601;
+  public static final int BLOCK_MINE_BLUE = 602;
+  public static final int BLOCK_TNT = 603;
+  public static final int BLOCK_RED_FLAG = 604;
+  public static final int BLOCK_BLUE_FLAG = 605;
+  public static final int BLOCK_DETONATOR = 606;
+  public static final int BLOCK_CRATE = 607;
+  public static final int BLOCK_PAYLOAD = 608;
+  public static final int BLOCK_FLAMETHROWER = 609;
 
   public static final int BLOCK_SOLIDITY_WALK_THROUGH = 0;
   public static final int BLOCK_SOLIDITY_SWIM_THROUGH = 1;

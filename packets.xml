@@ -78,7 +78,7 @@ POSSIBILITY OF SUCH DAMAGE.
         </field>
         <field>
           <name>type</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
       </fields>
     </packet>
@@ -87,8 +87,8 @@ POSSIBILITY OF SUCH DAMAGE.
       <name>move_and_rotate</name>
       <fields>
         <field>
-          <name>id</name>
-          <type>BYTE</type>
+          <name>id</name> <!-- held block -->
+          <type>SHORT</type>
         </field>
         <field>
           <name>x</name>
@@ -205,7 +205,12 @@ POSSIBILITY OF SUCH DAMAGE.
     <packet>
       <opcode>2</opcode>
       <name>level_init</name>
-      <fields/>
+      <fields>
+        <field>
+          <name>size</name>
+          <type>INT</type>
+        </field>
+      </fields>
     </packet>
     <packet>
       <opcode>3</opcode>
@@ -261,7 +266,7 @@ POSSIBILITY OF SUCH DAMAGE.
         </field>
         <field>
           <name>type</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
       </fields>
     </packet>
@@ -487,7 +492,7 @@ POSSIBILITY OF SUCH DAMAGE.
       <fields>
         <field>
           <name>block_to_hold</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>prevent_change</name>
@@ -693,7 +698,7 @@ Z        <field>
       <fields>
         <field>
           <name>id</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>name</name>
@@ -709,15 +714,15 @@ Z        <field>
         </field>
         <field>
           <name>texture_top</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>texture_side</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>texture_bottom</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>emits_light</name>
@@ -763,7 +768,7 @@ Z        <field>
       <fields>
         <field>
           <name>id</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>name</name>
@@ -779,27 +784,27 @@ Z        <field>
         </field>
         <field>
           <name>texture_top</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>texture_left</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>texture_right</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>texture_front</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>texture_back</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>texture_bottom</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>emits_light</name>
@@ -865,7 +870,7 @@ Z        <field>
       <fields>
         <field>
           <name>id</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>place</name>
@@ -883,9 +888,23 @@ Z        <field>
       <fields>
         <field>
           <name>id</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
       </fields>
     </packet>
-  </outgoing>
+    <packet>
+      <opcode>44</opcode>
+      <name>inventory_order</name>
+      <fields>
+        <field>
+          <name>order</name>
+          <type>BYTE</type>
+        </field>
+        <field>
+          <name>id</name>
+          <type>SHORT</type>
+        </field>
+      </fields>
+    </packet>
+</outgoing>
 </packets>
