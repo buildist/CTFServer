@@ -184,16 +184,16 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public boolean voting = false;
   public boolean isFirstBlood = true;
   public boolean ready = false;
-  public ArrayList<String> rtvYesPlayers = new ArrayList<String>();
-  public ArrayList<String> rtvNoPlayers = new ArrayList<String>();
-  public ArrayList<String> mutedPlayers = new ArrayList<String>();
+  public ArrayList<String> rtvYesPlayers = new ArrayList<>();
+  public ArrayList<String> rtvNoPlayers = new ArrayList<>();
+  public ArrayList<String> mutedPlayers = new ArrayList<>();
   public int rtvVotes = 0;
-  public ArrayList<String> nominatedMaps = new ArrayList<String>();
-  private ArrayList<String> killFeed = new ArrayList<String>();
+  public ArrayList<String> nominatedMaps = new ArrayList<>();
+  private ArrayList<KillFeedItem> killFeed = new ArrayList<>();
   public String currentMap = null;
   public String previousMap = null;
   private Level map;
-  private ArrayList<DropItem> items = new ArrayList<DropItem>(8);
+  private ArrayList<DropItem> items = new ArrayList<>(8);
   private String statusMessage;
 
   public CTFGameMode() {
@@ -340,17 +340,22 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public void sendAnnouncement(final Player p, final String message) {
     if (p.getSession().isExtensionSupported("MessageTypes")) {
       new Thread(
-              new Runnable() {
+          new Runnable() {
 
-                public void run() {
-                  try {
-                    p.getActionSender().sendChatMessage(message, 100);
-                    Thread.sleep(4000);
-                    p.getActionSender().sendChatMessage("", 100);
-                  } catch (InterruptedException ex) {
-                  }
+            public void run() {
+              try {
+                p.announcement = message;
+                p.getActionSender().sendChatMessage(message, 100);
+                Thread.sleep(4000);
+                if (p.announcement.equals(message)) {
+                  // Don't clear if it has since been updated again.
+                  p.announcement = "";
+                  p.getActionSender().sendChatMessage("", 100);
                 }
-              })
+              } catch (InterruptedException ex) {
+              }
+            }
+          })
           .start();
     }
   }
@@ -492,11 +497,15 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           t.sendToTeamSpawn();
           t.died(p);
           updateKillFeed(
+              p,
+              t,
               p.parseName()
                   + " exploded "
                   + t.getColoredName()
                   + (type == null ? "" : " &f(" + type + ")"));
-          if (!tk) checkFirstBlood(p, t);
+          if (!tk) {
+            checkFirstBlood(p, t);
+          }
           if (t.team != -1 && t.team != p.team) {
             p.setAttribute("explodes", (Integer) p.getAttribute("explodes") + 1);
             p.addStorePoints(5);
@@ -625,7 +634,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           t.sendToTeamSpawn();
           t.markSafe();
           t.died(p);
-          updateKillFeed(p.parseName() + " cooked " + t.getColoredName());
+          updateKillFeed(p, t, p.parseName() + " cooked " + t.getColoredName());
           checkFirstBlood(p, t);
           p.addStorePoints(5);
           if (t.hasFlag) {
@@ -759,71 +768,70 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     currentMap = map.id;
     MoveLog.getInstance().logMapChange(map.id);
     new Thread(
-            new Runnable() {
+        new Runnable() {
 
-              public void run() {
-                try {
-                  gameStartTime = System.currentTimeMillis();
-                  tournamentGameStarted = !GameSettings.getBoolean("Tournament");
-                  for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-                    player.team = -1;
-                    player.hasVoted = false;
-                    player.hasNominated = false;
-                    player.hasFlag = false;
-                    player.hasTNT = false;
-                    player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-                    player.accumulatedStorePoints = 0;
-                    for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
-                      player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
-                    }
-                  }
-                  World.getWorld().clearMines();
-                  startNewMap = null;
-                  blockSpawnX = (map.getSpawnPosition().getX() - 16) / 32;
-                  blockSpawnY = (map.getSpawnPosition().getY() - 16) / 32;
-                  blockSpawnZ = (map.getSpawnPosition().getZ() - 16) / 32;
-                  redPlayers = 0;
-                  bluePlayers = 0;
-                  World.getWorld().setLevel(map);
-                  resetRedFlagPos();
-                  resetBlueFlagPos();
-                  killFeed.clear();
-                  updateKillFeed("");
-                  updateStatusMessage();
-                  voting = false;
-                  rtvVotes = 0;
-                  rtvYesPlayers.clear();
-                  rtvNoPlayers.clear();
-                  nominatedMaps.clear();
-                  isFirstBlood = true;
-                  for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-                    p.joinTeam("spec", false);
-                  }
-                  try {
-                    Thread.sleep(5 * 1000);
-                  } catch (InterruptedException ex) {
-                  }
-                  World.getWorld()
-                      .broadcast("- &6Say /join to start playing, or /spec to spectate.");
-                  redFlagTaken = false;
-                  blueFlagTaken = false;
-                  redCaptures = 0;
-                  blueCaptures = 0;
-                  ready = true;
-                  updateStatusMessage();
-                  placeBlueFlag();
-                  placeRedFlag();
-                  payloadPosition = -1;
-                  if (getMode() == Level.PAYLOAD) {
-                    updatePayload(0);
-                  }
-                  openSpawns();
-                } catch (Exception ex) {
-                  Server.log(ex);
-                  voting = false;
+          public void run() {
+            try {
+              gameStartTime = System.currentTimeMillis();
+              tournamentGameStarted = !GameSettings.getBoolean("Tournament");
+              for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+                player.team = -1;
+                player.hasVoted = false;
+                player.hasNominated = false;
+                player.hasFlag = false;
+                player.hasTNT = false;
+                player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+                player.accumulatedStorePoints = 0;
+                for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
+                  player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
                 }
               }
-            })
+              World.getWorld().clearMines();
+              startNewMap = null;
+              blockSpawnX = (map.getSpawnPosition().getX() - 16) / 32;
+              blockSpawnY = (map.getSpawnPosition().getY() - 16) / 32;
+              blockSpawnZ = (map.getSpawnPosition().getZ() - 16) / 32;
+              redPlayers = 0;
+              bluePlayers = 0;
+              World.getWorld().setLevel(map);
+              resetRedFlagPos();
+              resetBlueFlagPos();
+              clearKillFeed();
+              updateStatusMessage();
+              voting = false;
+              rtvVotes = 0;
+              rtvYesPlayers.clear();
+              rtvNoPlayers.clear();
+              nominatedMaps.clear();
+              isFirstBlood = true;
+              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                p.joinTeam("spec", false);
+              }
+              try {
+                Thread.sleep(5 * 1000);
+              } catch (InterruptedException ex) {
+              }
+              World.getWorld()
+                  .broadcast("- &6Say /join to start playing, or /spec to spectate.");
+              redFlagTaken = false;
+              blueFlagTaken = false;
+              redCaptures = 0;
+              blueCaptures = 0;
+              ready = true;
+              updateStatusMessage();
+              placeBlueFlag();
+              placeRedFlag();
+              payloadPosition = -1;
+              if (getMode() == Level.PAYLOAD) {
+                updatePayload(0);
+              }
+              openSpawns();
+            } catch (Exception ex) {
+              Server.log(ex);
+              voting = false;
+            }
+          }
+        })
         .start();
     Server.saveLog();
   }
@@ -859,168 +867,196 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     return top;
   }
 
-  private void updateKillFeed(String killmsg) {
-    if (!killmsg.equals("")) {
-      killFeed.add(killmsg);
+  private void updateKillFeed(Player attacker, Player defender, String killmsg) {
+    killFeed.add(0, new KillFeedItem(killmsg));
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p == attacker || p == defender) {
+        sendAnnouncement(p, killmsg);
+      }
     }
 
     if (killFeed.size() > 3) {
-      killFeed.remove(0);
+      killFeed.remove(killFeed.get(killFeed.size() - 1));
     }
 
-    int i = 2;
-    for (String msg : killFeed) {
-      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-        if (p.getSession().isExtensionSupported("MessageTypes")) {
-          p.getActionSender().sendChatMessage(msg, 11 + i);
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      sendKillFeed(p);
+    }
+  }
+
+  private void clearKillFeed() {
+    killFeed.clear();
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p.getSession().isExtensionSupported("MessageTypes")) {
+        for (int i = 0; i < 3; i++) {
+          p.getActionSender().sendChatMessage("", 11 + i);
         }
       }
-      i--;
     }
   }
 
   private void sendKillFeed(Player p) {
-    if (p != null) {
-      int i = 2;
-      if (p.getSession().isExtensionSupported("MessageTypes")) {
-        for (String msg : killFeed) {
-          p.getActionSender().sendChatMessage(msg, 11 + i);
-          i--;
+    if (p == null) {
+      return;
+    }
+    if (p.getSession().isExtensionSupported("MessageTypes")) {
+      for (int i = 0; i < 3; i++) {
+        if (i >= killFeed.size()) {
+          p.getActionSender().sendChatMessage("", 11 + i);
+        } else {
+          p.getActionSender().sendChatMessage(killFeed.get(i).message, 11 + i);
         }
+      }
+    }
+  }
+
+  public void pruneKillFeed() {
+    boolean updated = false;
+    for (int i = killFeed.size() - 1; i >= 0; i--) {
+      if (System.currentTimeMillis() - killFeed.get(i).time > 10000) {
+        killFeed.remove(i);
+        updated = true;
+      }
+    }
+    if (updated) {
+      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+        sendKillFeed(p);
       }
     }
   }
 
   public void endGame() {
     new Thread(
-            new Runnable() {
-              public void run() {
-                try {
-                  String winner = null;
-                  int winnerID = -2;
-                  if (redCaptures > blueCaptures) {
-                    winner = "red";
-                    winnerID = 0;
-                  } else if (blueCaptures > redCaptures) {
-                    winner = "blue";
-                    winnerID = 1;
-                  }
-                  if (winner == null) {
-                    World.getWorld().broadcast("- &6The game ended in a tie!");
-                  } else {
-                    World.getWorld()
-                        .broadcast("- &6The game has ended; the " + winner + " team wins!");
-                  }
-                  if (getMode() == Level.CTF) {
-                    World.getWorld()
-                        .broadcast(
-                            "- &6Red had "
-                                + redCaptures
-                                + " captures, blue had "
-                                + blueCaptures
-                                + ".");
-                  } else {
-                    World.getWorld()
-                        .broadcast(
-                            "- &6Red had "
-                                + redCaptures
-                                + " kills, blue had "
-                                + blueCaptures
-                                + ".");
-                  }
-                  for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-                    if (p.team != -1) {
-                      p.setAttribute("games", (Integer) p.getAttribute("games") + 1);
-                    }
-                    if (p.team == winnerID) {
-                      p.setAttribute("wins", (Integer) p.getAttribute("wins") + 1);
-                    }
-                    p.hasVoted = false;
-                    p.hasNominated = false;
-                  }
-                  Player[] top = getTopPlayers(3);
-                  World.getWorld().broadcast("- &3Top players for the round:");
-                  if (top[0] == null) {
-                    World.getWorld().broadcast("- &3Nobody");
-                  }
-                  for (int j = 0; j < 3; j++) {
-                    Player p = top[j];
-                    if (p == null) {
-                      break;
-                    }
-                    World.getWorld()
-                        .broadcast("- &2" + p.getName() + " - " + p.accumulatedStorePoints);
-                  }
-                  for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-                    player.team = -1;
-                    player.hasFlag = false;
-                    player.hasTNT = false;
-                    if (player.isFlamethrowerEnabled()) {
-                      World.getWorld()
-                          .getLevel()
-                          .clearFire(player.linePosition, player.lineRotation);
-                      player.disableFlameThrower();
-                    }
-                    player.flamethrowerTime = 0;
-                    player.rocketTime = 0;
-                    player.sendToTeamSpawn();
-                  }
-                  rtvVotes = 0;
-                  rtvYesPlayers.clear();
-                  rtvNoPlayers.clear();
-                  if (GameSettings.getBoolean("Tournament")) return;
-                  World.getWorld().broadcast("- &aMap voting is now open for 40 seconds...");
-                  World.getWorld().broadcast("- &aSay /vote [mapname] to select the next map!");
-                  MapController.resetVotes();
-                  voting = true;
-                  int count = nominatedMaps.size();
-                  if (count > 3) {
-                    count = 3;
-                  }
-                  ArrayList<String> mapNames =
-                      MapController.getRandomMapNames(
-                          3 - count, new String[] {currentMap, previousMap});
-                  mapNames.addAll(nominatedMaps);
-                  String msg = "";
-                  for (String map : mapNames) {
-                    msg += map + ", ";
-                  }
-                  World.getWorld().broadcast("- &a" + msg);
-                  World.getWorld()
-                      .broadcast(
-                          "- &3Did you like the map you just played ("
-                              + currentMap
-                              + ")? Say /yes or /no followed by a reason (optional) to vote!");
-                  new Thread(
-                          new Runnable() {
-                            public void run() {
-                              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-                                try {
-                                  new SavePersistenceRequest(p).perform();
-                                } catch (IOException ex) {
-                                }
-                              }
-                            }
-                          })
-                      .start();
-                  Thread.sleep(40 * 1000);
-                  Level newLevel = MapController.getMostVotedForMap();
-                  ready = false;
-                  String rating = MapRatings.getRating(currentMap);
-                  World.getWorld().broadcast("- &3This map's approval rating is now " + rating);
-                  World.getWorld()
-                      .broadcast("- &3See the ratings at http://jacobsc.tf/mapratings.");
-                  World.getWorld()
-                      .broadcast(
-                          "- &e" + newLevel.id + " had the most votes. Starting new " + "game!");
-                  Thread.sleep(7 * 1000);
-                  startGame(newLevel);
-                } catch (Exception ex) {
-                  voting = false;
-                  Server.log(ex);
-                }
+        new Runnable() {
+          public void run() {
+            try {
+              String winner = null;
+              int winnerID = -2;
+              if (redCaptures > blueCaptures) {
+                winner = "red";
+                winnerID = 0;
+              } else if (blueCaptures > redCaptures) {
+                winner = "blue";
+                winnerID = 1;
               }
-            })
+              if (winner == null) {
+                World.getWorld().broadcast("- &6The game ended in a tie!");
+              } else {
+                World.getWorld()
+                    .broadcast("- &6The game has ended; the " + winner + " team wins!");
+              }
+              if (getMode() == Level.CTF) {
+                World.getWorld()
+                    .broadcast(
+                        "- &6Red had "
+                            + redCaptures
+                            + " captures, blue had "
+                            + blueCaptures
+                            + ".");
+              } else {
+                World.getWorld()
+                    .broadcast(
+                        "- &6Red had "
+                            + redCaptures
+                            + " kills, blue had "
+                            + blueCaptures
+                            + ".");
+              }
+              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                if (p.team != -1) {
+                  p.setAttribute("games", (Integer) p.getAttribute("games") + 1);
+                }
+                if (p.team == winnerID) {
+                  p.setAttribute("wins", (Integer) p.getAttribute("wins") + 1);
+                }
+                p.hasVoted = false;
+                p.hasNominated = false;
+              }
+              Player[] top = getTopPlayers(3);
+              World.getWorld().broadcast("- &3Top players for the round:");
+              if (top[0] == null) {
+                World.getWorld().broadcast("- &3Nobody");
+              }
+              for (int j = 0; j < 3; j++) {
+                Player p = top[j];
+                if (p == null) {
+                  break;
+                }
+                World.getWorld()
+                    .broadcast("- &2" + p.getName() + " - " + p.accumulatedStorePoints);
+              }
+              for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+                player.team = -1;
+                player.hasFlag = false;
+                player.hasTNT = false;
+                if (player.isFlamethrowerEnabled()) {
+                  World.getWorld()
+                      .getLevel()
+                      .clearFire(player.linePosition, player.lineRotation);
+                  player.disableFlameThrower();
+                }
+                player.flamethrowerTime = 0;
+                player.rocketTime = 0;
+                player.sendToTeamSpawn();
+              }
+              rtvVotes = 0;
+              rtvYesPlayers.clear();
+              rtvNoPlayers.clear();
+              if (GameSettings.getBoolean("Tournament")) {
+                return;
+              }
+              World.getWorld().broadcast("- &aMap voting is now open for 40 seconds...");
+              World.getWorld().broadcast("- &aSay /vote [mapname] to select the next map!");
+              MapController.resetVotes();
+              voting = true;
+              int count = nominatedMaps.size();
+              if (count > 3) {
+                count = 3;
+              }
+              ArrayList<String> mapNames =
+                  MapController.getRandomMapNames(
+                      3 - count, new String[]{currentMap, previousMap});
+              mapNames.addAll(nominatedMaps);
+              String msg = "";
+              for (String map : mapNames) {
+                msg += map + ", ";
+              }
+              World.getWorld().broadcast("- &a" + msg);
+              World.getWorld()
+                  .broadcast(
+                      "- &3Did you like the map you just played ("
+                          + currentMap
+                          + ")? Say /yes or /no followed by a reason (optional) to vote!");
+              new Thread(
+                  new Runnable() {
+                    public void run() {
+                      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                        try {
+                          new SavePersistenceRequest(p).perform();
+                        } catch (IOException ex) {
+                        }
+                      }
+                    }
+                  })
+                  .start();
+              Thread.sleep(40 * 1000);
+              Level newLevel = MapController.getMostVotedForMap();
+              ready = false;
+              String rating = MapRatings.getRating(currentMap);
+              World.getWorld().broadcast("- &3This map's approval rating is now " + rating);
+              World.getWorld()
+                  .broadcast("- &3See the ratings at http://jacobsc.tf/mapratings.");
+              World.getWorld()
+                  .broadcast(
+                      "- &e" + newLevel.id + " had the most votes. Starting new " + "game!");
+              Thread.sleep(7 * 1000);
+              startGame(newLevel);
+            } catch (Exception ex) {
+              voting = false;
+              Server.log(ex);
+            }
+          }
+        })
         .start();
   }
 
@@ -1280,7 +1316,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             dropFlag(p.team);
           }
           p.died(m.owner);
-          updateKillFeed(m.owner.parseName() + " mined " + p.parseName() + ".");
+          updateKillFeed(m.owner, p, m.owner.parseName() + " mined " + p.parseName() + ".");
         }
       }
     }
@@ -1347,7 +1383,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         tagged.died(tagger);
         tagger.setAttribute("tags", (Integer) tagger.getAttribute("tags") + 1);
         tagger.addStorePoints(5);
-        updateKillFeed(tagger.parseName() + " tagged " + tagged.parseName() + ".");
+        updateKillFeed(tagger, tagged, tagger.parseName() + " tagged " + tagged.parseName() + ".");
       }
     }
   }
@@ -1520,13 +1556,13 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                   && !isMine(offsetX + x, offsetY + y, offsetZ + z)
                   && !isPayload(offsetX + x, offsetY + y, offsetZ + z)
                   && !(x + offsetX == redFlagX
-                      && z + offsetZ == redFlagY
-                      && y + offsetY == redFlagZ)
+                  && z + offsetZ == redFlagY
+                  && y + offsetY == redFlagZ)
                   && !(x + offsetX == blueFlagX
-                      && z + offsetZ == blueFlagY
-                      && y + offsetY == blueFlagZ)
+                  && z + offsetZ == blueFlagY
+                  && y + offsetY == blueFlagZ)
                   && Math.abs(offsetX) + Math.abs(offsetY) + Math.abs(offsetZ)
-                      <= Math.abs(radius)) {
+                  <= Math.abs(radius)) {
                 level.setBlock(offsetX + x, offsetY + y, offsetZ + z, type);
               }
             }
@@ -1611,10 +1647,10 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           }
         }
       } else if ((type == BlockConstants.LAVA
-              || type == BlockConstants.WATER
-              || type == BlockConstants.ADMINIUM
-              || type == Constants.BLOCK_MINE_RED
-              || type == Constants.BLOCK_MINE_BLUE)
+          || type == BlockConstants.WATER
+          || type == BlockConstants.ADMINIUM
+          || type == Constants.BLOCK_MINE_RED
+          || type == Constants.BLOCK_MINE_BLUE)
           && !player.isOp()) {
         player.getActionSender().sendBlock(x, y, z, (short) 0);
         player.getActionSender().sendChatMessage("- &eYou can't place this block type!");
@@ -1684,7 +1720,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
     World.getWorld().broadcast("&a" + p.getName() + " left the game");
 
-    if (World.getWorld().getPlayerList().size() == 0) rtvVotes = 0;
+    if (World.getWorld().getPlayerList().size() == 0) {
+      rtvVotes = 0;
+    }
   }
 
   public void broadcastChatMessage(final Player player, final String message) {
@@ -1848,5 +1886,15 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public boolean isMuted(String name) {
     return mutedPlayers.contains(name);
+  }
+
+  static class KillFeedItem {
+
+    public final String message;
+    public final long time = System.currentTimeMillis();
+
+    KillFeedItem(String message) {
+      this.message = message;
+    }
   }
 }

@@ -76,6 +76,7 @@ public class Player extends Entity {
   public boolean appendingChat = false;
   public String partialChatMessage = "";
   public String lastMessage;
+  public String announcement = "";
   public long lastMessageTime;
   public long lastPacketTime;
   public int heldBlock = 0;

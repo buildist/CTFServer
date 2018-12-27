@@ -216,6 +216,9 @@ public class CTFProcessTask extends ScheduledTask {
     } else if (GameSettings.getBoolean("Tournament")) {
       showTimer("TournamentTimeLimit", false /* shouldEndGame */, "Tournament");
     }
+
+    ctf.pruneKillFeed();
+
     ticks++;
     if (ticks == 10) {
       ticks = 0;
