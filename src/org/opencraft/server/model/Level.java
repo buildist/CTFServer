@@ -982,7 +982,7 @@ public final class Level implements Cloneable {
     int index = (z * this.height + y) * this.width + x;
     blocks0[index] = (byte) (type & 0x00FF);
     compressedBlocks0 = null;
-    if (type > 255) {
+    if (type > 255 || blocks1[index] != 0) {
       blocks1[index] = (byte) ((type & 0xFF00) >> 8);
       compressedBlocks1 = null;
     }

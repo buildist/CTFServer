@@ -221,7 +221,10 @@ public class CustomBlockDefinition {
     public static final CustomBlockDefinition PAYLOAD =
             new CustomBlockDefinition(
                     Constants.BLOCK_PAYLOAD, "Payload", 249, Constants.BLOCK_WALK_SOUND_METAL, 0);
+  public static final CustomBlockDefinition CRATE =
+          new CustomBlockDefinition(
+                  Constants.BLOCK_CRATE, "Crate", 505, Constants.BLOCK_WALK_SOUND_WOOD, 0);
 
   public static final CustomBlockDefinition[] CUSTOM_BLOCKS =
-      new CustomBlockDefinition[] {TNT, PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE};
+      new CustomBlockDefinition[] {TNT, PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE, CRATE};
 }
