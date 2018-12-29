@@ -189,7 +189,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public ArrayList<String> mutedPlayers = new ArrayList<>();
   public int rtvVotes = 0;
   public ArrayList<String> nominatedMaps = new ArrayList<>();
-  private ArrayList<KillFeedItem> killFeed = new ArrayList<>();
+  private final ArrayList<KillFeedItem> killFeed = new ArrayList<>();
   public String currentMap = null;
   public String previousMap = null;
   private Level map;
@@ -450,7 +450,9 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
     if (player.getSession().isExtensionSupported("MessageTypes")) {
       World.getWorld().getGameMode().sendStatusMessage(player);
-      World.getWorld().getGameMode().sendKillFeed(player);
+      synchronized (killFeed) {
+        World.getWorld().getGameMode().sendKillFeed(player);
+      }
       player.sendFlamethrowerFuel();
     }
   }
@@ -868,28 +870,32 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   private void updateKillFeed(Player attacker, Player defender, String killmsg) {
-    killFeed.add(0, new KillFeedItem(killmsg));
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p == attacker || p == defender) {
-        sendAnnouncement(p, killmsg);
+    synchronized (killFeed) {
+      killFeed.add(0, new KillFeedItem(killmsg));
+      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+        if (p == attacker || p == defender) {
+          sendAnnouncement(p, killmsg);
+        }
       }
-    }
 
-    if (killFeed.size() > 3) {
-      killFeed.remove(killFeed.get(killFeed.size() - 1));
-    }
+      if (killFeed.size() > 3) {
+        killFeed.remove(killFeed.get(killFeed.size() - 1));
+      }
 
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      sendKillFeed(p);
+      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+        sendKillFeed(p);
+      }
     }
   }
 
   private void clearKillFeed() {
-    killFeed.clear();
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.getSession().isExtensionSupported("MessageTypes")) {
-        for (int i = 0; i < 3; i++) {
-          p.getActionSender().sendChatMessage("", 11 + i);
+    synchronized (killFeed) {
+      killFeed.clear();
+      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+        if (p.getSession().isExtensionSupported("MessageTypes")) {
+          for (int i = 0; i < 3; i++) {
+            p.getActionSender().sendChatMessage("", 11 + i);
+          }
         }
       }
     }
@@ -911,16 +917,18 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public void pruneKillFeed() {
-    boolean updated = false;
-    for (int i = killFeed.size() - 1; i >= 0; i--) {
-      if (System.currentTimeMillis() - killFeed.get(i).time > 10000) {
-        killFeed.remove(i);
-        updated = true;
+    synchronized (killFeed) {
+      boolean updated = false;
+      for (int i = killFeed.size() - 1; i >= 0; i--) {
+        if (System.currentTimeMillis() - killFeed.get(i).time > 10000) {
+          killFeed.remove(i);
+          updated = true;
+        }
       }
-    }
-    if (updated) {
-      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-        sendKillFeed(p);
+      if (updated) {
+        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+          sendKillFeed(p);
+        }
       }
     }
   }

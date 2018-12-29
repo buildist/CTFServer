@@ -887,15 +887,17 @@ public final class Level implements Cloneable {
       }
     }
 
-    while (!iceBlocks.isEmpty()) {
-      UpdateBlock block = iceBlocks.peek();
-      if (System.currentTimeMillis() - block.time > Constants.ICE_MELT_TIME) {
-        iceBlocks.remove();
-        if (getBlock(block.position) == 60) {
-          setBlock(block.position, 0);
+    synchronized (iceBlocks) {
+      while (!iceBlocks.isEmpty()) {
+        UpdateBlock block = iceBlocks.peek();
+        if (System.currentTimeMillis() - block.time > Constants.ICE_MELT_TIME) {
+          iceBlocks.remove();
+          if (getBlock(block.position) == 60) {
+            setBlock(block.position, 0);
+          }
+        } else {
+          break;
         }
-      } else {
-        break;
       }
     }
   }
@@ -1012,8 +1014,10 @@ public final class Level implements Cloneable {
       this.assignLightDepth(x, y, z);
       this.scheduleZPlantThink(x, y, z);
     }
-    if (type == 60) {
-      iceBlocks.add(new UpdateBlock(position, System.currentTimeMillis()));
+    synchronized (iceBlocks) {
+      if (type == 60) {
+        iceBlocks.add(new UpdateBlock(position, System.currentTimeMillis()));
+      }
     }
   }
 
