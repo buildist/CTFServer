@@ -58,36 +58,47 @@ public class StatusCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     int redPlayers = 0;
     int bluePlayers = 0;
-    String hasOtherFlag = null;
-    String hasOurFlag = null;
+    String hasRedFlag = null;
+    String hasBlueFlag = null;
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.team == 0) redPlayers++;
       else if (p.team == 1) bluePlayers++;
       if (p.hasFlag) {
-        if (p.team == player.team) hasOtherFlag = p.getName();
-        else hasOurFlag = p.getName();
+        if (p.team == 0) {
+          hasBlueFlag = p.getName();
+        }
+        else {
+          hasRedFlag = p.getName();
+        }
       }
     }
-    if (hasOtherFlag == null) hasOtherFlag = "No one";
-    if (hasOurFlag == null) hasOurFlag = "No one";
+    if (hasRedFlag == null) hasRedFlag = "No one";
+    if (hasBlueFlag == null) hasBlueFlag = "No one";
+
     player.getActionSender().sendChatMessage("- &d" + redPlayers + " players on red:");
-    Object[] names = World.getWorld().getPlayerList().getPlayers().toArray();
-    if (names.length > 0) {
-      String msg = "";
-      for (Object map : names) {
-        if (((Player) map).team == 0) msg += ((Player) map).getName() + ", ";
-      }
-      if (!msg.isEmpty()) player.getActionSender().sendChatMessage("- &c" + msg);
+    Player[] names = World.getWorld().getPlayerList().getPlayers().toArray(new Player[0]);
+    String msg = "";
+    for (Player other : names) {
+      if (other.team == 0) msg += other.getName() + ", ";
     }
+    if (!msg.isEmpty()) player.getActionSender().sendChatMessage("- &c" + msg);
+
     player.getActionSender().sendChatMessage("- &d" + bluePlayers + " players on blue:");
-    Object[] othernames = World.getWorld().getPlayerList().getPlayers().toArray();
-    String othermsg = "";
-    for (Object map : othernames) {
-      if (((Player) map).team == 1) othermsg += ((Player) map).getName() + ", ";
+    String bluemsg = "";
+    for (Player other : names) {
+      if (other.team == 0) bluemsg += other.getName() + ", ";
     }
-    if (!othermsg.isEmpty()) player.getActionSender().sendChatMessage("- &c" + othermsg);
-    player.getActionSender().sendChatMessage("&a" + hasOtherFlag + " has the other flag.");
-    player.getActionSender().sendChatMessage("&a" + hasOurFlag + " has your flag.");
+    if (!bluemsg.isEmpty()) player.getActionSender().sendChatMessage("- &c" + bluemsg);
+
+    if (player.team == -1) {
+      player.getActionSender().sendChatMessage("&a" + hasRedFlag + " has the red flag.");
+      player.getActionSender().sendChatMessage("&a" + hasBlueFlag + " has the blue flag.");
+    } else {
+      player.getActionSender().sendChatMessage(
+          "&a" + (player.team == 0 ? hasRedFlag : hasBlueFlag) + " has your flag.");
+      player.getActionSender().sendChatMessage(
+          "&a" + (player.team == 0 ? hasBlueFlag : hasRedFlag) + " has the other flag.");
+    }
     player
         .getActionSender()
         .sendChatMessage(
