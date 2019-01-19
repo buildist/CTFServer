@@ -617,7 +617,7 @@ public class ActionSender {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(44));
     bldr.putShort("id", id);
-    bldr.putByte("order", order);
+    bldr.putShort("order", order);
     session.send(bldr.toPacket());
   }
 

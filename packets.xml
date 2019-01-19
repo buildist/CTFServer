@@ -898,7 +898,7 @@ Z        <field>
       <fields>
         <field>
           <name>order</name>
-          <type>BYTE</type>
+          <type>SHORT</type>
         </field>
         <field>
           <name>id</name>
