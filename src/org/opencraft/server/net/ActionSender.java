@@ -457,6 +457,27 @@ public class ActionSender {
   }
 
   public void sendDefineBlockExt(CustomBlockDefinition block) {
+    if (block.blockDraw == Constants.BLOCK_DRAW_SPRITE) {
+      sendDefineBlock(
+          block.id,
+          block.name,
+          block.solid,
+          block.movementSpeed,
+          block.textureTop,
+          block.textureLeft,
+          block.textureBottom,
+          block.emitsLight,
+          block.walkSound,
+          block.fullBright,
+          0,
+          Constants.BLOCK_DRAW_OPAQUE,
+          block.fogDensity,
+          block.fogR,
+          block.fogG,
+          block.fogB
+      );
+      return;
+    }
     sendDefineBlockExt(
         block.id,
         block.name,
@@ -482,6 +503,44 @@ public class ActionSender {
         block.fogR,
         block.fogG,
         block.fogB);
+  }
+
+  public void sendDefineBlock(
+      int id,
+      String name,
+      int solid,
+      int movementSpeed,
+      int textureTop,
+      int textureSide,
+      int textureBottom,
+      boolean emitsLight,
+      int walkSound,
+      boolean fullBright,
+      int shape,
+      int blockDraw,
+      int fogDensity,
+      int fogR,
+      int fogG,
+      int fogB) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(35));
+    bldr.putShort("id", id);
+    bldr.putString("name", name);
+    bldr.putByte("solid", solid);
+    bldr.putByte("movement_speed", movementSpeed);
+    bldr.putShort("texture_top", textureTop);
+    bldr.putShort("texture_side", textureSide);
+    bldr.putShort("texture_bottom", textureBottom);
+    bldr.putByte("emits_light", emitsLight ? 1 : 0);
+    bldr.putByte("walk_sound", walkSound);
+    bldr.putByte("full_bright", fullBright ? 1 : 0);
+    bldr.putByte("shape", shape);
+    bldr.putByte("block_draw", blockDraw);
+    bldr.putByte("fog_density", fogDensity);
+    bldr.putByte("fog_r", fogR);
+    bldr.putByte("fog_g", fogG);
+    bldr.putByte("fog_b", fogB);
+    session.send(bldr.toPacket());
   }
 
   public void sendDefineBlockExt(

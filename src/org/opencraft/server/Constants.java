@@ -122,6 +122,7 @@ public final class Constants {
   public static final int BLOCK_CRATE = 607;
   public static final int BLOCK_PAYLOAD = 608;
   public static final int BLOCK_FLAMETHROWER = 609;
+  public static final int BLOCK_VINE = 610;
 
   public static final int BLOCK_SOLIDITY_WALK_THROUGH = 0;
   public static final int BLOCK_SOLIDITY_SWIM_THROUGH = 1;
@@ -143,6 +144,7 @@ public final class Constants {
   public static final int BLOCK_DRAW_TRANSPARENT_LEAVES = 2;
   public static final int BLOCK_DRAW_TRANSLUCENT = 3;
   public static final int BLOCK_DRAW_GAS = 4;
+  public static final int BLOCK_DRAW_SPRITE = 5;
 
   public static final String[] MAP_EXTENSIONS = new String[] {"dat", "lvl", "cw"};
 

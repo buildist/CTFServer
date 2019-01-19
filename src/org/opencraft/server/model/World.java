@@ -279,6 +279,7 @@ public final class World {
       session.getActionSender().sendHoldThis(1, (short) Constants.BLOCK_DETONATOR);
       session.getActionSender().sendHoldThis(2, (short) Constants.BLOCK_MINE);
       session.getActionSender().sendHoldThis(3, (short) 1);
+      session.getActionSender().sendHoldThis(4, (short) Constants.BLOCK_VINE);
       session.getActionSender().sendHoldThis(5, (short) 20);
       session.getActionSender().sendHoldThis(6, (short) 45);
       session.getActionSender().sendHoldThis(7, (short) 21);

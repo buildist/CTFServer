@@ -218,13 +218,40 @@ public class CustomBlockDefinition {
           14,
           Constants.BLOCK_WALK_SOUND_WOOL,
           0);
-    public static final CustomBlockDefinition PAYLOAD =
-            new CustomBlockDefinition(
-                    Constants.BLOCK_PAYLOAD, "Payload", 249, Constants.BLOCK_WALK_SOUND_METAL, 0);
+  public static final CustomBlockDefinition PAYLOAD =
+      new CustomBlockDefinition(
+          Constants.BLOCK_PAYLOAD, "Payload", 249, Constants.BLOCK_WALK_SOUND_METAL, 0);
   public static final CustomBlockDefinition CRATE =
-          new CustomBlockDefinition(
-                  Constants.BLOCK_CRATE, "Crate", 505, Constants.BLOCK_WALK_SOUND_WOOD, 0);
+      new CustomBlockDefinition(
+          Constants.BLOCK_CRATE, "Crate", 505, Constants.BLOCK_WALK_SOUND_WOOD, 0);
+  public static final CustomBlockDefinition BLOCK_VINE = new CustomBlockDefinition(
+      Constants.BLOCK_VINE,
+      "Vine",
+      Constants.BLOCK_SOLIDITY_SWIM_THROUGH,
+      128,
+      506,
+      506,
+      506,
+      506,
+      506,
+      506,
+      false,
+      Constants.BLOCK_WALK_SOUND_METAL,
+      false,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      Constants.BLOCK_DRAW_SPRITE,
+      0,
+      0,
+      0,
+      0,
+      1);
 
   public static final CustomBlockDefinition[] CUSTOM_BLOCKS =
-      new CustomBlockDefinition[] {TNT, PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE, CRATE};
+      new CustomBlockDefinition[]{TNT, PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE,
+          CRATE, BLOCK_VINE};
 }
