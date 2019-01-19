@@ -255,6 +255,14 @@ public final class Server {
     }
   }
 
+  public static int[] getUnsigned(byte[] b) {
+    int[] result = new int[b.length];
+    for(int i = 0; i < b.length; i++) {
+      result[i] = Server.getUnsigned(b[i]);
+    }
+    return result;
+  }
+
   public static boolean isIPBanned(String ip) {
     return ipBans.contains(ip);
   }

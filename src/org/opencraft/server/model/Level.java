@@ -677,7 +677,7 @@ public final class Level implements Cloneable {
         String name = (String) block.get("Name").getValue();
         int shape = (Byte) block.get("Shape").getValue();
         float speed = (Float) block.get("Speed").getValue();
-        byte[] textures = ((ByteArrayTag) block.get("Textures")).getValue();
+        int[] textures = Server.getUnsigned(((ByteArrayTag)block.get("Textures")).getValue());
         int transmitsLight = (Byte) block.get("TransmitsLight").getValue();
         int walkSound = (Byte) block.get("WalkSound").getValue();
 
