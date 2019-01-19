@@ -681,7 +681,7 @@ public final class Level implements Cloneable {
         int transmitsLight = (Byte) block.get("TransmitsLight").getValue();
         int walkSound = (Byte) block.get("WalkSound").getValue();
 
-        // if (!blockTypes.contains(id)) continue;
+        if (!blockTypes.contains(id)) continue;
 
         CustomBlockDefinition blockDef =
             new CustomBlockDefinition(
