@@ -270,22 +270,6 @@ public final class World {
     }
     session.getActionSender().sendHackControl(true);
     LevelGzipper.getLevelGzipper().gzipLevel(session);
-    try {
-      Thread.sleep(100);
-    } catch (InterruptedException ex) {
-      ex.printStackTrace();
-    }
-    if (session.isExtensionSupported("HeldBlock")) {
-      session.getActionSender().sendHoldThis(1, (short) Constants.BLOCK_DETONATOR);
-      session.getActionSender().sendHoldThis(2, (short) Constants.BLOCK_MINE);
-      session.getActionSender().sendHoldThis(3, (short) 1);
-      session.getActionSender().sendHoldThis(4, (short) Constants.BLOCK_VINE);
-      session.getActionSender().sendHoldThis(5, (short) 20);
-      session.getActionSender().sendHoldThis(6, (short) 45);
-      session.getActionSender().sendHoldThis(7, (short) 21);
-      session.getActionSender().sendHoldThis(8, (short) 29);
-      session.getActionSender().sendHoldThis((short) Constants.BLOCK_TNT);
-    }
   }
 
   /**
@@ -313,6 +297,24 @@ public final class World {
       session.close();
       return;
     }
+
+    if (session.isExtensionSupported("HeldBlock")) {
+      session.getActionSender().sendHoldThis(1, (short) Constants.BLOCK_DETONATOR);
+      session.getActionSender().sendHoldThis(2, (short) Constants.BLOCK_MINE);
+      session.getActionSender().sendHoldThis(3, (short) 1);
+      session.getActionSender().sendHoldThis(5, (short) 20);
+      session.getActionSender().sendHoldThis(6, (short) 45);
+      session.getActionSender().sendHoldThis(7, (short) 21);
+      session.getActionSender().sendHoldThis(8, (short) 29);
+      session.getActionSender().sendHoldThis((short) Constants.BLOCK_TNT);
+    }
+
+    if (session.isExtensionSupported("InventoryOrder")) {
+      if (!BlockManager.getBlockManager().isCustom(BlockConstants.TNT)) {
+        session.getActionSender().sendInventoryOrder(BlockConstants.TNT, 0);
+      }
+    }
+
     // Notify game mode
     World.getWorld().getGameMode().playerConnected(session.getPlayer());
   }

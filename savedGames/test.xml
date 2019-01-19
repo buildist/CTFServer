@@ -28,6 +28,10 @@
     <string>127.0.0.1</string>
   </entry>
   <entry>
+    <string>rules</string>
+    <string>true</string>
+  </entry>
+  <entry>
     <string>duelWins</string>
     <int>0</int>
   </entry>
