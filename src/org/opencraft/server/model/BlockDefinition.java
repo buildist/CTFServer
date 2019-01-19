@@ -67,6 +67,7 @@ public class BlockDefinition {
   private boolean isPlant;
   /** The timer, in milliseconds, on which this block thinks. */
   private long thinkTimer;
+  private boolean isCustom;
 
   /** Constructor. */
   public BlockDefinition() {}
@@ -81,6 +82,7 @@ public class BlockDefinition {
       boolean doesThink,
       boolean isPlant,
       long thinkTimer,
+      boolean isCustom,
       int fullCounterpart,
       String behaviourName)
       throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -93,6 +95,7 @@ public class BlockDefinition {
     this.doesThink = doesThink;
     this.isPlant = isPlant;
     this.thinkTimer = thinkTimer;
+    this.isCustom = isCustom;
     this.fullCounterpart = fullCounterpart;
     this.behaviourName = behaviourName.trim();
     if (behaviourName.length() > 0) {
@@ -127,6 +130,7 @@ public class BlockDefinition {
         doesThink,
         isPlant,
         thinkTimer,
+        false,
         fullCounterpart,
         behaviourName);
   }
@@ -246,6 +250,10 @@ public class BlockDefinition {
    */
   public long getTimer() {
     return thinkTimer;
+  }
+
+  public boolean isCustom() {
+    return isCustom;
   }
 
   /**

@@ -96,6 +96,10 @@ public final class BlockManager {
     return blocksArray[id];
   }
 
+  public boolean isCustom(int id) {
+    return blocksArray[id].isCustom();
+  }
+
   public void addCustomBlock(CustomBlockDefinition customBlockDefinition) {
     try {
       blocksArray[customBlockDefinition.id] =
@@ -109,6 +113,7 @@ public final class BlockManager {
               false,
               false,
               0,
+              true,
               0,
               "");
     } catch (Exception ex) {
