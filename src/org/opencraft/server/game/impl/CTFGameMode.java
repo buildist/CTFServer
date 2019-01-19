@@ -381,12 +381,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                             + "joined the game[/color][/b]",
                         "UTF-8");
                 Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-              } catch (Exception ex) {
-
-              }
+              } catch (Exception ex) {}
             }
           });
     }
+    WebServer.sendDiscordMessage(player.getName() + " joined the game", null);
 
     player.setAttribute("ip", player.getSession().getIP());
     player.muted = isMuted(player.getName());
@@ -1705,12 +1704,11 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                         "[b][color=#00aa00]" + p.getName() + " left the" + " game[/color][/b]",
                         "UTF-8");
                 Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-              } catch (Exception ex) {
-
-              }
+              } catch (Exception ex) {}
             }
           });
     }
+    WebServer.sendDiscordMessage(p.getName() + " left the game", null);
     if (p.hasFlag) {
       dropFlag(p);
     }
@@ -1857,6 +1855,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                   }
                 });
           }
+          WebServer.sendDiscordMessage(message, player.getName());
         }
         Server.log(player.getName() + ": " + message);
         break;

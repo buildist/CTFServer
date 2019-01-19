@@ -75,6 +75,7 @@ public class Configuration {
   private String scriptName;
 
   private String statsPostURL;
+  private String discordURL;
   private String welcomeMessage;
   private int rankLimit;
   private String ircServer;
@@ -102,6 +103,7 @@ public class Configuration {
     gameMode = props.getProperty("game_mode", CTFGameMode.class.getName());
     scriptName = props.getProperty("script_name", null);
     statsPostURL = props.getProperty("statsPostURL");
+    discordURL = props.getProperty("discordURL");
     welcomeMessage = props.getProperty("welcomeMessage");
     rankLimit = Integer.valueOf(props.getProperty("minRank"));
     ircServer = props.getProperty("ircServer");
@@ -157,6 +159,10 @@ public class Configuration {
 
   public String getStatsPostURL() {
     return statsPostURL;
+  }
+
+  public String getDiscordURL() {
+    return discordURL;
   }
 
   public String getWelcomeMessage() {

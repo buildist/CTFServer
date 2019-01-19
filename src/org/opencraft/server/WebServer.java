@@ -49,8 +49,16 @@ import org.opencraft.server.model.World;
 import org.opencraft.server.net.ConsoleActionSender;
 import org.opencraft.server.task.impl.RenderMapTask;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -85,6 +93,49 @@ public class WebServer {
 
   public static void run(Runnable r) {
     if (!Configuration.getConfiguration().isTest()) executor.submit(r);
+  }
+
+  public static void sendDiscordMessage(String message, String username) {
+    executor.submit(new Runnable() {
+      @Override
+      public void run() {
+        String urlString = Configuration.getConfiguration().getDiscordURL();
+        if (urlString.equals("null")) {
+          return;
+        }
+
+        try {
+          URL url = new URL(Configuration.getConfiguration().getDiscordURL());
+          HttpURLConnection con = (HttpURLConnection) url.openConnection();
+          con.setRequestMethod("POST");
+          con.setDoInput(true);
+          con.setDoOutput(true);
+          StringBuilder data = new StringBuilder();
+
+          data.append("content=").append(URLEncoder.encode(message, "UTF-8"));
+          if (username != null) {
+            data.append("&username=").append(URLEncoder.encode(username, "UTF-8"));
+            data.append("&avatar_url=").append(URLEncoder.encode("https://www.classicube.net/face/"
+                + URLEncoder.encode(username, "UTF-8") + ".png", "UTF-8"));
+          }
+
+          byte[] bytes = data.toString().getBytes(StandardCharsets.UTF_8);
+          con.setFixedLengthStreamingMode(bytes.length);
+          con.setRequestProperty(
+              "Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+          con.setRequestProperty(
+              "User-Agent",
+              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36");
+          con.connect();
+
+          try (OutputStream out = con.getOutputStream()) {
+            out.write(bytes);
+          }
+        } catch (IOException ex) {
+          Server.log(ex);
+        }
+      }
+    });
   }
 
   static class CTFHandler implements HttpHandler {
