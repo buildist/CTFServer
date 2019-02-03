@@ -633,7 +633,7 @@ public final class Level implements Cloneable {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
         for (int z = 0; z < depth; z++) {
-          int type = blockArray[(z * height + y) * width + x];
+          int type = Server.getUnsigned(blockArray[(z * height + y) * width + x]);
           blockTypes.add(type);
 
           if (GameSettings.getBoolean("Chaos")) {
@@ -652,7 +652,7 @@ public final class Level implements Cloneable {
               || solidTypes.contains(type)) {
             solidBlocks.add(new Position(x, y, z));
           }
-          blocks[x][y][z] = (byte) type;
+          blocks[x][y][z] = (short) type;
           blocks0[(z * height + y) * width + x] = (byte) type;
         }
       }
@@ -673,7 +673,7 @@ public final class Level implements Cloneable {
         byte[] coords = ((ByteArrayTag) block.get("Coords")).getValue();
         byte[] fog = ((ByteArrayTag) block.get("Fog")).getValue();
         int fullBright = (Byte) block.get("FullBright").getValue();
-        int id = (Byte) block.get("ID").getValue();
+        int id = Server.getUnsigned((Byte) block.get("ID").getValue());
         String name = (String) block.get("Name").getValue();
         int shape = (Byte) block.get("Shape").getValue();
         float speed = (Float) block.get("Speed").getValue();
