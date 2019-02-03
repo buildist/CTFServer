@@ -45,6 +45,8 @@ import org.opencraft.server.model.World;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class QuoteCommand implements Command {
   private static final QuoteCommand INSTANCE = new QuoteCommand();
@@ -53,7 +55,11 @@ public class QuoteCommand implements Command {
   static {
     try {
       String[] array = Server.readFileAsString("quotes.txt").split("\n");
+      Set<String> set = new HashSet<>();
       for (String q : array) {
+        set.add(q);
+      }
+      for (String q : set) {
         quotes.add(q);
       }
     } catch (IOException ex) {

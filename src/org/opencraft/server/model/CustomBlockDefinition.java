@@ -224,6 +224,9 @@ public class CustomBlockDefinition {
   public static final CustomBlockDefinition CRATE =
       new CustomBlockDefinition(
           Constants.BLOCK_CRATE, "Crate", 505, Constants.BLOCK_WALK_SOUND_WOOD, 0);
+  public static final CustomBlockDefinition INVISIBLE =
+      new CustomBlockDefinition(
+          255, "Invisible", 255, Constants.BLOCK_WALK_SOUND_METAL, 0);
   public static final CustomBlockDefinition BLOCK_VINE = new CustomBlockDefinition(
       Constants.BLOCK_VINE,
       "Vine",
@@ -253,5 +256,5 @@ public class CustomBlockDefinition {
 
   public static final CustomBlockDefinition[] CUSTOM_BLOCKS =
       new CustomBlockDefinition[]{TNT, PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE,
-          CRATE, BLOCK_VINE};
+          CRATE, BLOCK_VINE, INVISIBLE};
 }
