@@ -76,9 +76,10 @@ public final class Constants {
     "ExtendedBlocks",
     "ExtendedTextures",
     "FastMap",
+    "PlayerClick"
   };
   // CPE versions
-  public static final int[] CPE_EXT_VERSIONS = {1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1};
+  public static final int[] CPE_EXT_VERSIONS = {1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
   public static final int COLOR_CLOUD = 1;

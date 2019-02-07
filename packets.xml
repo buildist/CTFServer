@@ -178,6 +178,48 @@ POSSIBILITY OF SUCH DAMAGE.
         </field>
       </fields>
     </packet>
+      <packet>
+          <opcode>34</opcode>
+          <name>player_click</name>
+          <fields>
+              <field>
+                  <name>button</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>action</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>yaw</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>pitch</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>entity</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>block_x</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>block_y</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>block_z</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>block_face</name>
+                  <type>BYTE</type>
+              </field>
+          </fields>
+      </packet>
   </incoming>
   <outgoing>
     <packet>
@@ -906,5 +948,5 @@ Z        <field>
         </field>
       </fields>
     </packet>
-</outgoing>
+  </outgoing>
 </packets>
