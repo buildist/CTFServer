@@ -56,36 +56,10 @@ public class CTFProcessTask extends ScheduledTask {
 
   public void execute() {
     for (Player player : world.getPlayerList().getPlayers()) {
-      if (World.getWorld().getPlayerList().size()
-              >= Configuration.getConfiguration().getMaximumPlayers()
-          && System.currentTimeMillis() - player.moveTime > 5 * 60 * 1000
-          && player.moveTime != 0) {
-        World.getWorld().broadcast("- " + player.parseName() + " was kicked for being AFK");
-        player.getActionSender().sendLoginFailure("You were kicked for being AFK");
-        player.getSession().close();
-        player.moveTime = System.currentTimeMillis();
-      }
-
-      if (player.headBlockType != 0) {
-        Position blockPos = player.getPosition().toBlockPos();
-        Position newPosition = new Position(blockPos.getX(), blockPos.getY(), blockPos.getZ() + 3);
-        if (!newPosition.equals(player.headBlockPosition)) {
-          if (player.headBlockPosition != null) {
-            world.getLevel().setBlock(player.headBlockPosition, 0);
-          }
-          if (world.getLevel().getBlock(newPosition) == 0) {
-            player.headBlockPosition = newPosition;
-            world.getLevel().setBlock(player.headBlockPosition, player.headBlockType);
-          } else {
-            player.headBlockPosition = null;
-          }
-        }
-      } else if (player.headBlockPosition != null) {
-        world.getLevel().setBlock(player.headBlockPosition, 0);
-      }
+      player.step(ticks);
     }
 
-    ctf.pruneKillFeed();
+    ctf.step();
 
     ticks++;
     if (ticks == 10) {

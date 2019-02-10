@@ -76,10 +76,15 @@ public final class Constants {
     "ExtendedBlocks",
     "ExtendedTextures",
     "FastMap",
-    "PlayerClick"
+    "PlayerClick",
+    "ChangeModel",
+    "EntityProperty",
+    "FullCP437",
+    "TextHotKey"
   };
   // CPE versions
-  public static final int[] CPE_EXT_VERSIONS = {1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1};
+  public static final int[] CPE_EXT_VERSIONS =
+      {1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
   public static final int COLOR_CLOUD = 1;
@@ -105,6 +110,10 @@ public final class Constants {
   public static final String URL_MAP_COMMENT =
       "http://buildism.net/mc/server/mapComment.php?k=" + SECRET;
 
+  public static final int HIT_RED = 600;
+  public static final int HIT_BLUE = 601;
+  public static final int LASER_RED = 602;
+  public static final int LASER_BLUE = 603;
   public static final int BLOCK_CRATE = 607;
   public static final int BLOCK_VINE = 610;
 

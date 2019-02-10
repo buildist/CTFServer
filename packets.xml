@@ -948,5 +948,59 @@ Z        <field>
         </field>
       </fields>
     </packet>
+    <packet>
+        <opcode>29</opcode>
+        <name>change_model</name>
+        <fields>
+            <field>
+                <name>id</name>
+                <type>BYTE</type>
+            </field>
+            <field>
+                <name>model</name>
+                <type>STRING</type>
+            </field>
+        </fields>
+    </packet>
+      <packet>
+          <opcode>42</opcode>
+          <name>entity_property</name>
+          <fields>
+              <field>
+                  <name>id</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>key</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>value</name>
+                  <type>INT</type>
+              </field>
+          </fields>
+      </packet>
+      <packet>
+          <opcode>21</opcode>
+          <name>hotkey</name>
+          <fields>
+              <field>
+                  <name>label</name>
+                  <type>STRING</type>
+              </field>
+              <field>
+                  <name>action</name>
+                  <type>STRING</type>
+              </field>
+              <field>
+                  <name>key</name>
+                  <type>INT</type>
+              </field>
+              <field>
+                  <name>modifier</name>
+                  <type>BYTE</type>
+              </field>
+          </fields>
+      </packet>
   </outgoing>
 </packets>

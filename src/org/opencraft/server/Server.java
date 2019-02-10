@@ -256,6 +256,14 @@ public final class Server {
     return result;
   }
 
+  public static int getUnsignedShort(int s) {
+    if (s < 0) {
+      return s + 65536;
+    } else {
+      return s;
+    }
+  }
+
   public static boolean isIPBanned(String ip) {
     return ipBans.contains(ip);
   }

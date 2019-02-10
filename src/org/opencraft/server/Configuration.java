@@ -37,6 +37,7 @@
 package org.opencraft.server;
 
 import org.opencraft.server.game.impl.TagGameMode;
+import org.opencraft.server.model.EntityID;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -127,6 +128,7 @@ public class Configuration {
       try {
         props.load(is);
         configuration = new Configuration(props);
+        EntityID.init(configuration.maximumPlayers);
       } finally {
         is.close();
       }

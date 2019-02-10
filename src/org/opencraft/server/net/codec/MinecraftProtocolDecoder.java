@@ -103,7 +103,7 @@ public final class MinecraftProtocolDecoder extends CumulativeProtocolDecoder {
           case STRING:
             byte[] bytes = new byte[64];
             buffer.get(bytes);
-            value = new String(bytes).trim();
+            value = new String(bytes, 0, 64, "Cp437").trim();
             break;
         }
         values.put(field.getName(), value);

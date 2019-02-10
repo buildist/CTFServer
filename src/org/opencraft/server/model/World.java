@@ -219,6 +219,7 @@ public final class World {
     }
     session.getActionSender().sendHackControl(true);
     LevelGzipper.getLevelGzipper().gzipLevel(session);
+    session.getActionSender().sendHotkey("Reload", "/r\n", 19, (byte) 0);
   }
 
   /**
@@ -255,7 +256,7 @@ public final class World {
     World.getWorld().getGameMode().playerConnected(session.getPlayer());
 
     if (!session.levelSent && session.isExtensionSupported("HeldBlock")) {
-      
+      session.getActionSender().sendHoldThis((short) 0);
    }
     session.levelSent = true;
   }

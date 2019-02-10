@@ -61,6 +61,7 @@ import org.opencraft.server.cmd.impl.IgnoreCommand;
 import org.opencraft.server.cmd.impl.JoinCommand;
 import org.opencraft.server.cmd.impl.KickCommand;
 import org.opencraft.server.cmd.impl.LavaCommand;
+import org.opencraft.server.cmd.impl.LeaderBoardCommand;
 import org.opencraft.server.cmd.impl.LogCommand;
 import org.opencraft.server.cmd.impl.MapEnvironmentCommand;
 import org.opencraft.server.cmd.impl.MapListCommand;
@@ -81,6 +82,7 @@ import org.opencraft.server.cmd.impl.PlayerCommand;
 import org.opencraft.server.cmd.impl.PmCommand;
 import org.opencraft.server.cmd.impl.PointsCommand;
 import org.opencraft.server.cmd.impl.QuoteCommand;
+import org.opencraft.server.cmd.impl.RCommand;
 import org.opencraft.server.cmd.impl.RTVCommand;
 import org.opencraft.server.cmd.impl.RagequitCommand;
 import org.opencraft.server.cmd.impl.RedCommand;
@@ -106,7 +108,6 @@ import org.opencraft.server.cmd.impl.WarnCommand;
 import org.opencraft.server.cmd.impl.WaterCommand;
 import org.opencraft.server.cmd.impl.XBanCommand;
 import org.opencraft.server.cmd.impl.YesCommand;
-import org.opencraft.server.cmd.impl.LeaderBoardCommand;
 import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.BlockLog;
@@ -115,6 +116,7 @@ import org.opencraft.server.model.BuildMode;
 import org.opencraft.server.model.ChatMode;
 import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.DropItem;
+import org.opencraft.server.model.EntityID;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.MapRatings;
@@ -146,7 +148,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
 
   public Level startNewMap;
   public boolean voting = false;
-   public boolean ready = false;
+  public boolean ready = false;
   public ArrayList<String> rtvYesPlayers = new ArrayList<>();
   public ArrayList<String> rtvNoPlayers = new ArrayList<>();
   public ArrayList<String> mutedPlayers = new ArrayList<>();
@@ -157,7 +159,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
   public String previousMap = null;
   private Level map;
   private ArrayList<DropItem> items = new ArrayList<>(8);
-  private String statusMessage;
+  private static final ArrayList<TempEntity> entities = new ArrayList<>(127);
 
   public TagGameMode() {
     registerCommand("b", BlockInfoCommand.getCommand());
@@ -203,8 +205,9 @@ public class TagGameMode extends GameModeAdapter<Player> {
     registerCommand("pm", PmCommand.getCommand());
     registerCommand("points", PointsCommand.getCommand());
     registerCommand("pstats", PInfoCommand.getCommand());
-    registerCommand("ragequit", RagequitCommand.getCommand());
     registerCommand("quote", QuoteCommand.getCommand());
+    registerCommand("ragequit", RagequitCommand.getCommand());
+    registerCommand("r", RCommand.getCommand());
     registerCommand("red", RedCommand.getCommand());
     registerCommand("reload", ReloadCommand.getCommand());
     registerCommand("restart", RestartCommand.getCommand());
@@ -300,7 +303,8 @@ public class TagGameMode extends GameModeAdapter<Player> {
                             + "joined the game[/color][/b]",
                         "UTF-8");
                 Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-              } catch (Exception ex) {}
+              } catch (Exception ex) {
+              }
             }
           });
       WebServer.sendDiscordMessage(player.getName() + " joined the game", null);
@@ -332,10 +336,10 @@ public class TagGameMode extends GameModeAdapter<Player> {
       player.getActionSender().sendChatMessage("&aSay /rules to read the rules");
     } else {
       String helpText;
-        player
-            .getActionSender()
-            .sendChatMessage("&bWelcome to Capture the Flag! Here's how you " + "play.");
-        helpText = Constants.HELP_TEXT;
+      player
+          .getActionSender()
+          .sendChatMessage("&bWelcome to Capture the Flag! Here's how you " + "play.");
+      helpText = Constants.HELP_TEXT;
       player.getActionSender().sendChatMessage("&e" + helpText);
       player
           .getActionSender()
@@ -480,23 +484,6 @@ public class TagGameMode extends GameModeAdapter<Player> {
           p.getActionSender().sendChatMessage("", 11 + i);
         } else {
           p.getActionSender().sendChatMessage(killFeed.get(i).message, 11 + i);
-        }
-      }
-    }
-  }
-
-  public void pruneKillFeed() {
-    synchronized (killFeed) {
-      boolean updated = false;
-      for (int i = killFeed.size() - 1; i >= 0; i--) {
-        if (System.currentTimeMillis() - killFeed.get(i).time > 10000) {
-          killFeed.remove(i);
-          updated = true;
-        }
-      }
-      if (updated) {
-        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-          sendKillFeed(p);
         }
       }
     }
@@ -757,7 +744,8 @@ public class TagGameMode extends GameModeAdapter<Player> {
                         "[b][color=#00aa00]" + p.getName() + " left the" + " game[/color][/b]",
                         "UTF-8");
                 Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-              } catch (Exception ex) {}
+              } catch (Exception ex) {
+              }
             }
           });
       WebServer.sendDiscordMessage(p.getName() + " left the game", null);
@@ -937,6 +925,70 @@ public class TagGameMode extends GameModeAdapter<Player> {
     return mutedPlayers.contains(name);
   }
 
+  public void addLaser(
+      Player player,
+      double x1, double y1, double z1,
+      double x2, double y2, double z2) {
+    int block = player.team == 0 ? Constants.LASER_RED : Constants.LASER_BLUE;
+    double dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
+    double d = Math.sqrt(dx*dx + dy*dy + dz*dz);
+    dx /= d;
+    dy /= d;
+    dz /= d;
+    for (int i = 1; i < d; i++) {
+      addTempEntity(x1 + dx * i, y1 + dy * i, z1 + dz * i, block, 100);
+    }
+  }
+
+  public void onHit(Player source, Player target, double x, double y, double z) {
+    int block = source.team == 0 ? Constants.HIT_RED : Constants.HIT_BLUE;
+    addTempEntity(x, y, z, block, 1000);
+  }
+
+  private void addTempEntity(double x, double y, double z, int block, long lifeTime) {
+    TempEntity entity = new TempEntity(EntityID.get(), System.currentTimeMillis(), lifeTime);
+    if (entity.id == -1) return;
+    synchronized (entities) {
+      entities.add(entity);
+    }
+    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+      player.getActionSender().sendExtSpawn(
+          (byte) entity.id, "", "",
+          (int) (x * 32), (int) (y * 32), (int) (z * 32),
+          (byte) 0, (byte) 0);
+      player.getActionSender().sendChangeModel((byte) entity.id, "" + block);
+    }
+  }
+
+  public void step() {
+    synchronized (killFeed) {
+      boolean updated = false;
+      for (int i = killFeed.size() - 1; i >= 0; i--) {
+        if (System.currentTimeMillis() - killFeed.get(i).time > 10000) {
+          killFeed.remove(i);
+          updated = true;
+        }
+      }
+      if (updated) {
+        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+          sendKillFeed(p);
+        }
+      }
+    }
+
+    for (int i = 0; i < entities.size(); i++) {
+      TempEntity e = entities.get(i);
+      if (e.startTime + e.lifeTime < System.currentTimeMillis()) {
+        entities.remove(i);
+        EntityID.release(e.id);
+        i--;
+        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+          p.getActionSender().sendRemoveEntity(e.id);
+        }
+      }
+    }
+  }
+
   static class KillFeedItem {
 
     public final String message;
@@ -944,6 +996,18 @@ public class TagGameMode extends GameModeAdapter<Player> {
 
     KillFeedItem(String message) {
       this.message = message;
+    }
+  }
+
+  static class TempEntity {
+    public final int id;
+    public final long startTime;
+    public final long lifeTime;
+
+    public TempEntity(int id, long startTime, long lifeTime) {
+      this.id = id;
+      this.startTime = startTime;
+      this.lifeTime = lifeTime;
     }
   }
 }

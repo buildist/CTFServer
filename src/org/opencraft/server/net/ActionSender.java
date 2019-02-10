@@ -325,16 +325,32 @@ public class ActionSender {
     }
   }
 
+  public void sendTeleport(int id, int x, int y, int z, int rotation, int look) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(8));
+    bldr.putByte("id", id);
+    bldr.putShort("x", x);
+    bldr.putShort("y", y);
+    bldr.putShort("z", z);
+    bldr.putByte("rotation", rotation);
+    bldr.putByte("look", look);
+    session.send(bldr.toPacket());
+  }
+
   /**
    * Sends the remove entity packet.
    *
    * @param entity The entity being removed.
    */
-  public void sendRemoveEntity(Entity entity) {
+  public void sendRemoveEntity(int id) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(12));
-    bldr.putByte("id", entity.getOldId());
+    bldr.putByte("id", id);
     session.send(bldr.toPacket());
+  }
+
+  public void sendRemoveEntity(Entity entity) {
+    sendRemoveEntity(entity.getOldId());
   }
 
   public void sendRemovePlayer(Player p) {
@@ -621,6 +637,33 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
+  public void sendChangeModel(int id, String model) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(29));
+    bldr.putByte("id", id);
+    bldr.putString("model", model);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendEntityProperty(int id, int property, int value) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(42));
+    bldr.putByte("id", id);
+    bldr.putByte("key", property);
+    bldr.putInt("value", value);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendHotkey(String label, String action, int keyCode, byte modifier) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(21));
+    bldr.putString("label", label);
+    bldr.putString("action", action);
+    bldr.putInt("key", keyCode);
+    bldr.putByte("modifier", modifier);
+    session.send(bldr.toPacket());
+
+  }
   /**
    * Sends a chat message.
    *

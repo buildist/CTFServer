@@ -37,6 +37,8 @@
 package org.opencraft.server.model;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.TagGameMode;
@@ -81,7 +83,6 @@ public class Player extends Entity {
   public boolean frozen = false;
   public long moveTime = 0;
   public int team = -1;
-  private long safeTime = 0;
   public int outOfBoundsBlockChanges = 0;
   public int placeBlock = -1;
   public boolean placeSolid = false;
@@ -94,8 +95,6 @@ public class Player extends Entity {
   public int boxStartY = -1;
   public int boxStartZ = -1;
   public int buildMode;
-  public Position linePosition;
-  public Rotation lineRotation;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
   public int accumulatedStorePoints = 0;
@@ -108,6 +107,13 @@ public class Player extends Entity {
   public Player chatPlayer;
   public boolean sendCommandLog = false;
   public final PingList pingList = new PingList();
+  private final PlayerUI ui;
+
+  public int ammo;
+  public int hitsTaken = 0;
+  public boolean isDead = false;
+  public boolean isReloading = false;
+  public int reloadStep = 0;
 
   public Player(MinecraftSession session, String name) {
     this.session = session;
@@ -118,6 +124,8 @@ public class Player extends Entity {
     if (NAME_ID == 256) {
       NAME_ID = 0;
     }
+    ammo = GameSettings.getInt("Ammo");
+    ui = new PlayerUI(this);
   }
 
   public static Player getPlayer(String name, ActionSender source) {
@@ -498,11 +506,45 @@ public class Player extends Entity {
     return attributes;
   }
 
-  public void markSafe() {
-    safeTime = System.currentTimeMillis();
-  }
+  public void step(int ticks) {
+    World world = World.getWorld();
+    if (world.getPlayerList().size()
+        >= Configuration.getConfiguration().getMaximumPlayers()
+        && System.currentTimeMillis() - moveTime > 5 * 60 * 1000
+        && moveTime != 0) {
+      world.broadcast("- " + parseName() + " was kicked for being AFK");
+      getActionSender().sendLoginFailure("You were kicked for being AFK");
+      getSession().close();
+      moveTime = System.currentTimeMillis();
+    }
 
-  public boolean isSafe() {
-    return System.currentTimeMillis() - safeTime < Constants.SAFE_TIME;
+    if (headBlockType != 0) {
+      Position blockPos = getPosition().toBlockPos();
+      Position newPosition = new Position(blockPos.getX(), blockPos.getY(), blockPos.getZ() + 3);
+      if (!newPosition.equals(headBlockPosition)) {
+        if (headBlockPosition != null) {
+          world.getLevel().setBlock(headBlockPosition, 0);
+        }
+        if (world.getLevel().getBlock(newPosition) == 0) {
+          headBlockPosition = newPosition;
+          world.getLevel().setBlock(headBlockPosition, headBlockType);
+        } else {
+          headBlockPosition = null;
+        }
+      }
+    } else if (headBlockPosition != null) {
+      world.getLevel().setBlock(headBlockPosition, 0);
+    }
+
+    if (isReloading && ticks % 5 == 0) {
+      if (ammo == GameSettings.getInt("Ammo") || reloadStep == GameSettings.getInt("Ammo")) {
+        isReloading = false;
+      } else {
+        ammo++;
+        reloadStep++;
+      }
+    }
+
+    ui.step();
   }
 }
