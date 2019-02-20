@@ -91,9 +91,7 @@ import org.opencraft.server.cmd.impl.SetCommand;
 import org.opencraft.server.cmd.impl.SolidCommand;
 import org.opencraft.server.cmd.impl.SpecCommand;
 import org.opencraft.server.cmd.impl.StartCommand;
-import org.opencraft.server.cmd.impl.StatsCommand;
 import org.opencraft.server.cmd.impl.StatusCommand;
-import org.opencraft.server.cmd.impl.StoreCommand;
 import org.opencraft.server.cmd.impl.TeamCommand;
 import org.opencraft.server.cmd.impl.TeleportCommand;
 import org.opencraft.server.cmd.impl.TutorialCommand;
@@ -197,7 +195,6 @@ public class TagGameMode extends GameModeAdapter<Player> {
     registerCommand("players", ClientsCommand.getCommand());
     registerCommand("pm", PmCommand.getCommand());
     registerCommand("points", PointsCommand.getCommand());
-    registerCommand("pstats", PInfoCommand.getCommand());
     registerCommand("quote", QuoteCommand.getCommand());
     registerCommand("ragequit", RagequitCommand.getCommand());
     registerCommand("r", RCommand.getCommand());
@@ -211,9 +208,8 @@ public class TagGameMode extends GameModeAdapter<Player> {
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
     registerCommand("start", StartCommand.getCommand());
-    registerCommand("stats", StatsCommand.getCommand());
+    registerCommand("stats", PInfoCommand.getCommand());
     registerCommand("status", StatusCommand.getCommand());
-    registerCommand("store", StoreCommand.getCommand());
     registerCommand("team", TeamCommand.getCommand());
     registerCommand("tp", TeleportCommand.getCommand());
     registerCommand("unban", UnbanCommand.getCommand());
@@ -246,26 +242,6 @@ public class TagGameMode extends GameModeAdapter<Player> {
       }
     }
     return bluePoints;
-  }
-
-  public int getRedPlayers() {
-    int redPlayers = 0;
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.team == 0) {
-        redPlayers++;
-      }
-    }
-    return redPlayers;
-  }
-
-  public int getBluePlayers() {
-    int bluePlayers = 0;
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.team == 1) {
-        bluePlayers++;
-      }
-    }
-    return bluePlayers;
   }
 
   public void sendAnnouncement(String message) {
@@ -385,6 +361,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
     map.setBlock(redSpawnX, redSpawnZ, redSpawnY, Constants.BLOCK_RESUPPLY);
     map.setBlock(blueSpawnX, blueSpawnZ, blueSpawnY, Constants.BLOCK_RESUPPLY);
   }
+
   public void startGame(Level newMap) {
     final Level oldMap = map;
     if (newMap == null) {
@@ -535,7 +512,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
                 if (p.team == 0) {
                   redPoints += p.currentRoundPoints;
-                } else if(p.team == 1) {
+                } else if (p.team == 1) {
                   bluePoints += p.currentRoundPoints;
                 }
               }
@@ -545,7 +522,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
               if (redPoints > bluePoints) {
                 winner = "red";
                 winnerID = 0;
-              } else if(bluePoints > redPoints) {
+              } else if (bluePoints > redPoints) {
                 winner = "blue";
                 winnerID = 1;
               }
@@ -979,7 +956,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
       double x2, double y2, double z2) {
     int block = player.team == 0 ? Constants.LASER_RED : Constants.LASER_BLUE;
     double dx = x2 - x1, dy = y2 - y1, dz = z2 - z1;
-    double d = Math.sqrt(dx*dx + dy*dy + dz*dz);
+    double d = Math.sqrt(dx * dx + dy * dy + dz * dz);
     dx /= d;
     dy /= d;
     dz /= d;
@@ -992,9 +969,16 @@ public class TagGameMode extends GameModeAdapter<Player> {
     if (target.health == 0 || source.team == target.team || target.team == -1) return;
 
     target.health--;
-    source.addStorePoints(1);
+    source.incStat("hits");
+    target.incStat("hitsTaken");
+    source.addPoints(1);
     int block = source.team == 0 ? Constants.HIT_RED : Constants.HIT_BLUE;
     addTempEntity(x, y, z, block, 1000);
+
+    if (target.health == 0) {
+      source.incStat("kills");
+      target.incStat("deaths");
+    }
 
     updateKillFeed(source, target);
   }

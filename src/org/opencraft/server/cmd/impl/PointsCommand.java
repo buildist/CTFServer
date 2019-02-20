@@ -54,11 +54,11 @@ public class PointsCommand implements Command {
     else if (player.isOp()) {
       Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
       if (other != null) {
-        other.setStorePoints(params.getIntegerArgument(1));
+        other.setPoints(params.getIntegerArgument(1));
         player
             .getActionSender()
             .sendChatMessage(
-                "- &ePoints of " + other.getName() + " set to " + other.getStorePoints());
+                "- &ePoints of " + other.getName() + " set to " + other.getPoints());
       }
     } else player.getActionSender().sendChatMessage("You need to be op to do that!");
   }

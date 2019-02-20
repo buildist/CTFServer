@@ -40,7 +40,6 @@ import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.Store;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.SessionHandler;
 import org.opencraft.server.task.TaskQueue;
@@ -83,7 +82,6 @@ public final class Server {
   public static Random random = new Random();
   public static String log = "";
   public static ArrayList<String> rulesText = new ArrayList<String>(20);
-  private static Store store;
   private static ArrayList<String> ipBans = new ArrayList<String>(128);
   private static Server instance;
 
@@ -212,10 +210,6 @@ public final class Server {
       System.err.println("Error saving logs:");
       ex.printStackTrace();
     }
-  }
-
-  public static Store getStore() {
-    return store;
   }
 
   public static String httpGet(String address) {
@@ -355,15 +349,7 @@ public final class Server {
     acceptor.setReuseAddress(true);
     acceptor.bind(new InetSocketAddress(Constants.PORT));
     log("Ready for connections.");
-    createStore();
-    // irc = new IRC();
-    // if (!Configuration.getConfiguration().isTest()) {
     WebServer.init();
-    // }
-  }
-
-  public void createStore() {
-    store = new Store();
   }
 
   public static class ConsoleMessage {

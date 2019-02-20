@@ -63,17 +63,12 @@ public class LoadPersistenceRequest extends PersistenceRequest {
   }
 
   private void setDefaultStats(Player player) {
-    if (player.getAttribute("storepoints") == null) player.setAttribute("storepoints", 0);
+    if (player.getAttribute("points") == null) player.setAttribute("points", 0);
     if (player.getAttribute("ragequits") == null) player.setAttribute("ragequits", 0);
-    if (player.getAttribute("duelWins") == null) player.setAttribute("duelWins", 0);
-    if (player.getAttribute("duelLosses") == null) player.setAttribute("duelLosses", 0);
+    if (player.getAttribute("hits") == null) player.setAttribute("hits", 0);
+    if (player.getAttribute("hitsTaken") == null) player.setAttribute("hitsTaken", 0);
+    if (player.getAttribute("kills") == null) player.setAttribute("kills", 0);
     if (player.getAttribute("deaths") == null) player.setAttribute("deaths", 0);
-    if (player.getAttribute("maxKillstreak") == null) player.setAttribute("maxKillstreak", 0);
-    if (player.getAttribute("maxKillstreakEnded") == null)
-      player.setAttribute("maxKillstreakEnded", 0);
-    if (player.getAttribute("domination") == null) player.setAttribute("domination", 0);
-    if (player.getAttribute("revenge") == null) player.setAttribute("revenge", 0);
-    if (player.getAttribute("stalemateTags") == null) player.setAttribute("stalemateTags", 0);
   }
 
   @SuppressWarnings("unchecked")
@@ -87,11 +82,7 @@ public class LoadPersistenceRequest extends PersistenceRequest {
         Map<String, Object> attributes =
             (Map<String, Object>) xs.fromXML(new FileInputStream(file));
         for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-          if (entry.getKey().equals("storepoints") && GameSettings.getBoolean("Tournament")) {
-            player.setAttribute(entry.getKey(), 0);
-          } else {
-            player.setAttribute(entry.getKey(), entry.getValue());
-          }
+          player.setAttribute(entry.getKey(), entry.getValue());
         }
         player.joinedDuringTournamentMode = GameSettings.getBoolean("Tournament");
       } catch (RuntimeException ex) {

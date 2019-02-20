@@ -131,6 +131,7 @@ public class Player extends Entity {
   public static Player getPlayer(String name, ActionSender source) {
     Player player = null;
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p.getName().toLowerCase().equals(name.toLowerCase())) return p;
       if (p.getName().toLowerCase().contains(name.toLowerCase())) {
         if (player == null) player = p;
         else {
@@ -369,30 +370,23 @@ public class Player extends Entity {
     setAttribute(a, (Integer) getAttribute(a) + 1);
   }
 
-  public void addStorePoints(int n) {
-    if (getAttribute("storepoints") == null) {
-      setAttribute("storepoints", 0);
+  public void addPoints(int n) {
+    if (getAttribute("points") == null) {
+      setAttribute("points", 0);
     }
     currentRoundPoints += n;
-    setAttribute("storepoints", (Integer) getAttribute("storepoints") + n);
+    setAttribute("points", (Integer) getAttribute("points") + n);
   }
 
-  public int getStorePoints() {
-    return (Integer) getAttribute("storepoints");
+  public int getPoints() {
+    return (Integer) getAttribute("points");
   }
 
-  public void setStorePoints(int n) {
-    if (getAttribute("storepoints") == null) {
-      setAttribute("storepoints", 0);
+  public void setPoints(int n) {
+    if (getAttribute("points") == null) {
+      setAttribute("points", 0);
     }
-    setAttribute("storepoints", n);
-  }
-
-  public void subtractStorePoints(int n) {
-    if (getAttribute("storepoints") == null) {
-      setAttribute("storepoints", 0);
-    }
-    setAttribute("storepoints", (Integer) getAttribute("storepoints") - n);
+    setAttribute("points", n);
   }
 
   public void kickForHacking() {
@@ -402,10 +396,6 @@ public class Player extends Entity {
   }
 
   public void sendToTeamSpawn() {
-    final String teamname;
-    if (team == 0) teamname = "red";
-    else if (team == 1) teamname = "blue";
-    else teamname = "spec";
     getActionSender().sendTeleport(getTeamSpawn(),new Rotation(team == 0 ? 64 : 192, 0));
   }
 
