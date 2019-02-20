@@ -150,8 +150,9 @@ public class PlayerUI {
 
   public void step() {
     String time = getElapsedTime();
-    if (!status0.equals(time)) {
-      status0 = time;
+    String statusBar = time + "    &c" + World.getWorld().getGameMode().getRedScore()+ " &f| &9" + World.getWorld().getGameMode().getBlueScore();
+    if (!status0.equals(statusBar)) {
+      status0 = statusBar;
       player.getActionSender().sendChatMessage(status0, 1);
     }
 

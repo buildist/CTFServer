@@ -228,6 +228,26 @@ public class TagGameMode extends GameModeAdapter<Player> {
     registerCommand("lb", LeaderBoardCommand.getCommand());
   }
 
+  public int getRedScore() {
+    int redPoints = 0;
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p.team == 0) {
+        redPoints += p.currentRoundPoints;
+      }
+    }
+    return redPoints;
+  }
+
+  public int getBlueScore() {
+    int bluePoints = 0;
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p.team == 1) {
+        bluePoints += p.currentRoundPoints;
+      }
+    }
+    return bluePoints;
+  }
+
   public int getRedPlayers() {
     int redPlayers = 0;
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
