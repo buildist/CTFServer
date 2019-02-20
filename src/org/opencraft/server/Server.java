@@ -48,7 +48,6 @@ import org.opencraft.server.task.impl.CheckCpuUsageTask;
 import org.opencraft.server.task.impl.CTFProcessTask;
 import org.opencraft.server.task.impl.ConsoleTask;
 import org.opencraft.server.task.impl.HeartbeatTask;
-import org.opencraft.server.task.impl.ItemDropTask;
 import org.opencraft.server.task.impl.MessageTask;
 import org.opencraft.server.task.impl.PingTask;
 import org.opencraft.server.task.impl.UpdateTask;
@@ -127,7 +126,6 @@ public final class Server {
     TaskQueue.getTaskQueue().schedule(new CheckCpuUsageTask());
     TaskQueue.getTaskQueue().schedule(new PingTask());
     new Thread(new ConsoleTask()).start();
-    new Thread(new ItemDropTask()).start();
     log("Initializing game...");
   }
 

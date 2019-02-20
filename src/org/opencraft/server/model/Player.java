@@ -39,7 +39,6 @@ package org.opencraft.server.model;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
-import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.TagGameMode;
 import org.opencraft.server.game.impl.GameSettings;
@@ -97,7 +96,7 @@ public class Player extends Entity {
   public int buildMode;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
-  public int accumulatedStorePoints = 0;
+  public int currentRoundPoints = 0;
   private HashSet<String> ignorePlayers = new HashSet<String>();
   private ActionSender actionSender = null;
   private Player instance;
@@ -110,7 +109,7 @@ public class Player extends Entity {
   private final PlayerUI ui;
 
   public int ammo;
-  public int hitsTaken = 0;
+  public int health;
   public boolean isDead = false;
   public boolean isReloading = false;
   public int reloadStep = 0;
@@ -125,6 +124,7 @@ public class Player extends Entity {
       NAME_ID = 0;
     }
     ammo = GameSettings.getInt("Ammo");
+    health = GameSettings.getInt("Health");
     ui = new PlayerUI(this);
   }
 
@@ -373,7 +373,7 @@ public class Player extends Entity {
     if (getAttribute("storepoints") == null) {
       setAttribute("storepoints", 0);
     }
-    accumulatedStorePoints += n;
+    currentRoundPoints += n;
     setAttribute("storepoints", (Integer) getAttribute("storepoints") + n);
   }
 
@@ -406,10 +406,15 @@ public class Player extends Entity {
     if (team == 0) teamname = "red";
     else if (team == 1) teamname = "blue";
     else teamname = "spec";
-    getActionSender()
-        .sendTeleport(
-            World.getWorld().getLevel().getTeamSpawn(teamname),
-            new Rotation(team == 0 ? 64 : 192, 0));
+    getActionSender().sendTeleport(getTeamSpawn(),new Rotation(team == 0 ? 64 : 192, 0));
+  }
+
+  public Position getTeamSpawn() {
+    String teamname;
+    if (team == 0) teamname = "red";
+    else if (team == 1) teamname = "blue";
+    else teamname = "spec";
+    return World.getWorld().getLevel().getTeamSpawn(teamname);
   }
 
   /**
@@ -536,13 +541,19 @@ public class Player extends Entity {
       world.getLevel().setBlock(headBlockPosition, 0);
     }
 
-    if (isReloading && ticks % 5 == 0) {
+    if (isReloading && ticks % GameSettings.getInt("ReloadStep") == 0) {
       if (ammo == GameSettings.getInt("Ammo") || reloadStep == GameSettings.getInt("Ammo")) {
         isReloading = false;
       } else {
         ammo++;
         reloadStep++;
       }
+    }
+
+    Position blockPosition = getPosition().toBlockPos();
+    Position spawnPosition = getTeamSpawn().toBlockPos();
+    if (health == 0 && blockPosition.equals(spawnPosition)) {
+      health = GameSettings.getInt("Health");
     }
 
     ui.step();

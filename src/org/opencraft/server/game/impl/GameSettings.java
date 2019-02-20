@@ -15,7 +15,8 @@ public class GameSettings {
     add("Debug", TYPE_BOOLEAN, false);
     add("Tournament", TYPE_BOOLEAN, false);
     add("Ammo", TYPE_INT, 20); // number of shots before reloading
-    add("MaxHits", TYPE_INT, 10); // number of hits taken before having to resupply
+    add("Health", TYPE_INT, 50); // number of hits taken before having to resupply
+    add("ReloadStep", TYPE_INT, 3);
   }
 
   public static Object get(String k) {

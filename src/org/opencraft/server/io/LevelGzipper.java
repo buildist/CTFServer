@@ -111,6 +111,11 @@ public final class LevelGzipper {
               session.getActionSender().sendBlockPermissions(7, false, false);
               session.getActionSender().sendBlockPermissions(8, false, false);
               session.getActionSender().sendBlockPermissions(10, false, false);
+              session.getActionSender().sendBlockPermissions(Constants.HIT_RED, false, false);
+              session.getActionSender().sendBlockPermissions(Constants.HIT_BLUE, false, false);
+              session.getActionSender().sendBlockPermissions(Constants.LASER_RED, false, false);
+              session.getActionSender().sendBlockPermissions(Constants.LASER_BLUE, false, false);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_RESUPPLY, false, false);
 
               session.getPlayer().getLocalEntities().clear();
             } catch (IOException ex) {

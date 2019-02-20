@@ -405,7 +405,7 @@ public class ActionSender {
     bldr.putByte("speeding", enableHacks ? (byte) 1 : (byte) 0);
     bldr.putByte("spawn_control", enableHacks ? (byte) 1 : (byte) 0);
     bldr.putByte("third_person_view", (byte) 1);
-    bldr.putShort("jump_height", (short) -1);
+    bldr.putShort("jump_height", 120);
     session.send(bldr.toPacket());
   }
 

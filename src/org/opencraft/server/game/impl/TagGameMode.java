@@ -47,7 +47,6 @@ import org.opencraft.server.cmd.impl.ChatCommand;
 import org.opencraft.server.cmd.impl.ClientsCommand;
 import org.opencraft.server.cmd.impl.DeOperatorCommand;
 import org.opencraft.server.cmd.impl.DeVIPCommand;
-import org.opencraft.server.cmd.impl.DropCommand;
 import org.opencraft.server.cmd.impl.EndCommand;
 import org.opencraft.server.cmd.impl.FollowCommand;
 import org.opencraft.server.cmd.impl.ForceCommand;
@@ -76,9 +75,7 @@ import org.opencraft.server.cmd.impl.NotesCommand;
 import org.opencraft.server.cmd.impl.OpChatCommand;
 import org.opencraft.server.cmd.impl.OperatorCommand;
 import org.opencraft.server.cmd.impl.PInfoCommand;
-import org.opencraft.server.cmd.impl.PayCommand;
 import org.opencraft.server.cmd.impl.PingCommand;
-import org.opencraft.server.cmd.impl.PlayerCommand;
 import org.opencraft.server.cmd.impl.PmCommand;
 import org.opencraft.server.cmd.impl.PointsCommand;
 import org.opencraft.server.cmd.impl.QuoteCommand;
@@ -115,13 +112,13 @@ import org.opencraft.server.model.BlockLog.BlockInfo;
 import org.opencraft.server.model.BuildMode;
 import org.opencraft.server.model.ChatMode;
 import org.opencraft.server.model.CustomBlockDefinition;
-import org.opencraft.server.model.DropItem;
 import org.opencraft.server.model.EntityID;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.MapRatings;
 import org.opencraft.server.model.MoveLog;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.PlayerUI;
 import org.opencraft.server.model.World;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
@@ -158,7 +155,6 @@ public class TagGameMode extends GameModeAdapter<Player> {
   public String currentMap = null;
   public String previousMap = null;
   private Level map;
-  private ArrayList<DropItem> items = new ArrayList<>(8);
   private static final ArrayList<TempEntity> entities = new ArrayList<>(127);
 
   public TagGameMode() {
@@ -170,7 +166,6 @@ public class TagGameMode extends GameModeAdapter<Player> {
     registerCommand("commands", HelpCommand.getCommand());
     registerCommand("deop", DeOperatorCommand.getCommand());
     registerCommand("devip", DeVIPCommand.getCommand());
-    registerCommand("drop", DropCommand.getCommand());
     registerCommand("end", EndCommand.getCommand());
     registerCommand("follow", FollowCommand.getCommand());
     registerCommand("force", ForceCommand.getCommand());
@@ -198,9 +193,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
     registerCommand("nominate", NominateCommand.getCommand());
     registerCommand("op", OperatorCommand.getCommand());
     registerCommand("opchat", OpChatCommand.getCommand());
-    registerCommand("pay", PayCommand.getCommand());
     registerCommand("ping", PingCommand.getCommand());
-    registerCommand("playercount", PlayerCommand.getCommand());
     registerCommand("players", ClientsCommand.getCommand());
     registerCommand("pm", PmCommand.getCommand());
     registerCommand("points", PointsCommand.getCommand());
@@ -361,6 +354,17 @@ public class TagGameMode extends GameModeAdapter<Player> {
     }
   }
 
+  public void addSpawns() {
+    Level map = World.getWorld().getLevel();
+    int redSpawnX = Integer.parseInt(map.props.getProperty("redSpawnX"));
+    int redSpawnY = Integer.parseInt(map.props.getProperty("redSpawnY")) - 2;
+    int redSpawnZ = Integer.parseInt(map.props.getProperty("redSpawnZ"));
+    int blueSpawnX = Integer.parseInt(map.props.getProperty("blueSpawnX"));
+    int blueSpawnY = Integer.parseInt(map.props.getProperty("blueSpawnY")) - 2;
+    int blueSpawnZ = Integer.parseInt(map.props.getProperty("blueSpawnZ"));
+    map.setBlock(redSpawnX, redSpawnZ, redSpawnY, Constants.BLOCK_RESUPPLY);
+    map.setBlock(blueSpawnX, blueSpawnZ, blueSpawnY, Constants.BLOCK_RESUPPLY);
+  }
   public void startGame(Level newMap) {
     final Level oldMap = map;
     if (newMap == null) {
@@ -382,7 +386,9 @@ public class TagGameMode extends GameModeAdapter<Player> {
                 player.team = -1;
                 player.hasVoted = false;
                 player.hasNominated = false;
-                player.accumulatedStorePoints = 0;
+                player.currentRoundPoints = 0;
+                player.health = GameSettings.getInt("Health");
+                player.ammo = GameSettings.getInt("Ammo");
                 for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
                   player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
                 }
@@ -410,6 +416,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
               World.getWorld()
                   .broadcast("- &6Say /join to start playing, or /spec to spectate.");
               ready = true;
+              addSpawns();
             } catch (Exception ex) {
               Server.log(ex);
               voting = false;
@@ -424,7 +431,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
     HashMap<Integer, Player> leaderboard = new HashMap<Integer, Player>(16);
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.team != -1) {
-        leaderboard.put(p.accumulatedStorePoints, p);
+        leaderboard.put(p.currentRoundPoints, p);
       }
     }
 
@@ -442,12 +449,21 @@ public class TagGameMode extends GameModeAdapter<Player> {
     return top;
   }
 
-  private void updateKillFeed(Player attacker, Player defender, String killmsg) {
+  private void updateKillFeed(Player attacker, Player defender) {
     synchronized (killFeed) {
-      killFeed.add(0, new KillFeedItem(killmsg));
+      KillFeedItem item;
+      KillFeedItem first = killFeed.isEmpty() ? null : killFeed.get(0);
+      boolean isKill = defender.health == 0;
+      if (!isKill && first != null && first.source == attacker && first.target == defender) {
+        item = new KillFeedItem(attacker, defender, first.count + 1, false);
+        killFeed.remove(0);
+      } else {
+        item = new KillFeedItem(attacker, defender, 1, isKill);
+      }
+      killFeed.add(0, item);
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
         if (p == attacker || p == defender) {
-          sendAnnouncement(p, killmsg);
+          sendAnnouncement(p, item.getMessage());
         }
       }
 
@@ -483,7 +499,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
         if (i >= killFeed.size()) {
           p.getActionSender().sendChatMessage("", 11 + i);
         } else {
-          p.getActionSender().sendChatMessage(killFeed.get(i).message, 11 + i);
+          p.getActionSender().sendChatMessage(killFeed.get(i).getMessage(), 11 + i);
         }
       }
     }
@@ -494,7 +510,39 @@ public class TagGameMode extends GameModeAdapter<Player> {
         new Runnable() {
           public void run() {
             try {
-              int winnerID = -1;
+              int redPoints = 0;
+              int bluePoints = 0;
+              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                if (p.team == 0) {
+                  redPoints += p.currentRoundPoints;
+                } else if(p.team == 1) {
+                  bluePoints += p.currentRoundPoints;
+                }
+              }
+
+              String winner = null;
+              int winnerID = -2;
+              if (redPoints > bluePoints) {
+                winner = "red";
+                winnerID = 0;
+              } else if(bluePoints > redPoints) {
+                winner = "blue";
+                winnerID = 1;
+              }
+              if (winner == null) {
+                World.getWorld().broadcast("- &6The game ended in a tie!");
+              } else {
+                World.getWorld()
+                    .broadcast("- &6The game has ended; the " + winner + " team wins!");
+              }
+              World.getWorld()
+                  .broadcast(
+                      "- &6Red had "
+                          + redPoints
+                          + " points, blue had "
+                          + bluePoints
+                          + ".");
+
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
                 if (p.team != -1) {
                   p.setAttribute("games", (Integer) p.getAttribute("games") + 1);
@@ -516,7 +564,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
                   break;
                 }
                 World.getWorld()
-                    .broadcast("- &2" + p.getName() + " - " + p.accumulatedStorePoints);
+                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPoints);
               }
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
@@ -714,9 +762,6 @@ public class TagGameMode extends GameModeAdapter<Player> {
           && !player.isOp()) {
         player.getActionSender().sendBlock(x, y, z, (short) 0);
         player.getActionSender().sendChatMessage("- &eYou can't place this block type!");
-      } else if (getDropItem(x, y, z) != null) {
-        DropItem i = getDropItem(x, y, z);
-        i.pickUp(player);
       } else if (type > -1) {
         if (!ignore) {
           level.setBlock(x, y, z, (mode == 1 ? type : 0));
@@ -892,23 +937,6 @@ public class TagGameMode extends GameModeAdapter<Player> {
     }
   }
 
-  public void addDropItem(DropItem i) {
-    items.add(i);
-  }
-
-  public void removeDropItem(DropItem i) {
-    items.remove(i);
-  }
-
-  public DropItem getDropItem(int x, int y, int z) {
-    for (DropItem i : items) {
-      if (x == i.posX && y == i.posY && z == i.posZ) {
-        return i;
-      }
-    }
-    return null;
-  }
-
   public int getMode() {
     return World.getWorld().getLevel().mode;
   }
@@ -941,8 +969,14 @@ public class TagGameMode extends GameModeAdapter<Player> {
   }
 
   public void onHit(Player source, Player target, double x, double y, double z) {
+    if (target.health == 0 || source.team == target.team || target.team == -1) return;
+
+    target.health--;
+    source.addStorePoints(1);
     int block = source.team == 0 ? Constants.HIT_RED : Constants.HIT_BLUE;
     addTempEntity(x, y, z, block, 1000);
+
+    updateKillFeed(source, target);
   }
 
   private void addTempEntity(double x, double y, double z, int block, long lifeTime) {
@@ -976,26 +1010,48 @@ public class TagGameMode extends GameModeAdapter<Player> {
       }
     }
 
-    for (int i = 0; i < entities.size(); i++) {
-      TempEntity e = entities.get(i);
-      if (e.startTime + e.lifeTime < System.currentTimeMillis()) {
-        entities.remove(i);
-        EntityID.release(e.id);
-        i--;
-        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-          p.getActionSender().sendRemoveEntity(e.id);
+    synchronized (entities) {
+      for (int i = 0; i < entities.size(); i++) {
+        TempEntity e = entities.get(i);
+        if (e.startTime + e.lifeTime < System.currentTimeMillis()) {
+          entities.remove(i);
+          EntityID.release(e.id);
+          i--;
+          for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+            p.getActionSender().sendRemoveEntity(e.id);
+          }
         }
       }
+    }
+
+    long elapsedTime = System.currentTimeMillis() - World.getWorld().getGameMode().gameStartTime;
+    if (elapsedTime > GameSettings.getInt("TimeLimit") * 60 * 1000) {
+      gameStartTime = System.currentTimeMillis();
+      endGame();
     }
   }
 
   static class KillFeedItem {
-
-    public final String message;
     public final long time = System.currentTimeMillis();
+    public final Player source;
+    public final Player target;
+    public final int count;
+    public final boolean isKill;
 
-    KillFeedItem(String message) {
-      this.message = message;
+    KillFeedItem(Player source, Player target, int count, boolean isKill) {
+      this.source = source;
+      this.target = target;
+      this.count = count;
+      this.isKill = isKill;
+    }
+
+    public String getMessage() {
+      String message =
+          source.getColoredName() + " &f"
+              + (isKill ? PlayerUI.KILL_ICON : PlayerUI.HIT_ICON)
+              + " " + target.getColoredName();
+      if (count > 1) message += " &f(x" + count + ")";
+      return message;
     }
   }
 

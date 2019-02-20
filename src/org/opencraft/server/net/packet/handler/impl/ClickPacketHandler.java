@@ -13,10 +13,12 @@ public class ClickPacketHandler implements PacketHandler<MinecraftSession> {
   public void handlePacket(MinecraftSession session, Packet packet) {
     int button = (byte) packet.getNumericField("button");
     int action = (byte) packet.getNumericField("action");
-    if (action > 0) {
+    if (action > 0 || button > 0) {
       return;
     }
-    if (session.getPlayer().ammo == 0) {
+    if (session.getPlayer().team == -1
+        || session.getPlayer().ammo == 0
+        || session.getPlayer().health == 0) {
       return;
     }
     session.getPlayer().ammo--;
@@ -48,7 +50,6 @@ public class ClickPacketHandler implements PacketHandler<MinecraftSession> {
       int bz = (int) Math.floor(z);
       int block = World.getWorld().getLevel().getBlock(bx, by, bz);
       if (block != 0 && block != 20) {
-        System.out.println("hit block " + block);
         break;
       }
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {

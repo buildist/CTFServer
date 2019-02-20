@@ -114,6 +114,7 @@ public final class Constants {
   public static final int HIT_BLUE = 601;
   public static final int LASER_RED = 602;
   public static final int LASER_BLUE = 603;
+  public static final int BLOCK_RESUPPLY = 604;
   public static final int BLOCK_CRATE = 607;
   public static final int BLOCK_VINE = 610;
 

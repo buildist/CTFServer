@@ -45,6 +45,8 @@ import org.opencraft.server.net.packet.PacketDefinition;
 import org.opencraft.server.net.packet.PacketField;
 import org.opencraft.server.net.packet.PacketManager;
 
+import sun.java2d.opengl.WGLSurfaceData;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
