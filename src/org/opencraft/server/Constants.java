@@ -48,17 +48,12 @@ public final class Constants {
   // THis is set in the opencraft.properties file
 
   public static final int SECRET = 476286881;
-  // Server name
-  public static final String SERVER_NAME = "Jacob_'s Capture the Flag";
   // /help
-  public static final String HELP_TEXT =
-      "Try to capture the other team's flag and bring it back "
-          + "to your own side. Click the other team's flag to take it; capture it by clicking your own "
-          + "flag. You can stop the enemy by tagging them when they're on your side of the map, blowing"
-          + " them up with TNT (place a TNT block, then place a purple block or say /t to explode it), "
-          + "cooking them with the flamethrower (/f) or placing landmines (dark gray blocks). You gain "
-          + "points for doing well; say /store to find out how many points you have and what you can "
-          + "buy.";
+  public static final String HELP_TEXT = "Shoot players on the opposing team to gain points. If"
+      + " you're low on power (green bar), tap R to reload. If you take too many hits you will run"
+      + " out of health (purple bar). Return to the spawn point to be revived and continue playing."
+      + " Games are timed and them team with the most points at the end of the round wins, but"
+      + " individual stats are recorded too.";
   // Supported Classic Protocol Extension names
   public static final String[] CPE_EXT_NAMES = {
     "HeldBlock",

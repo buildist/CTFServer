@@ -54,11 +54,9 @@ public class HelpCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "&eCommands: /help, /rules, /join, /spec, /red, "
-                + "/blue, /team, /me, /pstats, /pm, /water, /lava, /status, /stats, /store, /vote, /t, "
-                + "/dtnt, /d, /maps, /f, /rtv, /nominate, /cc, /b, /");
+    player.getActionSender().sendChatMessage("In chat, use @[name] [message] to send private" +
+        " message, or $[message] to message your team");
+    player.getActionSender().sendChatMessage(
+        "Commands: /join, /red, /blue, /maps, /me, /quote, /rtv, /nominate, /help, /rules, /stats");
   }
 }

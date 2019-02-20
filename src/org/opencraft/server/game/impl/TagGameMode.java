@@ -331,7 +331,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
       String helpText;
       player
           .getActionSender()
-          .sendChatMessage("&bWelcome to Capture the Flag! Here's how you " + "play.");
+          .sendChatMessage("&bWelcome to Laser Tag! Here's how you play.");
       helpText = Constants.HELP_TEXT;
       player.getActionSender().sendChatMessage("&e" + helpText);
       player

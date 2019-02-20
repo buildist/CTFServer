@@ -1,8 +1,9 @@
-RULE #1: Don't be a jerk.
-Do not use fly, speed or noclip hacks.
-No spawn camping (killing within a few blocks of the enemy spawn).
-No respawning (pressing R)
-No abusing bugs (exploiting)
-Don't ask for op, you won't get it.
-No harassment, slurs or swearing at another member.
-Do not test the rules (including this one).
+Do not use macros such as hotkeys or autoclickers.
+Do not spawn camp. Spawn camping means there is no possible way for a player to leave the spawn without dying.
+Do not ask for operator or VIP rank.
+No excessive arguing, personal attacks or trolling.
+No accusations of cheating without reasonable evidence.
+Do not work against your own team.
+Do not work with the opposing team to boost your stats.
+Do not test any of the rules (including this one).
+Failure to abide by these rules will result in a warning, then a kick, then a possible ban. Send ban appeals and other comments to www.jacobsc.tf or discordapp.com/invite/YthUztA
