@@ -2,6 +2,8 @@ package org.opencraft.server.model;
 
 import org.opencraft.server.game.impl.GameSettings;
 
+import java.util.HashMap;
+
 public class PlayerUI {
   public static final String PROGRESS_LEFT = "Ç";
   public static final String PROGRESS_RIGHT = "ü";
@@ -36,6 +38,7 @@ public class PlayerUI {
   private static final String AMMO = "í";
   private static final int PROGRESS_LENGTH = 64;
   private static final int PROGRESS_LENGTH_CHARACTERS = PROGRESS_LENGTH / 8;
+  private final HashMap<Player, String> playerListName = new HashMap<>();
 
   private final Player player;
 
@@ -45,6 +48,9 @@ public class PlayerUI {
 
   public PlayerUI(Player player) {
     this.player = player;
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      playerListName.put(p, p.getListName());
+    }
   }
 
   public String getProgressBar(int currentValue, int maxValue, boolean style) {
@@ -148,7 +154,7 @@ public class PlayerUI {
     return time;
   }
 
-  public void step() {
+  public void step(int ticks) {
     String time = getElapsedTime();
     String statusBar = time + "    &c" + World.getWorld().getGameMode().getRedScore()
         + " &f| &9" + World.getWorld().getGameMode().getBlueScore();
@@ -169,6 +175,17 @@ public class PlayerUI {
     if (!status2.equals(ammoBar)) {
       status2 = ammoBar;
       player.getActionSender().sendChatMessage(status2, 3);
+    }
+
+    if (ticks % 5 == 0) {
+      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+        String listName = p.getListName();
+        if (!listName.equals(playerListName.get(p))){
+          playerListName.put(p, listName);
+          player.getActionSender().sendAddPlayerName(
+              p.nameId, p.getName(), p.getListName(), p.getTeamName(), (byte) 1);
+        }
+      }
     }
   }
 }

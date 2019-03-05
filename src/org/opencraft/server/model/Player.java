@@ -459,6 +459,11 @@ public class Player extends Entity {
     return getNameChar() + name;
   }
 
+  public String getListName() {
+    String listName = (getColoredName()+"    &f"+currentRoundPoints);
+    return listName.substring(0, Math.min(64, listName.length()));
+  }
+
   public String getTeamName() {
     if (team == 0) {
       return "&cRed";
@@ -546,6 +551,6 @@ public class Player extends Entity {
       health = GameSettings.getInt("Health");
     }
 
-    ui.step();
+    ui.step(ticks);
   }
 }

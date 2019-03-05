@@ -152,6 +152,7 @@ public class ActionSender {
                       session.getPlayer().getColoredName(),
                       session.getPlayer().getTeamName(),
                       session.getPlayer().getName(),
+                      session.getPlayer().getListName(),
                       spawn.getX(),
                       spawn.getY(),
                       spawn.getZ(),
@@ -198,6 +199,7 @@ public class ActionSender {
         player.getColoredName(),
         player.getTeamName(),
         player.getName(),
+        player.getListName(),
         player.getPosition().getX(),
         player.getPosition().getY(),
         player.getPosition().getZ(),
@@ -212,6 +214,7 @@ public class ActionSender {
       String colorName,
       String teamName,
       String name,
+      String listName,
       int x,
       int y,
       int z,
@@ -219,7 +222,7 @@ public class ActionSender {
       byte look,
       boolean isSelf) {
     if (session.isExtensionSupported("ExtPlayerList", 2)) {
-      sendAddPlayerName(nameId, name, colorName, teamName, (byte) 1);
+      sendAddPlayerName(nameId, name, listName, teamName, (byte) 1);
       if (!isSelf) {
         sendExtSpawn(id, colorName, name, x, y, z, rotation, look);
       }
