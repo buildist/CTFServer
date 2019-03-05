@@ -71,7 +71,7 @@ public final class LevelGzipper {
           .sendLoginResponse(
               Constants.PROTOCOL_VERSION,
               "Next map: " + level.id,
-              "&0-hax",
+              "&0-hax" + level.getMotd(),
               session.getPlayer().isOp());
       session.getActionSender().sendHackControl(true);
     }

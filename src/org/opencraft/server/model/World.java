@@ -207,9 +207,8 @@ public final class World {
     if (player.getAttribute("rules") == null) player.isNewPlayer = true;
     if (player.getAttribute("banned") != null && player.getAttribute("banned").equals("true"))
       session.close();
-    session
-        .getActionSender()
-        .sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c.getMessage() + "&0-hax", op);
+    session.getActionSender().sendLoginResponse(
+        Constants.PROTOCOL_VERSION, c.getName(), c.getMessage() + "&0-hax" + level.getMotd(), op);
     if (!session.isExtensionSupported("HackControl")) {
       session
           .getActionSender()

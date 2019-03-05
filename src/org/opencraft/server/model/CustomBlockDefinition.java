@@ -289,36 +289,10 @@ public class CustomBlockDefinition {
       0,
       0,
       1);
-  public static final CustomBlockDefinition AIR = new CustomBlockDefinition(
-      BlockConstants.AIR,
-      "Air",
-      Constants.BLOCK_SOLIDITY_WALK_THROUGH,
-      255,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      false,
-      Constants.BLOCK_WALK_SOUND_NONE,
-      false,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      Constants.BLOCK_DRAW_GAS,
-      0,
-      0,
-      0,
-      0,
-      0);
   public static final CustomBlockDefinition RESUPPLY =
       new CustomBlockDefinition(
           Constants.BLOCK_RESUPPLY, "Resupply", 500, Constants.BLOCK_WALK_SOUND_METAL, 0);
 
   public static final CustomBlockDefinition[] CUSTOM_BLOCKS =
-      new CustomBlockDefinition[]{CRATE, BLOCK_VINE, INVISIBLE, HIT_RED, HIT_BLUE, LASER_RED, LASER_BLUE, AIR, RESUPPLY};
+      new CustomBlockDefinition[]{CRATE, BLOCK_VINE, INVISIBLE, HIT_RED, HIT_BLUE, LASER_RED, LASER_BLUE, RESUPPLY};
 }

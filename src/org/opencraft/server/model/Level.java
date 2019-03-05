@@ -116,6 +116,8 @@ public final class Level implements Cloneable {
   private HashSet<Position> solidBlocks = new HashSet<Position>();
   private HashSet<Integer> solidTypes = new HashSet<Integer>();
   private boolean allSolidTypes = false;
+  private double walkSpeed;
+  private int jumps;
   public final ArrayList<CustomBlockDefinition> customBlockDefinitions =
       new ArrayList<CustomBlockDefinition>();
   /** The active "thinking" blocks on the map. */
@@ -256,6 +258,29 @@ public final class Level implements Cloneable {
       String[] parts = props.getProperty("spawnRotation").split(",");
       spawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
     }
+
+    if (props.getProperty("walkSpeed") != null) {
+      try {
+        walkSpeed = Double.parseDouble(props.getProperty("walkSpeed"));
+      } catch (NumberFormatException ex) {
+        walkSpeed = 0;
+      }
+    }
+
+    if (props.getProperty("jumps") != null) {
+      try {
+        jumps = Integer.parseInt(props.getProperty("jumps"));
+      } catch (NumberFormatException ex) {
+        jumps = 0;
+      }
+    }
+  }
+
+  public String getMotd() {
+    String motd = "";
+    if (jumps != 0) motd += " &jumps=" + jumps;
+    if (walkSpeed != 0) motd += "&horspeed=" + walkSpeed;
+    return motd;
   }
 
   private void setMapColors() {
