@@ -57,7 +57,6 @@ public final class Constants {
   // Supported Classic Protocol Extension names
   public static final String[] CPE_EXT_NAMES = {
     "HeldBlock",
-    "EnvMapAppearance",
     "MessageTypes",
     "EnvColors",
     "HackControl",
@@ -75,11 +74,12 @@ public final class Constants {
     "ChangeModel",
     "EntityProperty",
     "FullCP437",
-    "TextHotKey"
+    "TextHotKey",
+    "EnvMapAspect"
   };
   // CPE versions
   public static final int[] CPE_EXT_VERSIONS =
-      {1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+      {1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
   public static final int COLOR_CLOUD = 1;

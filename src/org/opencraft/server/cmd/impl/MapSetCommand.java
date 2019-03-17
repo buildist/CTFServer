@@ -84,6 +84,9 @@ public class MapSetCommand implements Command {
         }
         Server.log(player.getName() + " " + k + " set to " + v);
         doPropertyChange(k, v.trim());
+        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+          p.getActionSender().sendMapAspect();
+        }
         if (k.endsWith("Color")) {
           for (Player p : World.getWorld().getPlayerList().getPlayers()) {
             p.getActionSender().sendMapColors();

@@ -91,11 +91,18 @@ public final class Level implements Cloneable {
   public String id;
   public int votes = 0;
 
-  public int sideBlock = 7;
-  public int edgeBlock = 8;
-  public int sideLevel = depth / 2;
   public String textureUrl;
-  public short viewDistance = 0;
+  public int sideBlock;
+  public int edgeBlock;
+  public int edgeHeight;
+  public int cloudHeight;
+  public short viewDistance;
+  public int cloudSpeed;
+  public int weatherSpeed;
+  public int weatherFade;
+  public int expFog;
+  public int sideOffset;
+
   public short[][] colors = new short[Constants.DEFAULT_COLORS.length][3];
   public HashSet<Integer> blockTypes = new HashSet<Integer>();
 
@@ -213,19 +220,21 @@ public final class Level implements Cloneable {
 
     setMapColors();
 
-    if (props.getProperty("viewDistance") != null) {
-      try {
-        viewDistance = (short) Integer.parseInt(props.getProperty("viewDistance"));
-      } catch (NumberFormatException ex) {
-        viewDistance = 0;
-      }
-    }
+    sideBlock = 7;
+    edgeBlock = 8;
+    edgeHeight = depth / 2;
+    cloudHeight = depth + 2;
+    viewDistance = 0;
+    cloudSpeed = 256;
+    weatherSpeed = 256;
+    weatherFade = 128;
+    expFog = 0;
+    sideOffset = -2;
 
     if (props.getProperty("sideBlock") != null) {
       try {
         sideBlock = (short) Integer.parseInt(props.getProperty("sideBlock"));
       } catch (NumberFormatException ex) {
-        sideBlock = 7;
       }
     }
 
@@ -233,15 +242,63 @@ public final class Level implements Cloneable {
       try {
         edgeBlock = (short) Integer.parseInt(props.getProperty("edgeBlock"));
       } catch (NumberFormatException ex) {
-        edgeBlock = 8;
       }
     }
 
-    if (props.getProperty("sideLevel") != null) {
+    if (props.getProperty("edgeHeight") != null) {
       try {
-        sideLevel = (short) Integer.parseInt(props.getProperty("sideLevel"));
+        edgeHeight = (short) Integer.parseInt(props.getProperty("edgeHeight"));
       } catch (NumberFormatException ex) {
-        sideLevel = depth / 2;
+      }
+    }
+
+    if (props.getProperty("cloudHeight") != null) {
+      try {
+        cloudHeight = (short) Integer.parseInt(props.getProperty("cloudHeight"));
+      } catch (NumberFormatException ex) {
+      }
+    }
+
+    if (props.getProperty("viewDistance") != null) {
+      try {
+        viewDistance = (short) Integer.parseInt(props.getProperty("viewDistance"));
+      } catch (NumberFormatException ex) {
+      }
+    }
+
+    if (props.getProperty("cloudSpeed") != null) {
+      try {
+        cloudSpeed = (short) Integer.parseInt(props.getProperty("cloudSpeed"));
+      } catch (NumberFormatException ex) {
+      }
+    }
+
+
+    if (props.getProperty("weatherSpeed") != null) {
+      try {
+        weatherSpeed = (short) Integer.parseInt(props.getProperty("weatherSpeed"));
+      } catch (NumberFormatException ex) {
+      }
+    }
+
+    if (props.getProperty("weatherFade") != null) {
+      try {
+        weatherFade = (short) Integer.parseInt(props.getProperty("weatherFade"));
+      } catch (NumberFormatException ex) {
+      }
+    }
+
+    if (props.getProperty("expFog") != null) {
+      try {
+        expFog = (short) Integer.parseInt(props.getProperty("expFog"));
+      } catch (NumberFormatException ex) {
+      }
+    }
+
+    if (props.getProperty("sideOffset") != null) {
+      try {
+        sideOffset = (short) Integer.parseInt(props.getProperty("sideOffset"));
+      } catch (NumberFormatException ex) {
       }
     }
 
@@ -475,11 +532,11 @@ public final class Level implements Cloneable {
       CompoundMap envMapAppearance = ((CompoundTag) cpe.get("EnvMapAppearance")).getValue();
       this.edgeBlock = (Byte) envMapAppearance.get("EdgeBlock").getValue();
       this.sideBlock = (Byte) envMapAppearance.get("SideBlock").getValue();
-      this.sideLevel = (Short) envMapAppearance.get("SideLevel").getValue();
+      this.edgeHeight = (Short) envMapAppearance.get("SideLevel").getValue();
       this.textureUrl = (String) envMapAppearance.get("TextureURL").getValue();
       props.put("edgeBlock", edgeBlock + "");
       props.put("sideBlock", sideBlock + "");
-      props.put("sideLevel", sideLevel + "");
+      props.put("edgeHeight", edgeHeight + "");
     }
   }
 

@@ -419,25 +419,37 @@ public class ActionSender {
     }
   }
 
-  public void sendMapAppearanceV1() {
+  public void sendMapAspect() {
+    Level level = World.getWorld().getLevel();
+    String texturePack =
+        (level.textureUrl != null && !level.textureUrl.isEmpty())
+            ? level.textureUrl
+            : Configuration.getConfiguration().getEnvTexturePack();
+    sendMapUrl(texturePack);
+    sendMapProperty(0, level.sideBlock);
+    sendMapProperty(1, level.edgeBlock);
+    sendMapProperty(2, level.edgeHeight);
+    sendMapProperty(3, level.cloudHeight);
+    sendMapProperty(4, level.viewDistance);
+    sendMapProperty(5, level.cloudSpeed);
+    sendMapProperty(6, level.weatherSpeed);
+    sendMapProperty(7, level.weatherFade);
+    sendMapProperty(8, level.expFog);
+    sendMapProperty(9, level.sideOffset);
+  }
+
+  private void sendMapUrl(String url) {
     PacketBuilder bldr =
-        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(30));
-    bldr.putString("texture_url", Configuration.getConfiguration().getEnvTexturePack());
-    bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
-    bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
-    bldr.putShort("side_level", World.getWorld().getLevel().depth / 2);
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(40));
+    bldr.putString("url", url);
     session.send(bldr.toPacket());
   }
 
-  public void sendMapAppearanceV2(String textureUrl) {
+  private void sendMapProperty(int type, int value) {
     PacketBuilder bldr =
-        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(30));
-    bldr.putString("texture_url", textureUrl);
-    bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
-    bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
-    bldr.putShort("side_level", World.getWorld().getLevel().sideLevel);
-    bldr.putShort("cloud_level", World.getWorld().getLevel().depth);
-    bldr.putShort("view_distance", World.getWorld().getLevel().viewDistance);
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(41));
+    bldr.putByte("type", type);
+    bldr.putInt("value", value);
     session.send(bldr.toPacket());
   }
 

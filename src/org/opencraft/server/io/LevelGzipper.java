@@ -95,14 +95,8 @@ public final class LevelGzipper {
               sendBlocks(level.getCompressedBlocks0(), session.getActionSender(), false);
               sendBlocks(level.getCompressedBlocks1(), session.getActionSender(), true);
 
-              String texturePack =
-                  (level.textureUrl != null && !level.textureUrl.isEmpty())
-                      ? level.textureUrl
-                      : Configuration.getConfiguration().getEnvTexturePack();
-              if (session.isExtensionSupported("EnvMapAppearance", 2))
-                session.getActionSender().sendMapAppearanceV2(texturePack);
-              else if (session.isExtensionSupported("EnvMapAppearance", 1))
-                session.getActionSender().sendMapAppearanceV1();
+              if (session.isExtensionSupported("EnvMapAspect", 1))
+                session.getActionSender().sendMapAspect();
               if (session.isExtensionSupported("EnvColors"))
                 session.getActionSender().sendMapColors();
               session.getActionSender().sendLevelFinish();

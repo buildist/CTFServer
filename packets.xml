@@ -617,58 +617,6 @@ POSSIBILITY OF SUCH DAMAGE.
       </fields>
     </packet>
     <packet>
-      <opcode>30</opcode>
-      <name>set_map_appearance</name>
-      <fields>
-        <field>
-          <name>texture_url</name>
-          <type>STRING</type>
-        </field>
-        <field>
-          <name>side_block</name>
-          <type>BYTE</type>
-        </field>
-        <field>
-          <name>edge_block</name>
-          <type>BYTE</type>
-        </field>
-        <field>
-          <name>side_level</name>
-          <type>SHORT</type>
-        </field>
-      </fields>
-	</packet>
-    <packet>
-      <opcode>30</opcode>
-      <name>set_map_appearance_2</name>
-      <fields>
-        <field>
-          <name>texture_url</name>
-          <type>STRING</type>
-        </field>
-        <field>
-          <name>side_block</name>
-          <type>BYTE</type>
-        </field>
-        <field>
-          <name>edge_block</name>
-          <type>BYTE</type>
-        </field>
-Z        <field>
-          <name>side_level</name>
-          <type>SHORT</type>
-        </field>
-         <field>
-          <name>cloud_level</name>
-          <type>SHORT</type>
-        </field>
-         <field>
-          <name>view_distance</name>
-          <type>SHORT</type>
-        </field>
-      </fields>
-	</packet>
-    <packet>
       <opcode>32</opcode>
       <name>hack_control</name>
       <fields>
@@ -999,6 +947,30 @@ Z        <field>
               <field>
                   <name>modifier</name>
                   <type>BYTE</type>
+              </field>
+          </fields>
+      </packet>
+      <packet>
+          <opcode>40</opcode>
+          <name>map_url</name>
+          <fields>
+              <field>
+                  <name>url</name>
+                  <type>STRING</type>
+              </field>
+          </fields>
+      </packet>
+      <packet>
+          <opcode>41</opcode>
+          <name>map_property</name>
+          <fields>
+              <field>
+                  <name>type</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>value</name>
+                  <type>INT</type>
               </field>
           </fields>
       </packet>
