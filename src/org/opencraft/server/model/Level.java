@@ -328,6 +328,9 @@ public final class Level implements Cloneable {
       blocks0 = new byte[width * height * depth];
       blocks1 = new byte[width * height * depth];
       byte[] tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
+      byte[] tmpBlocks2 = classicWorld.containsKey("BlockArray2")
+          ? ((ByteArrayTag) classicWorld.get("BlockArray2")).getValue()
+          : null;
 
       CompoundMap spawn = ((CompoundTag) classicWorld.get("Spawn")).getValue();
       int spawnX = ((ShortTag) spawn.get("X")).getValue();
@@ -341,7 +344,7 @@ public final class Level implements Cloneable {
       Server.log("Loading map: " + id);
       loadProps();
 
-      loadBlocks(tmpBlocks);
+      loadBlocks(tmpBlocks, tmpBlocks2);
       loadMetadata(((CompoundTag) classicWorld.get("Metadata")).getValue());
 
     } catch (IOException ex) {
@@ -350,11 +353,16 @@ public final class Level implements Cloneable {
     return this;
   }
 
-  private void loadBlocks(byte[] blockArray) {
+  private void loadBlocks(byte[] blockArray, byte[] blockArray2) {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
         for (int z = 0; z < depth; z++) {
-          int type = Server.getUnsigned(blockArray[(z * height + y) * width + x]);
+          int type0 = Server.getUnsigned(blockArray[(z * height + y) * width + x]);
+          int type1 = 0;
+          if (blockArray2 != null) {
+            type1 = Server.getUnsigned(blockArray2[(z * height + y) * width + x]);
+          }
+          int type = type0 | (type1 << 8);
           blockTypes.add(type);
 
           if (GameSettings.getBoolean("Chaos")) {
@@ -374,7 +382,8 @@ public final class Level implements Cloneable {
             solidBlocks.add(new Position(x, y, z));
           }
           blocks[x][y][z] = (short) type;
-          blocks0[(z * height + y) * width + x] = (byte) type;
+          blocks0[(z * height + y) * width + x] = (byte) type0;
+          blocks1[(z * height + y) * width + x] = (byte) type1;
         }
       }
     }
@@ -387,22 +396,33 @@ public final class Level implements Cloneable {
       CompoundMap blockDefinitions = ((CompoundTag) cpe.get("BlockDefinitions")).getValue();
       for (Tag blockTag : blockDefinitions.values()) {
         if (!(blockTag instanceof CompoundTag)) continue;
-        ;
         CompoundMap block = ((CompoundTag) blockTag).getValue();
         int blockDraw = (Byte) block.get("BlockDraw").getValue();
         int collideType = (Byte) block.get("CollideType").getValue();
         byte[] coords = ((ByteArrayTag) block.get("Coords")).getValue();
         byte[] fog = ((ByteArrayTag) block.get("Fog")).getValue();
         int fullBright = (Byte) block.get("FullBright").getValue();
-        int id = Server.getUnsigned((Byte) block.get("ID").getValue());
+        int id = block.containsKey("ID2")
+            ? Server.getUnsignedShort((Short) block.get("ID2").getValue())
+            : Server.getUnsigned((Byte) block.get("ID").getValue());
         String name = (String) block.get("Name").getValue();
         int shape = (Byte) block.get("Shape").getValue();
         float speed = (Float) block.get("Speed").getValue();
-        int[] textures = Server.getUnsigned(((ByteArrayTag)block.get("Textures")).getValue());
+        int[] textures0 = Server.getUnsigned(((ByteArrayTag)block.get("Textures")).getValue());
+        int[] textures;
+        if (textures0.length == 6 ){
+          textures = textures0;
+        } else {
+          if (textures0.length != 12) throw  new RuntimeException("invalid textures");
+          textures = new int[6];
+          for (int i = 0; i < 6; i++) {
+            textures[i] = textures0[i] | (textures0[i + 6] << 8);
+          }
+        }
         int transmitsLight = (Byte) block.get("TransmitsLight").getValue();
         int walkSound = (Byte) block.get("WalkSound").getValue();
 
-        if (!blockTypes.contains(id)) continue;
+        if (!blockTypes.contains(id) && id > 65) continue;
 
         CustomBlockDefinition blockDef =
             new CustomBlockDefinition(
