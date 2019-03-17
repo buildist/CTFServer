@@ -115,10 +115,12 @@ public final class Level implements Cloneable {
   private byte[] compressedBlocks1;
   /** Light depth array. */
   private short[][] lightDepths;
-  /** The spawn rotation. */
-  private Rotation spawnRotation;
-  /** The spawn position. */
-  private Position spawnPosition;
+  public Position spawnPosition;
+  public Rotation spawnRotation;
+  public Position redSpawnPosition;
+  public Rotation redSpawnRotation;
+  public Position blueSpawnPosition;
+  public Rotation blueSpawnRotation;
 
   private HashSet<Position> solidBlocks = new HashSet<Position>();
   private HashSet<Integer> solidTypes = new HashSet<Integer>();
@@ -316,6 +318,34 @@ public final class Level implements Cloneable {
       spawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
     }
 
+    if (props.getProperty("redSpawnPosition") != null) {
+      String[] parts = props.getProperty("redSpawnPosition").split(",");
+      redSpawnPosition =
+          new Position(
+              Integer.parseInt(parts[0]) * 32 + 16,
+              Integer.parseInt(parts[1]) * 32 + 16,
+              Integer.parseInt(parts[2]) * 32 + 16);
+    }
+
+    if (props.getProperty("redSpawnRotation") != null) {
+      String[] parts = props.getProperty("redSpawnRotation").split(",");
+      redSpawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    }
+
+    if (props.getProperty("blueSpawnPosition") != null) {
+      String[] parts = props.getProperty("blueSpawnPosition").split(",");
+      blueSpawnPosition =
+          new Position(
+              Integer.parseInt(parts[0]) * 32 + 16,
+              Integer.parseInt(parts[1]) * 32 + 16,
+              Integer.parseInt(parts[2]) * 32 + 16);
+    }
+
+    if (props.getProperty("blueSpawnRotation") != null) {
+      String[] parts = props.getProperty("blueSpawnRotation").split(",");
+      blueSpawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    }
+    
     if (props.getProperty("walkSpeed") != null) {
       try {
         walkSpeed = Double.parseDouble(props.getProperty("walkSpeed"));
@@ -563,17 +593,6 @@ public final class Level implements Cloneable {
 
   public Object getProp(String p) {
     return props.get(p);
-  }
-
-  public Position getTeamSpawn(String team) {
-    if (team.equals("spec")) {
-      return Math.random() < 0.5 ? getTeamSpawn("red") : getTeamSpawn("blue");
-    } else {
-      return new Position(
-          Integer.parseInt((String) getProp(team + "SpawnX")) * 32 + 16,
-          Integer.parseInt((String) getProp(team + "SpawnZ")) * 32 + 16,
-          (Integer.parseInt((String) getProp(team + "SpawnY"))) * 32 + 16);
-    }
   }
 
   /**

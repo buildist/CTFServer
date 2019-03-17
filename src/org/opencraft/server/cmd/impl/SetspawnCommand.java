@@ -67,8 +67,16 @@ public class SetspawnCommand implements Command {
     if (player.isOp()) {
       Position position = player.getPosition().toBlockPos();
       Rotation rotation = player.getRotation();
-      MapSetCommand.doPropertyChange("spawnPosition", position.toString());
-      MapSetCommand.doPropertyChange("spawnRotation", rotation.toString());
+      if (params.getArgumentCount() == 0 || params.getStringArgument(0).equals("spec")) {
+        MapSetCommand.doPropertyChange("spawnPosition", position.toString());
+        MapSetCommand.doPropertyChange("spawnRotation", rotation.toString());
+      } else if(params.getStringArgument(0).equals("red")) {
+        MapSetCommand.doPropertyChange("redSpawnPosition", position.toString());
+        MapSetCommand.doPropertyChange("redSpawnRotation", rotation.toString());
+      } else {
+        MapSetCommand.doPropertyChange("blueSpawnPosition", position.toString());
+        MapSetCommand.doPropertyChange("blueSpawnRotation", rotation.toString());
+      }
     } else player.getActionSender().sendChatMessage("You must be OP to do that");
   }
 }

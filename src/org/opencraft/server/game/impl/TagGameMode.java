@@ -117,6 +117,8 @@ import org.opencraft.server.model.MapRatings;
 import org.opencraft.server.model.MoveLog;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.PlayerUI;
+import org.opencraft.server.model.Position;
+import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.World;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
@@ -128,6 +130,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+
+import javafx.geometry.Pos;
 
 public class TagGameMode extends GameModeAdapter<Player> {
 
@@ -352,14 +356,10 @@ public class TagGameMode extends GameModeAdapter<Player> {
 
   public void addSpawns() {
     Level map = World.getWorld().getLevel();
-    int redSpawnX = Integer.parseInt(map.props.getProperty("redSpawnX"));
-    int redSpawnY = Integer.parseInt(map.props.getProperty("redSpawnY")) - 2;
-    int redSpawnZ = Integer.parseInt(map.props.getProperty("redSpawnZ"));
-    int blueSpawnX = Integer.parseInt(map.props.getProperty("blueSpawnX"));
-    int blueSpawnY = Integer.parseInt(map.props.getProperty("blueSpawnY")) - 2;
-    int blueSpawnZ = Integer.parseInt(map.props.getProperty("blueSpawnZ"));
-    map.setBlock(redSpawnX, redSpawnZ, redSpawnY, Constants.BLOCK_RESUPPLY);
-    map.setBlock(blueSpawnX, blueSpawnZ, blueSpawnY, Constants.BLOCK_RESUPPLY);
+    Position redSpawn = map.redSpawnPosition.toBlockPos();
+    Position blueSpawn = map.blueSpawnPosition.toBlockPos();
+    map.setBlock(redSpawn.getX(), redSpawn.getY(), redSpawn.getZ() - 2, Constants.BLOCK_RESUPPLY);
+    map.setBlock(blueSpawn.getX(), blueSpawn.getY(), blueSpawn.getZ() - 2, Constants.BLOCK_RESUPPLY);
   }
 
   public void startGame(Level newMap) {

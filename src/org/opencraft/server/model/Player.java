@@ -352,9 +352,9 @@ public class Player extends Entity {
     if (!bad) {
       if (sendMessage)
         World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
-      Position spawn = l.getTeamSpawn(team);
-      getActionSender().sendTeleport(spawn, new Rotation(this.team == 0 ? 64 : 192, 0));
-      setPosition(spawn);
+      Position position = getTeamSpawn();
+      getActionSender().sendTeleport(position, getTeamSpawnRotation());
+      setPosition(position);
       session.getActionSender().sendHackControl(this.team == -1);
     }
     if (isNewPlayer) {
@@ -400,11 +400,33 @@ public class Player extends Entity {
   }
 
   public Position getTeamSpawn() {
-    String teamname;
-    if (team == 0) teamname = "red";
-    else if (team == 1) teamname = "blue";
-    else teamname = "spec";
-    return World.getWorld().getLevel().getTeamSpawn(teamname);
+    switch (team) {
+      case 0:
+        return World.getWorld().getLevel().redSpawnPosition;
+      case 1:
+        return World.getWorld().getLevel().blueSpawnPosition;
+      case -1:
+        return Math.random() < 0.5
+            ? World.getWorld().getLevel().redSpawnPosition
+            : World.getWorld().getLevel().blueSpawnPosition;
+      default:
+        return null;
+    }
+  }
+
+  public Rotation getTeamSpawnRotation() {
+    switch (team) {
+      case 0:
+        return World.getWorld().getLevel().redSpawnRotation;
+      case 1:
+        return World.getWorld().getLevel().blueSpawnRotation;
+      case -1:
+        return Math.random() < 0.5
+            ? World.getWorld().getLevel().redSpawnRotation
+            : World.getWorld().getLevel().blueSpawnRotation;
+      default:
+        return null;
+    }
   }
 
   /**
