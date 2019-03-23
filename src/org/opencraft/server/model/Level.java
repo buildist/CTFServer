@@ -233,22 +233,14 @@ public final class Level implements Cloneable {
 
     setMapColors();
 
-    sideBlock = 7;
-    edgeBlock = 8;
-    edgeHeight = depth / 2;
-    cloudHeight = depth + 2;
-    viewDistance = 0;
-    cloudSpeed = 256;
-    weatherSpeed = 256;
-    weatherFade = 128;
-    expFog = 0;
-    sideOffset = -2;
-
     if (props.getProperty("sideBlock") != null) {
       try {
         sideBlock = (short) Integer.parseInt(props.getProperty("sideBlock"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("sideBlock", "7");
+      sideBlock = 7;
     }
 
     if (props.getProperty("edgeBlock") != null) {
@@ -256,6 +248,9 @@ public final class Level implements Cloneable {
         edgeBlock = (short) Integer.parseInt(props.getProperty("edgeBlock"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("edgeBlock", "8");
+      edgeBlock = 8;
     }
 
     if (props.getProperty("edgeHeight") != null) {
@@ -263,6 +258,9 @@ public final class Level implements Cloneable {
         edgeHeight = (short) Integer.parseInt(props.getProperty("edgeHeight"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("edgeHeight", "" + (depth / 2));
+      edgeHeight = depth / 2;
     }
 
     if (props.getProperty("cloudHeight") != null) {
@@ -270,6 +268,9 @@ public final class Level implements Cloneable {
         cloudHeight = (short) Integer.parseInt(props.getProperty("cloudHeight"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("cloudHeight", "" + (depth + 2));
+      cloudHeight = depth + 2;
     }
 
     if (props.getProperty("viewDistance") != null) {
@@ -277,6 +278,9 @@ public final class Level implements Cloneable {
         viewDistance = (short) Integer.parseInt(props.getProperty("viewDistance"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("viewDistance", "0");
+      viewDistance = 0;
     }
 
     if (props.getProperty("cloudSpeed") != null) {
@@ -284,6 +288,9 @@ public final class Level implements Cloneable {
         cloudSpeed = (short) Integer.parseInt(props.getProperty("cloudSpeed"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("cloudSpeed", "256");
+      cloudSpeed = 256;
     }
 
 
@@ -292,6 +299,9 @@ public final class Level implements Cloneable {
         weatherSpeed = (short) Integer.parseInt(props.getProperty("weatherSpeed"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("weatherSpeed", "256");
+      weatherSpeed = 256;
     }
 
     if (props.getProperty("weatherFade") != null) {
@@ -299,6 +309,9 @@ public final class Level implements Cloneable {
         weatherFade = (short) Integer.parseInt(props.getProperty("weatherFade"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("weatherFade", "128");
+      weatherFade = 128;
     }
 
     if (props.getProperty("expFog") != null) {
@@ -306,6 +319,9 @@ public final class Level implements Cloneable {
         expFog = (short) Integer.parseInt(props.getProperty("expFog"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("expFog", "0");
+      expFog = 0;
     }
 
     if (props.getProperty("sideOffset") != null) {
@@ -313,6 +329,9 @@ public final class Level implements Cloneable {
         sideOffset = (short) Integer.parseInt(props.getProperty("sideOffset"));
       } catch (NumberFormatException ex) {
       }
+    } else {
+      props.setProperty("sideOffset", "-2");
+      sideOffset = -2;
     }
 
     if (props.getProperty("spawnPosition") != null) {
@@ -322,11 +341,17 @@ public final class Level implements Cloneable {
               Integer.parseInt(parts[0]) * 32 + 16,
               Integer.parseInt(parts[1]) * 32 + 16,
               Integer.parseInt(parts[2]) * 32 + 16);
+    } else {
+      props.setProperty("spawnPosition", "0,0,0");
+      spawnPosition = new Position(0, 0, 0);
     }
 
     if (props.getProperty("spawnRotation") != null) {
       String[] parts = props.getProperty("spawnRotation").split(",");
       spawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    } else {
+      props.setProperty("spawnRotation", "0,0");
+      spawnRotation = new Rotation(0, 0);
     }
 
     if (props.getProperty("redSpawnPosition") != null) {
@@ -336,11 +361,17 @@ public final class Level implements Cloneable {
               Integer.parseInt(parts[0]) * 32 + 16,
               Integer.parseInt(parts[1]) * 32 + 16,
               Integer.parseInt(parts[2]) * 32 + 16);
+    } else {
+      props.setProperty("redSpawnPosition", "0,0,0");
+      spawnPosition = new Position(0, 0, 0);
     }
 
     if (props.getProperty("redSpawnRotation") != null) {
       String[] parts = props.getProperty("redSpawnRotation").split(",");
       redSpawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    } else {
+      props.setProperty("redSpawnRotation", "0,0");
+      spawnRotation = new Rotation(0, 0);
     }
 
     if (props.getProperty("blueSpawnPosition") != null) {
@@ -350,11 +381,17 @@ public final class Level implements Cloneable {
               Integer.parseInt(parts[0]) * 32 + 16,
               Integer.parseInt(parts[1]) * 32 + 16,
               Integer.parseInt(parts[2]) * 32 + 16);
+    } else {
+      props.setProperty("blueSpawnPosition", "0,0,0");
+      spawnPosition = new Position(0, 0, 0);
     }
 
     if (props.getProperty("blueSpawnRotation") != null) {
       String[] parts = props.getProperty("blueSpawnRotation").split(",");
       blueSpawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    } else {
+      props.setProperty("blueSpawnRotation", "0,0");
+      spawnRotation = new Rotation(0, 0);
     }
     
     if (props.getProperty("walkSpeed") != null) {
@@ -363,6 +400,9 @@ public final class Level implements Cloneable {
       } catch (NumberFormatException ex) {
         walkSpeed = 0;
       }
+    } else {
+      props.setProperty("walkSpeed", "1");
+      walkSpeed = 1;
     }
 
     if (props.getProperty("jumps") != null) {
@@ -371,6 +411,9 @@ public final class Level implements Cloneable {
       } catch (NumberFormatException ex) {
         jumps = 0;
       }
+    } else {
+      props.setProperty("jumps", "1");
+      jumps = 1;
     }
   }
 
@@ -508,6 +551,7 @@ public final class Level implements Cloneable {
             : Server.getUnsigned((Byte) block.get("ID").getValue());
         String name = (String) block.get("Name").getValue();
         int shape = (Byte) block.get("Shape").getValue();
+        if (shape == 0) blockDraw = Constants.BLOCK_DRAW_SPRITE;
         float speed = (Float) block.get("Speed").getValue();
         int[] textures0 = Server.getUnsigned(((ByteArrayTag)block.get("Textures")).getValue());
         int[] textures;

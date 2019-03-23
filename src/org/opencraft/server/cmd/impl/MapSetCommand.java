@@ -44,7 +44,10 @@ import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 
 public class MapSetCommand implements Command {
 
@@ -69,8 +72,12 @@ public class MapSetCommand implements Command {
       if (params.getArgumentCount() == 0) {
         player.getActionSender().sendChatMessage("/mapset [name] [value]");
         Enumeration<Object> keys = level.props.keys();
+        List<String> sortedKeys = new ArrayList<>(level.props.size());
         while (keys.hasMoreElements()) {
-          Object key = keys.nextElement();
+          sortedKeys.add(keys.nextElement().toString());
+        }
+        Collections.sort(sortedKeys);
+        for (String key : sortedKeys) {
           player.getActionSender().sendChatMessage(key + " = " + level.props.get(key));
         }
       } else if (params.getArgumentCount() >= 2) {
