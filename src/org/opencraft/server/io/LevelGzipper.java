@@ -111,6 +111,11 @@ public final class LevelGzipper {
               session.getActionSender().sendBlockPermissions(Constants.LASER_BLUE, false, false);
               session.getActionSender().sendBlockPermissions(Constants.BLOCK_RESUPPLY, false, false);
 
+              for (int id : level.usedSolidTypes) {
+                session.getActionSender().sendBlockPermissions(id, false, false);
+                session.getActionSender().sendInventoryOrder(id, 0);
+              }
+
               session.getPlayer().getLocalEntities().clear();
             } catch (IOException ex) {
               session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");

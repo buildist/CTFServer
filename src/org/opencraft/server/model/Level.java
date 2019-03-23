@@ -122,20 +122,22 @@ public final class Level implements Cloneable {
   public Position blueSpawnPosition;
   public Rotation blueSpawnRotation;
 
-  private HashSet<Position> solidBlocks = new HashSet<Position>();
-  private HashSet<Integer> solidTypes = new HashSet<Integer>();
+  private HashSet<Position> solidBlocks = new HashSet<>();
+  private HashSet<Integer> solidTypes = new HashSet<>();
+  public HashSet<Integer> usedSolidTypes = new HashSet<>();
   private boolean allSolidTypes = false;
+  private HashSet<Integer> excludedSolidTypes = new HashSet<>();
   private double walkSpeed;
   private int jumps;
   public final ArrayList<CustomBlockDefinition> customBlockDefinitions =
-      new ArrayList<CustomBlockDefinition>();
+      new ArrayList<>();
   /** The active "thinking" blocks on the map. */
   private Map<Integer, ArrayDeque<Position>> activeBlocks =
-      new HashMap<Integer, ArrayDeque<Position>>();
+      new HashMap<>();
   /** The timers for the active "thinking" blocks on the map. */
-  private Map<Integer, Long> activeTimers = new HashMap<Integer, Long>();
+  private Map<Integer, Long> activeTimers = new HashMap<>();
   /** A queue of positions to update at the next tick. */
-  private final Queue<Position> updateQueue = new ArrayDeque<Position>();
+  private final Queue<Position> updateQueue = new ArrayDeque<>();
 
   private final Queue<UpdateBlock> iceBlocks = new LinkedList<>();
 
@@ -213,7 +215,16 @@ public final class Level implements Cloneable {
       } else {
         String[] solidTypesString = props.getProperty("solidBlocks").split(" ");
         for (String t : solidTypesString) {
-          solidTypes.add(Integer.parseInt(t));
+          if (t.equals("all")) {
+            allSolidTypes = true;
+          } else {
+            int type = Integer.parseInt(t);
+            if (type >= 0) {
+              solidTypes.add(type);
+            } else {
+              excludedSolidTypes.add(-type);
+            }
+          }
         }
       }
     }
@@ -464,9 +475,12 @@ public final class Level implements Cloneable {
               type = 7;
             }
           }
-          if ((allSolidTypes && type != 0 && type != 8 && type != 9 && type != 10 && type != 11)
+          if ((allSolidTypes
+                  && type != 0 && type != 8 && type != 9 && type != 10 && type != 11
+                  && !excludedSolidTypes.contains(type))
               || solidTypes.contains(type)) {
             solidBlocks.add(new Position(x, y, z));
+            usedSolidTypes.add(type);
           }
           blocks[x][y][z] = (short) type;
           blocks0[(z * height + y) * width + x] = (byte) type0;
