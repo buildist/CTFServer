@@ -568,8 +568,9 @@ public class Player extends Entity {
     }
 
     Position blockPosition = getPosition().toBlockPos();
-    Position spawnPosition = getTeamSpawn().toBlockPos();
-    if (health == 0 && blockPosition.equals(spawnPosition)) {
+    if (health == 0 &&
+        (blockPosition.equals(World.getWorld().getLevel().redSpawnPosition)
+            || blockPosition.equals(World.getWorld().getLevel().blueSpawnPosition))) {
       health = GameSettings.getInt("Health");
     }
 
