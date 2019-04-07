@@ -419,8 +419,8 @@ public final class Level implements Cloneable {
 
   public String getMotd() {
     String motd = "";
-    motd += " &jumps=" + (jumps == 0 ? 1 : jumps);
-    motd += " &horspeed=" + (walkSpeed == 0 ? 1 : walkSpeed);
+    motd += " &jumps=" + (jumps == 0 ? 2 : jumps);
+    motd += " &horspeed=" + (walkSpeed == 0 ? 2 : walkSpeed);
     return motd;
   }
 
