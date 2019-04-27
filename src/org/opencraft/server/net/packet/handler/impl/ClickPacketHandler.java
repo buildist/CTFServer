@@ -41,7 +41,7 @@ public class ClickPacketHandler implements PacketHandler<MinecraftSession> {
     double vx = Math.cos(yaw) * Math.cos(pitch) * 0.125;
     double vy = Math.sin(yaw) * Math.cos(pitch) * 0.125;
     double vz = Math.sin(pitch) * 0.125;
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < 2048; i++) {
       x += vx;
       y += vy;
       z += vz;
