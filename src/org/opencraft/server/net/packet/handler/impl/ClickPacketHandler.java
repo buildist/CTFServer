@@ -17,11 +17,11 @@ public class ClickPacketHandler implements PacketHandler<MinecraftSession> {
       return;
     }
     if (session.getPlayer().team == -1
-        || session.getPlayer().ammo == 0
-        || session.getPlayer().health == 0) {
+        || session.getPlayer().getAmmo() == 0
+        || session.getPlayer().getHealth() == 0) {
       return;
     }
-    session.getPlayer().ammo--;
+    session.getPlayer().setAmmo(session.getPlayer().getAmmo() - 1);
     int yawInt = (short) packet.getNumericField("yaw");
     int pitchInt = (short) packet.getNumericField("pitch");
     double yaw =

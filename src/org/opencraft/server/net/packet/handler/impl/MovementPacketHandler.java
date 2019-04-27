@@ -40,6 +40,7 @@ import org.opencraft.server.model.MoveLog;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
+import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.handler.PacketHandler;
@@ -66,7 +67,8 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     final int y = packet.getNumericField("y").intValue();
     final int z = packet.getNumericField("z").intValue();
 
-    Position blockPosition = new Position(x, y, z).toBlockPos();
+    Position position = new Position(x, y, z);
+    Position blockPosition = position.toBlockPos();
 
     int dx = Math.abs(x - oldX);
     int dy = Math.abs(y - oldY);
@@ -80,9 +82,22 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
       player.moveTime = System.currentTimeMillis();
     }
 
+    // kill floor
+    if ((z - 16) / 32 < World.getWorld().getLevel().floor
+        && System.currentTimeMillis() - player.respawnTime > 5) {
+      World.getWorld().getGameMode().onDied(player);
+      player.getActionSender().sendTeleport(player.safePosition, player.getRotation());
+    }
+
+    boolean isOnGround = World.getWorld().getLevel().getBlock(
+        blockPosition.getX(), blockPosition.getY(), blockPosition.getZ() - 2) > 0;
+    if (isOnGround) {
+      player.safePosition = position;
+    }
+
     final int rotation = packet.getNumericField("rotation").intValue();
     final int look = packet.getNumericField("look").intValue();
-    player.setPosition(new Position(x, y, z));
+    player.setPosition(position);
     player.setRotation(new Rotation(rotation, look));
     MoveLog.getInstance().logPosition(player);
     if (session.isExtensionSupported("HeldBlock"))

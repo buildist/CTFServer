@@ -81,6 +81,7 @@ public class Player extends Entity {
   public boolean muted = false;
   public boolean frozen = false;
   public long moveTime = 0;
+  public long respawnTime = 0;
   public int team = -1;
   public int outOfBoundsBlockChanges = 0;
   public int placeBlock = -1;
@@ -107,9 +108,10 @@ public class Player extends Entity {
   public boolean sendCommandLog = false;
   public final PingList pingList = new PingList();
   private final PlayerUI ui;
+  public Position safePosition = new Position(0, 0, 0);
 
-  public int ammo;
-  public int health;
+  private int ammo;
+  private int health;
   public boolean isDead = false;
   public boolean isReloading = false;
   public int reloadStep = 0;
@@ -123,9 +125,27 @@ public class Player extends Entity {
     if (NAME_ID == 256) {
       NAME_ID = 0;
     }
-    ammo = GameSettings.getInt("Ammo");
-    health = GameSettings.getInt("Health");
     ui = new PlayerUI(this);
+    setAmmo(GameSettings.getInt("Ammo"));
+    setHealth(GameSettings.getInt("Health"));
+  }
+
+  public int getAmmo() {
+    return ammo;
+  }
+
+  public void setAmmo(int value) {
+    this.ammo = value;
+    ui.setAmmo(value);
+  }
+
+  public int getHealth() {
+    return health;
+  }
+
+  public void setHealth(int value) {
+    this.health = value;
+    ui.setHealth(value);
   }
 
   public static Player getPlayer(String name, ActionSender source) {
@@ -562,16 +582,17 @@ public class Player extends Entity {
       if (ammo == GameSettings.getInt("Ammo") || reloadStep == GameSettings.getInt("Ammo")) {
         isReloading = false;
       } else {
-        ammo++;
+        setAmmo(ammo + 1);
         reloadStep++;
       }
     }
 
     Position blockPosition = getPosition().toBlockPos();
     if (health == 0 &&
-        (blockPosition.equals(World.getWorld().getLevel().redSpawnPosition)
-            || blockPosition.equals(World.getWorld().getLevel().blueSpawnPosition))) {
-      health = GameSettings.getInt("Health");
+        (blockPosition.equals(World.getWorld().getLevel().redSpawnPosition.toBlockPos())
+            || blockPosition.equals(World.getWorld().getLevel().blueSpawnPosition.toBlockPos()))) {
+      setHealth(GameSettings.getInt("Health"));
+      setAmmo(GameSettings.getInt("Ammo"));
     }
 
     ui.step(ticks);

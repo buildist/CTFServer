@@ -42,6 +42,8 @@ public class PlayerUI {
 
   private final Player player;
 
+  private ProgressBar healthBar = new ProgressBar();
+  private ProgressBar ammoBar = new ProgressBar();
   private String status0 = "";
   private String status1 = "";
   private String status2 = "";
@@ -53,8 +55,16 @@ public class PlayerUI {
     }
   }
 
-  public String getProgressBar(int currentValue, int maxValue, boolean style) {
-    int length = (int) Math.round(((double) currentValue / maxValue) * PROGRESS_LENGTH);
+  public void setHealth(int value) {
+    healthBar.set(value);
+  }
+
+  public void setAmmo(int value) {
+    ammoBar.set(value);
+  }
+
+  public String getProgressBar(float currentValue, int maxValue, boolean style) {
+    int length = Math.round(currentValue / maxValue * PROGRESS_LENGTH);
     StringBuilder builder = new StringBuilder();
     if (currentValue == 0) {
       builder.append(PROGRESS_LEFT_INACTIVE);
@@ -102,7 +112,7 @@ public class PlayerUI {
         builder.append(style ? PROGRESS_1 : PROGRESS_B_1);
         break;
       case 0:
-        if (currentValue < maxValue) builder.append(PROGRESS_0);
+        if (length < PROGRESS_LENGTH) builder.append(PROGRESS_0);
         break;
     }
     for (int i = length / PROGRESS_LENGTH_CHARACTERS + 1; i < PROGRESS_LENGTH_CHARACTERS; i++) {
@@ -163,17 +173,20 @@ public class PlayerUI {
       player.getActionSender().sendChatMessage(status0, 1);
     }
 
-    String healthBar = HEALTH + " " + getProgressBar(player.health, GameSettings.getInt("Health"), false);
-    if (!status1.equals(healthBar)) {
-      status1 = healthBar;
+    healthBar.update();
+    ammoBar.update();
+
+    String health = HEALTH + " " + getProgressBar(healthBar.get(), GameSettings.getInt("Health"), false);
+    if (!status1.equals(health)) {
+      status1 = health;
       player.getActionSender().sendChatMessage(status1, 2);
     }
 
-    String ammoBar = player.health > 0
-        ? (AMMO + " " + getProgressBar(player.ammo, GameSettings.getInt("Ammo"), true))
+    String ammo = player.getHealth() > 0
+        ? (AMMO + " " + getProgressBar(ammoBar.get(), GameSettings.getInt("Ammo"), true))
         : "";
-    if (!status2.equals(ammoBar)) {
-      status2 = ammoBar;
+    if (!status2.equals(ammo)) {
+      status2 = ammo;
       player.getActionSender().sendChatMessage(status2, 3);
     }
 

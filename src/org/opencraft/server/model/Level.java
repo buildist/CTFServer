@@ -85,7 +85,7 @@ public final class Level implements Cloneable {
 
   public Properties props;
   public int ceiling;
-  public int floor;
+  public int floor = -8;
   public int mode = TAG;
   public String filename;
   public String id;

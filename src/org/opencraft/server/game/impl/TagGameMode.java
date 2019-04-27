@@ -384,8 +384,8 @@ public class TagGameMode extends GameModeAdapter<Player> {
                 player.hasVoted = false;
                 player.hasNominated = false;
                 player.currentRoundPoints = 0;
-                player.health = GameSettings.getInt("Health");
-                player.ammo = GameSettings.getInt("Ammo");
+                player.setHealth(GameSettings.getInt("Health"));
+                player.setAmmo(GameSettings.getInt("Ammo"));
                 for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
                   player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
                 }
@@ -450,12 +450,13 @@ public class TagGameMode extends GameModeAdapter<Player> {
     synchronized (killFeed) {
       KillFeedItem item;
       KillFeedItem first = killFeed.isEmpty() ? null : killFeed.get(0);
-      boolean isKill = defender.health == 0;
+      boolean isKill = defender.getHealth() == 0;
       if (!isKill && first != null && first.source == attacker && first.target == defender) {
         item = new KillFeedItem(attacker, defender, first.count + 1, false);
         killFeed.remove(0);
       } else {
         item = new KillFeedItem(attacker, defender, 1, isKill);
+        if (isKill) defender.setAmmo(0);
       }
       killFeed.add(0, item);
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
@@ -967,21 +968,27 @@ public class TagGameMode extends GameModeAdapter<Player> {
   }
 
   public void onHit(Player source, Player target, double x, double y, double z) {
-    if (target.health == 0 || source.team == target.team || target.team == -1) return;
+    if (target.getHealth() == 0 || source.team == target.team || target.team == -1) return;
 
-    target.health--;
+    target.setHealth(target.getHealth() - 1);
     source.incStat("hits");
     target.incStat("hitsTaken");
     source.addPoints(1);
     int block = source.team == 0 ? Constants.HIT_RED : Constants.HIT_BLUE;
     addTempEntity(x, y, z, block, 1000);
 
-    if (target.health == 0) {
+    if (target.getHealth() == 0) {
       source.incStat("kills");
       target.incStat("deaths");
     }
 
     updateKillFeed(source, target);
+  }
+
+  public void onDied(Player target) {
+    target.setHealth(0);
+    target.incStat("deaths");
+    updateKillFeed(null, target);
   }
 
   private void addTempEntity(double x, double y, double z, int block, long lifeTime) {
@@ -1051,10 +1058,12 @@ public class TagGameMode extends GameModeAdapter<Player> {
     }
 
     public String getMessage() {
-      String message =
-          source.getColoredName() + " &f"
-              + (isKill ? PlayerUI.KILL_ICON : PlayerUI.HIT_ICON)
-              + " " + target.getColoredName();
+      String message = "";
+      if (source != null) {
+        message += source.getColoredName() + " &f";
+      }
+      message += (isKill ? PlayerUI.KILL_ICON : PlayerUI.HIT_ICON)
+          + " " + target.getColoredName();
       if (count > 1) message += " &f(x" + count + ")";
       return message;
     }
