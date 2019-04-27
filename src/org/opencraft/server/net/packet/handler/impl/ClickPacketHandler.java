@@ -62,7 +62,7 @@ public class ClickPacketHandler implements PacketHandler<MinecraftSession> {
             && y > py - 0.5 && y < py + 0.5
             && z > pz - 1 && z < pz + 1) {
           World.getWorld().getGameMode().onHit(session.getPlayer(), p, x, y, z + 1.25);
-          i = 256;
+          i = 2048;
           break;
         }
       }
