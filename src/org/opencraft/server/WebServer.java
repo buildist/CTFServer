@@ -71,7 +71,7 @@ public class WebServer {
     consolePlayer.setAttribute("IsOperator", "true");
     consolePlayer.setAttribute("IsOwner", "true");
     try {
-      InetSocketAddress addr = new InetSocketAddress(22000);
+      InetSocketAddress addr = new InetSocketAddress(Constants.WEB_PORT);
       HttpServer server = HttpServer.create(addr, 0);
 
       CTFHandler ch = new CTFHandler();

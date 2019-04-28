@@ -980,6 +980,7 @@ public class TagGameMode extends GameModeAdapter<Player> {
     if (target.getHealth() == 0) {
       source.incStat("kills");
       target.incStat("deaths");
+      target.makeInvisible();
     }
 
     updateKillFeed(source, target);

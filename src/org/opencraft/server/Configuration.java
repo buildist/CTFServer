@@ -111,6 +111,7 @@ public class Configuration {
     ircChannel = props.getProperty("ircChannel");
     ircName = props.getProperty("ircName");
     Constants.PORT = Integer.valueOf(props.getProperty("port"));
+    Constants.WEB_PORT = Integer.valueOf(props.getProperty("webPort"));
     premium = Boolean.valueOf(props.getProperty("premium", "false"));
     envTexturePack = props.getProperty("envTexturePack");
   }

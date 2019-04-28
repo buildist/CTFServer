@@ -86,7 +86,7 @@ public class Player extends Entity {
   public int outOfBoundsBlockChanges = 0;
   public int placeBlock = -1;
   public boolean placeSolid = false;
-  public boolean isVisible = true;
+  public boolean isHidden = false;
   public boolean brush = false;
   public boolean hasVoted = false;
   public boolean hasNominated = false;
@@ -128,6 +128,10 @@ public class Player extends Entity {
     ui = new PlayerUI(this);
     setAmmo(GameSettings.getInt("Ammo"));
     setHealth(GameSettings.getInt("Health"));
+  }
+
+  public boolean isVisible() {
+    return !isHidden && team != -1 && health > 0;
   }
 
   public int getAmmo() {
@@ -283,13 +287,13 @@ public class Player extends Entity {
 
   public void makeInvisible() {
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      p.getActionSender().sendRemovePlayer(instance);
+      if (this != p) p.getActionSender().sendRemoveEntity(instance);
     }
   }
 
   public void makeVisible() {
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      p.getActionSender().sendAddPlayer(instance, p == instance);
+      if (this != p) p.getActionSender().sendExtSpawn(instance);
     }
   }
 
@@ -315,11 +319,11 @@ public class Player extends Entity {
           .sendChatMessage(
               "- &aThis map was contributed by: " + World.getWorld().getLevel().getCreator());
     }
-    if (!isVisible && !team.equals("spec")) {
+    if (isHidden && !team.equals("spec")) {
       Server.log(getName() + " is now unhidden");
       makeVisible();
       getActionSender().sendChatMessage("- &eYou are now visible");
-      isVisible = true;
+      isHidden = false;
     }
     Level l = World.getWorld().getLevel();
     TagGameMode ctf = World.getWorld().getGameMode();
@@ -339,6 +343,7 @@ public class Player extends Entity {
     }
     boolean bad = false;
     if (team.equals("red")) {
+      if (this.team == -1) makeVisible();
       if (unbalanced && ctf.redPlayers > ctf.bluePlayers) {
         ctf.bluePlayers++;
         this.team = 1;
@@ -349,6 +354,7 @@ public class Player extends Entity {
         this.team = 0;
       }
     } else if (team.equals("blue")) {
+      if (this.team == -1) makeVisible();
       if (unbalanced && ctf.bluePlayers > ctf.redPlayers) {
         ctf.redPlayers++;
         this.team = 0;
@@ -364,7 +370,7 @@ public class Player extends Entity {
       bad = true;
       getActionSender().sendChatMessage("- Unrecognized team!");
     }
-    if (isVisible) {
+    if (isVisible()) {
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
         p.getActionSender().sendAddPlayer(this, p == this);
       }
@@ -593,6 +599,7 @@ public class Player extends Entity {
             || blockPosition.equals(World.getWorld().getLevel().blueSpawnPosition.toBlockPos()))) {
       setHealth(GameSettings.getInt("Health"));
       setAmmo(GameSettings.getInt("Ammo"));
+      makeVisible();
     }
 
     ui.step(ticks);

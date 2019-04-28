@@ -142,6 +142,7 @@ public final class Constants {
 
   public static final String ROOT_PATH = ".";
   public static int PORT = 25560;
+  public static int WEB_PORT = 22001;
   public static String VERSION = "Laser Tag";
   public static int SAFE_TIME = 3000;
 }

@@ -158,7 +158,8 @@ public class ActionSender {
                       spawn.getZ(),
                       (byte) r.getRotation(),
                       (byte) r.getLook(),
-                      false);
+                      false,
+                      true);
                   // now load the player's game (TODO in the future do this in parallel with loading
                   // the
                   // level)
@@ -205,7 +206,8 @@ public class ActionSender {
         player.getPosition().getZ(),
         (byte) player.getRotation().getRotation(),
         (byte) player.getRotation().getLook(),
-        isSelf);
+        isSelf,
+        player.isVisible());
   }
 
   public void sendSpawn(
@@ -220,10 +222,11 @@ public class ActionSender {
       int z,
       byte rotation,
       byte look,
-      boolean isSelf) {
+      boolean isSelf,
+      boolean isVisible) {
     if (session.isExtensionSupported("ExtPlayerList", 2)) {
       sendAddPlayerName(nameId, name, listName, teamName, (byte) 1);
-      if (!isSelf) {
+      if (!isSelf && isVisible) {
         sendExtSpawn(id, colorName, name, x, y, z, rotation, look);
       }
     } else if (!isSelf) {
@@ -238,6 +241,18 @@ public class ActionSender {
       bldr.putByte("look", look);
       session.send(bldr.toPacket());
     }
+  }
+
+  public void sendExtSpawn(Player player) {
+    sendExtSpawn(
+        (byte) player.getId(),
+        player.getColoredName(),
+        player.getName(),
+        player.getPosition().getX(),
+        player.getPosition().getY(),
+        player.getPosition().getZ(),
+        (byte) player.getRotation().getRotation(),
+        (byte) player.getRotation().getLook());
   }
 
   public void sendAddPlayerName(

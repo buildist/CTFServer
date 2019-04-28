@@ -83,7 +83,7 @@ public class UpdateTask extends ScheduledTask {
         }
       }
       for (Player otherEntity : players) {
-        if (!le.contains(otherEntity) && otherEntity != player && otherEntity.isVisible) {
+        if (!le.contains(otherEntity) && otherEntity != player) {
           le.add(otherEntity);
           player.getSession().getActionSender().sendAddPlayer(otherEntity, false);
           Server.d("Adding " + otherEntity.getName() + " to " + player.getName());
