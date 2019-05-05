@@ -153,6 +153,7 @@ public class ActionSender {
                       session.getPlayer().getTeamName(),
                       session.getPlayer().getName(),
                       session.getPlayer().getListName(),
+                      session.getPlayer().getSkinUrl(),
                       spawn.getX(),
                       spawn.getY(),
                       spawn.getZ(),
@@ -201,6 +202,7 @@ public class ActionSender {
         player.getTeamName(),
         player.getName(),
         player.getListName(),
+        player.getSkinUrl(),
         player.getPosition().getX(),
         player.getPosition().getY(),
         player.getPosition().getZ(),
@@ -217,6 +219,7 @@ public class ActionSender {
       String teamName,
       String name,
       String listName,
+      String skinUrl,
       int x,
       int y,
       int z,
@@ -227,7 +230,7 @@ public class ActionSender {
     if (session.isExtensionSupported("ExtPlayerList", 2)) {
       sendAddPlayerName(nameId, name, listName, teamName, (byte) 1);
       if (!isSelf && isVisible) {
-        sendExtSpawn(id, colorName, name, x, y, z, rotation, look);
+        sendExtSpawn(id, colorName, skinUrl != null ? skinUrl : name, x, y, z, rotation, look);
       }
     } else if (!isSelf) {
       PacketBuilder bldr =
@@ -358,7 +361,7 @@ public class ActionSender {
   /**
    * Sends the remove entity packet.
    *
-   * @param entity The entity being removed.
+   * @param id The entity being removed.
    */
   public void sendRemoveEntity(int id) {
     PacketBuilder bldr =
@@ -724,7 +727,6 @@ public class ActionSender {
   /**
    * Sends a chat message.
    *
-   * @param id The source player id.
    * @param message The message.
    */
   public void sendChatMessage(String message, int messageType) {

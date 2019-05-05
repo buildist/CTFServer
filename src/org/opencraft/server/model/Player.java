@@ -455,6 +455,17 @@ public class Player extends Entity {
     }
   }
 
+  public String getSkinUrl() {
+    switch (team) {
+      case 0:
+        return "http://buildism.net/mc/server/skin_red.png";
+      case 1:
+        return "http://buildism.net/mc/server/skin_blue.png";
+      default:
+        return null;
+    }
+  }
+
   /**
    * Sets an attribute of this player.
    *
