@@ -887,11 +887,11 @@ POSSIBILITY OF SUCH DAMAGE.
       <name>inventory_order</name>
       <fields>
         <field>
-          <name>order</name>
+          <name>id</name>
           <type>SHORT</type>
         </field>
         <field>
-          <name>id</name>
+          <name>order</name>
           <type>SHORT</type>
         </field>
       </fields>

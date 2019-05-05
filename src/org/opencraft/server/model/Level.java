@@ -124,6 +124,7 @@ public final class Level implements Cloneable {
 
   private HashSet<Position> solidBlocks = new HashSet<>();
   private HashSet<Integer> solidTypes = new HashSet<>();
+  public HashSet<Integer> usedBreakableTypes = new HashSet<>();
   public HashSet<Integer> usedSolidTypes = new HashSet<>();
   private boolean allSolidTypes = false;
   private HashSet<Integer> excludedSolidTypes = new HashSet<>();
@@ -524,6 +525,8 @@ public final class Level implements Cloneable {
               || solidTypes.contains(type)) {
             solidBlocks.add(new Position(x, y, z));
             usedSolidTypes.add(type);
+          } else {
+            usedBreakableTypes.add(type);
           }
           blocks[x][y][z] = (short) type;
           blocks0[(z * height + y) * width + x] = (byte) type0;

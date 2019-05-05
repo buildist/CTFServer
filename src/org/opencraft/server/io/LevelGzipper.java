@@ -59,6 +59,9 @@ public final class LevelGzipper {
   private static final LevelGzipper INSTANCE = new LevelGzipper();
   private ExecutorService service = Executors.newCachedThreadPool();
 
+  private static final int[] DEFAULT_RESTRICTED_BLOCKS = new int[]{
+      7, 8, 10, Constants.HIT_RED, Constants.HIT_BLUE, Constants.LASER_RED, Constants.LASER_BLUE};
+
   public static LevelGzipper getLevelGzipper() {
     return INSTANCE;
   }
@@ -101,19 +104,16 @@ public final class LevelGzipper {
                 session.getActionSender().sendMapColors();
               session.getActionSender().sendLevelFinish();
 
-              session.getActionSender().sendBlockPermissions(0, true, true);
-              session.getActionSender().sendBlockPermissions(7, false, false);
-              session.getActionSender().sendBlockPermissions(8, false, false);
-              session.getActionSender().sendBlockPermissions(10, false, false);
-              session.getActionSender().sendBlockPermissions(Constants.HIT_RED, false, false);
-              session.getActionSender().sendBlockPermissions(Constants.HIT_BLUE, false, false);
-              session.getActionSender().sendBlockPermissions(Constants.LASER_RED, false, false);
-              session.getActionSender().sendBlockPermissions(Constants.LASER_BLUE, false, false);
-              session.getActionSender().sendBlockPermissions(Constants.BLOCK_RESUPPLY, false, false);
-
               for (int id : level.usedSolidTypes) {
                 session.getActionSender().sendBlockPermissions(id, false, false);
-                session.getActionSender().sendInventoryOrder(id, 0);
+              }
+
+              for (int id : level.usedBreakableTypes) {
+                session.getActionSender().sendBlockPermissions(id, true, true);
+              }
+
+              for (int type : DEFAULT_RESTRICTED_BLOCKS) {
+                session.getActionSender().sendBlockPermissions(type, false, false);
               }
 
               session.getPlayer().getLocalEntities().clear();
