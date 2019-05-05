@@ -83,8 +83,8 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     }
 
     // kill floor
-    if ((z - 16) / 32 < World.getWorld().getLevel().floor
-        && System.currentTimeMillis() - player.respawnTime > 5000) {
+    boolean belowKillFloor = (z - 16) / 32 < World.getWorld().getLevel().floor;
+    if (belowKillFloor && System.currentTimeMillis() - player.respawnTime > 5000) {
       World.getWorld().getGameMode().onDied(player);
       player.getActionSender().sendTeleport(player.safePosition, player.getRotation());
       player.respawnTime = System.currentTimeMillis();
@@ -92,7 +92,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
 
     boolean isOnGround = World.getWorld().getLevel().getBlock(
         blockPosition.getX(), blockPosition.getY(), blockPosition.getZ() - 2) > 0;
-    if (isOnGround) {
+    if (isOnGround && !belowKillFloor) {
       player.safePosition = position;
     }
 
