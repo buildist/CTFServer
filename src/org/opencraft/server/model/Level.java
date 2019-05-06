@@ -309,24 +309,6 @@ public final class Level implements Cloneable {
     if (props.getProperty("isTDM") != null) {
       mode = TDM;
 
-      if (props.getProperty("spawnsX") != null && !props.containsKey("tdmSpawns")) {
-        String[] spawnX = props.getProperty("spawnsX").split(" ");
-        String[] spawnY = props.getProperty("spawnsY").split(" ");
-        String[] spawnZ = props.getProperty("spawnsZ").split(" ");
-        String spawns = "";
-        for (int i = 0; i < spawnX.length; i++) {
-          spawns += spawnX[i] + "," + spawnY[i] + "," + spawnZ[i];
-          if (i != spawnX.length - 1) {
-            spawns += " ";
-          }
-        }
-        props.setProperty("tdmSpawns", spawns);
-        props.remove("spawnsX");
-        props.remove("spawnsY");
-        props.remove("spawnsZ");
-        saveProps();
-      }
-
       tdmSpawns.clear();
       if (props.getProperty("tdmSpawns") != null) {
         String[] spawns = props.getProperty("tdmSpawns").split(" ");
@@ -811,22 +793,11 @@ public final class Level implements Cloneable {
     return props.get(p);
   }
 
-  public Position getTeamSpawn(String team) {
-    if (mode == TDM) {
-      if (tdmSpawns.isEmpty()) {
-        return Player.getSpawnPos();
-      } else {
-        return tdmSpawns.get((int) (Math.random() * tdmSpawns.size()));
-      }
+  public Position getTDMSpawn() {
+    if (tdmSpawns.isEmpty()) {
+      return Player.getSpawnPos();
     } else {
-      if (team.equals("spec")) {
-        return Math.random() < 0.5 ? getTeamSpawn("red") : getTeamSpawn("blue");
-      } else {
-        return new Position(
-            Integer.parseInt((String) getProp(team + "SpawnX")) * 32 + 16,
-            Integer.parseInt((String) getProp(team + "SpawnZ")) * 32 + 16,
-            (Integer.parseInt((String) getProp(team + "SpawnY"))) * 32 + 16);
-      }
+      return tdmSpawns.get((int) (Math.random() * tdmSpawns.size()));
     }
   }
 

@@ -644,9 +644,12 @@ public class Player extends Entity {
   public void sendToTeamSpawn() {
     // If player dies while flamethrower is on, don't leave remnants on the map.
     if (isFlamethrowerEnabled()) World.getWorld().getLevel().clearFire(linePosition, lineRotation);
-    getActionSender().sendTeleport(getTeamSpawn(),new Rotation(team == 0 ? 64 : 192, 0));  }
+    getActionSender().sendTeleport(getTeamSpawn(), new Rotation(team == 0 ? 64 : 192, 0));  }
 
   public Position getTeamSpawn() {
+    if (World.getWorld().getLevel().mode == Level.TDM) {
+      return World.getWorld().getLevel().getTDMSpawn();
+    }
     switch (team) {
       case 0:
         return World.getWorld().getLevel().redSpawnPosition;
