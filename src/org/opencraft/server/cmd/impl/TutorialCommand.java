@@ -39,10 +39,7 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.Constants;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
-import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
 public class TutorialCommand implements Command {
   private static final TutorialCommand INSTANCE = new TutorialCommand();
@@ -57,13 +54,8 @@ public class TutorialCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (World.getWorld().getGameMode().getMode() == Level.CTF)
-      player
-          .getActionSender()
-          .sendChatMessage("- &eSay /commands for a command list. " + Constants.HELP_TEXT);
-    else
-      player
-          .getActionSender()
-          .sendChatMessage("- &eSay /commands for a command list. " + Constants.TDM_HELP_TEXT);
+    player
+        .getActionSender()
+        .sendChatMessage("- &eSay /commands for a command list. " + Constants.HELP_TEXT);
   }
 }

@@ -63,7 +63,7 @@ public class LoadPersistenceRequest extends PersistenceRequest {
   }
 
   private void setDefaultStats(Player player) {
-    if (player.getAttribute("storepoints") == null) player.setAttribute("storepoints", 0);
+    if (player.getAttribute("points") == null) player.setAttribute("points", 0);
     if (player.getAttribute("ragequits") == null) player.setAttribute("ragequits", 0);
     if (player.getAttribute("duelWins") == null) player.setAttribute("duelWins", 0);
     if (player.getAttribute("duelLosses") == null) player.setAttribute("duelLosses", 0);
@@ -87,7 +87,7 @@ public class LoadPersistenceRequest extends PersistenceRequest {
         Map<String, Object> attributes =
             (Map<String, Object>) xs.fromXML(new FileInputStream(file));
         for (Map.Entry<String, Object> entry : attributes.entrySet()) {
-          if (entry.getKey().equals("storepoints") && GameSettings.getBoolean("Tournament")) {
+          if (entry.getKey().equals("points") && GameSettings.getBoolean("Tournament")) {
             player.setAttribute(entry.getKey(), 0);
           } else {
             player.setAttribute(entry.getKey(), entry.getValue());
@@ -99,7 +99,7 @@ public class LoadPersistenceRequest extends PersistenceRequest {
       }
       setDefaultStats(player);
     } else if (createFile) {
-      if (player.getAttribute("tags") == null) {
+      if (player.getAttribute("wins") == null) {
         player.setAttribute("tags", 0);
         player.setAttribute("captures", 0);
         player.setAttribute("explodes", 0);

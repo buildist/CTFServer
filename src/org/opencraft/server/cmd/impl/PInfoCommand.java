@@ -55,7 +55,9 @@ public class PInfoCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    Player target = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+    Player target = params.getArgumentCount() > 0
+        ? Player.getPlayer(params.getStringArgument(0), player.getActionSender())
+        : player;
     if (target == null) {
       target = new Player(null, params.getStringArgument(0));
       try {
@@ -66,9 +68,9 @@ public class PInfoCommand implements Command {
     }
     if (target != null) {
       player.getActionSender().sendChatMessage("- &aStats for " + target.getName());
-      // if(player.isOp())
-      //    player.getActionSender().sendChatMessage("- &eIP:"+Player.getAttributeFor(target
-      // .getName(), "ip", player.getActionSender()));
+      if(player.isOp())
+        player.getActionSender().sendChatMessage(
+            "- &eIP:"+Player.getAttributeFor(target.getName(), "ip", player.getActionSender()));
       player
           .getActionSender()
           .sendChatMessage(
@@ -99,7 +101,7 @@ public class PInfoCommand implements Command {
       player
           .getActionSender()
           .sendChatMessage("- &eRagequits: " + target.getAttribute("ragequits"));
-      player.getActionSender().sendChatMessage("- &eStore Points: " + target.getStorePoints());
+      player.getActionSender().sendChatMessage("- &ePoints: " + target.getPoints());
     }
   }
 }

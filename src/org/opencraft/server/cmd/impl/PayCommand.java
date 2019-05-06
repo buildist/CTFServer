@@ -55,9 +55,9 @@ public class PayCommand implements Command {
       Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
       if (other != null
           && params.getIntegerArgument(1) >= 0
-          && params.getIntegerArgument(1) < player.getStorePoints()) {
-        other.addStorePoints(params.getIntegerArgument(1));
-        player.addStorePoints(-params.getIntegerArgument(1));
+          && params.getIntegerArgument(1) < player.getPoints()) {
+        other.addPoints(params.getIntegerArgument(1));
+        player.addPoints(-params.getIntegerArgument(1));
         player
             .getActionSender()
             .sendChatMessage(

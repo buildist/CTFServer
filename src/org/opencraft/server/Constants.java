@@ -48,8 +48,6 @@ public final class Constants {
   // THis is set in the opencraft.properties file
 
   public static final int SECRET = 476286881;
-  // Server name
-  public static final String SERVER_NAME = "Jacob_'s Capture the Flag";
   // /help
   public static final String HELP_TEXT =
       "Try to capture the other team's flag and bring it back "
@@ -70,7 +68,6 @@ public final class Constants {
   // Supported Classic Protocol Extension names
   public static final String[] CPE_EXT_NAMES = {
     "HeldBlock",
-    "EnvMapAppearance",
     "MessageTypes",
     "EnvColors",
     "HackControl",
@@ -84,9 +81,17 @@ public final class Constants {
     "ExtendedBlocks",
     "ExtendedTextures",
     "FastMap",
+    "PlayerClick",
+    "ChangeModel",
+    "EntityProperty",
+    "FullCP437",
+    "TextHotKey",
+    "EnvMapAspect",
   };
+
   // CPE versions
-  public static final int[] CPE_EXT_VERSIONS = {1, 2, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1};
+  public static final int[] CPE_EXT_VERSIONS =
+      {1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
   public static final int COLOR_CLOUD = 1;
@@ -112,17 +117,27 @@ public final class Constants {
   public static final String URL_MAP_COMMENT =
       "http://buildism.net/mc/server/mapComment.php?k=" + SECRET;
 
-  public static final int BLOCK_MINE = 600;
-  public static final int BLOCK_MINE_RED = 601;
-  public static final int BLOCK_MINE_BLUE = 602;
-  public static final int BLOCK_TNT = 603;
-  public static final int BLOCK_RED_FLAG = 604;
-  public static final int BLOCK_BLUE_FLAG = 605;
-  public static final int BLOCK_DETONATOR = 606;
-  public static final int BLOCK_CRATE = 607;
-  public static final int BLOCK_PAYLOAD = 608;
-  public static final int BLOCK_FLAMETHROWER = 609;
-  public static final int BLOCK_VINE = 610;
+  // Shared
+  public static final int BLOCK_CRATE = 601;
+  public static final int BLOCK_VINE = 602;
+  public static final int BLOCK_FLAMETHROWER = 603;
+
+  // CTF
+  public static final int BLOCK_MINE = 604;
+  public static final int BLOCK_MINE_RED = 605;
+  public static final int BLOCK_MINE_BLUE = 606;
+  public static final int BLOCK_TNT = 607;
+  public static final int BLOCK_RED_FLAG = 608;
+  public static final int BLOCK_BLUE_FLAG = 609;
+  public static final int BLOCK_DETONATOR = 610;
+  public static final int BLOCK_PAYLOAD = 611;
+
+  // Laser tag
+  public static final int HIT_RED = 612;
+  public static final int HIT_BLUE = 613;
+  public static final int LASER_RED = 614;
+  public static final int LASER_BLUE = 615;
+  public static final int BLOCK_RESUPPLY = 616;
 
   public static final int BLOCK_SOLIDITY_WALK_THROUGH = 0;
   public static final int BLOCK_SOLIDITY_SWIM_THROUGH = 1;
@@ -156,6 +171,7 @@ public final class Constants {
 
   public static final String ROOT_PATH = ".";
   public static int PORT = 25560;
+  public static int WEB_PORT = 22000;
   public static String VERSION = "Capture the Flag";
   public static int SAFE_TIME = 3000;
 

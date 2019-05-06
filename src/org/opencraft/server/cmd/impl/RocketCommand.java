@@ -39,7 +39,6 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
@@ -72,7 +71,7 @@ public class RocketCommand implements Command {
                     .getActionSender()
                     .sendChatMessage("- &ePlease wait " + (TIMEOUT - dt / 1000) + "" + " seconds");
                 if (!GameSettings.getBoolean("Chaos")) {
-                  player.addStorePoints(50);
+                  player.addPoints(50);
                 }
                 return;
               }

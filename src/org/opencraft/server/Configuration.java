@@ -37,6 +37,7 @@
 package org.opencraft.server;
 
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.model.EntityID;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -110,6 +111,7 @@ public class Configuration {
     ircChannel = props.getProperty("ircChannel");
     ircName = props.getProperty("ircName");
     Constants.PORT = Integer.valueOf(props.getProperty("port"));
+    Constants.WEB_PORT = Integer.valueOf(props.getProperty("webPort"));
     premium = Boolean.valueOf(props.getProperty("premium", "false"));
     envTexturePack = props.getProperty("envTexturePack");
   }
@@ -120,7 +122,7 @@ public class Configuration {
    * @throws FileNotFoundException if the configuration file is not present.
    * @throws IOException if an I/O error occurs.
    */
-  public static void readConfiguration() throws FileNotFoundException, IOException {
+  public static void readConfiguration() throws IOException {
     synchronized (Configuration.class) {
       Properties props = new Properties();
       InputStream is = new FileInputStream(Constants.ROOT_PATH + "/opencraft.properties");
@@ -206,15 +208,6 @@ public class Configuration {
   }
 
   /**
-   * Gets the map filename.
-   *
-   * @return The map's filename.
-   */
-  public String getMapFilename() {
-    return mapFilename;
-  }
-
-  /**
    * Gets the range at which a sponge is effective.
    *
    * @return The sponge radius.
@@ -230,35 +223,6 @@ public class Configuration {
    */
   public String getGameMode() {
     return gameMode;
-  }
-
-  /**
-   * Gets the script name.
-   *
-   * @return The script name.
-   */
-  public String getScriptName() {
-    return scriptName;
-  }
-
-  public int getMinRank() {
-    return rankLimit;
-  }
-
-  public String getIRCServer() {
-    return ircServer;
-  }
-
-  public String getIRCChannel() {
-    return ircChannel;
-  }
-
-  public String getIRCName() {
-    return ircName;
-  }
-
-  public boolean isPremium() {
-    return premium;
   }
 
   public String getEnvTexturePack() {

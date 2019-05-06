@@ -178,6 +178,48 @@ POSSIBILITY OF SUCH DAMAGE.
         </field>
       </fields>
     </packet>
+      <packet>
+          <opcode>34</opcode>
+          <name>player_click</name>
+          <fields>
+              <field>
+                  <name>button</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>action</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>yaw</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>pitch</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>entity</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>block_x</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>block_y</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>block_z</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>block_face</name>
+                  <type>BYTE</type>
+              </field>
+          </fields>
+      </packet>
   </incoming>
   <outgoing>
     <packet>
@@ -576,28 +618,6 @@ POSSIBILITY OF SUCH DAMAGE.
     </packet>
     <packet>
       <opcode>30</opcode>
-      <name>set_map_appearance</name>
-      <fields>
-        <field>
-          <name>texture_url</name>
-          <type>STRING</type>
-        </field>
-        <field>
-          <name>side_block</name>
-          <type>BYTE</type>
-        </field>
-        <field>
-          <name>edge_block</name>
-          <type>BYTE</type>
-        </field>
-        <field>
-          <name>side_level</name>
-          <type>SHORT</type>
-        </field>
-      </fields>
-	</packet>
-    <packet>
-      <opcode>30</opcode>
       <name>set_map_appearance_2</name>
       <fields>
         <field>
@@ -897,14 +917,92 @@ Z        <field>
       <name>inventory_order</name>
       <fields>
         <field>
-          <name>order</name>
+          <name>id</name>
           <type>SHORT</type>
         </field>
         <field>
-          <name>id</name>
+          <name>order</name>
           <type>SHORT</type>
         </field>
       </fields>
     </packet>
-</outgoing>
+      <packet>
+          <opcode>29</opcode>
+          <name>change_model</name>
+          <fields>
+              <field>
+                  <name>id</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>model</name>
+                  <type>STRING</type>
+              </field>
+          </fields>
+      </packet>
+      <packet>
+          <opcode>42</opcode>
+          <name>entity_property</name>
+          <fields>
+              <field>
+                  <name>id</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>key</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>value</name>
+                  <type>INT</type>
+              </field>
+          </fields>
+      </packet>
+      <packet>
+          <opcode>21</opcode>
+          <name>hotkey</name>
+          <fields>
+              <field>
+                  <name>label</name>
+                  <type>STRING</type>
+              </field>
+              <field>
+                  <name>action</name>
+                  <type>STRING</type>
+              </field>
+              <field>
+                  <name>key</name>
+                  <type>INT</type>
+              </field>
+              <field>
+                  <name>modifier</name>
+                  <type>BYTE</type>
+              </field>
+          </fields>
+      </packet>
+      <packet>
+          <opcode>40</opcode>
+          <name>map_url</name>
+          <fields>
+              <field>
+                  <name>url</name>
+                  <type>STRING</type>
+              </field>
+          </fields>
+      </packet>
+      <packet>
+          <opcode>41</opcode>
+          <name>map_property</name>
+          <fields>
+              <field>
+                  <name>type</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>value</name>
+                  <type>INT</type>
+              </field>
+          </fields>
+      </packet>
+  </outgoing>
 </packets>

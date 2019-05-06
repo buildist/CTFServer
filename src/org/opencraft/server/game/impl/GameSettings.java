@@ -11,6 +11,7 @@ public class GameSettings {
     add("MaxCaptures", TYPE_INT, 5);
     add("Chaos", TYPE_BOOLEAN, false);
     add("MaxMines", TYPE_INT, 2);
+    add("LTTimeLimit", TYPE_INT, 10);
     add("TDMTimeLimit", TYPE_INT, 10);
     add("PayloadTimeLimit", TYPE_INT, 10);
     add("TournamentTimeLimit", TYPE_INT, 40);
@@ -22,6 +23,9 @@ public class GameSettings {
     add("FlameThrowerLength", TYPE_INT, 2);
     add("FlameThrowerRechargeTime", TYPE_INT, 30);
     add("FlameThrowerDuration", TYPE_INT, 8);
+    add("Ammo", TYPE_INT, 20); // number of shots before reloading
+    add("Health", TYPE_INT, 24); // number of hits taken before having to resupply
+    add("ReloadStep", TYPE_INT, 3);
   }
 
   public static Object get(String k) {

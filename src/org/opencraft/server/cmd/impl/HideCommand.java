@@ -55,17 +55,17 @@ public class HideCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
-      if (player.isVisible) {
+      if (!player.isHidden) {
         if (player.team != -1) player.joinTeam("spec");
+        player.isHidden = true;
         Server.log(player.getName() + " is now hidden");
         player.makeInvisible();
         player.getActionSender().sendChatMessage("- &eSay /hide again to unhide");
-        player.isVisible = false;
       } else {
+        player.isHidden = false;
         Server.log(player.getName() + " is now unhidden");
         player.makeVisible();
         player.getActionSender().sendChatMessage("- &eYou are now visible");
-        player.isVisible = true;
       }
     } else player.getActionSender().sendChatMessage("You must be OP to do that");
   }

@@ -86,7 +86,6 @@ import org.opencraft.server.cmd.impl.OperatorCommand;
 import org.opencraft.server.cmd.impl.PInfoCommand;
 import org.opencraft.server.cmd.impl.PayCommand;
 import org.opencraft.server.cmd.impl.PingCommand;
-import org.opencraft.server.cmd.impl.PlayerCommand;
 import org.opencraft.server.cmd.impl.PmCommand;
 import org.opencraft.server.cmd.impl.PointsCommand;
 import org.opencraft.server.cmd.impl.QuoteCommand;
@@ -136,7 +135,6 @@ import org.opencraft.server.model.MoveLog;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
-import org.opencraft.server.model.Teleporter;
 import org.opencraft.server.model.World;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
@@ -144,11 +142,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+
+import static org.opencraft.server.model.Level.TDM;
 
 public class CTFGameMode extends GameModeAdapter<Player> {
 
@@ -192,9 +191,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   private final ArrayList<KillFeedItem> killFeed = new ArrayList<>();
   public String currentMap = null;
   public String previousMap = null;
-  private Level map;
+  public Level map;
   private ArrayList<DropItem> items = new ArrayList<>(8);
-  private String statusMessage;
 
   public CTFGameMode() {
     registerCommand("accept", DuelAcceptCommand.getCommand());
@@ -246,7 +244,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     registerCommand("opchat", OpChatCommand.getCommand());
     registerCommand("pay", PayCommand.getCommand());
     registerCommand("ping", PingCommand.getCommand());
-    registerCommand("playercount", PlayerCommand.getCommand());
     registerCommand("players", ClientsCommand.getCommand());
     registerCommand("pm", PmCommand.getCommand());
     registerCommand("points", PointsCommand.getCommand());
@@ -304,31 +301,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     return bluePlayers;
   }
 
-  public void updateStatusMessage() {
-    if (getMode() == Level.PAYLOAD) {
-      return;
-    }
-
-    String redFlag = redFlagTaken ? " &6[!]" : "";
-    String blueFlag = blueFlagTaken ? " &6[!]" : "";
-    setStatusMessage(
-        "Map: "
-            + map.id
-            + " | &cRed: "
-            + redCaptures
-            + redFlag
-            + " &f| &9Blue: "
-            + blueCaptures
-            + blueFlag);
-  }
-
-  public void setStatusMessage(String message) {
-    statusMessage = message;
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      sendStatusMessage(p);
-    }
-  }
-
   public void sendAnnouncement(String message) {
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.getSession().ccUser) {
@@ -358,10 +330,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           })
           .start();
     }
-  }
-
-  public void sendStatusMessage(Player p) {
-    p.getActionSender().sendStatusMessage(statusMessage);
   }
 
   @Override
@@ -448,7 +416,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                   + " (www.classicube.net) for more features.");
     }
     if (player.getSession().isExtensionSupported("MessageTypes")) {
-      World.getWorld().getGameMode().sendStatusMessage(player);
       synchronized (killFeed) {
         World.getWorld().getGameMode().sendKillFeed(player);
       }
@@ -491,7 +458,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             && (p.team != t.team || (tk && (t == p || !t.hasFlag)))
             && !t.isSafe()
             && p.canKill(t, true)
-            && t.isVisible) {
+            && !t.isHidden) {
           t.markSafe();
           n++;
           p.gotKill(t);
@@ -509,7 +476,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           }
           if (t.team != -1 && t.team != p.team) {
             p.setAttribute("explodes", (Integer) p.getAttribute("explodes") + 1);
-            p.addStorePoints(5);
+            p.addPoints(5);
           }
           if (t.hasFlag) {
             dropFlag(t.team);
@@ -637,7 +604,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           t.died(p);
           updateKillFeed(p, t, p.parseName() + " cooked " + t.getColoredName());
           checkFirstBlood(p, t);
-          p.addStorePoints(5);
+          p.addPoints(5);
           if (t.hasFlag) {
             dropFlag(t.team);
           }
@@ -657,7 +624,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public void showScore() {
-    if (getMode() == Level.TDM) {
+    if (getMode() == TDM) {
       World.getWorld()
           .broadcast(
               "- Current score: Red has "
@@ -782,7 +749,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                 player.hasFlag = false;
                 player.hasTNT = false;
                 player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-                player.accumulatedStorePoints = 0;
+                player.currentRoundPoints = 0;
                 for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
                   player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
                 }
@@ -798,7 +765,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               resetRedFlagPos();
               resetBlueFlagPos();
               clearKillFeed();
-              updateStatusMessage();
               voting = false;
               rtvVotes = 0;
               rtvYesPlayers.clear();
@@ -819,7 +785,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               redCaptures = 0;
               blueCaptures = 0;
               ready = true;
-              updateStatusMessage();
               placeBlueFlag();
               placeRedFlag();
               payloadPosition = -1;
@@ -841,7 +806,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     if (isFirstBlood && defender.team != -1) {
       World.getWorld().broadcast("- " + attacker.getColoredName() + " &4took the first blood!");
       attacker.setAttribute("tags", (Integer) attacker.getAttribute("tags") + 10);
-      attacker.addStorePoints(50);
+      attacker.addPoints(50);
       isFirstBlood = false;
     }
   }
@@ -850,7 +815,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     HashMap<Integer, Player> leaderboard = new HashMap<Integer, Player>(16);
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.team != -1) {
-        leaderboard.put(p.accumulatedStorePoints, p);
+        leaderboard.put(p.currentRoundPoints, p);
       }
     }
 
@@ -990,7 +955,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                   break;
                 }
                 World.getWorld()
-                    .broadcast("- &2" + p.getName() + " - " + p.accumulatedStorePoints);
+                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPoints);
               }
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
@@ -1095,7 +1060,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         dropFlag(p);
       }
     }
-    updateStatusMessage();
     antiStalemate = false;
   }
 
@@ -1182,7 +1146,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             p.hasFlag = true;
             redFlagTaken = true;
             checkForStalemate();
-            this.updateStatusMessage();
             resetRedFlagPos();
             if (redFlagDroppedThread != null) {
               redFlagDroppedThread.interrupt();
@@ -1200,8 +1163,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           blueFlagTaken = false;
           placeBlueFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
-          p.addStorePoints(20);
-          this.updateStatusMessage();
+          p.addPoints(20);
           if (redCaptures == GameSettings.getInt("MaxCaptures")) {
             nominatedMaps.clear();
             endGame();
@@ -1235,7 +1197,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             p.hasFlag = true;
             blueFlagTaken = true;
             checkForStalemate();
-            this.updateStatusMessage();
             resetBlueFlagPos();
             if (blueFlagDroppedThread != null) {
               blueFlagDroppedThread.interrupt();
@@ -1253,8 +1214,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           redFlagTaken = false;
           placeRedFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
-          p.addStorePoints(20);
-          this.updateStatusMessage();
+          p.addPoints(20);
           if (blueCaptures == GameSettings.getInt("MaxCaptures")) {
             nominatedMaps.clear();
             endGame();
@@ -1278,9 +1238,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     int blockY = (y - 16) / 32;
     int blockZ = (z - 16) / 32;
     if (p.team != -1) {
-      Enumeration<Mine> en = World.getWorld().getAllMines();
-      while (en.hasMoreElements()) {
-        Mine m = en.nextElement();
+      for (Mine m : World.getWorld().getAllMines()) {
         int mx = (m.x - 16) / 32;
         int my = (m.y - 16) / 32;
         int mz = (m.z - 16) / 32;
@@ -1295,8 +1253,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             && m.y > y - 96
             && m.y < y + 96
             && m.z > z - 96
-            && m.z < z + 96
-            && !p.shield) {
+            && m.z < z + 96) {
           Level level = World.getWorld().getLevel();
           int r = 1;
           level.setBlock(mx, my, mz, 0);
@@ -1326,10 +1283,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           updateKillFeed(m.owner, p, m.owner.parseName() + " mined " + p.parseName() + ".");
         }
       }
-    }
-    Teleporter te = World.getWorld().getTPEntrance(blockX, blockY, blockZ);
-    if (te != null) {
-      p.getActionSender().sendTeleport(new Position(te.inX, te.inY, te.inZ), p.getRotation());
     }
     if (blockX == blockSpawnX && blockY == blockSpawnY && blockZ == blockSpawnZ) {
       if (p.hasFlag) {
@@ -1375,8 +1328,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           && tagged != null
           && tagger != null
           && tagger.canKill(tagged, false)
-          && !tagged.isSafe()
-          && !tagged.shield) {
+          && !tagged.isSafe()) {
         tagger.gotKill(tagged);
         tagged.sendToTeamSpawn();
         tagged.markSafe();
@@ -1389,7 +1341,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         }
         tagged.died(tagger);
         tagger.setAttribute("tags", (Integer) tagger.getAttribute("tags") + 1);
-        tagger.addStorePoints(5);
+        tagger.addPoints(5);
         updateKillFeed(tagger, tagged, tagger.parseName() + " tagged " + tagged.parseName() + ".");
       }
     }
@@ -1405,9 +1357,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public boolean isMine(int x, int y, int z) {
-    Enumeration en = World.getWorld().getAllMines();
-    while (en.hasMoreElements()) {
-      Mine m = (Mine) en.nextElement();
+    for(Mine m : World.getWorld().getAllMines()) {
       if ((m.x - 16) / 32 == x && (m.y - 16) / 32 == y && (m.z - 16) / 32 == z) {
         return true;
       }
@@ -1470,26 +1420,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         player.boxStartX = -1;
         player.buildMode = BuildMode.NORMAL;
       }
-    } else if (player.buildMode == BuildMode.TELE_ENTRANCE) {
-      player.teleX1 = x;
-      player.teleY1 = y;
-      player.teleZ1 = z;
-      player.getActionSender().sendChatMessage("- &eNow place the exit");
-      player.buildMode = BuildMode.TELE_EXIT;
-      World.getWorld().getLevel().setBlock(x, y, z, 0);
-    } else if (player.buildMode == BuildMode.TELE_EXIT) {
-      Teleporter tele = new Teleporter();
-      tele.owner = player;
-      tele.inX = player.teleX1;
-      tele.inY = player.teleY1;
-      tele.inZ = player.teleZ1;
-      tele.outX = x;
-      tele.outY = y;
-      tele.outZ = z;
-      World.getWorld().addTP(tele);
-      player.buildMode = BuildMode.NORMAL;
-      World.getWorld().getLevel().setBlock(player.teleX1, player.teleY1, player.teleZ1, 11);
-      World.getWorld().getLevel().setBlock(x, y, z, 9);
     } else if (player.buildMode == BuildMode.BLOCK_INFO) {
       player.getActionSender().sendChatMessage("Position: " + x + " " + z + " " + y);
       BlockInfo info = BlockLog.getInfo(x, y, z);
@@ -1860,6 +1790,18 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         Server.log(player.getName() + ": " + message);
         break;
     }
+  }
+
+  public void step() {
+    if (getMode() == TDM) {
+      long elapsedTime = System.currentTimeMillis() - gameStartTime;
+      if (elapsedTime > GameSettings.getInt("TDMTimeLimit") * 60 * 1000) {
+        World.getWorld().getGameMode().gameStartTime = System.currentTimeMillis();
+        World.getWorld().getGameMode().endGame();
+      }
+    }
+
+    pruneKillFeed();
   }
 
   public void addDropItem(DropItem i) {

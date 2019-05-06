@@ -47,25 +47,19 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.ConsoleActionSender;
-import org.opencraft.server.task.impl.RenderMapTask;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.rmi.server.ExportException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.imageio.ImageIO;
 
 public class WebServer {
   public static ArrayList<String> blockedWords = new ArrayList<String>();
@@ -77,7 +71,7 @@ public class WebServer {
     consolePlayer.setAttribute("IsOperator", "true");
     consolePlayer.setAttribute("IsOwner", "true");
     try {
-      InetSocketAddress addr = new InetSocketAddress(22000);
+      InetSocketAddress addr = new InetSocketAddress(Constants.WEB_PORT);
       HttpServer server = HttpServer.create(addr, 0);
 
       CTFHandler ch = new CTFHandler();
@@ -191,12 +185,6 @@ public class WebServer {
           responseHeaders.set("Access-Control-Allow-Origin", "*");
           exchange.sendResponseHeaders(200, 0);
           exchange.getResponseBody().write(Server.getConsoleMessages(time).getBytes());
-          exchange.close();
-        } else if (params.containsKey("map")) {
-          Headers responseHeaders = exchange.getResponseHeaders();
-          responseHeaders.set("Content-Type", "image/jpeg");
-          exchange.sendResponseHeaders(200, 0);
-          ImageIO.write(RenderMapTask.mapImage, "jpeg", exchange.getResponseBody());
           exchange.close();
         } else {
           exchange.close();

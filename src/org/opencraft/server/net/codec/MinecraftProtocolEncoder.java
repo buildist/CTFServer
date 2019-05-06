@@ -44,6 +44,8 @@ import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.PacketDefinition;
 import org.opencraft.server.net.packet.PacketField;
 
+import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 
 /**
@@ -82,14 +84,11 @@ public final class MinecraftProtocolEncoder extends ProtocolEncoderAdapter {
           break;
         case STRING:
           String str = packet.getStringField(field.getName());
-          data = str.getBytes();
-          resized = Arrays.copyOf(data, 64);
-          for (int i = 0; i < resized.length; i++) {
-            if (resized[i] == 0) {
-              resized[i] = ' ';
-            }
+          ByteBuffer bytes = Charset.forName("Cp437").encode(str);
+          buf.put(bytes);
+          for (int i = str.length(); i < 64; i++) {
+            buf.put((byte) 0x20);
           }
-          buf.put(resized);
           break;
       }
     }

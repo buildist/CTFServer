@@ -26,7 +26,7 @@ public class BountyCommand implements Command {
       if (hunted.team != -1) {
         if (params.getIntegerArgument(1) == 0) {
           if (player.bountySet != 0) {
-            player.addStorePoints(player.bountySet);
+            player.addPoints(player.bountySet);
             hunted.bountiedBy = null;
             hunted.bountyAmount = hunted.bountyAmount - player.bountySet;
             if (hunted.bountyAmount == 0) {
@@ -47,7 +47,7 @@ public class BountyCommand implements Command {
           }
         } else {
           if (hunted != null && params.getIntegerArgument(1) >= 50) {
-            if (params.getIntegerArgument(1) <= player.getStorePoints()) {
+            if (params.getIntegerArgument(1) <= player.getPoints()) {
               if (player.bountyActive) {
                 player
                     .getActionSender()
@@ -65,7 +65,7 @@ public class BountyCommand implements Command {
                   hunted.bountyAmount += player.bountySet;
                   hunted.bountyMode = true;
                   player.bountyActive = true;
-                  player.addStorePoints(-params.getIntegerArgument(1));
+                  player.addPoints(-params.getIntegerArgument(1));
                   World.getWorld()
                       .broadcast(
                           "- "
@@ -94,7 +94,7 @@ public class BountyCommand implements Command {
                   hunted.bountyAmount += player.bountySet;
                   hunted.bountyMode = true;
                   player.bountyActive = true;
-                  player.addStorePoints(-params.getIntegerArgument(1));
+                  player.addPoints(-params.getIntegerArgument(1));
                 }
               }
             } else {

@@ -65,4 +65,8 @@ POSSIBILITY OF SUCH DAMAGE.
     <int>43</int>
     <string>org.opencraft.server.net.packet.handler.impl.PingPacketHandler</string>
   </entry>
+  <entry>
+    <int>34</int>
+    <string>org.opencraft.server.net.packet.handler.impl.ClickPacketHandler</string>
+  </entry>
 </map>

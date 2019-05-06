@@ -152,12 +152,15 @@ public class ActionSender {
                       session.getPlayer().getColoredName(),
                       session.getPlayer().getTeamName(),
                       session.getPlayer().getName(),
+                      session.getPlayer().getListName(),
+                      session.getPlayer().getSkinUrl(),
                       spawn.getX(),
                       spawn.getY(),
                       spawn.getZ(),
                       (byte) r.getRotation(),
                       (byte) r.getLook(),
-                      false);
+                      false,
+                      true);
                   // now load the player's game (TODO in the future do this in parallel with loading
                   // the
                   // level)
@@ -198,12 +201,15 @@ public class ActionSender {
         player.getColoredName(),
         player.getTeamName(),
         player.getName(),
+        player.getListName(),
+        player.getSkinUrl(),
         player.getPosition().getX(),
         player.getPosition().getY(),
         player.getPosition().getZ(),
         (byte) player.getRotation().getRotation(),
         (byte) player.getRotation().getLook(),
-        isSelf);
+        isSelf,
+        player.isVisible());
   }
 
   public void sendSpawn(
@@ -212,16 +218,19 @@ public class ActionSender {
       String colorName,
       String teamName,
       String name,
+      String listName,
+      String skinUrl,
       int x,
       int y,
       int z,
       byte rotation,
       byte look,
-      boolean isSelf) {
+      boolean isSelf,
+      boolean isVisible) {
     if (session.isExtensionSupported("ExtPlayerList", 2)) {
-      sendAddPlayerName(nameId, name, colorName, teamName, (byte) 1);
-      if (!isSelf) {
-        sendExtSpawn(id, colorName, name, x, y, z, rotation, look);
+      sendAddPlayerName(nameId, name, listName, teamName, (byte) 1);
+      if (!isSelf && isVisible) {
+        sendExtSpawn(id, colorName, skinUrl != null ? skinUrl : name, x, y, z, rotation, look);
       }
     } else if (!isSelf) {
       PacketBuilder bldr =
@@ -235,6 +244,18 @@ public class ActionSender {
       bldr.putByte("look", look);
       session.send(bldr.toPacket());
     }
+  }
+
+  public void sendExtSpawn(Player player) {
+    sendExtSpawn(
+        (byte) player.getId(),
+        player.getColoredName(),
+        player.getName(),
+        player.getPosition().getX(),
+        player.getPosition().getY(),
+        player.getPosition().getZ(),
+        (byte) player.getRotation().getRotation(),
+        (byte) player.getRotation().getLook());
   }
 
   public void sendAddPlayerName(
@@ -325,16 +346,32 @@ public class ActionSender {
     }
   }
 
+  public void sendTeleport(int id, int x, int y, int z, int rotation, int look) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(8));
+    bldr.putByte("id", id);
+    bldr.putShort("x", x);
+    bldr.putShort("y", y);
+    bldr.putShort("z", z);
+    bldr.putByte("rotation", rotation);
+    bldr.putByte("look", look);
+    session.send(bldr.toPacket());
+  }
+
   /**
    * Sends the remove entity packet.
    *
-   * @param entity The entity being removed.
+   * @param id The entity being removed.
    */
-  public void sendRemoveEntity(Entity entity) {
+  public void sendRemoveEntity(int id) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(12));
-    bldr.putByte("id", entity.getOldId());
+    bldr.putByte("id", id);
     session.send(bldr.toPacket());
+  }
+
+  public void sendRemoveEntity(Entity entity) {
+    sendRemoveEntity(entity.getOldId());
   }
 
   public void sendRemovePlayer(Player p) {
@@ -400,25 +437,37 @@ public class ActionSender {
     }
   }
 
-  public void sendMapAppearanceV1() {
+  public void sendMapAspect() {
+    Level level = World.getWorld().getLevel();
+    String texturePack =
+        (level.textureUrl != null && !level.textureUrl.isEmpty())
+            ? level.textureUrl
+            : Configuration.getConfiguration().getEnvTexturePack();
+    sendMapUrl(texturePack);
+    sendMapProperty(0, level.sideBlock);
+    sendMapProperty(1, level.edgeBlock);
+    sendMapProperty(2, level.edgeHeight);
+    sendMapProperty(3, level.cloudHeight);
+    sendMapProperty(4, level.viewDistance);
+    sendMapProperty(5, level.cloudSpeed);
+    sendMapProperty(6, level.weatherSpeed);
+    sendMapProperty(7, level.weatherFade);
+    sendMapProperty(8, level.expFog);
+    sendMapProperty(9, level.sideOffset);
+  }
+
+  private void sendMapUrl(String url) {
     PacketBuilder bldr =
-        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(30));
-    bldr.putString("texture_url", Configuration.getConfiguration().getEnvTexturePack());
-    bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
-    bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
-    bldr.putShort("side_level", World.getWorld().getLevel().depth / 2);
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(40));
+    bldr.putString("url", url);
     session.send(bldr.toPacket());
   }
 
-  public void sendMapAppearanceV2(String textureUrl) {
+  private void sendMapProperty(int type, int value) {
     PacketBuilder bldr =
-        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(30));
-    bldr.putString("texture_url", textureUrl);
-    bldr.putByte("side_block", World.getWorld().getLevel().sideBlock);
-    bldr.putByte("edge_block", World.getWorld().getLevel().edgeBlock);
-    bldr.putShort("side_level", World.getWorld().getLevel().sideLevel);
-    bldr.putShort("cloud_level", World.getWorld().getLevel().depth);
-    bldr.putShort("view_distance", World.getWorld().getLevel().viewDistance);
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(41));
+    bldr.putByte("type", type);
+    bldr.putInt("value", value);
     session.send(bldr.toPacket());
   }
 
@@ -621,6 +670,33 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
+  public void sendChangeModel(int id, String model) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(29));
+    bldr.putByte("id", id);
+    bldr.putString("model", model);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendEntityProperty(int id, int property, int value) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(42));
+    bldr.putByte("id", id);
+    bldr.putByte("key", property);
+    bldr.putInt("value", value);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendHotkey(String label, String action, int keyCode, byte modifier) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(21));
+    bldr.putString("label", label);
+    bldr.putString("action", action);
+    bldr.putInt("key", keyCode);
+    bldr.putByte("modifier", modifier);
+    session.send(bldr.toPacket());
+  }
+
   /**
    * Sends a chat message.
    *
@@ -628,16 +704,6 @@ public class ActionSender {
    */
   public void sendChatMessage(String message) {
     sendChatMessage(message, 0);
-  }
-
-  public void sendStatusMessage(String message) {
-    int maxLength = 64;
-    if (message.length() > maxLength) {
-      message = message.substring(0, maxLength);
-    }
-    if (session.isExtensionSupported("MessageTypes")) {
-      this.sendChatMessage(message, 1);
-    }
   }
 
   /**
@@ -661,7 +727,6 @@ public class ActionSender {
   /**
    * Sends a chat message.
    *
-   * @param id The source player id.
    * @param message The message.
    */
   public void sendChatMessage(String message, int messageType) {

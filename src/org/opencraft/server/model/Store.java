@@ -41,7 +41,6 @@ import org.opencraft.server.cmd.impl.CreeperCommand;
 import org.opencraft.server.cmd.impl.GrenadeCommand;
 import org.opencraft.server.cmd.impl.LineCommand;
 import org.opencraft.server.cmd.impl.RocketCommand;
-import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.impl.BigTNTItem;
 import org.opencraft.server.model.impl.SimpleItem;
@@ -53,7 +52,6 @@ public class Store {
 
   public Store() {
     addItem("BigTNT", new BigTNTItem("BigTNT", 70), "bigtnt");
-    // addItem("Ghost", new GhostItem("Ghost", 275), "g");
     addItem(
         "Rocket",
         new SimpleItem("Rocket", 50, "Shoots a rocket from your face", RocketCommand.getCommand()),
@@ -77,13 +75,13 @@ public class Store {
       p.getActionSender().sendChatMessage("- &eStore item does not exist.");
       return false;
     }
-    if (!GameSettings.getBoolean("Chaos") && item.price > p.getStorePoints()) {
+    if (!GameSettings.getBoolean("Chaos") && item.price > p.getPoints()) {
       p.getActionSender().sendChatMessage("- &eYou don't have enough points!");
       return false;
     }
     if (!GameSettings.getBoolean("Chaos")) {
-      p.subtractStorePoints(item.price);
-      p.getActionSender().sendChatMessage("- &eYou have " + p.getStorePoints() + " points left");
+      p.subtractPoints(item.price);
+      p.getActionSender().sendChatMessage("- &eYou have " + p.getPoints() + " points left");
     }
     return true;
   }

@@ -98,11 +98,19 @@ public final class Level implements Cloneable {
   public String id;
   public int votes = 0;
 
-  public int sideBlock = 7;
-  public int edgeBlock = 8;
-  public int sideLevel = depth / 2;
   public String textureUrl;
-  public short viewDistance = 0;
+  public int sideBlock;
+  public int edgeBlock;
+  public int edgeHeight;
+  public int cloudHeight;
+  public short viewDistance;
+  public int cloudSpeed;
+  public int weatherSpeed;
+  public int weatherFade;
+  public int expFog;
+  public int sideOffset;
+  private double walkSpeed;
+  private int jumps;
   public short[][] colors = new short[Constants.DEFAULT_COLORS.length][3];
   public HashSet<Integer> blockTypes = new HashSet<Integer>();
 
@@ -115,25 +123,30 @@ public final class Level implements Cloneable {
   private byte[] compressedBlocks1;
   /** Light depth array. */
   private short[][] lightDepths;
-  /** The spawn rotation. */
-  private Rotation spawnRotation;
-  /** The spawn position. */
-  private Position spawnPosition;
+  public Position spawnPosition;
+  public Rotation spawnRotation;
+  public Position redSpawnPosition;
+  public Rotation redSpawnRotation;
+  public Position blueSpawnPosition;
+  public Rotation blueSpawnRotation;
 
   private ArrayList<Position> tdmSpawns = new ArrayList<Position>();
   private ArrayList<Position> payloadPath = new ArrayList<>();
-  private HashSet<Position> solidBlocks = new HashSet<Position>();
-  private HashSet<Integer> solidTypes = new HashSet<Integer>();
+
+  private HashSet<Position> solidBlocks = new HashSet<>();
+  private HashSet<Integer> solidTypes = new HashSet<>();
+  public HashSet<Integer> usedBreakableTypes = new HashSet<>();
+  public HashSet<Integer> usedSolidTypes = new HashSet<>();
   private boolean allSolidTypes = false;
+  private HashSet<Integer> excludedSolidTypes = new HashSet<>();
   public final ArrayList<CustomBlockDefinition> customBlockDefinitions =
-      new ArrayList<CustomBlockDefinition>();
+      new ArrayList<>();
   /** The active "thinking" blocks on the map. */
-  private Map<Integer, ArrayDeque<Position>> activeBlocks =
-      new HashMap<Integer, ArrayDeque<Position>>();
+  private Map<Integer, ArrayDeque<Position>> activeBlocks = new HashMap<>();
   /** The timers for the active "thinking" blocks on the map. */
-  private Map<Integer, Long> activeTimers = new HashMap<Integer, Long>();
+  private Map<Integer, Long> activeTimers = new HashMap<>();
   /** A queue of positions to update at the next tick. */
-  private final Queue<Position> updateQueue = new ArrayDeque<Position>();
+  private final Queue<Position> updateQueue = new ArrayDeque<>();
 
   private final Queue<UpdateBlock> iceBlocks = new LinkedList<>();
 
@@ -273,11 +286,7 @@ public final class Level implements Cloneable {
   }
 
   public String getCreator() {
-    if (props.containsKey("author")) {
-      return props.getProperty("author");
-    } else {
-      return MapController.getCreator(id);
-    }
+    return props.getProperty("author");
   }
 
   public void loadProps() {
@@ -290,32 +299,8 @@ public final class Level implements Cloneable {
         };
     try {
       String propsPath = filename.substring(0, filename.indexOf(".")) + ".properties";
-      boolean newMap = false;
-      if (!new File(propsPath).exists()) {
-        propsPath = "./template.properties";
-        newMap = true;
-      }
       FileInputStream ps = new FileInputStream(propsPath);
       props.load(ps);
-      ps.close();
-      if (newMap) {
-        World.getWorld().broadcast("Properties not found for this map, using defaults.");
-        props.setProperty("divider", "" + width / 2);
-        props.setProperty("buildCeiling", "" + height);
-        props.setProperty("redSpawnX", "" + 0);
-        props.setProperty("redSpawnY", "" + height);
-        props.setProperty("redSpawnZ", "" + depth / 2);
-        props.setProperty("blueSpawnX", "" + (width - 1));
-        props.setProperty("blueSpawnY", "" + height);
-        props.setProperty("blueSpawnZ", "" + depth / 2);
-        props.setProperty("redFlagX", "" + 0);
-        props.setProperty("redFlagY", "" + height / 2);
-        props.setProperty("redFlagZ", "" + depth / 2);
-        props.setProperty("blueFlagX", "" + (width - 1));
-        props.setProperty("blueFlagY", "" + height / 2);
-        props.setProperty("blueFlagZ", "" + depth / 2);
-        saveProps();
-      }
       ps.close();
     } catch (Exception ex) {
       Server.log("[E] Could not load props for " + id + ": " + ex);
@@ -376,7 +361,16 @@ public final class Level implements Cloneable {
       } else {
         String[] solidTypesString = props.getProperty("solidBlocks").split(" ");
         for (String t : solidTypesString) {
-          solidTypes.add(Integer.parseInt(t));
+          if (t.equals("all")) {
+            allSolidTypes = true;
+          } else {
+            int type = Integer.parseInt(t);
+            if (type >= 0) {
+              solidTypes.add(type);
+            } else {
+              excludedSolidTypes.add(-type);
+            }
+          }
         }
       }
     }
@@ -385,36 +379,105 @@ public final class Level implements Cloneable {
 
     setMapColors();
 
-    if (props.getProperty("viewDistance") != null) {
-      try {
-        viewDistance = (short) Integer.parseInt(props.getProperty("viewDistance"));
-      } catch (NumberFormatException ex) {
-        viewDistance = 0;
-      }
-    }
-
     if (props.getProperty("sideBlock") != null) {
       try {
         sideBlock = (short) Integer.parseInt(props.getProperty("sideBlock"));
       } catch (NumberFormatException ex) {
-        sideBlock = 7;
       }
+    } else {
+      props.setProperty("sideBlock", "7");
+      sideBlock = 7;
     }
 
     if (props.getProperty("edgeBlock") != null) {
       try {
         edgeBlock = (short) Integer.parseInt(props.getProperty("edgeBlock"));
       } catch (NumberFormatException ex) {
-        edgeBlock = 8;
       }
+    } else {
+      props.setProperty("edgeBlock", "8");
+      edgeBlock = 8;
     }
 
-    if (props.getProperty("sideLevel") != null) {
+    if (props.getProperty("edgeHeight") != null) {
       try {
-        sideLevel = (short) Integer.parseInt(props.getProperty("sideLevel"));
+        edgeHeight = (short) Integer.parseInt(props.getProperty("edgeHeight"));
       } catch (NumberFormatException ex) {
-        sideLevel = depth / 2;
       }
+    } else {
+      props.setProperty("edgeHeight", "" + (depth / 2));
+      edgeHeight = depth / 2;
+    }
+
+    if (props.getProperty("cloudHeight") != null) {
+      try {
+        cloudHeight = (short) Integer.parseInt(props.getProperty("cloudHeight"));
+      } catch (NumberFormatException ex) {
+      }
+    } else {
+      props.setProperty("cloudHeight", "" + (depth + 2));
+      cloudHeight = depth + 2;
+    }
+
+    if (props.getProperty("viewDistance") != null) {
+      try {
+        viewDistance = (short) Integer.parseInt(props.getProperty("viewDistance"));
+      } catch (NumberFormatException ex) {
+      }
+    } else {
+      props.setProperty("viewDistance", "0");
+      viewDistance = 0;
+    }
+
+    if (props.getProperty("cloudSpeed") != null) {
+      try {
+        cloudSpeed = (short) Integer.parseInt(props.getProperty("cloudSpeed"));
+      } catch (NumberFormatException ex) {
+      }
+    } else {
+      props.setProperty("cloudSpeed", "256");
+      cloudSpeed = 256;
+    }
+
+
+    if (props.getProperty("weatherSpeed") != null) {
+      try {
+        weatherSpeed = (short) Integer.parseInt(props.getProperty("weatherSpeed"));
+      } catch (NumberFormatException ex) {
+      }
+    } else {
+      props.setProperty("weatherSpeed", "256");
+      weatherSpeed = 256;
+    }
+
+    if (props.getProperty("weatherFade") != null) {
+      try {
+        weatherFade = (short) Integer.parseInt(props.getProperty("weatherFade"));
+      } catch (NumberFormatException ex) {
+      }
+    } else {
+      props.setProperty("weatherFade", "128");
+      weatherFade = 128;
+    }
+
+    if (props.getProperty("expFog") != null) {
+      try {
+        expFog = (short) Integer.parseInt(props.getProperty("expFog"));
+      } catch (NumberFormatException ex) {
+      }
+    } else {
+      props.setProperty("expFog", "0");
+      expFog = 0;
+    }
+
+    if (props.getProperty("sideOffset") != null) {
+      try {
+        sideOffset = (short) Integer.parseInt(props.getProperty("sideOffset"));
+      } catch (NumberFormatException ex) {
+      }
+    } else {
+      props.setProperty("sideOffset", "-2");
+      sideOffset = -2;
     }
 
     if (props.getProperty("spawnPosition") != null) {
@@ -429,14 +492,91 @@ public final class Level implements Cloneable {
     if (props.getProperty("spawnRotation") != null) {
       String[] parts = props.getProperty("spawnRotation").split(",");
       spawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    } else {
+      props.setProperty("spawnRotation", "0,0");
+      spawnRotation = new Rotation(0, 0);
     }
 
-    if (World.getWorld().getLevel() == this) {
-      World.getWorld().getGameMode().resetRedFlagPos();
-      World.getWorld().getGameMode().resetBlueFlagPos();
-      World.getWorld().getGameMode().placeRedFlag();
-      World.getWorld().getGameMode().placeBlueFlag();
+    if (props.getProperty("redSpawnPosition") != null) {
+      String[] parts = props.getProperty("redSpawnPosition").split(",");
+      redSpawnPosition =
+          new Position(
+              Integer.parseInt(parts[0]) * 32 + 16,
+              Integer.parseInt(parts[1]) * 32 + 16,
+              Integer.parseInt(parts[2]) * 32 + 16);
+    } else if (props.getProperty("redSpawnX") != null) {
+      redSpawnPosition =
+          new Position(
+              Integer.parseInt(props.getProperty("redSpawnX")) * 32 + 16,
+              Integer.parseInt(props.getProperty("redSpawnZ")) * 32 + 16,
+              Integer.parseInt(props.getProperty("redSpawnY")) * 32 + 16);
+    } else {
+      props.setProperty("redSpawnPosition", "0,0,0");
+      redSpawnPosition = new Position(0, 0, 0);
     }
+
+    if (props.getProperty("redSpawnRotation") != null) {
+      String[] parts = props.getProperty("redSpawnRotation").split(",");
+      redSpawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    } else {
+      props.setProperty("redSpawnRotation", "64,0");
+      redSpawnRotation = new Rotation(64, 0);
+    }
+
+    if (props.getProperty("blueSpawnPosition") != null) {
+      String[] parts = props.getProperty("blueSpawnPosition").split(",");
+      blueSpawnPosition =
+          new Position(
+              Integer.parseInt(parts[0]) * 32 + 16,
+              Integer.parseInt(parts[1]) * 32 + 16,
+              Integer.parseInt(parts[2]) * 32 + 16);
+    } else if (props.getProperty("blueSpawnX") != null) {
+      blueSpawnPosition =
+          new Position(
+              Integer.parseInt(props.getProperty("blueSpawnX")) * 32 + 16,
+              Integer.parseInt(props.getProperty("blueSpawnZ")) * 32 + 16,
+              Integer.parseInt(props.getProperty("blueSpawnY")) * 32 + 16);
+    } else {
+      props.setProperty("blueSpawnPosition", "0,0,0");
+      blueSpawnPosition = new Position(0, 0, 0);
+    }
+
+    if (props.getProperty("blueSpawnRotation") != null) {
+      String[] parts = props.getProperty("blueSpawnRotation").split(",");
+      blueSpawnRotation = new Rotation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+    } else {
+      props.setProperty("blueSpawnRotation", "192,0");
+      blueSpawnRotation = new Rotation(192, 0);
+    }
+
+    if (props.getProperty("walkSpeed") != null) {
+      try {
+        walkSpeed = Double.parseDouble(props.getProperty("walkSpeed"));
+      } catch (NumberFormatException ex) {
+        walkSpeed = 0;
+      }
+    } else {
+      props.setProperty("walkSpeed", "1");
+      walkSpeed = 1;
+    }
+
+    if (props.getProperty("jumps") != null) {
+      try {
+        jumps = Integer.parseInt(props.getProperty("jumps"));
+      } catch (NumberFormatException ex) {
+        jumps = 0;
+      }
+    } else {
+      props.setProperty("jumps", "1");
+      jumps = 1;
+    }
+  }
+
+  public String getMotd() {
+    String motd = "";
+    motd += " &jumps=" + (jumps == 0 ? 2 : jumps);
+    motd += " &horspeed=" + (walkSpeed == 0 ? 2 : walkSpeed);
+    return motd;
   }
 
   private void setMapColors() {
@@ -469,171 +609,56 @@ public final class Level implements Cloneable {
     solidTypes.add(BlockConstants.ADMINIUM);
     this.filename = filename;
     this.id = id;
-    if (filename.endsWith(".lvl")) {
-      FileInputStream fis;
-      GZIPInputStream gzis;
-      DataInputStream inputstream;
-      try {
-        fis = new FileInputStream(filename);
-        gzis = new GZIPInputStream(fis);
-        inputstream = new DataInputStream(gzis);
+    FileInputStream fileIn;
+    NBTInputStream nbtIn;
+    try {
+      fileIn = new FileInputStream(filename);
+      nbtIn = new NBTInputStream(fileIn);
 
-        short version = inputstream.readShort();
-        short[] vars = new short[6];
-        byte[] rot = new byte[2];
-        if (version == 20999) {
-          byte[] header = new byte[16];
-          inputstream.read(header);
-          ByteBuffer bb = ByteBuffer.wrap(header);
-          bb.order(ByteOrder.LITTLE_ENDIAN);
-          for (int i = 0; i < 6; i++) {
-            vars[i] = bb.getShort();
-          }
-          rot[0] = header[12];
-          rot[1] = header[13];
-        } else {
-          vars[0] = version;
-          vars[1] = inputstream.readShort();
-          vars[2] = inputstream.readShort();
-          vars[3] = inputstream.readShort();
-          vars[4] = inputstream.readShort();
-          vars[5] = inputstream.readShort();
-          rot[0] = inputstream.readByte();
-          rot[1] = inputstream.readByte();
-        }
+      CompoundMap classicWorld = ((CompoundTag) nbtIn.readTag()).getValue();
 
-        width = vars[0];
-        height = vars[1];
-        depth = vars[2];
-        blocks = new short[width][height][depth];
-        blocks0 = new byte[width * height * depth];
-        blocks1 = new byte[width * height * depth];
-        byte[] tmpBlocks = new byte[width * height * depth];
-        inputstream.readFully(tmpBlocks);
-        this.spawnPosition = new Position(vars[3] * 32 + 16, vars[4] * 32 + 16, vars[5] * 32 + 16);
-
-        Server.log("Loading map: " + id);
-        loadProps();
-
-        loadBlocks(tmpBlocks);
-
-        try {
-          if (inputstream.readByte() == (byte) 0xBD) {
-            // https://github.com/Hetal728/MCGalaxy/blob/b5cf22c3c06d5b6ff0e255bfc769118f427d5d06/MCGalaxy/Levels/IO/Importers/LvlImporter.cs#L80
-
-            int chunksX = ceilDiv16(width);
-            int chunksY = ceilDiv16(height);
-            int chunksZ = ceilDiv16(depth);
-            // byte[][] customBlocks = new byte[chunksX * chunksY * chunksZ][];
-            // int index = 0;
-            for (int y = 0; y < chunksY; y++) {
-              for (int z = 0; z < chunksZ; z++) {
-                for (int x = 0; x < chunksX; x++) {
-                  if (inputstream.readByte() == 1) {
-                    byte[] chunk = new byte[16 * 16 * 16];
-                    inputstream.readFully(chunk);
-                    // customBlocks[index] = chunk;
-                  }
-                  // index++;
-                }
-              }
-            }
-          }
-        } catch (EOFException ex) {
-        }
-        gzis.close();
-        fis.close();
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      }
-    } else if (filename.endsWith(".dat")) {
-      FileInputStream fis = null;
-      GZIPInputStream gzis = null;
-      ObjectInputStream in = null;
-      DataInputStream inputstream = null;
-      com.mojang.minecraft.level.Level l = null;
-      try {
-        fis = new FileInputStream(filename);
-        gzis = new GZIPInputStream(fis);
-        inputstream = new DataInputStream(gzis);
-        if ((inputstream.readInt()) != 0x271bb788) {
-          return null;
-        }
-        if ((inputstream.readByte()) > 2) {
-          System.out.println("Error: Level version > 2, this is unexpected!");
-          return null;
-        }
-        in = new ObjectInputStream(gzis);
-        l = (com.mojang.minecraft.level.Level) in.readObject();
-        inputstream.close();
-        in.close();
-        gzis.close();
-        fis.close();
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      } catch (ClassNotFoundException ex) {
-        ex.printStackTrace();
-      }
-      l.initTransient();
-      byte[] tmpBlocks = l.blocks;
-      width = (short) l.width;
-      height = (short) l.height;
-      depth = (short) l.depth;
+      width = ((ShortTag) classicWorld.get("X")).getValue();
+      height = ((ShortTag) classicWorld.get("Z")).getValue();
+      depth = ((ShortTag) classicWorld.get("Y")).getValue();
       blocks = new short[width][height][depth];
       blocks0 = new byte[width * height * depth];
       blocks1 = new byte[width * height * depth];
-      this.spawnPosition =
-          new Position(l.xSpawn * 32 + 16, (l.zSpawn) * 32 + 16, l.ySpawn * 32 + 16);
+      byte[] tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
+      byte[] tmpBlocks2 = classicWorld.containsKey("BlockArray2")
+          ? ((ByteArrayTag) classicWorld.get("BlockArray2")).getValue()
+          : null;
+
+      CompoundMap spawn = ((CompoundTag) classicWorld.get("Spawn")).getValue();
+      int spawnX = ((ShortTag) spawn.get("X")).getValue();
+      int spawnY = ((ShortTag) spawn.get("Y")).getValue();
+      int spawnZ = ((ShortTag) spawn.get("Z")).getValue();
+      int spawnH = ((ByteTag) spawn.get("H")).getValue();
+      int spawnP = ((ByteTag) spawn.get("P")).getValue();
+      this.spawnPosition = new Position(spawnX * 32 + 16, spawnZ * 32 + 16, spawnY * 32 + 16);
+      this.spawnRotation = new Rotation(spawnH, spawnP);
 
       Server.log("Loading map: " + id);
       loadProps();
 
-      loadBlocks(tmpBlocks);
+      loadBlocks(tmpBlocks, tmpBlocks2);
+      loadMetadata(((CompoundTag) classicWorld.get("Metadata")).getValue());
 
-    } else if (filename.endsWith(".cw")) {
-      FileInputStream fileIn;
-      NBTInputStream nbtIn;
-      try {
-        fileIn = new FileInputStream(filename);
-        nbtIn = new NBTInputStream(fileIn);
-
-        CompoundMap classicWorld = ((CompoundTag) nbtIn.readTag()).getValue();
-
-        width = ((ShortTag) classicWorld.get("X")).getValue();
-        height = ((ShortTag) classicWorld.get("Z")).getValue();
-        depth = ((ShortTag) classicWorld.get("Y")).getValue();
-        blocks = new short[width][height][depth];
-        blocks0 = new byte[width * height * depth];
-        blocks1 = new byte[width * height * depth];
-        byte[] tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
-
-        CompoundMap spawn = ((CompoundTag) classicWorld.get("Spawn")).getValue();
-        int spawnX = ((ShortTag) spawn.get("X")).getValue();
-        int spawnY = ((ShortTag) spawn.get("Y")).getValue();
-        int spawnZ = ((ShortTag) spawn.get("Z")).getValue();
-        int spawnH = ((ByteTag) spawn.get("H")).getValue();
-        int spawnP = ((ByteTag) spawn.get("P")).getValue();
-        this.spawnPosition = new Position(spawnX * 32 + 16, spawnZ * 32 + 16, spawnY * 32 + 16);
-        this.spawnRotation = new Rotation(spawnH, spawnP);
-
-        Server.log("Loading map: " + id);
-        loadProps();
-
-        loadBlocks(tmpBlocks);
-        loadMetadata(((CompoundTag) classicWorld.get("Metadata")).getValue());
-
-      } catch (IOException ex) {
-        ex.printStackTrace();
-      }
+    } catch (IOException ex) {
+      ex.printStackTrace();
     }
     return this;
   }
 
-  private void loadBlocks(byte[] blockArray) {
+  private void loadBlocks(byte[] blockArray, byte[] blockArray2) {
     for (int x = 0; x < width; x++) {
       for (int y = 0; y < height; y++) {
         for (int z = 0; z < depth; z++) {
-          int type = Server.getUnsigned(blockArray[(z * height + y) * width + x]);
+          int type0 = Server.getUnsigned(blockArray[(z * height + y) * width + x]);
+          int type1 = 0;
+          if (blockArray2 != null) {
+            type1 = Server.getUnsigned(blockArray2[(z * height + y) * width + x]);
+          }
+          int type = type0 | (type1 << 8);
           blockTypes.add(type);
 
           if (GameSettings.getBoolean("Chaos")) {
@@ -648,12 +673,18 @@ public final class Level implements Cloneable {
               type = 7;
             }
           }
-          if ((allSolidTypes && type != 0 && type != 8 && type != 9 && type != 10 && type != 11)
+          if ((allSolidTypes
+              && type != 0 && type != 8 && type != 9 && type != 10 && type != 11
+              && !excludedSolidTypes.contains(type))
               || solidTypes.contains(type)) {
             solidBlocks.add(new Position(x, y, z));
+            usedSolidTypes.add(type);
+          } else {
+            usedBreakableTypes.add(type);
           }
           blocks[x][y][z] = (short) type;
-          blocks0[(z * height + y) * width + x] = (byte) type;
+          blocks0[(z * height + y) * width + x] = (byte) type0;
+          blocks1[(z * height + y) * width + x] = (byte) type1;
         }
       }
     }
@@ -673,15 +704,28 @@ public final class Level implements Cloneable {
         byte[] coords = ((ByteArrayTag) block.get("Coords")).getValue();
         byte[] fog = ((ByteArrayTag) block.get("Fog")).getValue();
         int fullBright = (Byte) block.get("FullBright").getValue();
-        int id = Server.getUnsigned((Byte) block.get("ID").getValue());
+        int id = block.containsKey("ID2")
+            ? Server.getUnsignedShort((Short) block.get("ID2").getValue())
+            : Server.getUnsigned((Byte) block.get("ID").getValue());
         String name = (String) block.get("Name").getValue();
         int shape = (Byte) block.get("Shape").getValue();
+        if (shape == 0) blockDraw = Constants.BLOCK_DRAW_SPRITE;
         float speed = (Float) block.get("Speed").getValue();
-        int[] textures = Server.getUnsigned(((ByteArrayTag)block.get("Textures")).getValue());
+        int[] textures0 = Server.getUnsigned(((ByteArrayTag)block.get("Textures")).getValue());
+        int[] textures;
+        if (textures0.length == 6 ){
+          textures = textures0;
+        } else {
+          if (textures0.length != 12) throw  new RuntimeException("invalid textures");
+          textures = new int[6];
+          for (int i = 0; i < 6; i++) {
+            textures[i] = textures0[i] | (textures0[i + 6] << 8);
+          }
+        }
         int transmitsLight = (Byte) block.get("TransmitsLight").getValue();
         int walkSound = (Byte) block.get("WalkSound").getValue();
 
-        if (!blockTypes.contains(id)) continue;
+        if (!blockTypes.contains(id) && id > 65) continue;
 
         CustomBlockDefinition blockDef =
             new CustomBlockDefinition(
@@ -734,11 +778,11 @@ public final class Level implements Cloneable {
       CompoundMap envMapAppearance = ((CompoundTag) cpe.get("EnvMapAppearance")).getValue();
       this.edgeBlock = (Byte) envMapAppearance.get("EdgeBlock").getValue();
       this.sideBlock = (Byte) envMapAppearance.get("SideBlock").getValue();
-      this.sideLevel = (Short) envMapAppearance.get("SideLevel").getValue();
+      this.edgeHeight = (Short) envMapAppearance.get("SideLevel").getValue();
       this.textureUrl = (String) envMapAppearance.get("TextureURL").getValue();
       props.put("edgeBlock", edgeBlock + "");
       props.put("sideBlock", sideBlock + "");
-      props.put("sideLevel", sideLevel + "");
+      props.put("edgeHeight", edgeHeight + "");
     }
   }
 
@@ -761,10 +805,6 @@ public final class Level implements Cloneable {
 
   public boolean isSolid(int x, int y, int z) {
     return solidBlocks.contains(new Position(x, y, z));
-  }
-
-  public boolean isSolid(Position position) {
-    return solidBlocks.contains(position);
   }
 
   public Object getProp(String p) {
@@ -1001,10 +1041,6 @@ public final class Level implements Cloneable {
     if (type == 0) {
       BlockManager.getBlockManager().getBlock(formerBlock).behaveDestruct(this, x, y, z);
       updateNeighboursAt(x, y, z);
-      if (this.getLightDepth(x, y) == z) {
-        // this.recalculateLightDepth(x, y);
-        // this.scheduleZPlantThink(x, y, z);
-      }
     }
     Position position = new Position(x, y, z);
     if (BlockManager.getBlockManager().getBlock(type).doesThink()) {
@@ -1126,10 +1162,6 @@ public final class Level implements Cloneable {
    */
   public Position getSpawnPosition() {
     return spawnPosition;
-  }
-
-  private static int ceilDiv16(int x) {
-    return (x + 15) / 16;
   }
 }
 

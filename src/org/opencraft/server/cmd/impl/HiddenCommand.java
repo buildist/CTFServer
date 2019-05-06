@@ -57,7 +57,7 @@ public class HiddenCommand implements Command {
     if (player.isOp()) {
       String message = "- &eHidden players: ";
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-        if (!p.isVisible) message += p.parseName() + ",";
+        if (p.isHidden) message += p.parseName() + ",";
       }
       player.getActionSender().sendChatMessage(message);
     } else player.getActionSender().sendChatMessage("You must be OP to do that");

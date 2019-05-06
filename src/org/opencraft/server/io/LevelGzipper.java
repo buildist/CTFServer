@@ -59,6 +59,9 @@ public final class LevelGzipper {
   private static final LevelGzipper INSTANCE = new LevelGzipper();
   private ExecutorService service = Executors.newCachedThreadPool();
 
+  private static final int[] DEFAULT_RESTRICTED_BLOCKS = new int[]{
+      7, 8, 10, Constants.HIT_RED, Constants.HIT_BLUE, Constants.LASER_RED, Constants.LASER_BLUE};
+
   public static LevelGzipper getLevelGzipper() {
     return INSTANCE;
   }
@@ -71,7 +74,7 @@ public final class LevelGzipper {
           .sendLoginResponse(
               Constants.PROTOCOL_VERSION,
               "Next map: " + level.id,
-              "&0-hax",
+              "&0-hax" + level.getMotd(),
               session.getPlayer().isOp());
       session.getActionSender().sendHackControl(true);
     }
@@ -95,42 +98,23 @@ public final class LevelGzipper {
               sendBlocks(level.getCompressedBlocks0(), session.getActionSender(), false);
               sendBlocks(level.getCompressedBlocks1(), session.getActionSender(), true);
 
-              String texturePack =
-                  (level.textureUrl != null && !level.textureUrl.isEmpty())
-                      ? level.textureUrl
-                      : Configuration.getConfiguration().getEnvTexturePack();
-              if (session.isExtensionSupported("EnvMapAppearance", 2))
-                session.getActionSender().sendMapAppearanceV2(texturePack);
-              else if (session.isExtensionSupported("EnvMapAppearance", 1))
-                session.getActionSender().sendMapAppearanceV1();
+              if (session.isExtensionSupported("EnvMapAspect", 1))
+                session.getActionSender().sendMapAspect();
               if (session.isExtensionSupported("EnvColors"))
                 session.getActionSender().sendMapColors();
               session.getActionSender().sendLevelFinish();
 
-              session.getActionSender().sendBlockPermissions(0, true, true);
-              session.getActionSender().sendBlockPermissions(7, false, false);
-              session.getActionSender().sendBlockPermissions(8, false, false);
-              session.getActionSender().sendBlockPermissions(10, false, false);
-              session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE, true, false);
-              session
-                  .getActionSender()
-                  .sendBlockPermissions(Constants.BLOCK_MINE_RED, false, false);
-              session
-                  .getActionSender()
-                  .sendBlockPermissions(Constants.BLOCK_MINE_BLUE, false, false);
-              session.getActionSender().sendBlockPermissions(Constants.BLOCK_RED_FLAG, false, true);
-              session
-                  .getActionSender()
-                  .sendBlockPermissions(Constants.BLOCK_BLUE_FLAG, false, true);
-              session
-                  .getActionSender()
-                  .sendBlockPermissions(Constants.BLOCK_TNT, true, true);
-              session
-                  .getActionSender()
-                  .sendBlockPermissions(Constants.BLOCK_DETONATOR, true, true);
-              session
-                  .getActionSender()
-                  .sendBlockPermissions(Constants.BLOCK_MINE, true, true);
+              for (int id : level.usedSolidTypes) {
+                session.getActionSender().sendBlockPermissions(id, false, false);
+              }
+
+              for (int id : level.usedBreakableTypes) {
+                session.getActionSender().sendBlockPermissions(id, true, true);
+              }
+
+              for (int type : DEFAULT_RESTRICTED_BLOCKS) {
+                session.getActionSender().sendBlockPermissions(type, false, false);
+              }
 
               session.getPlayer().getLocalEntities().clear();
             } catch (IOException ex) {

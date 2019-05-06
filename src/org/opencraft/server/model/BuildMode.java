@@ -44,7 +44,5 @@ public class BuildMode {
   public static final int REPLACE = 4;
   public static final int SPHERE = 5;
   public static final int CIRCLE = 6;
-  public static final int TELE_ENTRANCE = 7;
-  public static final int TELE_EXIT = 8;
   public static final int BLOCK_INFO = 9;
 }

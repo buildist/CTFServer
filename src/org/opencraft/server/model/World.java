@@ -39,7 +39,6 @@ package org.opencraft.server.model;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
-import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.heartbeat.HeartbeatManager;
 import org.opencraft.server.io.LevelGzipper;
@@ -53,8 +52,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  * Manages the in-game world.
@@ -81,8 +79,7 @@ public final class World {
   /** The player list. */
   private final PlayerList playerList = new PlayerList();
 
-  private Vector<Mine> mines = new Vector<Mine>(64);
-  private Vector<Teleporter> teleporters = new Vector<Teleporter>(64);
+  private ArrayList<Mine> mines = new ArrayList<>(64);
   /** The level. */
   private Level level;
   /** The game mode. */
@@ -114,38 +111,15 @@ public final class World {
     mines.clear();
   }
 
-  public void addTP(Teleporter t) {
-    teleporters.add(t);
-  }
-
-  public void removeTP(Teleporter t) {
-    teleporters.remove(t);
-  }
-
-  public Teleporter getTPEntrance(int x, int y, int z) {
-    for (Teleporter t : teleporters) {
-      if (t.inX == x && t.inY == y && t.inZ == z) {
-        return t;
-      }
-    }
-    return null;
-  }
-
-  public Vector<Teleporter> getTeleporters() {
-    return teleporters;
-  }
-
   public Mine getMine(int x, int y, int z) {
-    Enumeration en = mines.elements();
-    while (en.hasMoreElements()) {
-      Mine m = (Mine) en.nextElement();
+    for (Mine m : mines) {
       if ((m.x - 16) / 32 == x && (m.y - 16) / 32 == y && (m.z - 16) / 32 == z) return m;
     }
     return null;
   }
 
-  public Enumeration<Mine> getAllMines() {
-    return mines.elements();
+  public Iterable<Mine> getAllMines() {
+    return new ArrayList<>(mines);
   }
 
   /**
@@ -258,9 +232,8 @@ public final class World {
     if (player.getAttribute("rules") == null) player.isNewPlayer = true;
     if (player.getAttribute("banned") != null && player.getAttribute("banned").equals("true"))
       session.close();
-    session
-        .getActionSender()
-        .sendLoginResponse(Constants.PROTOCOL_VERSION, c.getName(), c.getMessage() + "&0-hax", op);
+    session.getActionSender().sendLoginResponse(
+        Constants.PROTOCOL_VERSION, c.getName(), c.getMessage() + "&0-hax" + level.getMotd(), op);
     if (!session.isExtensionSupported("HackControl")) {
       session
           .getActionSender()

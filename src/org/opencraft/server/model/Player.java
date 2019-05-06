@@ -37,9 +37,12 @@
 package org.opencraft.server.model;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.CTFPlayerUI;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.net.ActionSender;
 import org.opencraft.server.net.MinecraftSession;
@@ -61,16 +64,11 @@ import java.util.Map;
 public class Player extends Entity {
 
   public static short NAME_ID = 0;
-  // public Mine mine = null;
-  public final LinkedList<Mine> mines = new LinkedList<Mine>();
-  /** The player's session. */
-  private final MinecraftSession session;
-  /** The player's name. */
-  private final String name;
-  /** A map of attributes that can be attached to this player. */
-  private final Map<String, Object> attributes = new HashMap<String, Object>();
 
-  // There is literally no organization for these attributes, have fun!
+  // Shared
+  private final MinecraftSession session;
+  private final String name;
+  private final Map<String, Object> attributes = new HashMap<String, Object>();
   public short nameId;
   public boolean isNewPlayer = false;
   public boolean appendingChat = false;
@@ -85,39 +83,14 @@ public class Player extends Entity {
   public boolean frozen = false;
   public long moveTime = 0;
   public int team = -1;
-  public int killstreak = 0;
-  private long safeTime = 0;
-  public boolean hasTNT = false;
-  public int tntX;
-  public int tntY;
-  public int tntZ;
-  public int tntRadius = 2;
-  public boolean hasFlag = false;
   public int outOfBoundsBlockChanges = 0;
   public int placeBlock = -1;
   public boolean placeSolid = false;
-  public boolean moveFlag = false;
-  public boolean isVisible = true;
-  public boolean setPayloadPath = false;
-  public ArrayList<Position> payloadPathPositions = new ArrayList<>();
-  public boolean brush = false;
-  public boolean hasVoted = false;
-  public boolean hasNominated = false;
-  // STORE STUFF
-  public int bigTNTRemaining = 0;
-  public boolean hasGhost = false;
-  public boolean hasShield = false;
-  public boolean shield = false;
+  public boolean isHidden = false;
   public long lastBlockTimestamp;
   public int boxStartX = -1;
   public int boxStartY = -1;
   public int boxStartZ = -1;
-  public int teleX1 = -1;
-  public int teleY1 = -1;
-  public int teleZ1 = -1;
-  public int teleX2 = -1;
-  public int teleY2 = -1;
-  public int teleZ2 = -1;
   public int buildMode;
   public Position linePosition;
   public Rotation lineRotation;
@@ -127,7 +100,7 @@ public class Player extends Entity {
   public long rocketTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
-  public int accumulatedStorePoints = 0;
+  public int currentRoundPoints = 0;
   public Player duelChallengedBy = null;
   public Player duelPlayer = null;
   public int duelKills = 0;
@@ -148,6 +121,26 @@ public class Player extends Entity {
   public Player chatPlayer;
   public boolean sendCommandLog = false;
   public final PingList pingList = new PingList();
+  private final PlayerUI ui;
+  public Position safePosition = new Position(0, 0, 0);
+
+  // CTF
+  public final LinkedList<Mine> mines = new LinkedList<Mine>();
+  public int killstreak = 0;
+  private long safeTime = 0;
+  public boolean hasTNT = false;
+  public int tntX;
+  public int tntY;
+  public int tntZ;
+  public int tntRadius = 2;
+  public boolean hasFlag = false;
+  public boolean setPayloadPath = false;
+  public ArrayList<Position> payloadPathPositions = new ArrayList<>();
+  public boolean brush = false;
+  public boolean hasVoted = false;
+  public boolean hasNominated = false;
+  // STORE STUFF
+  public int bigTNTRemaining = 0;
 
   public Player(MinecraftSession session, String name) {
     this.session = session;
@@ -158,8 +151,12 @@ public class Player extends Entity {
     if (NAME_ID == 256) {
       NAME_ID = 0;
     }
+    ui = new CTFPlayerUI(World.getWorld().getGameMode(), this);
   }
 
+  public boolean isVisible() {
+    return !isHidden && team != -1;
+  }
   public static Position getSpawnPos() {
     Level l = World.getWorld().getLevel();
     boolean done = false;
@@ -187,6 +184,7 @@ public class Player extends Entity {
   public static Player getPlayer(String name, ActionSender source) {
     Player player = null;
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p.getName().toLowerCase().equals(name.toLowerCase())) return p;
       if (p.getName().toLowerCase().contains(name.toLowerCase())) {
         if (player == null) player = p;
         else {
@@ -321,7 +319,6 @@ public class Player extends Entity {
     else if (World.getWorld().getGameMode().getMode() == Level.TDM) {
       if (team == 0) World.getWorld().getGameMode().redCaptures++;
       else World.getWorld().getGameMode().blueCaptures++;
-      World.getWorld().getGameMode().updateStatusMessage();
     }
 
     killstreak++;
@@ -405,7 +402,7 @@ public class Player extends Entity {
     }
     if (this.bountyMode) {
       if (this.team == -1) {
-        this.bountiedBy.addStorePoints(this.bountyAmount);
+        this.bountiedBy.addPoints(this.bountyAmount);
         this.bountied = null;
         this.bountiedBy = null;
         this.bountyMode = false;
@@ -429,7 +426,7 @@ public class Player extends Entity {
                             + "on "
                             + this.getColoredName()
                             + "!");
-                attacker.addStorePoints(this.bountyAmount);
+                attacker.addPoints(this.bountyAmount);
                 this.bountied = null;
                 this.bountiedBy = null;
                 this.bountyMode = false;
@@ -466,47 +463,20 @@ public class Player extends Entity {
     return (getAttribute("IsOperator") != null && getAttribute("IsOperator").equals("true"));
   }
 
-  public boolean isOwner() {
-    return name.equals("Jacob_");
-  }
-
   public String parseName() {
     return getNameChar() + name + "&e";
   }
 
   public void makeInvisible() {
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      p.getActionSender().sendRemovePlayer(instance);
+      if (this != p) p.getActionSender().sendRemoveEntity(instance);
     }
   }
 
   public void makeVisible() {
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      p.getActionSender().sendAddPlayer(instance, p == instance);
+      if (this != p) p.getActionSender().sendExtSpawn(instance);
     }
-  }
-
-  public void activateGhost() {
-    new Thread(
-            new Runnable() {
-              public void run() {
-                makeInvisible();
-                isVisible = false;
-                hasGhost = false;
-                try {
-                  getActionSender().sendChatMessage("- &eYou activated ghost mode!");
-                  Thread.sleep(10 * 1000);
-                  getActionSender().sendChatMessage("- &eGhost mode expires in 5 seconds!");
-                  Thread.sleep(5 * 1000);
-                } catch (InterruptedException ex) {
-
-                }
-                makeVisible();
-                getActionSender().sendChatMessage("- &eYou are no longer a ghost!");
-                isVisible = true;
-              }
-            })
-        .start();
   }
 
   public void autoJoinTeam() {
@@ -531,11 +501,11 @@ public class Player extends Entity {
           .sendChatMessage(
               "- &aThis map was contributed by: " + World.getWorld().getLevel().getCreator());
     }
-    if (!isVisible && !team.equals("spec")) {
+    if (isHidden && !team.equals("spec")) {
       Server.log(getName() + " is now unhidden");
       makeVisible();
       getActionSender().sendChatMessage("- &eYou are now visible");
-      isVisible = true;
+      isHidden = false;
     }
     Level l = World.getWorld().getLevel();
     CTFGameMode ctf = World.getWorld().getGameMode();
@@ -566,6 +536,7 @@ public class Player extends Entity {
       World.getWorld().broadcast("- " + parseName() + " dropped the flag!");
     }
     if (team.equals("red")) {
+      if (this.team == -1) makeVisible();
       if (unbalanced && ctf.redPlayers > ctf.bluePlayers) {
         ctf.bluePlayers++;
         this.team = 1;
@@ -576,6 +547,7 @@ public class Player extends Entity {
         this.team = 0;
       }
     } else if (team.equals("blue")) {
+      if (this.team == -1) makeVisible();
       if (unbalanced && ctf.bluePlayers > ctf.redPlayers) {
         ctf.redPlayers++;
         this.team = 0;
@@ -596,7 +568,7 @@ public class Player extends Entity {
       getActionSender().sendChatMessage("- Unrecognized team!");
     }
     clearMines();
-    if (isVisible) {
+    if (isVisible()) {
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
         p.getActionSender().sendAddPlayer(this, p == this);
       }
@@ -604,10 +576,11 @@ public class Player extends Entity {
     if (!bad) {
       if (sendMessage)
         World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
-      Position spawn = l.getTeamSpawn(team);
-      getActionSender().sendTeleport(spawn, new Rotation(this.team == 0 ? 64 : 192, 0));
-      setPosition(spawn);
-      session.getActionSender().sendHackControl(this.team == -1);
+      Position position = getTeamSpawn();
+      getActionSender().sendTeleport(position, getTeamSpawnRotation());
+      setPosition(position);
+      session.getActionSender().sendHackControl(
+          Configuration.getConfiguration().isTest() || this.team == -1);
     }
     if (isNewPlayer) {
       setAttribute("rules", "true");
@@ -615,16 +588,8 @@ public class Player extends Entity {
     }
   }
 
-  public void sendToOtherPlayers() {
-    if (isVisible) {
-      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-        p.getActionSender().sendAddPlayer(this, p == this);
-      }
-    }
-  }
-
   public void setInt(String a, int value) {
-    setAttribute(a, (Integer) value);
+    setAttribute(a, value);
   }
 
   public void setIfMax(String a, int value) {
@@ -644,30 +609,30 @@ public class Player extends Entity {
     setAttribute(a, (Integer) getAttribute(a) + 1);
   }
 
-  public void addStorePoints(int n) {
-    if (getAttribute("storepoints") == null) {
-      setAttribute("storepoints", 0);
+  public void addPoints(int n) {
+    if (getAttribute("points") == null) {
+      setAttribute("points", 0);
     }
-    accumulatedStorePoints += n;
-    setAttribute("storepoints", (Integer) getAttribute("storepoints") + n);
+    currentRoundPoints += n;
+    setAttribute("points", (Integer) getAttribute("points") + n);
   }
 
-  public int getStorePoints() {
-    return (Integer) getAttribute("storepoints");
+  public int getPoints() {
+    return (Integer) getAttribute("points");
   }
 
-  public void setStorePoints(int n) {
-    if (getAttribute("storepoints") == null) {
-      setAttribute("storepoints", 0);
+  public void setPoints(int n) {
+    if (getAttribute("points") == null) {
+      setAttribute("points", 0);
     }
-    setAttribute("storepoints", n);
+    setAttribute("points", n);
   }
 
-  public void subtractStorePoints(int n) {
-    if (getAttribute("storepoints") == null) {
-      setAttribute("storepoints", 0);
+  public void subtractPoints(int n) {
+    if (getAttribute("points") == null) {
+      setAttribute("points", 0);
     }
-    setAttribute("storepoints", (Integer) getAttribute("storepoints") - n);
+    setAttribute("points", (Integer) getAttribute("points") - n);
   }
 
   public void kickForHacking() {
@@ -679,14 +644,47 @@ public class Player extends Entity {
   public void sendToTeamSpawn() {
     // If player dies while flamethrower is on, don't leave remnants on the map.
     if (isFlamethrowerEnabled()) World.getWorld().getLevel().clearFire(linePosition, lineRotation);
-    final String teamname;
-    if (team == 0) teamname = "red";
-    else if (team == 1) teamname = "blue";
-    else teamname = "spec";
-    getActionSender()
-        .sendTeleport(
-            World.getWorld().getLevel().getTeamSpawn(teamname),
-            new Rotation(team == 0 ? 64 : 192, 0));
+    getActionSender().sendTeleport(getTeamSpawn(),new Rotation(team == 0 ? 64 : 192, 0));  }
+
+  public Position getTeamSpawn() {
+    switch (team) {
+      case 0:
+        return World.getWorld().getLevel().redSpawnPosition;
+      case 1:
+        return World.getWorld().getLevel().blueSpawnPosition;
+      case -1:
+        return Math.random() < 0.5
+            ? World.getWorld().getLevel().redSpawnPosition
+            : World.getWorld().getLevel().blueSpawnPosition;
+      default:
+        return null;
+    }
+  }
+
+  public Rotation getTeamSpawnRotation() {
+    switch (team) {
+      case 0:
+        return World.getWorld().getLevel().redSpawnRotation;
+      case 1:
+        return World.getWorld().getLevel().blueSpawnRotation;
+      case -1:
+        return Math.random() < 0.5
+            ? World.getWorld().getLevel().redSpawnRotation
+            : World.getWorld().getLevel().blueSpawnRotation;
+      default:
+        return null;
+    }
+  }
+
+  public String getSkinUrl() {
+    switch (team) {
+      case 0:
+        return "http://buildism.net/mc/server/skin_red.png";
+      case 1:
+        return "http://buildism.net/mc/server/skin_blue.png";
+      default:
+        return null;
+    }
   }
 
   /**
@@ -741,6 +739,11 @@ public class Player extends Entity {
     return getNameChar() + name;
   }
 
+  public String getListName() {
+    String listName = (getColoredName()+"    &f"+currentRoundPoints);
+    return listName.substring(0, Math.min(64, listName.length()));
+  }
+
   public String getTeamName() {
     if (team == 0) {
       return "&cRed";
@@ -781,6 +784,100 @@ public class Player extends Entity {
    */
   public Map<String, Object> getAttributes() {
     return attributes;
+  }
+
+  public void step(int ticks) {
+    if (World.getWorld().getPlayerList().size()
+        >= Configuration.getConfiguration().getMaximumPlayers()
+        && System.currentTimeMillis() - moveTime > 5 * 60 * 1000
+        && moveTime != 0) {
+      World.getWorld().broadcast("- " + parseName() + " was kicked for being AFK");
+      getActionSender().sendLoginFailure("You were kicked for being AFK");
+      getSession().close();
+      moveTime = System.currentTimeMillis();
+    }
+    World.getWorld().getGameMode().processPlayerMove(this);
+    if (isFlamethrowerEnabled()) {
+      int duration = GameSettings.getInt("FlameThrowerDuration");
+      // ticks a second
+      float rate = (float) Constants.FLAME_THROWER_FUEL / duration;
+      long time = System.currentTimeMillis();
+      long dt = time - flamethrowerTime;
+      // Rate in seconds, dt in milliseconds
+      flamethrowerFuel -= rate * dt / 1000;
+      flamethrowerTime = time;
+      if (flamethrowerFuel <= 0) { // Out of fuel
+        disableFlameThrower();
+        flamethrowerFuel = 0;
+      }
+      // Was flame thrower disabled because they ran out of fuel?
+      if (isFlamethrowerEnabled()) {
+        if (!getPosition().equals(linePosition)
+            || !getRotation().equals(lineRotation)) {
+          if (linePosition != null)
+            World.getWorld().getLevel().clearFire(linePosition, lineRotation);
+          World.getWorld().getLevel().drawFire(getPosition(), getRotation());
+          linePosition = getPosition();
+          lineRotation = getRotation();
+        }
+        World.getWorld()
+            .getGameMode()
+            .processFlamethrower(this, linePosition, lineRotation);
+      }
+      sendFlamethrowerFuel();
+    } else {
+      if (flamethrowerFuel != (float) Constants.FLAME_THROWER_FUEL) {
+        int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
+        float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
+        long time = System.currentTimeMillis();
+        long dt = time - flamethrowerTime;
+        // Recharge rate in seconds, dt in milliseconds
+        flamethrowerFuel += rechargeRate * dt / 1000;
+        flamethrowerTime = time;
+        if (flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
+          flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+          getActionSender().sendChatMessage("- &eFlame thrower charged.");
+        }
+        sendFlamethrowerFuel();
+      }
+    }
+
+      /* if(hasFlag) {
+          headBlockType = team == 0 ? 28 : 21;
+      }
+      else */
+    if (duelPlayer != null) {
+      headBlockType = 41;
+    } else {
+      headBlockType = 0;
+    }
+    if (headBlockType != 0) {
+      Position blockPos = getPosition().toBlockPos();
+      Position newPosition = new Position(blockPos.getX(), blockPos.getY(), blockPos.getZ() + 3);
+      if (!newPosition.equals(headBlockPosition)) {
+        if (headBlockPosition != null) {
+          World.getWorld().getLevel().setBlock(headBlockPosition, 0);
+        }
+        if (World.getWorld().getLevel().getBlock(newPosition) == 0) {
+          headBlockPosition = newPosition;
+          World.getWorld().getLevel().setBlock(headBlockPosition, headBlockType);
+        } else {
+          headBlockPosition = null;
+        }
+      }
+    } else if (headBlockPosition != null) {
+      World.getWorld().getLevel().setBlock(headBlockPosition, 0);
+    }
+
+    if (setPayloadPath) {
+      Position currentPosition = getPosition().toBlockPos();
+      if (payloadPathPositions.isEmpty()
+          || !currentPosition.equals(
+          payloadPathPositions.get(payloadPathPositions.size() - 1))) {
+        payloadPathPositions.add(currentPosition);
+      }
+    }
+    ui.step(ticks);
   }
 
   public boolean canKill(Player p, boolean sendMessage) {

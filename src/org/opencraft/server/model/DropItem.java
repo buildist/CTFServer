@@ -37,7 +37,6 @@
 package org.opencraft.server.model;
 
 import org.opencraft.server.Constants;
-import org.opencraft.server.game.impl.CTFGameMode;
 
 public class DropItem implements Runnable {
   public int points;
@@ -56,7 +55,7 @@ public class DropItem implements Runnable {
       p.getActionSender().sendBlock(posX, posY, posZ, (short) Constants.BLOCK_CRATE);
     } else {
       World.getWorld().broadcast("- " + p.parseName() + " has found " + points + " points!");
-      p.addStorePoints(points);
+      p.addPoints(points);
       World.getWorld().getLevel().setBlock(posX, posY, posZ, 0);
       World.getWorld().getGameMode().removeDropItem(this);
     }

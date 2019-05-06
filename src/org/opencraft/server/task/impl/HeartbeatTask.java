@@ -39,7 +39,6 @@ package org.opencraft.server.task.impl;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
-import org.opencraft.server.cmd.impl.PlayerCommand;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.heartbeat.HeartbeatManager;
 import org.opencraft.server.model.World;
@@ -68,12 +67,8 @@ public class HeartbeatTask extends ScheduledTask {
     if (getDelay() == 0) {
       setDelay(DELAY);
     }
-    final int players;
-    if (PlayerCommand.playerCount == 0
-        || PlayerCommand.playerCount < World.getWorld().getPlayerList().size())
-      players = World.getWorld().getPlayerList().size();
-    else players = PlayerCommand.playerCount;
-    final Map<String, String> parameters = new HashMap<String, String>();
+    final int players = World.getWorld().getPlayerList().size();
+    final Map<String, String> parameters = new HashMap<>();
     parameters.put("users", String.valueOf(players));
     parameters.put("max", String.valueOf(Configuration.getConfiguration().getMaximumPlayers()));
     parameters.put("public", String.valueOf(Configuration.getConfiguration().isPublicServer()));

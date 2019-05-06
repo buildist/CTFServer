@@ -57,7 +57,6 @@ public class ExtEntryPacketHandler implements PacketHandler<MinecraftSession> {
       if (Constants.CPE_EXT_NAMES[i].equals(extName)
           && Constants.CPE_EXT_VERSIONS[i] >= extVersion) {
         session.addExtension(extName, extVersion);
-        // Server.log(session.getIP()+" supports "+extName+" v"+extVersion);
         break;
       }
     }

@@ -74,8 +74,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Random;
 
-// import org.opencraft.server.model.IRC;
-
 /**
  * The core class of the OpenCraft server.
  *
@@ -130,7 +128,6 @@ public final class Server {
     TaskQueue.getTaskQueue().schedule(new PingTask());
     new Thread(new ConsoleTask()).start();
     new Thread(new ItemDropTask()).start();
-    // new Thread(new RenderMapTask()).start();
     log("Initializing game...");
   }
 
@@ -223,10 +220,6 @@ public final class Server {
     return store;
   }
 
-  public static boolean isAllowed(String playerName) {
-    return true;
-  }
-
   public static String httpGet(String address) {
     try {
       URL url = new URL(address);
@@ -261,6 +254,14 @@ public final class Server {
       result[i] = Server.getUnsigned(b[i]);
     }
     return result;
+  }
+
+  public static int getUnsignedShort(int s) {
+    if (s < 0) {
+      return s + 65536;
+    } else {
+      return s;
+    }
   }
 
   public static boolean isIPBanned(String ip) {
@@ -357,10 +358,7 @@ public final class Server {
     acceptor.bind(new InetSocketAddress(Constants.PORT));
     log("Ready for connections.");
     createStore();
-    // irc = new IRC();
-    // if (!Configuration.getConfiguration().isTest()) {
     WebServer.init();
-    // }
   }
 
   public void createStore() {

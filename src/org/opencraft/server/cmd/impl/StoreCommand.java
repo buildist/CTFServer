@@ -57,7 +57,7 @@ public class StoreCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     player
         .getActionSender()
-        .sendChatMessage("- &aYou have " + player.getStorePoints() + " points" + ".");
+        .sendChatMessage("- &aYou have " + player.getPoints() + " points" + ".");
     Object[] items = Server.getStore().getItems();
     int i = 1;
     for (Object obj : items) {

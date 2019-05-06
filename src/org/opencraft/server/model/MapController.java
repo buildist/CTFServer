@@ -51,64 +51,16 @@ public class MapController {
   public static ArrayList<String> levelNames = new ArrayList<String>(16);
   private static ArrayList<String> voteList;
   private static HashMap<String, Integer> levelVotes = new HashMap<String, Integer>(16);
-  private static HashMap<String, String> mapCreators = new HashMap<String, String>(16);
   private static int nLevels = 0;
 
-  private static void setCreator(String i, String c) {
-    mapCreators.put(i, c);
-  }
-
-  public static String getCreator(String id) {
-    return mapCreators.get(id);
-  }
-
   public static void create() {
-    setCreator("arctic", ".Snake and Makoto");
-    setCreator("arena", "Jacob_");
-    setCreator("atoll", "Saiko");
-    setCreator("bases", "Neko_Baron");
-    setCreator("battle", "Jacob_");
-    setCreator("britannia", "Makoto");
-    setCreator("castles", "Jacob_");
-    setCreator("castlewars", "Saiko");
-    setCreator("cathedral", "Beardbeard");
-    setCreator("caverns", "Jacob_");
-    setCreator("civil", "Makoto");
-    setCreator("colony", "Jacob_");
-    setCreator("desert", "shawnachu");
-    setCreator("factory", "UltimateBudgie");
-    setCreator("fort", "KingSam");
-    setCreator("hydro", "Jacob_");
-    setCreator("jungle", "Saiko");
-    setCreator("KOTF", "mkanke");
-    setCreator("kruugis", "Makoto");
-    setCreator("micro", "Jacob_");
-    setCreator("mineshaft", "mkanke");
-    setCreator("outpost", "Saiko and Makoto");
-    setCreator("origin", "Jacob_");
-    setCreator("pits", "catapiller");
-    setCreator("stadium", "Jacob_");
-    setCreator("subway", "potato");
-    setCreator("templegrounds", "Saiko");
-    setCreator("underworld", "Jacob_");
-    setCreator("warsphere", "Pimpmastaflex");
-    setCreator("empire", "Vexillum Gaming");
-    setCreator("chicks", "Vexillum Gaming");
-    setCreator("sector9", "Vexillum Gaming");
-    setCreator("compound", "Vexillum Gaming");
-    setCreator("deathmatch", "Matthewd12");
-    setCreator("bespin", "crispymasterty");
-    setCreator("lagfest", "MineCon 2010");
-    setCreator("spire", "Makoto");
-    setCreator("complex", "Jacob_");
-
     levelNames.clear();
     levelVotes.clear();
     File dir = new File(Constants.ROOT_PATH + "/maps");
     String[] maps = dir.list();
     for (String mapName : maps) {
       String[] parts = mapName.split("\\.");
-      if (parts.length == 2 && !parts[1].equals("properties")) {
+      if (parts.length == 2 && parts[1].equals("cw")) {
         levelNames.add(parts[0]);
         levelVotes.put(parts[0], 0);
       }
@@ -125,16 +77,14 @@ public class MapController {
   }
 
   public static Level getLevel(String id) {
-    for (String ext : Constants.MAP_EXTENSIONS) {
-      try {
-        String path = "maps/" + id + "." + ext;
-        File file = new File(path);
-        if (file.exists()) {
-          return new Level().load(path, id);
-        }
-      } catch (Exception ex) {
-        ex.printStackTrace();
+    try {
+      String path = "maps/" + id + ".cw";
+      File file = new File(path);
+      if (file.exists()) {
+        return new Level().load(path, id);
       }
+    } catch (Exception ex) {
+      ex.printStackTrace();
     }
     return null;
   }

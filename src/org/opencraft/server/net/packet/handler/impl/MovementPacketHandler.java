@@ -68,7 +68,8 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     final int y = packet.getNumericField("y").intValue();
     final int z = packet.getNumericField("z").intValue();
 
-    Position blockPosition = new Position(x, y, z).toBlockPos();
+    Position position = new Position(x, y, z);
+    Position blockPosition = position.toBlockPos();
 
     int dx = Math.abs(x - oldX);
     int dy = Math.abs(y - oldY);
@@ -88,28 +89,25 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     }
 
     // kill floor
-    if ((z - 16) / 32 < World.getWorld().getLevel().floor && !player.isSafe()) {
-      if (World.getWorld().getLevel().id.equals("tdm_abyss")) {
-        player.markSafe();
-        player
-            .getActionSender()
-            .sendTeleport(
-                new Position(
-                    player.getPosition().getX(), player.getPosition().getY(), 128 * 32 + 16),
-                player.getRotation());
-      } else {
-        player.markSafe();
-        World.getWorld().broadcast("- " + player.parseName() + " died!");
-        player.sendToTeamSpawn();
-        if (player.hasFlag) {
-          CTFGameMode ctf = World.getWorld().getGameMode();
-          ctf.dropFlag(player, true, false);
-        }
+    boolean belowKillFloor = (z - 16) / 32 < World.getWorld().getLevel().floor;
+    if (belowKillFloor && !player.isSafe()) {
+      player.markSafe();
+      World.getWorld().broadcast("- " + player.parseName() + " died!");
+      player.sendToTeamSpawn();
+      if (player.hasFlag) {
+        CTFGameMode ctf = World.getWorld().getGameMode();
+        ctf.dropFlag(player, true, false);
       }
     }
+    boolean isOnGround = World.getWorld().getLevel().getBlock(
+        blockPosition.getX(), blockPosition.getY(), blockPosition.getZ() - 2) > 0;
+    if (isOnGround && !belowKillFloor) {
+      player.safePosition = position;
+    }
+
     final int rotation = packet.getNumericField("rotation").intValue();
     final int look = packet.getNumericField("look").intValue();
-    player.setPosition(new Position(x, y, z));
+    player.setPosition(position);
     player.setRotation(new Rotation(rotation, look));
     MoveLog.getInstance().logPosition(player);
     if (session.isExtensionSupported("HeldBlock"))
