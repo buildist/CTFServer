@@ -25,6 +25,7 @@ abstract class CumulativeIncomeFilter extends IoFilterAdapter {
   public void sessionClosed(NextFilter nextFilter, IoSession session)
       throws Exception {
     removeSessionBuffer(session);
+    nextFilter.sessionClosed(session);
   }
 
   private void storeRemainingInSession(IoBuffer buf, IoSession session) {
