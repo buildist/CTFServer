@@ -76,6 +76,7 @@ public class HeartbeatTask extends ScheduledTask {
     parameters.put("salt", String.valueOf(HeartbeatManager.getHeartbeatManager().getSalt()));
     parameters.put("version", String.valueOf(Constants.PROTOCOL_VERSION));
     parameters.put("software", Constants.VERSION);
+    parameters.put("web", "true");
     new Thread(
             new Runnable() {
               public void run() {

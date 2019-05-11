@@ -41,6 +41,7 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.opencraft.server.net.codec.MinecraftCodecFactory;
 import org.opencraft.server.net.packet.Packet;
+import org.opencraft.server.net.websocket.WebSocketFilter;
 import org.opencraft.server.task.TaskQueue;
 import org.opencraft.server.task.impl.SessionClosedTask;
 import org.opencraft.server.task.impl.SessionMessageTask;
@@ -77,6 +78,7 @@ public final class SessionHandler extends IoHandlerAdapter {
             "protocol",
             new ProtocolCodecFilter(
                 new MinecraftCodecFactory(PersistingPacketManager.getPacketManager())));
+    session.getFilterChain().addFirst("websocket", new WebSocketFilter());
     TaskQueue.getTaskQueue().push(new SessionOpenedTask(session));
   }
 }

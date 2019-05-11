@@ -61,6 +61,8 @@ public final class SessionClosedTask implements Task {
 
   @Override
   public void execute() {
-    ((MinecraftSession) session.removeAttribute("attachment")).destroy();
+    if (session.containsAttribute("attachment")) {
+      ((MinecraftSession) session.removeAttribute("attachment")).destroy();
+    }
   }
 }
