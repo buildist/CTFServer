@@ -45,6 +45,7 @@ import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
+import org.opencraft.server.model.TexturePackHandler;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.packet.PacketBuilder;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
@@ -439,10 +440,13 @@ public class ActionSender {
 
   public void sendMapAspect() {
     Level level = World.getWorld().getLevel();
-    String texturePack =
-        (level.textureUrl != null && !level.textureUrl.isEmpty())
-            ? level.textureUrl
-            : Configuration.getConfiguration().getEnvTexturePack();
+    String texturePack;
+    String server = Configuration.getConfiguration().isTest() ? "127.0.0.1" : "168.235.67.212";
+    if (TexturePackHandler.hasCustomTexturePack(level.id)) {
+      texturePack = "http://" + server + ":" + Constants.WEB_PORT + "/texturepack.zip?map=" + level.id;
+    } else {
+      texturePack = "http://" + server + ":" + Constants.WEB_PORT + "/texturepack.zip?map=default";
+    }
     sendMapUrl(texturePack);
     sendMapProperty(0, level.sideBlock);
     sendMapProperty(1, level.edgeBlock);

@@ -98,7 +98,6 @@ public final class Level implements Cloneable {
   public String id;
   public int votes = 0;
 
-  public String textureUrl;
   public int sideBlock;
   public int edgeBlock;
   public int edgeHeight;
@@ -761,7 +760,6 @@ public final class Level implements Cloneable {
       this.edgeBlock = (Byte) envMapAppearance.get("EdgeBlock").getValue();
       this.sideBlock = (Byte) envMapAppearance.get("SideBlock").getValue();
       this.edgeHeight = (Short) envMapAppearance.get("SideLevel").getValue();
-      this.textureUrl = (String) envMapAppearance.get("TextureURL").getValue();
       props.put("edgeBlock", edgeBlock + "");
       props.put("sideBlock", sideBlock + "");
       props.put("edgeHeight", edgeHeight + "");

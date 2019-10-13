@@ -45,21 +45,38 @@ import com.sun.net.httpserver.HttpServer;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.TexturePackHandler;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.ConsoleActionSender;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.xml.bind.DatatypeConverter;
 
 public class WebServer {
   public static ArrayList<String> blockedWords = new ArrayList<String>();
@@ -134,15 +151,42 @@ public class WebServer {
 
   static class CTFHandler implements HttpHandler {
 
-    public void handle(HttpExchange exchange) throws IOException {
+    public void handle(HttpExchange exchange) {
       try {
         Map<String, Object> params = (Map<String, Object>) exchange.getAttribute("parameters");
-        if (!params.containsKey("k")
-            || !params.get("k").equals(Integer.toString(Constants.SECRET))) {
+        if (params.containsKey("map")) {
+          String map = params.get("map").toString();
+          TexturePackHandler.createPatchedTexturePack(map);
+          String filename = "terrain_" + map + ".zip";
+          File texturePackFile = new File("texturepacks_cache/" + filename);
+          Path texturePackPath = texturePackFile.toPath();
+
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Content-Type", "application/zip");
+          responseHeaders.set("Content-Disposition", "attachment; filename=" + filename);
+          responseHeaders.set("Last-Modified", formatDate(texturePackFile.lastModified()));
+          String md5 = md5(texturePackPath);
+          responseHeaders.set("ETag", md5);
+
+          long fileSize = texturePackFile.length();
+          if (exchange.getRequestMethod().equals("HEAD")) {
+            exchange.sendResponseHeaders(200, -1);
+            responseHeaders.set("Content-Length", Long.toString(fileSize));
+          } else if (exchange.getRequestHeaders().containsKey("If-None-Match")
+                && exchange.getRequestHeaders().get("If-None-Match").get(0).equals(md5)) {
+            exchange.sendResponseHeaders(304, -1);
+          } else {
+            exchange.sendResponseHeaders(200, fileSize);
+            Files.copy(texturePackPath, exchange.getResponseBody());
+          }
           exchange.close();
-          return;
         }
         if (params.containsKey("x")) {
+          if (!params.containsKey("k")
+              || !params.get("k").equals(Integer.toString(Constants.SECRET))) {
+            exchange.close();
+            return;
+          }
           String message = Server.cleanColorCodes(params.get("x").toString());
           String messageLower = message.toLowerCase();
           for (String word : blockedWords) {
@@ -192,6 +236,23 @@ public class WebServer {
       } catch (Exception ex) {
         ex.printStackTrace();
         exchange.close();
+      }
+    }
+
+    private String formatDate(long date) {
+      Calendar calendar = Calendar.getInstance();
+      SimpleDateFormat dateFormat = new SimpleDateFormat(
+          "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
+      dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+      return dateFormat.format(date);
+    }
+
+    private String md5(Path path) {
+      try {
+        byte[] b = Files.readAllBytes(path);
+        return DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(b));
+      } catch (Exception ex) {
+        return "";
       }
     }
   }

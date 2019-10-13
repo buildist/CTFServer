@@ -83,7 +83,6 @@ public class Configuration {
   private String ircChannel;
   private String ircName;
   private boolean premium;
-  private String envTexturePack;
   private boolean test = false;
 
   /**
@@ -113,7 +112,6 @@ public class Configuration {
     Constants.PORT = Integer.valueOf(props.getProperty("port"));
     Constants.WEB_PORT = Integer.valueOf(props.getProperty("webPort"));
     premium = Boolean.valueOf(props.getProperty("premium", "false"));
-    envTexturePack = props.getProperty("envTexturePack");
   }
 
   /**
@@ -223,10 +221,6 @@ public class Configuration {
    */
   public String getGameMode() {
     return gameMode;
-  }
-
-  public String getEnvTexturePack() {
-    return envTexturePack;
   }
 
   public boolean isTest() {
