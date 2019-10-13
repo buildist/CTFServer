@@ -1,5 +1,6 @@
 package org.opencraft.server.game.impl;
 
+import org.opencraft.server.Constants;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.PlayerUI;
@@ -29,6 +30,27 @@ public class CTFPlayerUI extends PlayerUI {
 
   @Override
   protected String getStatus1() {
+    if (hasTimer()) {
+      return getTimerMessage();
+    } else {
+      return getFlamethrowerMessage();
+    }
+  }
+
+  @Override
+  protected String getStatus2() {
+    if(hasTimer()) {
+      return getFlamethrowerMessage();
+    } else {
+      return null;
+    }
+  }
+
+  private boolean hasTimer() {
+    return ctf.getMode() == Level.TDM || GameSettings.getBoolean("Tournament");
+  }
+
+  private String getTimerMessage() {
     String timerSetting = null;
     String timerMessage = null;
     if (ctf.getMode() == Level.TDM) {
@@ -51,8 +73,18 @@ public class CTFPlayerUI extends PlayerUI {
     return timerMessage + " | " + prettyTime((int) remaining);
   }
 
-  @Override
-  protected String getStatus2() {
-    return null;
+  private String getFlamethrowerMessage() {
+    int slots = 20;
+    StringBuilder fuelSB = new StringBuilder("&c");
+    float percentPerSlot = 100f / slots;
+    float percent = Math.round(player.flamethrowerFuel / Constants.FLAME_THROWER_FUEL * 100);
+    int show = (int)Math.floor(Math.abs(percent / percentPerSlot));
+    for (int i = 0; i < slots; i++) {
+      if (show == i) {
+        fuelSB.append("&f");
+      }
+      fuelSB.append('-');
+    }
+    return "Fuel: [" + fuelSB.toString() + "&f]";
   }
 }

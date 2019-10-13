@@ -40,7 +40,7 @@ public abstract class PlayerUI {
   private static final int PROGRESS_LENGTH_CHARACTERS = PROGRESS_LENGTH / 8;
   private final HashMap<Player, String> playerListName = new HashMap<>();
 
-  private final Player player;
+  protected final Player player;
 
   private String status0 = "";
   private String status1 = "";

@@ -299,21 +299,6 @@ public class Player extends Entity {
     return this.flamethrowerEnabled;
   }
 
-  public void sendFlamethrowerFuel() {
-    int slots = 20;
-    StringBuilder fuelSB = new StringBuilder("&c");
-    float percentPerSlot = 100f / slots;
-    float percent = Math.round(flamethrowerFuel / Constants.FLAME_THROWER_FUEL * 100);
-    int show = (int)Math.floor(Math.abs(percent / percentPerSlot));
-    for (int i = 0; i < slots; i++) {
-      if (show == i) {
-        fuelSB.append("&f");
-      }
-      fuelSB.append('-');
-    }
-    getActionSender().sendChatMessage("Fuel: [" + fuelSB.toString() + "&f]", 2);
-  }
-
   public void gotKill(Player defender) {
     if (defender.team == -1 || defender.team == team) return;
     else if (World.getWorld().getGameMode().getMode() == Level.TDM) {
@@ -827,7 +812,6 @@ public class Player extends Entity {
             .getGameMode()
             .processFlamethrower(this, linePosition, lineRotation);
       }
-      sendFlamethrowerFuel();
     } else {
       if (flamethrowerFuel != (float) Constants.FLAME_THROWER_FUEL) {
         int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
@@ -841,7 +825,6 @@ public class Player extends Entity {
           flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
           getActionSender().sendChatMessage("- &eFlame thrower charged.");
         }
-        sendFlamethrowerFuel();
       }
     }
 

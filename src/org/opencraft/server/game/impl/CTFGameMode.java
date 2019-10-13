@@ -419,7 +419,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       synchronized (killFeed) {
         World.getWorld().getGameMode().sendKillFeed(player);
       }
-      player.sendFlamethrowerFuel();
     }
   }
 
