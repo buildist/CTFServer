@@ -49,12 +49,8 @@ import org.opencraft.server.model.TexturePackHandler;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.ConsoleActionSender;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
@@ -63,20 +59,15 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.xml.bind.DatatypeConverter;
 
 public class WebServer {
   public static ArrayList<String> blockedWords = new ArrayList<String>();
@@ -162,6 +153,7 @@ public class WebServer {
           Path texturePackPath = texturePackFile.toPath();
 
           Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
           responseHeaders.set("Content-Type", "application/zip");
           responseHeaders.set("Content-Disposition", "attachment; filename=" + filename);
           responseHeaders.set("Last-Modified", formatDate(texturePackFile.lastModified()));
@@ -240,7 +232,6 @@ public class WebServer {
     }
 
     private String formatDate(long date) {
-      Calendar calendar = Calendar.getInstance();
       SimpleDateFormat dateFormat = new SimpleDateFormat(
           "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
       dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -250,10 +241,22 @@ public class WebServer {
     private String md5(Path path) {
       try {
         byte[] b = Files.readAllBytes(path);
-        return DatatypeConverter.printHexBinary(MessageDigest.getInstance("MD5").digest(b));
+        return bytesToHex(MessageDigest.getInstance("MD5").digest(b));
       } catch (Exception ex) {
         return "";
       }
+    }
+
+    private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+
+    private static String bytesToHex(byte[] bytes) {
+      char[] hexChars = new char[bytes.length * 2];
+      for (int j = 0; j < bytes.length; j++) {
+        int v = bytes[j] & 0xFF;
+        hexChars[j * 2] = HEX_ARRAY[v >>> 4];
+        hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
+      }
+      return new String(hexChars);
     }
   }
 }
