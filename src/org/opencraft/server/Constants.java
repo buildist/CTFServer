@@ -110,12 +110,12 @@ public final class Constants {
   public static final byte CUSTOM_BLOCK_LEVEL = 1;
   // URL to send chat messages to
   public static final String URL_SENDCHAT =
-      "http://buildism.net/mc/server/sendChat.php?k=" + SECRET;
+      "http://jacobsc.tf/server/sendChat.php?k=" + SECRET;
   // URL to send server status (map + number of players) to
-  public static final String URL_SERVER_STATUS = "http://buildism.net/mc/server/serverStatus.php";
+  public static final String URL_SERVER_STATUS = "http://jacobsc.tf/server/serverStatus.php";
 
   public static final String URL_MAP_COMMENT =
-      "http://buildism.net/mc/server/mapComment.php?k=" + SECRET;
+      "http://jacobsc.tf/server/mapComment.php?k=" + SECRET;
 
   // Shared
   public static final int BLOCK_CRATE = 601;

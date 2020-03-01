@@ -82,7 +82,7 @@ public class HeartbeatTask extends ScheduledTask {
               public void run() {
                 String name =
                     Configuration.getConfiguration()
-                        .getLongName()
+                        .getName()
                         .replace("_m", World.getWorld().getLevel().id);
                 HeartbeatManager.getHeartbeatManager()
                     .sendHeartbeat(

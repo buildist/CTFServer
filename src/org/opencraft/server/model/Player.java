@@ -667,9 +667,9 @@ public class Player extends Entity {
   public String getSkinUrl() {
     switch (team) {
       case 0:
-        return "http://buildism.net/mc/server/skin_red.png";
+        return "http://jacobsc.tf/server/skin_red.png";
       case 1:
-        return "http://buildism.net/mc/server/skin_blue.png";
+        return "http://jacobsc.tf/server/skin_blue.png";
       default:
         return null;
     }

@@ -44,7 +44,6 @@ import org.opencraft.server.model.Store;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.SessionHandler;
 import org.opencraft.server.task.TaskQueue;
-import org.opencraft.server.task.impl.CheckCpuUsageTask;
 import org.opencraft.server.task.impl.CTFProcessTask;
 import org.opencraft.server.task.impl.ConsoleTask;
 import org.opencraft.server.task.impl.HeartbeatTask;
@@ -124,7 +123,6 @@ public final class Server {
     TaskQueue.getTaskQueue().schedule(new CTFProcessTask());
     TaskQueue.getTaskQueue().schedule(new HeartbeatTask());
     TaskQueue.getTaskQueue().schedule(new MessageTask());
-    TaskQueue.getTaskQueue().schedule(new CheckCpuUsageTask());
     TaskQueue.getTaskQueue().schedule(new PingTask());
     new Thread(new ConsoleTask()).start();
     new Thread(new ItemDropTask()).start();

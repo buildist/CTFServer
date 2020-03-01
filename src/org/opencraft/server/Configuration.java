@@ -54,12 +54,9 @@ public class Configuration {
 
   /** The configuration instance. */
   private static Configuration configuration;
-  /** The filename of the map file. */
-  private static String mapFilename;
   /** The server name. */
   private String name;
 
-  private String longName;
   /** The server MOTD. */
   private String message;
   /** The maximum allowed player count. */
@@ -72,17 +69,10 @@ public class Configuration {
   private boolean verifyNames;
   /** The game mode. */
   private String gameMode;
-  /** The script name. */
-  private String scriptName;
 
   private String statsPostURL;
   private String discordURL;
   private String welcomeMessage;
-  private int rankLimit;
-  private String ircServer;
-  private String ircChannel;
-  private String ircName;
-  private boolean premium;
   private boolean test = false;
 
   /**
@@ -93,25 +83,17 @@ public class Configuration {
   public Configuration(Properties props) {
     test = Boolean.valueOf(props.getProperty("test", "false"));
     name = props.getProperty("name", "OpenCraft Server");
-    longName = props.getProperty("longName", "OpenCraft Server");
     message = props.getProperty("message", "http://opencraft.sf.net/");
     maximumPlayers = Integer.valueOf(props.getProperty("max_players", "16"));
     publicServer = Boolean.valueOf(props.getProperty("public", "false"));
     verifyNames = Boolean.valueOf(props.getProperty("verify_names", "false"));
-    mapFilename = props.getProperty("filename", "server_level.dat");
     spongeRadius = Integer.valueOf(props.getProperty("sponge_radius", "2"));
     gameMode = props.getProperty("game_mode", CTFGameMode.class.getName());
-    scriptName = props.getProperty("script_name", null);
     statsPostURL = props.getProperty("statsPostURL");
     discordURL = props.getProperty("discordURL");
     welcomeMessage = props.getProperty("welcomeMessage");
-    rankLimit = Integer.valueOf(props.getProperty("minRank"));
-    ircServer = props.getProperty("ircServer");
-    ircChannel = props.getProperty("ircChannel");
-    ircName = props.getProperty("ircName");
     Constants.PORT = Integer.valueOf(props.getProperty("port"));
     Constants.WEB_PORT = Integer.valueOf(props.getProperty("webPort"));
-    premium = Boolean.valueOf(props.getProperty("premium", "false"));
   }
 
   /**
@@ -151,10 +133,6 @@ public class Configuration {
    */
   public String getName() {
     return name;
-  }
-
-  public String getLongName() {
-    return longName;
   }
 
   public String getStatsPostURL() {
