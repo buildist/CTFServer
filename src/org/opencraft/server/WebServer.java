@@ -62,13 +62,14 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
 
 public class WebServer {
   public static ArrayList<String> blockedWords = new ArrayList<String>();
@@ -154,6 +155,7 @@ public class WebServer {
           Path texturePackPath = texturePackFile.toPath();
 
           Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
           responseHeaders.set("Content-Type", "application/zip");
           responseHeaders.set("Content-Disposition", "attachment; filename=" + filename);
           responseHeaders.set("Last-Modified", formatDate(texturePackFile.lastModified()));
@@ -232,7 +234,6 @@ public class WebServer {
     }
 
     private String formatDate(long date) {
-      Calendar calendar = Calendar.getInstance();
       SimpleDateFormat dateFormat = new SimpleDateFormat(
           "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
       dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
