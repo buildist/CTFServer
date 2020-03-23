@@ -224,9 +224,32 @@ public class CustomBlockDefinition {
   public static final CustomBlockDefinition CRATE =
       new CustomBlockDefinition(
           Constants.BLOCK_CRATE, "Crate", 505, Constants.BLOCK_WALK_SOUND_WOOD, 0);
-  public static final CustomBlockDefinition INVISIBLE =
-      new CustomBlockDefinition(
-          255, "Invisible", 255, Constants.BLOCK_WALK_SOUND_METAL, 0);
+  public static final CustomBlockDefinition INVISIBLE = new CustomBlockDefinition(
+      255,
+      "Invisible",
+      Constants.BLOCK_SOLIDITY_SOLID,
+      128,
+      255,
+      255,
+      255,
+      255,
+      255,
+      255,
+      true,
+      Constants.BLOCK_WALK_SOUND_METAL,
+      false,
+      0,
+      0,
+      0,
+      16,
+      16,
+      16,
+      Constants.BLOCK_DRAW_TRANSPARENT_GLASS,
+      0,
+      0,
+      0,
+      0,
+      0);
   public static final CustomBlockDefinition BLOCK_VINE = new CustomBlockDefinition(
       Constants.BLOCK_VINE,
       "Vine",

@@ -1420,7 +1420,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         player.buildMode = BuildMode.NORMAL;
       }
     } else if (player.buildMode == BuildMode.BLOCK_INFO) {
-      player.getActionSender().sendChatMessage("Position: " + x + " " + z + " " + y);
+      player.getActionSender().sendChatMessage("ID: " + level.getBlock(x, y, z) + "  Position: " + x + " " + z + " " + y);
       BlockInfo info = BlockLog.getInfo(x, y, z);
       if (info == null) {
         player.getActionSender().sendChatMessage("- &aNo one has changed this block yet.");
