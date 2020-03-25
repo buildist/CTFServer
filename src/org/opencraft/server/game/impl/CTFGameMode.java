@@ -713,14 +713,17 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   public void openSpawns() {
     if (getMode() == Level.CTF || getMode() == Level.PAYLOAD) {
       Level map = World.getWorld().getLevel();
-      int bDoorX = Integer.parseInt(map.props.getProperty("blueSpawnX"));
-      int bDoorY = Integer.parseInt(map.props.getProperty("blueSpawnY")) - 2;
-      int bDoorZ = Integer.parseInt(map.props.getProperty("blueSpawnZ"));
-      int rDoorX = Integer.parseInt(map.props.getProperty("redSpawnX"));
-      int rDoorY = Integer.parseInt(map.props.getProperty("redSpawnY")) - 2;
-      int rDoorZ = Integer.parseInt(map.props.getProperty("redSpawnZ"));
-      map.setBlock(rDoorX, rDoorZ, rDoorY, 0);
-      map.setBlock(bDoorX, bDoorZ, bDoorY, 0);
+      Position blueSpawn = map.blueSpawnPosition.toBlockPos();
+      Position redSpawn = map.redSpawnPosition.toBlockPos();
+      System.out.println(blueSpawn);
+      int bDoorX = blueSpawn.getX();
+      int bDoorY = blueSpawn.getY();
+      int bDoorZ = blueSpawn.getZ() - 2;
+      int rDoorX = redSpawn.getX();
+      int rDoorY = redSpawn.getY();
+      int rDoorZ = redSpawn.getZ() - 2;
+      map.setBlock(rDoorX, rDoorY, rDoorZ, 0);
+      map.setBlock(bDoorX, bDoorY, bDoorZ, 0);
     }
   }
 
