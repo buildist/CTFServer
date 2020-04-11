@@ -1,7 +1,5 @@
 package org.opencraft.server.model;
 
-import org.opencraft.server.game.impl.GameSettings;
-
 import java.util.HashMap;
 
 public abstract class PlayerUI {
@@ -32,15 +30,26 @@ public abstract class PlayerUI {
   public static final String PROGRESS_B_3 = "º";
   public static final String PROGRESS_B_2 = "¿";
   public static final String PROGRESS_B_1 = "⌐";
+  public static final String PROGRESS_F_8 = "▓";
+  public static final String PROGRESS_F_7 = "│";
+  public static final String PROGRESS_F_6 = "┤";
+  public static final String PROGRESS_F_5 = "╡";
+  public static final String PROGRESS_F_4 = "╢";
+  public static final String PROGRESS_F_3 = "╖";
+  public static final String PROGRESS_F_2 = "╕";
+  public static final String PROGRESS_F_1 = "╣";
   public static final String HIT_ICON = "É";
   public static final String KILL_ICON = "ù";
   private static final String HEALTH = "á";
   private static final String AMMO = "í";
+  protected static final String FIRE = "░";
   private static final int PROGRESS_LENGTH = 64;
   private static final int PROGRESS_LENGTH_CHARACTERS = PROGRESS_LENGTH / 8;
   private final HashMap<Player, String> playerListName = new HashMap<>();
 
   protected final Player player;
+
+  protected ProgressBar flamethrowerBar = new ProgressBar();
 
   private String status0 = "";
   private String status1 = "";
@@ -53,53 +62,104 @@ public abstract class PlayerUI {
     }
   }
 
-  protected String getProgressBar(float currentValue, int maxValue, boolean style) {
+  public void setFlamethrower(int value) {
+    flamethrowerBar.set(value);
+  }
+
+  protected String getProgressBar(float currentValue, int maxValue, ProgressBarType style) {
     int length = Math.round(currentValue / maxValue * PROGRESS_LENGTH);
     StringBuilder builder = new StringBuilder();
     if (currentValue == 0) {
       builder.append(PROGRESS_LEFT_INACTIVE);
-      if (style) {
-        builder.append(PROGRESS_RELOAD_1);
-        builder.append(PROGRESS_RELOAD_2);
-        for (int i = 2; i < PROGRESS_LENGTH_CHARACTERS; i++) {
-          builder.append(PROGRESS_0_INACTIVE);
-        }
-      } else {
-        builder.append(PROGRESS_RESPAWN_1);
-        builder.append(PROGRESS_RESPAWN_2);
-        builder.append(PROGRESS_RESPAWN_3);
-        for (int i = 3; i < PROGRESS_LENGTH_CHARACTERS; i++) {
-          builder.append(PROGRESS_0_INACTIVE);
-        }
+      switch (style) {
+        case AMMO:
+          builder.append(PROGRESS_RELOAD_1);
+          builder.append(PROGRESS_RELOAD_2);
+          for (int i = 2; i < PROGRESS_LENGTH_CHARACTERS; i++) {
+            builder.append(PROGRESS_0_INACTIVE);
+          }
+          break;
+        case HEALTH:
+          builder.append(PROGRESS_RESPAWN_1);
+          builder.append(PROGRESS_RESPAWN_2);
+          builder.append(PROGRESS_RESPAWN_3);
+          for (int i = 3; i < PROGRESS_LENGTH_CHARACTERS; i++) {
+            builder.append(PROGRESS_0_INACTIVE);
+          }
+          break;
+        case FIRE:
+          builder.append(PROGRESS_RELOAD_1);
+          builder.append(PROGRESS_RELOAD_2);
+          for (int i = 2; i < PROGRESS_LENGTH_CHARACTERS; i++) {
+            builder.append(PROGRESS_0_INACTIVE);
+          }
+          break;
       }
       builder.append(PROGRESS_RIGHT_INACTIVE);
           return builder.toString();
     }
+
+    String p8, p7, p6, p5, p4, p3, p2, p1;
+    switch (style) {
+      case AMMO:
+        p8 = PROGRESS_8;
+        p7 = PROGRESS_7;
+        p6 = PROGRESS_6;
+        p5 = PROGRESS_5;
+        p4 = PROGRESS_4;
+        p3 = PROGRESS_3;
+        p2 = PROGRESS_2;
+        p1 = PROGRESS_1;
+        break;
+      case HEALTH:
+        p8 = PROGRESS_B_8;
+        p7 = PROGRESS_B_7;
+        p6 = PROGRESS_B_6;
+        p5 = PROGRESS_B_5;
+        p4 = PROGRESS_B_4;
+        p3 = PROGRESS_B_3;
+        p2 = PROGRESS_B_2;
+        p1 = PROGRESS_B_1;
+        break;
+      case FIRE:
+        p8 = PROGRESS_F_8;
+        p7 = PROGRESS_F_7;
+        p6 = PROGRESS_F_6;
+        p5 = PROGRESS_F_5;
+        p4 = PROGRESS_F_4;
+        p3 = PROGRESS_F_3;
+        p2 = PROGRESS_F_2;
+        p1 = PROGRESS_F_1;
+        break;
+        default:
+          throw new RuntimeException();
+    }
+
     builder.append(PROGRESS_LEFT);
     for (int i = 0; i < length / PROGRESS_LENGTH_CHARACTERS; i++) {
-      builder.append(style ? PROGRESS_8 : PROGRESS_B_8);
+      builder.append(p8);
     }
     switch (length % PROGRESS_LENGTH_CHARACTERS) {
       case 7:
-        builder.append(style ? PROGRESS_7 : PROGRESS_B_7);
+        builder.append(p7);
         break;
       case 6:
-        builder.append(style ? PROGRESS_6 : PROGRESS_B_6);
+        builder.append(p6);
         break;
       case 5:
-        builder.append(style ? PROGRESS_5 : PROGRESS_B_5);
+        builder.append(p5);
         break;
       case 4:
-        builder.append(style ? PROGRESS_4 : PROGRESS_B_4);
+        builder.append(p4);
         break;
       case 3:
-        builder.append(style ? PROGRESS_3 : PROGRESS_B_3);
+        builder.append(p3);
         break;
       case 2:
-        builder.append(style ? PROGRESS_2 : PROGRESS_B_2);
+        builder.append(p2);
         break;
       case 1:
-        builder.append(style ? PROGRESS_1 : PROGRESS_B_1);
+        builder.append(p1);
         break;
       case 0:
         if (length < PROGRESS_LENGTH) builder.append(PROGRESS_0);

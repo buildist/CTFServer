@@ -827,6 +827,7 @@ public class Player extends Entity {
         }
       }
     }
+    ui.setFlamethrower(Math.round(flamethrowerFuel));
 
       /* if(hasFlag) {
           headBlockType = team == 0 ? 28 : 21;

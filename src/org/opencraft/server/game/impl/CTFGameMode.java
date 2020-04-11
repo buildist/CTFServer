@@ -715,7 +715,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
       Level map = World.getWorld().getLevel();
       Position blueSpawn = map.blueSpawnPosition.toBlockPos();
       Position redSpawn = map.redSpawnPosition.toBlockPos();
-      System.out.println(blueSpawn);
       int bDoorX = blueSpawn.getX();
       int bDoorY = blueSpawn.getY();
       int bDoorZ = blueSpawn.getZ() - 2;

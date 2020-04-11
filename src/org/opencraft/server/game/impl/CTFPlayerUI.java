@@ -4,14 +4,22 @@ import org.opencraft.server.Constants;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.PlayerUI;
+import org.opencraft.server.model.ProgressBar;
+import org.opencraft.server.model.ProgressBarType;
 import org.opencraft.server.model.World;
 
 public class CTFPlayerUI extends PlayerUI {
   private final CTFGameMode ctf;
 
+  private final ProgressBar flamethrower = new ProgressBar();
+
   public CTFPlayerUI(CTFGameMode ctf, Player player) {
     super(player);
     this.ctf = ctf;
+  }
+
+  protected void update() {
+    flamethrowerBar.update();
   }
 
   @Override
@@ -74,17 +82,8 @@ public class CTFPlayerUI extends PlayerUI {
   }
 
   private String getFlamethrowerMessage() {
-    int slots = 20;
-    StringBuilder fuelSB = new StringBuilder("&c");
-    float percentPerSlot = 100f / slots;
-    float percent = Math.round(player.flamethrowerFuel / Constants.FLAME_THROWER_FUEL * 100);
-    int show = (int)Math.floor(Math.abs(percent / percentPerSlot));
-    for (int i = 0; i < slots; i++) {
-      if (show == i) {
-        fuelSB.append("&f");
-      }
-      fuelSB.append('-');
-    }
-    return "Fuel: [" + fuelSB.toString() + "&f]";
+    return FIRE + " "
+        + getProgressBar(flamethrowerBar.get(), Constants.FLAME_THROWER_FUEL, ProgressBarType.FIRE);
   }
 }
+  
