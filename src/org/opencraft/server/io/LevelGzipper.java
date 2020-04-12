@@ -89,6 +89,7 @@ public final class LevelGzipper {
     }
     for (CustomBlockDefinition blockDef : CustomBlockDefinition.CUSTOM_BLOCKS) {
       session.getActionSender().sendDefineBlockExt(blockDef);
+      session.getActionSender().sendInventoryOrder(blockDef.id, blockDef.inventoryOrder);
     }
     service.submit(
         new Runnable() {

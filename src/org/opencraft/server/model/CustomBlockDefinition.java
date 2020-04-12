@@ -275,7 +275,7 @@ public class CustomBlockDefinition {
       0,
       0,
       0,
-      1);
+      4);
   public static final CustomBlockDefinition HIT_RED = new CustomBlockDefinition(
       Constants.HIT_RED,
       "Hit Red",
