@@ -132,7 +132,7 @@ public final class Level implements Cloneable {
   private ArrayList<Position> tdmSpawns = new ArrayList<Position>();
   private ArrayList<Position> payloadPath = new ArrayList<>();
 
-  private HashSet<Position> solidBlocks = new HashSet<>();
+  private boolean[][][] solidBlocks;
   private HashSet<Integer> solidTypes = new HashSet<>();
   public HashSet<Integer> usedBreakableTypes = new HashSet<>();
   public HashSet<Integer> usedSolidTypes = new HashSet<>();
@@ -155,6 +155,7 @@ public final class Level implements Cloneable {
     this.height = 256;
     this.depth = 64;
     this.blocks = new short[width][height][depth];
+    this.solidBlocks = new boolean[width][height][depth];
     this.lightDepths = new short[width][height];
     this.spawnRotation = new Rotation(0, 0);
     for (int i = 0; i < 256; i++) {
@@ -602,6 +603,7 @@ public final class Level implements Cloneable {
       height = ((ShortTag) classicWorld.get("Z")).getValue();
       depth = ((ShortTag) classicWorld.get("Y")).getValue();
       blocks = new short[width][height][depth];
+      this.solidBlocks = new boolean[width][height][depth];
       blocks0 = new byte[width * height * depth];
       blocks1 = new byte[width * height * depth];
       byte[] tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
@@ -658,7 +660,7 @@ public final class Level implements Cloneable {
               && type != 0 && type != 8 && type != 9 && type != 10 && type != 11
               && !excludedSolidTypes.contains(type))
               || solidTypes.contains(type)) {
-            solidBlocks.add(new Position(x, y, z));
+            solidBlocks[x][y][z] = true;
             usedSolidTypes.add(type);
           } else {
             usedBreakableTypes.add(type);
@@ -784,7 +786,7 @@ public final class Level implements Cloneable {
   }
 
   public boolean isSolid(int x, int y, int z) {
-    return solidBlocks.contains(new Position(x, y, z));
+    return solidBlocks[x][y][z];
   }
 
   public Object getProp(String p) {
