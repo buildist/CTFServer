@@ -100,6 +100,7 @@ public class WebServer {
   }
 
   public static void sendDiscordMessage(String message, String username) {
+    if(executor == null) return;
     executor.submit(new Runnable() {
       @Override
       public void run() {

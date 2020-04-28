@@ -735,6 +735,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
     previousMap = currentMap;
     currentMap = map.id;
+    WebServer.sendDiscordMessage("Switching map: " + map.id, null);
     MoveLog.getInstance().logMapChange(map.id);
     new Thread(
         new Runnable() {
