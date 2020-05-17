@@ -786,6 +786,7 @@ public final class Level implements Cloneable {
   }
 
   public boolean isSolid(int x, int y, int z) {
+    if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) return true;
     return solidBlocks[x][y][z];
   }
 
