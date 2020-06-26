@@ -130,7 +130,6 @@ public final class Constants {
   public static final int BLOCK_RED_FLAG = 608;
   public static final int BLOCK_BLUE_FLAG = 609;
   public static final int BLOCK_DETONATOR = 610;
-  public static final int BLOCK_PAYLOAD = 611;
 
   // Laser tag
   public static final int HIT_RED = 612;
@@ -164,7 +163,6 @@ public final class Constants {
   public static final String[] MAP_EXTENSIONS = new String[] {"dat", "lvl", "cw"};
 
   public static final int ICE_MELT_TIME = 60000;
-  public static final int PAYLOAD_RADIUS = 2;
 
   /** The protocol version of Minecraft that this version of OpenCraft is compatible with. */
   public static final int PROTOCOL_VERSION = 7;

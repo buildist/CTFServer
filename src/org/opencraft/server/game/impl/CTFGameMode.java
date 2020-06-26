@@ -171,8 +171,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public boolean antiStalemate;
 
-  public int payloadPosition = -1;
-
   public int bluePlayers = 0;
   public int redPlayers = 0;
 
@@ -379,8 +377,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           .sendChatMessage("&bSay /join to start playing, or /spec to " + "spectate");
       if (getMode() == Level.CTF) {
         player.getActionSender().sendChatMessage("&aSay /help to learn how to play");
-      } else if (getMode() == Level.PAYLOAD) {
-
       } else {
         player
             .getActionSender()
@@ -519,8 +515,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         && oldBlock != Constants.BLOCK_TNT
         && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)
         && !(x == redFlagX && z == redFlagY && y == redFlagZ)
-        && !isMine(x, y, z)
-        && !isPayload(x, y, z);
+        && !isMine(x, y, z);
   }
 
   private void defuseMineIfCan(Player p, int x, int y, int z) {
@@ -696,22 +691,8 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
   }
 
-  public void updatePayload(int nextPosition) {
-    if (payloadPosition != -1) {
-      World.getWorld()
-          .getLevel()
-          .setBlock(World.getWorld().getLevel().getPayloadPath().get(payloadPosition), 0);
-    }
-    payloadPosition = nextPosition;
-    World.getWorld()
-        .getLevel()
-        .setBlock(
-            World.getWorld().getLevel().getPayloadPath().get(payloadPosition),
-            Constants.BLOCK_PAYLOAD);
-  }
-
   public void openSpawns() {
-    if (getMode() == Level.CTF || getMode() == Level.PAYLOAD) {
+    if (getMode() == Level.CTF) {
       Level map = World.getWorld().getLevel();
       Position blueSpawn = map.blueSpawnPosition.toBlockPos();
       Position redSpawn = map.redSpawnPosition.toBlockPos();
@@ -789,10 +770,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               ready = true;
               placeBlueFlag();
               placeRedFlag();
-              payloadPosition = -1;
-              if (getMode() == Level.PAYLOAD) {
-                updatePayload(0);
-              }
               openSpawns();
             } catch (Exception ex) {
               Server.log(ex);
@@ -1367,15 +1344,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     return false;
   }
 
-  public boolean isPayload(int x, int y, int z) {
-    if (payloadPosition == -1) {
-      return false;
-    }
-
-    Position position = World.getWorld().getLevel().getPayloadPath().get(payloadPosition);
-    return position.getX() == x && position.getY() == y && position.getZ() == z;
-  }
-
   @Override
   public void setBlock(Player player, Level level, int x, int y, int z, int mode, int type) {
     int oldType = level.getBlock(x, y, z);
@@ -1493,7 +1461,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               if (level.getBlock(offsetX + x, offsetY + y, offsetZ + z) != 7
                   && !isTNT(offsetX + x, offsetY + y, offsetZ + z)
                   && !isMine(offsetX + x, offsetY + y, offsetZ + z)
-                  && !isPayload(offsetX + x, offsetY + y, offsetZ + z)
                   && !(x + offsetX == redFlagX
                   && z + offsetZ == redFlagY
                   && y + offsetY == redFlagZ)
@@ -1524,8 +1491,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_TNT);
       } else if (isMine(x, y, z) && !ignore) { // Deleting mines
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
-      } else if (isPayload(x, y, z) && !ignore) {
-        player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if (type == Constants.BLOCK_TNT && mode == 1 && !ignore) // Placing tnt
       {
         if (player.getAttribute("explodes").toString().equals("0")) {
@@ -1545,7 +1510,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
               player.tntZ = z;
               level.setBlock(x, y, z, type);
             } else if (!isTNT(x, y, z)
-                && !isPayload(x, y, z)
                 && !(x == redFlagX && z == redFlagY && y == redFlagZ)
                 && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
               player.getActionSender().sendBlock(x, y, z, (short) 0x00);
@@ -1576,7 +1540,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
             World.getWorld().addMine(mine);
             new Thread(new MineActivator(mine, player)).start();
           } else if (!isMine(x, y, z)
-              && !isPayload(x, y, z)
               && !(x == redFlagX && z == redFlagY && y == redFlagZ)
               && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
             player.getActionSender().sendBlock(x, y, z, (short) 0x00);

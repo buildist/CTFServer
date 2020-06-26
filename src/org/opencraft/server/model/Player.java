@@ -134,8 +134,6 @@ public class Player extends Entity {
   public int tntZ;
   public int tntRadius = 2;
   public boolean hasFlag = false;
-  public boolean setPayloadPath = false;
-  public ArrayList<Position> payloadPathPositions = new ArrayList<>();
   public boolean brush = false;
   public boolean hasVoted = false;
   public boolean hasNominated = false;
@@ -854,15 +852,6 @@ public class Player extends Entity {
       }
     } else if (headBlockPosition != null) {
       World.getWorld().getLevel().setBlock(headBlockPosition, 0);
-    }
-
-    if (setPayloadPath) {
-      Position currentPosition = getPosition().toBlockPos();
-      if (payloadPathPositions.isEmpty()
-          || !currentPosition.equals(
-          payloadPathPositions.get(payloadPathPositions.size() - 1))) {
-        payloadPathPositions.add(currentPosition);
-      }
     }
     ui.step(ticks);
   }

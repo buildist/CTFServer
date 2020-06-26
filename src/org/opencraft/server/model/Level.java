@@ -80,7 +80,6 @@ public final class Level implements Cloneable {
 
   public static final int CTF = 0;
   public static final int TDM = 1;
-  public static final int PAYLOAD = 2;
 
   /** The level width. */
   public int width;
@@ -130,7 +129,6 @@ public final class Level implements Cloneable {
   public Rotation blueSpawnRotation;
 
   private ArrayList<Position> tdmSpawns = new ArrayList<Position>();
-  private ArrayList<Position> payloadPath = new ArrayList<>();
 
   private boolean[][][] solidBlocks;
   private HashSet<Integer> solidTypes = new HashSet<>();
@@ -320,18 +318,6 @@ public final class Level implements Cloneable {
                   Integer.parseInt(parts[2]) * 32 + 16,
                   Integer.parseInt(parts[1]) * 32 + 16));
         }
-      }
-    } else if (props.getProperty("isPayload") != null) {
-      mode = PAYLOAD;
-      payloadPath.clear();
-      String[] path = props.getProperty("payloadPath").split(" ");
-      for (String position : path) {
-        String[] parts = position.split(",");
-        payloadPath.add(
-            new Position(
-                Integer.parseInt(parts[0]),
-                Integer.parseInt(parts[1]),
-                Integer.parseInt(parts[2])));
       }
     } else {
       mode = CTF;
@@ -800,10 +786,6 @@ public final class Level implements Cloneable {
     } else {
       return tdmSpawns.get((int) (Math.random() * tdmSpawns.size()));
     }
-  }
-
-  public List<Position> getPayloadPath() {
-    return payloadPath;
   }
 
   /**
