@@ -55,7 +55,7 @@ public class CTFPlayerUI extends PlayerUI {
   }
 
   private boolean hasTimer() {
-    return ctf.getMode() == Level.TDM || GameSettings.getBoolean("Tournament");
+    return ctf.getMode() == Level.TDM || GameSettings.getInt("TimeLimit") > 0;
   }
 
   private String getTimerMessage() {
@@ -64,9 +64,9 @@ public class CTFPlayerUI extends PlayerUI {
     if (ctf.getMode() == Level.TDM) {
       timerSetting = "TDMTimeLimit";
       timerMessage = "Team Deathmatch";
-    } else if (GameSettings.getBoolean("Tournament")) {
-      timerSetting = "TournamentTimeLimit";
-      timerMessage = "Team Tournament";
+    } else {
+      timerSetting = "TimeLimit";
+      timerMessage = "Capture the Flag";
     }
     if (timerSetting == null) return null;
 

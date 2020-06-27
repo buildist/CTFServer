@@ -625,7 +625,7 @@ public class CTFGameMode extends GameMode {
   }
 
   public void checkForStalemate() {
-    if (redFlagTaken && blueFlagTaken) {
+    if (GameSettings.getBoolean("AntiStalemate") && redFlagTaken && blueFlagTaken) {
       World.getWorld().broadcast("- &eAnti-stalemate mode activated!");
       World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");
       antiStalemate = true;
@@ -1202,9 +1202,11 @@ public class CTFGameMode extends GameMode {
   @Override
   public void step() {
     super.step();
-    if (getMode() == Level.TDM) {
+    String setting = getMode() == Level.TDM ? "TDMTimeLimit" : "TimeLimit";
+    int timeLimit = GameSettings.getInt(setting);
+    if (timeLimit > 0) {
       long elapsedTime = System.currentTimeMillis() - gameStartTime;
-      if (elapsedTime > GameSettings.getInt("TDMTimeLimit") * 60 * 1000) {
+      if (elapsedTime > timeLimit * 60 * 1000) {
         gameStartTime = System.currentTimeMillis();
         endGame();
       }
