@@ -40,6 +40,7 @@ import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
@@ -105,8 +106,8 @@ public class GrenadeCommand implements Command {
                           (int) Math.round(lastY),
                           (int) Math.round(lastZ),
                           0);
-                  World.getWorld()
-                      .getGameMode()
+                  ((CTFGameMode)World.getWorld()
+                      .getGameMode())
                       .explodeTNT(
                           player,
                           World.getWorld().getLevel(),

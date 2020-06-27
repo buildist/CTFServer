@@ -66,7 +66,7 @@ public class LeaderBoardCommand implements Command {
         return;
       }
     }
-    CTFGameMode ctf = World.getWorld().getGameMode();
+    CTFGameMode ctf = ((CTFGameMode)World.getWorld().getGameMode());
     Player[] topPlayers = ctf.getTopPlayers(number);
     player.getActionSender().sendChatMessage("- &eTop " + number + " players this round:");
     for (int i = 0; i < number; i++) {

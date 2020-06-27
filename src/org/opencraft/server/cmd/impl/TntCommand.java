@@ -56,10 +56,8 @@ public class TntCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if (player.hasTNT) {
-      World.getWorld()
-          .getGameMode()
-          .explodeTNT(
-              player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, 2);
+      ((CTFGameMode)World.getWorld().getGameMode()).explodeTNT(
+          player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, 2);
       player.hasTNT = false;
       player.tntX = 0;
       player.tntY = 0;

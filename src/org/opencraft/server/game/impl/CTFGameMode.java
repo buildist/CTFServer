@@ -39,120 +39,34 @@ package org.opencraft.server.game.impl;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
-import org.opencraft.server.WebServer;
-import org.opencraft.server.cmd.impl.AddSpawnCommand;
-import org.opencraft.server.cmd.impl.BanIPCommand;
-import org.opencraft.server.cmd.impl.BlockInfoCommand;
-import org.opencraft.server.cmd.impl.BlueCommand;
-import org.opencraft.server.cmd.impl.BountyCommand;
-import org.opencraft.server.cmd.impl.ChatCommand;
-import org.opencraft.server.cmd.impl.ClientsCommand;
-import org.opencraft.server.cmd.impl.DeOperatorCommand;
-import org.opencraft.server.cmd.impl.DeVIPCommand;
 import org.opencraft.server.cmd.impl.DefuseCommand;
 import org.opencraft.server.cmd.impl.DefuseTNTCommand;
-import org.opencraft.server.cmd.impl.DropCommand;
-import org.opencraft.server.cmd.impl.DuelAcceptCommand;
-import org.opencraft.server.cmd.impl.DuelCommand;
-import org.opencraft.server.cmd.impl.EndCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
 import org.opencraft.server.cmd.impl.FlamethrowerCommand;
-import org.opencraft.server.cmd.impl.FollowCommand;
-import org.opencraft.server.cmd.impl.ForceCommand;
-import org.opencraft.server.cmd.impl.FreezeCommand;
-import org.opencraft.server.cmd.impl.GlobalChatCommand;
-import org.opencraft.server.cmd.impl.HelpCommand;
-import org.opencraft.server.cmd.impl.HelpOpCommand;
-import org.opencraft.server.cmd.impl.HiddenCommand;
-import org.opencraft.server.cmd.impl.HideCommand;
-import org.opencraft.server.cmd.impl.IgnoreCommand;
-import org.opencraft.server.cmd.impl.JoinCommand;
-import org.opencraft.server.cmd.impl.KickCommand;
-import org.opencraft.server.cmd.impl.LavaCommand;
-import org.opencraft.server.cmd.impl.LogCommand;
-import org.opencraft.server.cmd.impl.MapEnvironmentCommand;
-import org.opencraft.server.cmd.impl.MapImportCommand;
-import org.opencraft.server.cmd.impl.MapListCommand;
-import org.opencraft.server.cmd.impl.MapSetCommand;
-import org.opencraft.server.cmd.impl.MeCommand;
-import org.opencraft.server.cmd.impl.MuteCommand;
-import org.opencraft.server.cmd.impl.NewGameCommand;
-import org.opencraft.server.cmd.impl.NoCommand;
-import org.opencraft.server.cmd.impl.NominateCommand;
-import org.opencraft.server.cmd.impl.NoteCommand;
-import org.opencraft.server.cmd.impl.NotesCommand;
-import org.opencraft.server.cmd.impl.OpChatCommand;
-import org.opencraft.server.cmd.impl.OperatorCommand;
-import org.opencraft.server.cmd.impl.PInfoCommand;
-import org.opencraft.server.cmd.impl.PayCommand;
-import org.opencraft.server.cmd.impl.PingCommand;
-import org.opencraft.server.cmd.impl.PmCommand;
-import org.opencraft.server.cmd.impl.PointsCommand;
-import org.opencraft.server.cmd.impl.QuoteCommand;
-import org.opencraft.server.cmd.impl.RTVCommand;
-import org.opencraft.server.cmd.impl.RagequitCommand;
-import org.opencraft.server.cmd.impl.RedCommand;
-import org.opencraft.server.cmd.impl.ReloadCommand;
-import org.opencraft.server.cmd.impl.RemoveSpawnCommand;
-import org.opencraft.server.cmd.impl.RestartCommand;
-import org.opencraft.server.cmd.impl.RulesCommand;
-import org.opencraft.server.cmd.impl.SayCommand;
-import org.opencraft.server.cmd.impl.SetCommand;
-import org.opencraft.server.cmd.impl.SolidCommand;
-import org.opencraft.server.cmd.impl.SpecCommand;
-import org.opencraft.server.cmd.impl.StartCommand;
-import org.opencraft.server.cmd.impl.StatsCommand;
-import org.opencraft.server.cmd.impl.StatusCommand;
-import org.opencraft.server.cmd.impl.StoreCommand;
-import org.opencraft.server.cmd.impl.TeamCommand;
-import org.opencraft.server.cmd.impl.TeleportCommand;
 import org.opencraft.server.cmd.impl.TntCommand;
-import org.opencraft.server.cmd.impl.TutorialCommand;
-import org.opencraft.server.cmd.impl.UnbanCommand;
-import org.opencraft.server.cmd.impl.UnbanIPCommand;
-import org.opencraft.server.cmd.impl.VIPCommand;
-import org.opencraft.server.cmd.impl.VoteCommand;
-import org.opencraft.server.cmd.impl.WarnCommand;
-import org.opencraft.server.cmd.impl.WaterCommand;
-import org.opencraft.server.cmd.impl.XBanCommand;
-import org.opencraft.server.cmd.impl.YesCommand;
-import org.opencraft.server.cmd.impl.LeaderBoardCommand;
 import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.BlockLog;
 import org.opencraft.server.model.BlockLog.BlockInfo;
 import org.opencraft.server.model.BuildMode;
-import org.opencraft.server.model.ChatMode;
-import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.DropItem;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.MapRatings;
 import org.opencraft.server.model.Mine;
 import org.opencraft.server.model.MineActivator;
-import org.opencraft.server.model.MoveLog;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.PlayerUI;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.World;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.NavigableSet;
-import java.util.TreeSet;
-
-import static org.opencraft.server.model.Level.TDM;
 
 public class CTFGameMode extends GameModeAdapter<Player> {
 
-  public static int blockSpawnX;
-  public static int blockSpawnY;
-  public static int blockSpawnZ;
   public int redFlagX;
   public int redFlagY;
   public int redFlagZ;
@@ -170,201 +84,20 @@ public class CTFGameMode extends GameModeAdapter<Player> {
 
   public boolean antiStalemate;
 
-  public int bluePlayers = 0;
-  public int redPlayers = 0;
-
-  public long gameStartTime = System.currentTimeMillis();
-  public boolean tournamentGameStarted = false;
-
-  public Level startNewMap;
-  public boolean voting = false;
-  public boolean isFirstBlood = true;
-  public boolean ready = false;
-  public ArrayList<String> rtvYesPlayers = new ArrayList<>();
-  public ArrayList<String> rtvNoPlayers = new ArrayList<>();
-  public ArrayList<String> mutedPlayers = new ArrayList<>();
-  public int rtvVotes = 0;
-  public ArrayList<String> nominatedMaps = new ArrayList<>();
-  private final ArrayList<KillFeedItem> killFeed = new ArrayList<>();
-  public String currentMap = null;
-  public String previousMap = null;
-  public Level map;
-  private ArrayList<DropItem> items = new ArrayList<>(8);
-
   public CTFGameMode() {
-    registerCommand("accept", DuelAcceptCommand.getCommand());
-    registerCommand("addspawn", AddSpawnCommand.getCommand());
-    registerCommand("b", BlockInfoCommand.getCommand());
-    registerCommand("ban", XBanCommand.getCommand());
-    registerCommand("banip", BanIPCommand.getCommand());
-    registerCommand("blue", BlueCommand.getCommand());
-    registerCommand("bounty", BountyCommand.getCommand());
-    registerCommand("c", ChatCommand.getCommand());
-    registerCommand("commands", HelpCommand.getCommand());
+    super();
     registerCommand("d", DefuseCommand.getCommand());
     registerCommand("defuse", DefuseCommand.getCommand());
     registerCommand("defusetnt", DefuseTNTCommand.getCommand());
-    registerCommand("deop", DeOperatorCommand.getCommand());
-    registerCommand("devip", DeVIPCommand.getCommand());
-    registerCommand("drop", DropCommand.getCommand());
     registerCommand("dt", DefuseTNTCommand.getCommand());
-    registerCommand("duel", DuelCommand.getCommand());
-    registerCommand("end", EndCommand.getCommand());
     registerCommand("f", FlamethrowerCommand.getCommand());
     registerCommand("fd", FlagDropCommand.getCommand());
-    registerCommand("follow", FollowCommand.getCommand());
-    registerCommand("force", ForceCommand.getCommand());
-    registerCommand("freeze", FreezeCommand.getCommand());
-    registerCommand("g", GlobalChatCommand.getCommand());
-    registerCommand("help", TutorialCommand.getCommand());
-    registerCommand("helpop", HelpOpCommand.getCommand());
-    registerCommand("hidden", HiddenCommand.getCommand());
-    registerCommand("hide", HideCommand.getCommand());
-    registerCommand("ignore", IgnoreCommand.getCommand());
-    registerCommand("join", JoinCommand.getCommand());
-    registerCommand("k", KickCommand.getCommand());
-    registerCommand("kick", KickCommand.getCommand());
-    registerCommand("lava", LavaCommand.getCommand());
-    registerCommand("log", LogCommand.getCommand());
-    registerCommand("mapenvironment", MapEnvironmentCommand.getCommand());
-    registerCommand("mapimport", MapImportCommand.getCommand());
-    registerCommand("maps", MapListCommand.getCommand());
-    registerCommand("mapset", MapSetCommand.getCommand());
-    registerCommand("me", MeCommand.getCommand());
-    registerCommand("mute", MuteCommand.getCommand());
-    registerCommand("newgame", NewGameCommand.getCommand());
-    registerCommand("no", NoCommand.getCommand());
-    registerCommand("note", NoteCommand.getCommand());
-    registerCommand("notes", NotesCommand.getCommand());
-    registerCommand("nominate", NominateCommand.getCommand());
-    registerCommand("op", OperatorCommand.getCommand());
-    registerCommand("opchat", OpChatCommand.getCommand());
-    registerCommand("pay", PayCommand.getCommand());
-    registerCommand("ping", PingCommand.getCommand());
-    registerCommand("players", ClientsCommand.getCommand());
-    registerCommand("pm", PmCommand.getCommand());
-    registerCommand("points", PointsCommand.getCommand());
-    registerCommand("pstats", PInfoCommand.getCommand());
-    registerCommand("ragequit", RagequitCommand.getCommand());
-    registerCommand("removespawn", RemoveSpawnCommand.getCommand());
-    registerCommand("quote", QuoteCommand.getCommand());
-    registerCommand("red", RedCommand.getCommand());
-    registerCommand("reload", ReloadCommand.getCommand());
-    registerCommand("restart", RestartCommand.getCommand());
-    registerCommand("rtv", RTVCommand.getCommand());
-    registerCommand("rules", RulesCommand.getCommand());
-    registerCommand("say", SayCommand.getCommand());
-    registerCommand("set", SetCommand.getCommand());
-    registerCommand("solid", SolidCommand.getCommand());
-    registerCommand("spec", SpecCommand.getCommand());
-    registerCommand("start", StartCommand.getCommand());
-    registerCommand("stats", StatsCommand.getCommand());
-    registerCommand("status", StatusCommand.getCommand());
-    registerCommand("store", StoreCommand.getCommand());
-    registerCommand("t", TntCommand.getCommand());
-    registerCommand("team", TeamCommand.getCommand());
     registerCommand("tnt", TntCommand.getCommand());
-    registerCommand("tp", TeleportCommand.getCommand());
-    registerCommand("unban", UnbanCommand.getCommand());
-    registerCommand("unbanip", UnbanIPCommand.getCommand());
-    registerCommand("users", ClientsCommand.getCommand());
-    registerCommand("vip", VIPCommand.getCommand());
-    registerCommand("vote", VoteCommand.getCommand());
-    registerCommand("water", WaterCommand.getCommand());
-    registerCommand("warn", WarnCommand.getCommand());
-    registerCommand("who", StatusCommand.getCommand());
-    registerCommand("yes", YesCommand.getCommand());
-    registerCommand("lb", LeaderBoardCommand.getCommand());
-  }
-
-  public int getRedPlayers() {
-    int redPlayers = 0;
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.team == 0) {
-        redPlayers++;
-      }
-    }
-    return redPlayers;
-  }
-
-  public int getBluePlayers() {
-    int bluePlayers = 0;
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.team == 1) {
-        bluePlayers++;
-      }
-    }
-    return bluePlayers;
-  }
-
-  public void sendAnnouncement(String message) {
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.getSession().ccUser) {
-        sendAnnouncement(p, message);
-      }
-    }
-  }
-
-  public void sendAnnouncement(final Player p, final String message) {
-    if (p.getSession().isExtensionSupported("MessageTypes")) {
-      new Thread(
-          new Runnable() {
-
-            public void run() {
-              try {
-                p.announcement = message;
-                p.getActionSender().sendChatMessage(message, 100);
-                Thread.sleep(4000);
-                if (p.announcement.equals(message)) {
-                  // Don't clear if it has since been updated again.
-                  p.announcement = "";
-                  p.getActionSender().sendChatMessage("", 100);
-                }
-              } catch (InterruptedException ex) {
-              }
-            }
-          })
-          .start();
-    }
   }
 
   @Override
   public void playerConnected(final Player player) {
-    Server.log(player.getName() + " (" + player.getSession().getIP() + ") joined the game");
-    if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
-      WebServer.run(
-          new Runnable() {
-            @Override
-            public void run() {
-              try {
-                String urlMessage =
-                    URLEncoder.encode(
-                        "[b][color=#00aa00]"
-                            + player.getName()
-                            + " "
-                            + "joined the game[/color][/b]",
-                        "UTF-8");
-                Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-              } catch (Exception ex) {}
-            }
-          });
-    }
-    WebServer.sendDiscordMessage(player.getName() + " joined the game", null);
-
-    player.setAttribute("ip", player.getSession().getIP());
-    player.muted = isMuted(player.getName());
-    String rank;
-    try {
-      int r = Integer.parseInt(player.getAttribute("rank").toString());
-      if (r != 0) {
-        rank = " &f(Rank " + r + ", " + player.getAttribute("games").toString() + " games played)";
-      } else {
-        rank = "";
-      }
-    } catch (Exception ex) {
-      rank = "";
-    }
-    World.getWorld().broadcast("&a" + player.getName() + " joined the game" + rank);
+    super.playerConnected(player);
     String welcome = Configuration.getConfiguration().getWelcomeMessage();
     if (!player.isNewPlayer) {
       if (welcome != null && !welcome.equals("null")) {
@@ -401,18 +134,6 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           .sendChatMessage(
               "&bSay /join to start playing or /spec to spectate"
                   + ". /help will show these instructions again.");
-    }
-    if (!player.getSession().ccUser) {
-      player
-          .getActionSender()
-          .sendChatMessage(
-              "-- &bWe recommend using the &aClassiCube &bclient"
-                  + " (www.classicube.net) for more features.");
-    }
-    if (player.getSession().isExtensionSupported("MessageTypes")) {
-      synchronized (killFeed) {
-        World.getWorld().getGameMode().sendKillFeed(player);
-      }
     }
   }
 
@@ -480,7 +201,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     for (int cx = x - r; cx <= x + r; cx++) {
       for (int cy = y - r; cy <= y + r; cy++) {
         for (int cz = z - r; cz <= z + r; cz++) {
-          if (isExplodableBlock(level, cx, cy, cz)) {
+          if (!isSolidBlock(level, cx, cy, cz)) {
             level.setBlock(cx, cy, cz, 0);
           }
           defuseMineIfCan(p, cx, cy, cz);
@@ -507,13 +228,14 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
   }
 
-  public boolean isExplodableBlock(Level level, int x, int y, int z) {
+  @Override
+  public boolean isSolidBlock(Level level, int x, int y, int z) {
     int oldBlock = level.getBlock(x, y, z);
-    return !level.isSolid(x, y, z)
-        && oldBlock != Constants.BLOCK_TNT
-        && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)
-        && !(x == redFlagX && z == redFlagY && y == redFlagZ)
-        && !isMine(x, y, z);
+    return level.isSolid(x, y, z)
+        || oldBlock == Constants.BLOCK_TNT
+        || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)
+        || (x == redFlagX && z == redFlagY && y == redFlagZ)
+        || isMine(x, y, z);
   }
 
   private void defuseMineIfCan(Player p, int x, int y, int z) {
@@ -578,7 +300,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           || oldBlock == BlockConstants.SAND
           || oldBlock == BlockConstants.GLASS
           || oldBlock == BlockConstants.OBSIDIAN
-          || !isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
+          || isSolidBlock(World.getWorld().getLevel(), bx, by, bz)) {
         return;
       }
 
@@ -616,7 +338,7 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public void showScore() {
-    if (getMode() == TDM) {
+    if (getMode() == Level.TDM) {
       World.getWorld()
           .broadcast(
               "- Current score: Red has "
@@ -689,130 +411,31 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
   }
 
-  public void openSpawns() {
-    if (getMode() == Level.CTF) {
-      Level map = World.getWorld().getLevel();
-      Position blueSpawn = map.blueSpawnPosition.toBlockPos();
-      Position redSpawn = map.redSpawnPosition.toBlockPos();
-      int bDoorX = blueSpawn.getX();
-      int bDoorY = blueSpawn.getY();
-      int bDoorZ = blueSpawn.getZ() - 2;
-      int rDoorX = redSpawn.getX();
-      int rDoorY = redSpawn.getY();
-      int rDoorZ = redSpawn.getZ() - 2;
-      map.setBlock(rDoorX, rDoorY, rDoorZ, 0);
-      map.setBlock(bDoorX, bDoorY, bDoorZ, 0);
-    }
-  }
-
-  public void startGame(Level newMap) {
-    final Level oldMap = map;
-    if (newMap == null) {
-      map = MapController.randomLevel();
-    } else {
-      map = newMap;
-    }
-    previousMap = currentMap;
-    currentMap = map.id;
-    WebServer.sendDiscordMessage("Switching map: " + map.id, null);
-    MoveLog.getInstance().logMapChange(map.id);
-    new Thread(
-        new Runnable() {
-
-          public void run() {
-            try {
-              gameStartTime = System.currentTimeMillis();
-              tournamentGameStarted = !GameSettings.getBoolean("Tournament");
-              for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-                player.team = -1;
-                player.hasVoted = false;
-                player.hasNominated = false;
-                player.hasFlag = false;
-                player.hasTNT = false;
-                player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-                player.currentRoundPoints = 0;
-                for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
-                  player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
-                }
-              }
-              World.getWorld().clearMines();
-              startNewMap = null;
-              blockSpawnX = (map.getSpawnPosition().getX() - 16) / 32;
-              blockSpawnY = (map.getSpawnPosition().getY() - 16) / 32;
-              blockSpawnZ = (map.getSpawnPosition().getZ() - 16) / 32;
-              redPlayers = 0;
-              bluePlayers = 0;
-              World.getWorld().setLevel(map);
-              resetRedFlagPos();
-              resetBlueFlagPos();
-              clearKillFeed();
-              voting = false;
-              rtvVotes = 0;
-              rtvYesPlayers.clear();
-              rtvNoPlayers.clear();
-              nominatedMaps.clear();
-              isFirstBlood = true;
-              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-                p.joinTeam("spec", false);
-              }
-              try {
-                Thread.sleep(5 * 1000);
-              } catch (InterruptedException ex) {
-              }
-              World.getWorld()
-                  .broadcast("- &6Say /join to start playing, or /spec to spectate.");
-              redFlagTaken = false;
-              blueFlagTaken = false;
-              redCaptures = 0;
-              blueCaptures = 0;
-              ready = true;
-              placeBlueFlag();
-              placeRedFlag();
-              openSpawns();
-            } catch (Exception ex) {
-              Server.log(ex);
-              voting = false;
-            }
-          }
-        })
-        .start();
-    Server.saveLog();
-  }
-
-  private void checkFirstBlood(Player attacker, Player defender) {
-    if (isFirstBlood && defender.team != -1) {
-      World.getWorld().broadcast("- " + attacker.getColoredName() + " &4took the first blood!");
-      attacker.setAttribute("tags", (Integer) attacker.getAttribute("tags") + 10);
-      attacker.addPoints(50);
-      isFirstBlood = false;
-    }
-  }
-
-  public Player[] getTopPlayers(int number) {
-    HashMap<Integer, Player> leaderboard = new HashMap<Integer, Player>(16);
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.team != -1) {
-        leaderboard.put(p.currentRoundPoints, p);
-      }
+  protected void resetGameMode() {
+    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+      player.hasFlag = false;
+      player.hasTNT = false;
+      player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+      player.currentRoundPoints = 0;
     }
 
-    NavigableSet<Integer> set = new TreeSet<Integer>(leaderboard.keySet());
-    Iterator<Integer> itr = set.descendingIterator();
-    Player[] top = new Player[number];
-    int i = 0;
-    while (itr.hasNext()) {
-      top[i] = leaderboard.get(itr.next());
-      i++;
-      if (i >= 3) {
-        break;
-      }
-    }
-    return top;
+    redFlagTaken = false;
+    blueFlagTaken = false;
+    redCaptures = 0;
+    blueCaptures = 0;
+
+    resetRedFlagPos();
+    resetBlueFlagPos();
+
+    placeBlueFlag();
+    placeRedFlag();
+
+    openSpawns();
   }
 
   private void updateKillFeed(Player attacker, Player defender, String killmsg) {
     synchronized (killFeed) {
-      killFeed.add(0, new KillFeedItem(killmsg));
+      killFeed.add(0, new KillFeedItem(attacker, defender, 0, true));
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
         if (p == attacker || p == defender) {
           sendAnnouncement(p, killmsg);
@@ -829,48 +452,19 @@ public class CTFGameMode extends GameModeAdapter<Player> {
     }
   }
 
-  private void clearKillFeed() {
-    synchronized (killFeed) {
-      killFeed.clear();
-      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-        if (p.getSession().isExtensionSupported("MessageTypes")) {
-          for (int i = 0; i < 3; i++) {
-            p.getActionSender().sendChatMessage("", 11 + i);
-          }
-        }
-      }
-    }
-  }
-
-  private void sendKillFeed(Player p) {
-    if (p == null) {
-      return;
-    }
-    if (p.getSession().isExtensionSupported("MessageTypes")) {
-      for (int i = 0; i < 3; i++) {
-        if (i >= killFeed.size()) {
-          p.getActionSender().sendChatMessage("", 11 + i);
-        } else {
-          p.getActionSender().sendChatMessage(killFeed.get(i).message, 11 + i);
-        }
-      }
-    }
-  }
-
-  public void pruneKillFeed() {
-    synchronized (killFeed) {
-      boolean updated = false;
-      for (int i = killFeed.size() - 1; i >= 0; i--) {
-        if (System.currentTimeMillis() - killFeed.get(i).time > 10000) {
-          killFeed.remove(i);
-          updated = true;
-        }
-      }
-      if (updated) {
-        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-          sendKillFeed(p);
-        }
-      }
+  private void openSpawns() {
+    if (getMode() == Level.CTF) {
+      Level map = World.getWorld().getLevel();
+      Position blueSpawn = map.blueSpawnPosition.toBlockPos();
+      Position redSpawn = map.redSpawnPosition.toBlockPos();
+      int bDoorX = blueSpawn.getX();
+      int bDoorY = blueSpawn.getY();
+      int bDoorZ = blueSpawn.getZ() - 2;
+      int rDoorX = redSpawn.getX();
+      int rDoorY = redSpawn.getY();
+      int rDoorZ = redSpawn.getZ() - 2;
+      map.setBlock(rDoorX, rDoorY, rDoorZ, 0);
+      map.setBlock(bDoorX, bDoorY, bDoorZ, 0);
     }
   }
 
@@ -1009,25 +603,25 @@ public class CTFGameMode extends GameModeAdapter<Player> {
         .start();
   }
 
+  public void playerChangedTeam(Player player) {
+    if (player.hasFlag) {
+      if (player.team == 0) {
+        blueFlagTaken = false;
+        placeBlueFlag();
+      } else {
+        redFlagTaken = false;
+        placeRedFlag();
+      }
+      player.hasFlag = false;
+      World.getWorld().broadcast("- " + player.parseName() + " dropped the flag!");
+    }
+  }
+
   public void checkForStalemate() {
     if (redFlagTaken && blueFlagTaken) {
       World.getWorld().broadcast("- &eAnti-stalemate mode activated!");
       World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");
       antiStalemate = true;
-    }
-  }
-
-  public void checkForUnbalance(Player p) {
-    if (!GameSettings.getBoolean("Tournament")) {
-      if (redPlayers < bluePlayers - 2 && p.team == 1) {
-        World.getWorld()
-            .broadcast("- " + p.parseName() + " was moved to red team for game " + "balance.");
-        p.joinTeam("red");
-      } else if (bluePlayers < redPlayers - 2 && p.team == 0) {
-        World.getWorld()
-            .broadcast("- " + p.parseName() + " was moved to blue team for game " + "balance.");
-        p.joinTeam("blue");
-      }
     }
   }
 
@@ -1284,6 +878,12 @@ public class CTFGameMode extends GameModeAdapter<Player> {
           processTag(p, t, x, y, z);
         }
       }
+    }
+  }
+
+  public void playerRespawn(Player player) {
+    if (player.team > -1) {
+      if (player.hasFlag) dropFlag(player, true, false);
     }
   }
 
@@ -1585,228 +1185,31 @@ public class CTFGameMode extends GameModeAdapter<Player> {
   }
 
   public void playerDisconnected(final Player p) {
-    Server.log(p.getName() + " left the game");
-    if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
-      WebServer.run(
-          new Runnable() {
-            @Override
-            public void run() {
-              try {
-                String urlMessage =
-                    URLEncoder.encode(
-                        "[b][color=#00aa00]" + p.getName() + " left the" + " game[/color][/b]",
-                        "UTF-8");
-                Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-              } catch (Exception ex) {}
-            }
-          });
-    }
-    WebServer.sendDiscordMessage(p.getName() + " left the game", null);
+    super.playerDisconnected(p);
     if (p.hasFlag) {
       dropFlag(p);
     }
-
     p.clearMines();
-
-    if (p.team == 0) {
-      World.getWorld().getGameMode().redPlayers--;
-    } else if (p.team == 1) {
-      World.getWorld().getGameMode().bluePlayers--;
-    }
-    if (p.duelPlayer != null) {
-      p.duelPlayer.duelPlayer = null;
-      p.duelPlayer = null;
-    }
-    World.getWorld().broadcast("&a" + p.getName() + " left the game");
-
-    if (World.getWorld().getPlayerList().size() == 0) {
-      rtvVotes = 0;
-    }
   }
 
-  public void broadcastChatMessage(final Player player, final String message) {
-    if (player.lastMessage != null
-        && message.equals(player.lastMessage)
-        && System.currentTimeMillis() - player.lastMessageTime < 750) {
-      player.getActionSender().sendChatMessage("&7Duplicate chat message not sent.");
-      return;
-    }
-    player.lastMessage = message;
-    player.lastMessageTime = System.currentTimeMillis();
-
-    // Toggle chat mode ("#", "$", "@player").
-    if (message.equals("#") && player.isOp()) {
-      if (player.chatMode != ChatMode.OPERATOR) {
-        player.chatMode = ChatMode.OPERATOR;
-        player
-            .getActionSender()
-            .sendChatMessage("&7Switched to op chat, say # again to return to normal.");
-      } else {
-        player.chatMode = ChatMode.DEFAULT;
-        player.getActionSender().sendChatMessage("&7Switched to normal chat.");
-      }
-      return;
-    } else if (message.equals("$")) {
-      if (player.chatMode != ChatMode.TEAM) {
-        player.chatMode = ChatMode.TEAM;
-        player
-            .getActionSender()
-            .sendChatMessage("&7Switched to team chat, say $ again to return to normal.");
-      } else {
-        player.chatMode = ChatMode.DEFAULT;
-        player.getActionSender().sendChatMessage("&7Switched to normal chat.");
-      }
-      return;
-    } else if (message.startsWith("@") && message.trim().split(" ").length == 1) {
-      if (message.length() > 1) {
-        Player messagePlayer = Player.getPlayer(message.substring(1), player.getActionSender());
-        if (messagePlayer != null) {
-          player.chatMode = ChatMode.PRIVATE;
-          player.chatPlayer = messagePlayer;
-          player
-              .getActionSender()
-              .sendChatMessage(
-                  "&7Switched to private chat with "
-                      + messagePlayer.getName()
-                      + ", say @ to return to normal.");
-        } else {
-          player.getActionSender().sendChatMessage("- &ePlayer not found.");
-        }
-      } else if (player.chatMode == ChatMode.PRIVATE) {
-        player.chatMode = ChatMode.DEFAULT;
-        player.getActionSender().sendChatMessage("&7Switched to normal chat.");
-      } else {
-        player.getActionSender().sendChatMessage("@name message");
-      }
-      return;
-    }
-
-    ChatMode messageChatMode = player.chatMode;
-    String messageToSend = message;
-    Player messagePlayer = player.chatPlayer;
-
-    // Set temp chat mode for this message("#message", "$message", "@player message").
-    if (message.startsWith("@") && message.length() > 1 && message.trim().split(" ").length > 1) {
-      String[] parts = message.split(" ");
-      Player other = Player.getPlayer(parts[0].substring(1), player.getActionSender());
-      if (other == null) {
-        return;
-      }
-      String text = "";
-      for (int i = 1; i < parts.length; i++) {
-        text += " " + parts[i];
-      }
-      text = text.trim();
-      if (text.isEmpty()) {
-        player.getActionSender().sendChatMessage("@name message");
-        return;
-      }
-      messageChatMode = ChatMode.PRIVATE;
-      messageToSend = text;
-      messagePlayer = other;
-    } else if (message.startsWith("#") && message.length() > 1) {
-      messageChatMode = player.chatMode == ChatMode.OPERATOR ? ChatMode.DEFAULT : ChatMode.OPERATOR;
-      messageToSend = message.substring(1);
-    } else if (message.startsWith("$") && message.length() > 1) {
-      messageChatMode = player.chatMode == ChatMode.TEAM ? ChatMode.DEFAULT : ChatMode.TEAM;
-      messageToSend = message.substring(1);
-    }
-
-    switch (messageChatMode) {
-      case TEAM:
-        World.getWorld().sendTeamChat(player, messageToSend);
-        break;
-      case OPERATOR:
-        World.getWorld().sendOpChat(player, messageToSend);
-        break;
-      case PRIVATE:
-        World.getWorld().sendPM(player, messagePlayer, messageToSend);
-        break;
-      default:
-        String error = null;
-        if (player.muted) {
-          error = "You're muted!";
-        }
-        if (error != null) {
-          player.getActionSender().sendChatMessage("- &e" + error);
-        } else {
-          World.getWorld().sendChat(player, messageToSend);
-          if (!Configuration.getConfiguration().isTest()
-              && !GameSettings.getBoolean("Tournament")) {
-            WebServer.run(
-                new Runnable() {
-                  @Override
-                  public void run() {
-                    try {
-                      String urlMessage = URLEncoder.encode(message, "UTF-8");
-                      String urlName = URLEncoder.encode(player.getName(), "UTF-8");
-                      Server.httpGet(
-                          Constants.URL_SENDCHAT + "&username=" + urlName + "&msg=" + urlMessage);
-                    } catch (UnsupportedEncodingException ex) {
-                      Server.log(ex);
-                    }
-                  }
-                });
-          }
-          WebServer.sendDiscordMessage(message, player.getName());
-        }
-        Server.log(player.getName() + ": " + message);
-        break;
-    }
-  }
-
+  @Override
   public void step() {
-    if (getMode() == TDM) {
+    super.step();
+    if (getMode() == Level.TDM) {
       long elapsedTime = System.currentTimeMillis() - gameStartTime;
       if (elapsedTime > GameSettings.getInt("TDMTimeLimit") * 60 * 1000) {
-        World.getWorld().getGameMode().gameStartTime = System.currentTimeMillis();
-        World.getWorld().getGameMode().endGame();
+        gameStartTime = System.currentTimeMillis();
+        endGame();
       }
     }
-
-    pruneKillFeed();
   }
 
-  public void addDropItem(DropItem i) {
-    items.add(i);
-  }
-
-  public void removeDropItem(DropItem i) {
-    items.remove(i);
-  }
-
-  public DropItem getDropItem(int x, int y, int z) {
-    for (DropItem i : items) {
-      if (x == i.posX && y == i.posY && z == i.posZ) {
-        return i;
-      }
-    }
-    return null;
+  @Override
+  public PlayerUI createPlayerUI(Player p) {
+    return new CTFPlayerUI(this, p);
   }
 
   public int getMode() {
     return World.getWorld().getLevel().mode;
-  }
-
-  public void mute(Player p) {
-    mutedPlayers.add(p.getName());
-  }
-
-  public void unmute(Player p) {
-    mutedPlayers.remove(p.getName());
-  }
-
-  public boolean isMuted(String name) {
-    return mutedPlayers.contains(name);
-  }
-
-  static class KillFeedItem {
-
-    public final String message;
-    public final long time = System.currentTimeMillis();
-
-    KillFeedItem(String message) {
-      this.message = message;
-    }
   }
 }

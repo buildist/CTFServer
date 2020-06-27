@@ -38,6 +38,7 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
@@ -102,8 +103,8 @@ public class StatusCommand implements Command {
         .getActionSender()
         .sendChatMessage(
             "&cRed: "
-                + World.getWorld().getGameMode().getRedCaptures()
+                + ((CTFGameMode)World.getWorld().getGameMode()).getRedCaptures()
                 + " -- Blue: "
-                + World.getWorld().getGameMode().getBlueCaptures());
+                + ((CTFGameMode)World.getWorld().getGameMode()).getBlueCaptures());
   }
 }

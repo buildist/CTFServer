@@ -76,9 +76,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     int dz = Math.abs(z - oldZ);
     if ((dx > 400 || dy > 400 || dz > 400)) // respawning
     {
-      if (player.team > -1) {
-        if (player.hasFlag) World.getWorld().getGameMode().dropFlag(player, true, false);
-      }
+      World.getWorld().getGameMode().playerRespawn(player);
     } else if (player.frozen) { // frozen
       player.getActionSender().sendTeleport(player.getPosition(), player.getRotation());
       return;
@@ -94,8 +92,8 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
       player.markSafe();
       World.getWorld().broadcast("- " + player.parseName() + " died!");
       player.sendToTeamSpawn();
-      if (player.hasFlag) {
-        CTFGameMode ctf = World.getWorld().getGameMode();
+      if (World.getWorld().getGameMode() instanceof  CTFGameMode && player.hasFlag) {
+        CTFGameMode ctf = (CTFGameMode) World.getWorld().getGameMode();
         ctf.dropFlag(player, true, false);
       }
     }

@@ -39,6 +39,7 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
@@ -108,8 +109,8 @@ public class RocketCommand implements Command {
                 int bz = (int) Math.round(z);
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
                 if (block != 0 && block != 49) {
-                  World.getWorld()
-                      .getGameMode()
+                  ((CTFGameMode)World.getWorld()
+                      .getGameMode())
                       .explodeTNT(
                           player,
                           World.getWorld().getLevel(),

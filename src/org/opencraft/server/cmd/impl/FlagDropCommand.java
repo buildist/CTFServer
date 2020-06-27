@@ -56,6 +56,8 @@ public class FlagDropCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    World.getWorld().getGameMode().dropFlag(player, false, true);
+    ((CTFGameMode)World.getWorld()
+        .getGameMode())
+        .dropFlag(player, false, true);
   }
 }

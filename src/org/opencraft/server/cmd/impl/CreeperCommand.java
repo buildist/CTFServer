@@ -67,8 +67,8 @@ public class CreeperCommand implements Command {
     int pz = ((pos.getZ() - 16) / 32);
     World.getWorld().broadcast("- " + player.parseName() + " &eisn't feeling so good...");
     World.getWorld().broadcast("- &esssssssSSSSSSSSS");
-    World.getWorld()
-        .getGameMode()
+    ((CTFGameMode)World.getWorld()
+        .getGameMode())
         .explodeTNT(player, World.getWorld().getLevel(), px, py, pz, 4, true, true, false, null);
   }
 }

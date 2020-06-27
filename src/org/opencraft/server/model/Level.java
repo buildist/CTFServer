@@ -47,6 +47,7 @@ import com.flowpowered.nbt.stream.NBTInputStream;
 import java.awt.Color;
 
 import org.opencraft.server.Server;
+import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 
@@ -205,7 +206,7 @@ public final class Level implements Cloneable {
       }
 
       int oldBlock = getBlock(bx, by, bz);
-      CTFGameMode ctf = World.getWorld().getGameMode();
+      GameModeAdapter gameMode = World.getWorld().getGameMode();
 
       // Turn sand into glass.
       if (oldBlock == BlockConstants.SAND) {
@@ -218,7 +219,7 @@ public final class Level implements Cloneable {
           || oldBlock == BlockConstants.SAND
           || oldBlock == BlockConstants.GLASS
           || oldBlock == BlockConstants.OBSIDIAN
-          || !ctf.isExplodableBlock(World.getWorld().getLevel(), bx, by, bz)) {
+          || gameMode.isSolidBlock(World.getWorld().getLevel(), bx, by, bz)) {
         return;
       }
 

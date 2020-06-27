@@ -39,6 +39,7 @@ package org.opencraft.server.model;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
+import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.heartbeat.HeartbeatManager;
 import org.opencraft.server.io.LevelGzipper;
@@ -83,7 +84,7 @@ public final class World {
   /** The level. */
   private Level level;
   /** The game mode. */
-  private CTFGameMode gameMode;
+  private GameModeAdapter gameMode;
 
   /** Default private constructor. */
   private World() throws InstantiationException, IllegalAccessException, ClassNotFoundException {
@@ -127,7 +128,7 @@ public final class World {
    *
    * @return The current game mode.
    */
-  public CTFGameMode getGameMode() {
+  public GameModeAdapter getGameMode() {
     return gameMode;
   }
 

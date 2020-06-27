@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
+import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.CTFPlayerUI;
 import org.opencraft.server.game.impl.GameSettings;
@@ -140,6 +141,13 @@ public class Player extends Entity {
   // STORE STUFF
   public int bigTNTRemaining = 0;
 
+  // Laser Tag
+  private int ammo;
+  private int health;
+  public boolean isDead = false;
+  public boolean isReloading = false;
+  public int reloadStep = 0;
+
   public Player(MinecraftSession session, String name) {
     this.session = session;
     this.name = name;
@@ -149,12 +157,31 @@ public class Player extends Entity {
     if (NAME_ID == 256) {
       NAME_ID = 0;
     }
-    ui = new CTFPlayerUI(World.getWorld().getGameMode(), this);
+    ui = World.getWorld().getGameMode().createPlayerUI(this);
+    setAmmo(GameSettings.getInt("Ammo"));
+    setHealth(GameSettings.getInt("Health"));
   }
 
   public boolean isVisible() {
     return !isHidden && team != -1;
   }
+
+  public int getAmmo() {
+    return ammo;
+  }
+
+  public void setAmmo(int value) {
+    this.ammo = value;
+  }
+
+  public int getHealth() {
+    return health;
+  }
+
+  public void setHealth(int value) {
+    this.health = value;
+  }
+
   public static Position getSpawnPos() {
     Level l = World.getWorld().getLevel();
     boolean done = false;
@@ -299,10 +326,6 @@ public class Player extends Entity {
 
   public void gotKill(Player defender) {
     if (defender.team == -1 || defender.team == team) return;
-    else if (World.getWorld().getGameMode().getMode() == Level.TDM) {
-      if (team == 0) World.getWorld().getGameMode().redCaptures++;
-      else World.getWorld().getGameMode().blueCaptures++;
-    }
 
     killstreak++;
     Killstats.kill(this, defender);
@@ -463,10 +486,10 @@ public class Player extends Entity {
   }
 
   public void autoJoinTeam() {
-    CTFGameMode ctf = World.getWorld().getGameMode();
+    GameModeAdapter gameMode = World.getWorld().getGameMode();
     String team;
-    if (ctf.redPlayers > ctf.bluePlayers) team = "blue";
-    else if (ctf.bluePlayers > ctf.redPlayers) team = "red";
+    if (gameMode.redPlayers > gameMode.bluePlayers) team = "blue";
+    else if (gameMode.bluePlayers > gameMode.redPlayers) team = "red";
     else {
       if (Math.random() < 0.5) team = "red";
       else team = "blue";
@@ -479,6 +502,7 @@ public class Player extends Entity {
   }
 
   public void joinTeam(String team, boolean sendMessage) {
+    if (!(team.equals("red") || team.equals("blue") || team.equals("spec"))) return;
     if (this.team == -1 && !team.equals("spec")) {
       getActionSender()
           .sendChatMessage(
@@ -491,11 +515,11 @@ public class Player extends Entity {
       isHidden = false;
     }
     Level l = World.getWorld().getLevel();
-    CTFGameMode ctf = World.getWorld().getGameMode();
-    if (ctf.voting) return;
-    if (this.team == 0) ctf.redPlayers--;
-    else if (this.team == 1) ctf.bluePlayers--;
-    int diff = ctf.redPlayers - ctf.bluePlayers;
+    GameModeAdapter gameMode = World.getWorld().getGameMode();
+    if (gameMode.voting) return;
+    if (this.team == 0) gameMode.redPlayers--;
+    else if (this.team == 1) gameMode.bluePlayers--;
+    int diff = gameMode.redPlayers - gameMode.bluePlayers;
     boolean unbalanced = false;
     if (!GameSettings.getBoolean("Tournament")) {
       if (diff >= 1 && team.equals("red")) unbalanced = true;
@@ -506,49 +530,35 @@ public class Player extends Entity {
         p.getActionSender().sendRemovePlayer(this);
       }
     }
-    boolean bad = false;
-    if (hasFlag) {
-      if (this.team == 0) {
-        ctf.blueFlagTaken = false;
-        ctf.placeBlueFlag();
-      } else {
-        ctf.redFlagTaken = false;
-        ctf.placeRedFlag();
-      }
-      hasFlag = false;
-      World.getWorld().broadcast("- " + parseName() + " dropped the flag!");
-    }
+    gameMode.playerChangedTeam(this);
     if (team.equals("red")) {
       if (this.team == -1) makeVisible();
-      if (unbalanced && ctf.redPlayers > ctf.bluePlayers) {
-        ctf.bluePlayers++;
+      if (unbalanced && gameMode.redPlayers > gameMode.bluePlayers) {
+        gameMode.bluePlayers++;
         this.team = 1;
         team = "blue";
         getActionSender().sendChatMessage("- Red team is full.");
       } else {
-        ctf.redPlayers++;
+        gameMode.redPlayers++;
         this.team = 0;
       }
     } else if (team.equals("blue")) {
       if (this.team == -1) makeVisible();
-      if (unbalanced && ctf.bluePlayers > ctf.redPlayers) {
-        ctf.redPlayers++;
+      if (unbalanced && gameMode.bluePlayers > gameMode.redPlayers) {
+        gameMode.redPlayers++;
         this.team = 0;
         team = "red";
         this.getActionSender().sendChatMessage("- Blue team is full.");
       } else {
-        ctf.bluePlayers++;
+        gameMode.bluePlayers++;
         this.team = 1;
       }
-    } else if (team.equals("spec")) {
+    } else {
       this.team = -1;
       if (duelPlayer != null) {
         duelPlayer.duelPlayer = null;
         duelPlayer = null;
       }
-    } else {
-      bad = true;
-      getActionSender().sendChatMessage("- Unrecognized team!");
     }
     clearMines();
     if (isVisible()) {
@@ -556,15 +566,13 @@ public class Player extends Entity {
         p.getActionSender().sendAddPlayer(this, p == this);
       }
     }
-    if (!bad) {
-      if (sendMessage)
-        World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
-      Position position = getTeamSpawn();
-      getActionSender().sendTeleport(position, getTeamSpawnRotation());
-      setPosition(position);
-      session.getActionSender().sendHackControl(
-          Configuration.getConfiguration().isTest() || this.team == -1);
-    }
+    if (sendMessage)
+      World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
+    Position position = getTeamSpawn();
+    getActionSender().sendTeleport(position, getTeamSpawnRotation());
+    setPosition(position);
+    session.getActionSender().sendHackControl(
+        Configuration.getConfiguration().isTest() || this.team == -1);
     if (isNewPlayer) {
       setAttribute("rules", "true");
       isNewPlayer = false;
@@ -806,8 +814,8 @@ public class Player extends Entity {
           linePosition = getPosition();
           lineRotation = getRotation();
         }
-        World.getWorld()
-            .getGameMode()
+        ((CTFGameMode)World.getWorld()
+            .getGameMode())
             .processFlamethrower(this, linePosition, lineRotation);
       }
     } else {

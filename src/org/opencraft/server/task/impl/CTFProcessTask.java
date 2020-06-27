@@ -36,7 +36,7 @@
  */
 package org.opencraft.server.task.impl;
 
-import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.GameModeAdapter;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.task.ScheduledTask;
@@ -44,7 +44,7 @@ import org.opencraft.server.task.ScheduledTask;
 public class CTFProcessTask extends ScheduledTask {
 
   private static final long DELAY = 100;
-  private static CTFGameMode ctf = World.getWorld().getGameMode();
+  private static GameModeAdapter gameMode = World.getWorld().getGameMode();
   private static World world = World.getWorld();
   private static int ticks = 0;
 
@@ -56,7 +56,7 @@ public class CTFProcessTask extends ScheduledTask {
     for (Player player : world.getPlayerList().getPlayers()) {
       player.step(ticks);
     }
-    ctf.step();
+    gameMode.step();
 
     ticks++;
     if (ticks == 10) {
