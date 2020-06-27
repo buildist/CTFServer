@@ -36,7 +36,7 @@
  */
 package org.opencraft.server.task.impl;
 
-import org.opencraft.server.game.GameModeAdapter;
+import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.task.ScheduledTask;
@@ -44,7 +44,7 @@ import org.opencraft.server.task.ScheduledTask;
 public class CTFProcessTask extends ScheduledTask {
 
   private static final long DELAY = 100;
-  private static GameModeAdapter gameMode = World.getWorld().getGameMode();
+  private static GameMode gameMode = World.getWorld().getGameMode();
   private static World world = World.getWorld();
   private static int ticks = 0;
 

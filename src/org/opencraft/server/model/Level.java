@@ -47,13 +47,10 @@ import com.flowpowered.nbt.stream.NBTInputStream;
 import java.awt.Color;
 
 import org.opencraft.server.Server;
-import org.opencraft.server.game.GameModeAdapter;
-import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.GameSettings;
 
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,14 +58,12 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.TreeSet;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
-import java.util.zip.GZIPInputStream;
 import org.opencraft.server.Constants;
 
 /**
@@ -206,7 +201,7 @@ public final class Level implements Cloneable {
       }
 
       int oldBlock = getBlock(bx, by, bz);
-      GameModeAdapter gameMode = World.getWorld().getGameMode();
+      GameMode gameMode = World.getWorld().getGameMode();
 
       // Turn sand into glass.
       if (oldBlock == BlockConstants.SAND) {

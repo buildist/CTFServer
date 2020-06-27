@@ -40,7 +40,7 @@ import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.impl.RCommand;
-import org.opencraft.server.game.GameModeAdapter;
+import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.BlockLog;
 import org.opencraft.server.model.BlockLog.BlockInfo;
@@ -58,7 +58,7 @@ import org.opencraft.server.persistence.SavePersistenceRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class LaserTagGameMode extends GameModeAdapter<Player> {
+public class LaserTagGameMode extends GameMode {
 
   private static final ArrayList<TempEntity> entities = new ArrayList<>(127);
 

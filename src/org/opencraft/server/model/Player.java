@@ -41,7 +41,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
-import org.opencraft.server.game.GameModeAdapter;
+import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.CTFPlayerUI;
 import org.opencraft.server.game.impl.GameSettings;
@@ -486,7 +486,7 @@ public class Player extends Entity {
   }
 
   public void autoJoinTeam() {
-    GameModeAdapter gameMode = World.getWorld().getGameMode();
+    GameMode gameMode = World.getWorld().getGameMode();
     String team;
     if (gameMode.redPlayers > gameMode.bluePlayers) team = "blue";
     else if (gameMode.bluePlayers > gameMode.redPlayers) team = "red";
@@ -515,7 +515,7 @@ public class Player extends Entity {
       isHidden = false;
     }
     Level l = World.getWorld().getLevel();
-    GameModeAdapter gameMode = World.getWorld().getGameMode();
+    GameMode gameMode = World.getWorld().getGameMode();
     if (gameMode.voting) return;
     if (this.team == 0) gameMode.redPlayers--;
     else if (this.team == 1) gameMode.bluePlayers--;

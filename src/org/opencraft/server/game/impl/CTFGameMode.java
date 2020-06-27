@@ -44,7 +44,7 @@ import org.opencraft.server.cmd.impl.DefuseTNTCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
 import org.opencraft.server.cmd.impl.FlamethrowerCommand;
 import org.opencraft.server.cmd.impl.TntCommand;
-import org.opencraft.server.game.GameModeAdapter;
+import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.BlockLog;
 import org.opencraft.server.model.BlockLog.BlockInfo;
@@ -65,7 +65,7 @@ import org.opencraft.server.persistence.SavePersistenceRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CTFGameMode extends GameModeAdapter<Player> {
+public class CTFGameMode extends GameMode {
 
   public int redFlagX;
   public int redFlagY;
