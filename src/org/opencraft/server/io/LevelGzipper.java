@@ -117,6 +117,28 @@ public final class LevelGzipper {
                 session.getActionSender().sendBlockPermissions(type, false, false);
               }
 
+              session.getActionSender().sendDefineEffect(
+                  Constants.EFFECT_TNT,
+                  0,
+                  0,
+                  1,
+                  1,
+                  255,
+                  255,
+                  255,
+                  1,
+                  100,
+                  2,
+                  0,
+                  32,
+                  20000,
+                  5 * 10000,
+                  1 * 10000,
+                  2000,
+                  0b00000000,
+                  1
+              );
+
               session.getPlayer().getLocalEntities().clear();
             } catch (IOException ex) {
               session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");

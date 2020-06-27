@@ -87,11 +87,12 @@ public final class Constants {
     "FullCP437",
     "TextHotKey",
     "EnvMapAspect",
+    "CustomParticles",
   };
 
   // CPE versions
   public static final int[] CPE_EXT_VERSIONS =
-      {1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+      {1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
   public static final int COLOR_CLOUD = 1;
@@ -159,6 +160,8 @@ public final class Constants {
   public static final int BLOCK_DRAW_TRANSLUCENT = 3;
   public static final int BLOCK_DRAW_GAS = 4;
   public static final int BLOCK_DRAW_SPRITE = 5;
+
+  public static final int EFFECT_TNT = 0;
 
   public static final String[] MAP_EXTENSIONS = new String[] {"dat", "lvl", "cw"};
 

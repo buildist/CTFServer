@@ -27,6 +27,7 @@ public class TexturePackHandler {
       }
 
       File fontFile = new File("texturepack_patch/default.png");
+      File particlesFile = new File("texturepack_patch/particles.png");
 
       ZipFile in = new ZipFile(texturePackFile);
       ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outputFile));
@@ -37,6 +38,9 @@ public class TexturePackHandler {
         switch (entry.getName()) {
           case "default.png":
             Files.copy(fontFile.toPath(), out);
+            break;
+          case "particles.png":
+            Files.copy(particlesFile.toPath(), out);
             break;
           default:
             DataInputStream dataIn = new DataInputStream(in.getInputStream(entry));

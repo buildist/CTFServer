@@ -226,6 +226,13 @@ public class CTFGameMode extends GameModeAdapter<Player> {
                     + (type == null ? "" : " &f(" + type + ")"));
       }
     }
+
+    /*for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+      int ex = x  * 32 + 16;
+      int ez = y  * 32 + 16;
+      int ey = z  * 32 + 16;
+      player.getActionSender().sendSpawnEffect(Constants.EFFECT_TNT, ex, ey, ez, ex, ey, ez);
+    }*/
   }
 
   @Override

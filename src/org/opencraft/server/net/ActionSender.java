@@ -728,6 +728,70 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
+  public void sendDefineEffect(
+      int id,
+      int u1,
+      int u2,
+      int v1,
+      int v2,
+      int r,
+      int g,
+      int b,
+      int frameCount,
+      int particleCount,
+      int size,
+      int sizeVariation,
+      int spread,
+      int speed,
+      int gravity,
+      int lifetime,
+      int lifetimeVariation,
+      int collide,
+      int fullBright) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(48));
+    bldr.putByte("id", id);
+    bldr.putByte("u1", u1);
+    bldr.putByte("v1", v1);
+    bldr.putByte("u2", u2);
+    bldr.putByte("v2", v2);
+    bldr.putByte("r", r);
+    bldr.putByte("g", g);
+    bldr.putByte("b", b);
+    bldr.putByte("frame_count", frameCount);
+    bldr.putByte("particle_count", particleCount);
+    bldr.putByte("size", size);
+    bldr.putInt("size_variation", sizeVariation);
+    bldr.putShort("spread", spread);
+    bldr.putInt("speed", speed);
+    bldr.putInt("gravity", gravity);
+    bldr.putInt("lifetime", lifetime);
+    bldr.putInt("lifetime_variation", lifetimeVariation);
+    bldr.putByte("collide", collide);
+    bldr.putByte("full_bright", fullBright);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendSpawnEffect(
+      int id,
+      int posX,
+      int posY,
+      int posZ,
+      int originX,
+      int originY,
+      int originZ) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(49));
+    bldr.putByte("id", id);
+    bldr.putInt("pos_x", posX);
+    bldr.putInt("pos_y", posY);
+    bldr.putInt("pos_z", posZ);
+    bldr.putInt("origin_x", originX);
+    bldr.putInt("origin_y", originY);
+    bldr.putInt("origin_z", originZ);
+    session.send(bldr.toPacket());
+  }
+
   /**
    * Sends a chat message.
    *
