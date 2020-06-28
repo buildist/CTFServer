@@ -36,10 +36,17 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import com.google.common.base.Joiner;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
+
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+
+import java.util.HashMap;
 
 /**
  * Official /say command
@@ -62,10 +69,14 @@ public class ClientsCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    String message = "";
+    Multimap<String, String> clientToUsers = HashMultimap.create();
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      message += p.parseName() + ": " + p.getSession().client + ", ";
+      clientToUsers.put(p.getSession().client, p.getName());
     }
-    player.getActionSender().sendChatMessage("- " + message);
+    player.getActionSender().sendChatMessage("&ePlayers using:");
+    for (String client : clientToUsers.keySet()) {
+      player.getActionSender().sendChatMessage(
+          "&e  " + client + ": &f" + Joiner.on(", ").join(clientToUsers.get(client)));
+    }
   }
 }

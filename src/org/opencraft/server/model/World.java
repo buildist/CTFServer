@@ -333,7 +333,7 @@ public final class World {
     Server.log(player.getName() + " [opchat]:  " + text);
     for (Player t : World.getWorld().getPlayerList().getPlayers()) {
       if (t.isOp()) {
-        t.getActionSender().sendChatMessage("[OP] " + player.getColoredName() + "&f> " + text);
+        t.getActionSender().sendChatMessage("[OP] " + player.getColoredName() + "&f: " + text);
       }
     }
   }
@@ -343,7 +343,7 @@ public final class World {
       Server.log(player.getName() + " [team]:  " + text);
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
         if (t.team == player.team && !t.isIgnored(player)) {
-          t.getActionSender().sendChatMessage("[Team] " + player.getColoredName() + "&f> " + text);
+          t.getActionSender().sendChatMessage("[Team] " + player.getColoredName() + "&f: " + text);
         }
       }
     }
@@ -356,7 +356,7 @@ public final class World {
     }
     for (Player t : World.getWorld().getPlayerList().getPlayers()) {
       if (!t.isIgnored(player)) {
-        t.getActionSender().sendChatMessage(chr + player.getName() + "&f> " + message);
+        t.getActionSender().sendChatMessage(chr + player.getName() + "&f: " + message);
       }
     }
   }

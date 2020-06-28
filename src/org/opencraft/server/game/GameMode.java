@@ -169,6 +169,7 @@ public abstract class GameMode {
     registerCommand("blue", BlueCommand.getCommand());
     registerCommand("bounty", BountyCommand.getCommand());
     registerCommand("c", ChatCommand.getCommand());
+    registerCommand("clients", ClientsCommand.getCommand());
     registerCommand("commands", HelpCommand.getCommand());
     registerCommand("deop", DeOperatorCommand.getCommand());
     registerCommand("devip", DeVIPCommand.getCommand());
@@ -229,7 +230,6 @@ public abstract class GameMode {
     registerCommand("tp", TeleportCommand.getCommand());
     registerCommand("unban", UnbanCommand.getCommand());
     registerCommand("unbanip", UnbanIPCommand.getCommand());
-    registerCommand("users", ClientsCommand.getCommand());
     registerCommand("vip", VIPCommand.getCommand());
     registerCommand("vote", VoteCommand.getCommand());
     registerCommand("water", WaterCommand.getCommand());
