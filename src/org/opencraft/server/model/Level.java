@@ -593,20 +593,29 @@ public final class Level implements Cloneable {
           ? ((ByteArrayTag) classicWorld.get("BlockArray2")).getValue()
           : null;
 
+      boolean hasMetadata =
+          ((CompoundTag) classicWorld.get("Metadata")).getValue().containsKey("CPE");
+
       CompoundMap spawn = ((CompoundTag) classicWorld.get("Spawn")).getValue();
       int spawnX = ((ShortTag) spawn.get("X")).getValue();
       int spawnY = ((ShortTag) spawn.get("Y")).getValue();
       int spawnZ = ((ShortTag) spawn.get("Z")).getValue();
       int spawnH = ((ByteTag) spawn.get("H")).getValue();
       int spawnP = ((ByteTag) spawn.get("P")).getValue();
-      this.spawnPosition = new Position(spawnX * 32 + 16, spawnZ * 32 + 16, spawnY * 32 + 16);
+      if (!hasMetadata) { // fix for fCraft converted maps
+        this.spawnPosition = new Position(spawnX, spawnY, spawnZ);
+      } else {
+        this.spawnPosition = new Position(spawnX * 32 + 16, spawnZ * 32 + 16, spawnY * 32 + 16);
+      }
       this.spawnRotation = new Rotation(spawnH, spawnP);
 
       Server.log("Loading map: " + id);
       loadProps();
 
       loadBlocks(tmpBlocks, tmpBlocks2);
-      loadMetadata(((CompoundTag) classicWorld.get("Metadata")).getValue());
+      if (hasMetadata) {
+        loadMetadata(((CompoundTag) classicWorld.get("Metadata")).getValue());
+      }
 
     } catch (IOException ex) {
       ex.printStackTrace();
