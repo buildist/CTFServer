@@ -96,6 +96,7 @@ import org.opencraft.server.cmd.impl.RestartCommand;
 import org.opencraft.server.cmd.impl.RulesCommand;
 import org.opencraft.server.cmd.impl.SayCommand;
 import org.opencraft.server.cmd.impl.SetCommand;
+import org.opencraft.server.cmd.impl.SetspawnCommand;
 import org.opencraft.server.cmd.impl.SolidCommand;
 import org.opencraft.server.cmd.impl.SpecCommand;
 import org.opencraft.server.cmd.impl.StartCommand;
@@ -219,6 +220,7 @@ public abstract class GameMode {
     registerCommand("rules", RulesCommand.getCommand());
     registerCommand("say", SayCommand.getCommand());
     registerCommand("set", SetCommand.getCommand());
+    registerCommand("setspawn", SetspawnCommand.getCommand());
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
     registerCommand("start", StartCommand.getCommand());
