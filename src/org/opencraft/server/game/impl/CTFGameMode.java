@@ -377,6 +377,7 @@ public class CTFGameMode extends GameMode {
   public void placeRedFlag() {
     if (getMode() == Level.CTF) {
       World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, Constants.BLOCK_RED_FLAG);
+      World.getWorld().getLevel().clearSolidBlock(redFlagX, redFlagZ, redFlagY);
     }
   }
 
@@ -385,6 +386,7 @@ public class CTFGameMode extends GameMode {
       World.getWorld()
           .getLevel()
           .setBlock(blueFlagX, blueFlagZ, blueFlagY, Constants.BLOCK_BLUE_FLAG);
+      World.getWorld().getLevel().clearSolidBlock(blueFlagX, blueFlagZ, blueFlagY);
     }
   }
 

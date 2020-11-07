@@ -664,6 +664,10 @@ public final class Level implements Cloneable {
     }
   }
 
+  public void clearSolidBlock(int x, int y, int z) {
+    solidBlocks[x][y][z] = false;
+  }
+
   private void loadMetadata(CompoundMap metadata) {
     CompoundMap cpe = ((CompoundTag) metadata.get("CPE")).getValue();
 
