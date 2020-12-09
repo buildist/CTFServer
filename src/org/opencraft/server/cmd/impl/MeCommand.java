@@ -55,6 +55,8 @@ public class MeCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
+    if (player.muted) return;
+
     String text = "";
     for (int i = 0; i < params.getArgumentCount(); i++) {
       text += " " + params.getStringArgument(i);

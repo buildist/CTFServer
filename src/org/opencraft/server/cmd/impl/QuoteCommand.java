@@ -73,6 +73,8 @@ public class QuoteCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
+    if (player.muted) return;
+
     if (params.getArgumentCount() == 0) {
       String quote = quotes.get((int) (Math.random() * quotes.size()));
       World.getWorld().broadcast(">> &3" + quote);
