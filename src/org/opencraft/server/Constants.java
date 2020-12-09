@@ -162,6 +162,7 @@ public final class Constants {
   public static final int BLOCK_DRAW_SPRITE = 5;
 
   public static final int EFFECT_TNT = 0;
+  public static final int EFFECT_TNT_2 = 1;
 
   public static final String[] MAP_EXTENSIONS = new String[] {"dat", "lvl", "cw"};
 
