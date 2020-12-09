@@ -416,6 +416,7 @@ public abstract class GameMode {
                   player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
                 }
               }
+              clearDropItems();
               World.getWorld().clearMines();
               startNewMap = null;
               blockSpawnX = (map.getSpawnPosition().getX() - 16) / 32;
@@ -675,6 +676,10 @@ public abstract class GameMode {
 
   public void step() {
     pruneKillFeed();
+  }
+
+  private void clearDropItems() {
+    items.clear();
   }
 
   public void addDropItem(DropItem i) {
