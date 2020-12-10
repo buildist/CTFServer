@@ -151,6 +151,15 @@ public final class World {
   }
 
   public void setLevel(Level l) {
+    if (level != null) {
+      // Clear solid types for next map
+      for (int id : level.usedSolidTypes) {
+        for (Player p : getPlayerList().getPlayers()) {
+          p.getActionSender().sendBlockPermissions(id, true, true);
+        }
+      }
+    }
+
     level = l;
     BlockLog.clear();
     for (Player player : World.getWorld().getPlayerList().getPlayers()) {
