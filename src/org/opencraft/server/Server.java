@@ -119,6 +119,7 @@ public final class Server {
     log("Creating world...");
     World.getWorld();
     acceptor.setHandler(new SessionHandler());
+    acceptor.getSessionConfig().setTcpNoDelay(true);
     TaskQueue.getTaskQueue().schedule(new UpdateTask());
     TaskQueue.getTaskQueue().schedule(new CTFProcessTask());
     TaskQueue.getTaskQueue().schedule(new HeartbeatTask());
