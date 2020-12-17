@@ -60,7 +60,7 @@ public final class LevelGzipper {
   private ExecutorService service = Executors.newCachedThreadPool();
 
   private static final int[] DEFAULT_RESTRICTED_BLOCKS = new int[]{
-      7, 8, 10, Constants.HIT_RED, Constants.HIT_BLUE, Constants.LASER_RED, Constants.LASER_BLUE};
+      7, 8, 10, Constants.HIT_RED, Constants.HIT_BLUE, Constants.LASER_RED, Constants.LASER_BLUE, 60};
 
   public static LevelGzipper getLevelGzipper() {
     return INSTANCE;
