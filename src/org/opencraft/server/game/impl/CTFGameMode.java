@@ -654,7 +654,7 @@ public class CTFGameMode extends GameMode {
       World.getWorld().broadcast("- " + p.parseName() + " dropped the flag!");
       sendAnnouncement(p.parseName() + " dropped the flag!");
       Position playerPos = p.getPosition().toBlockPos();
-      final boolean _antiStalemate = this.antiStalemate;
+      final boolean _antiStalemate = this.antiStalemate || (redFlagTaken && blueFlagTaken);
       if (p.team == 0) {
         blueFlagTaken = false;
         blueFlagDropped = true;
