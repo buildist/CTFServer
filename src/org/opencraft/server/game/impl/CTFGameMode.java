@@ -426,7 +426,8 @@ public class CTFGameMode extends GameMode {
       player.hasFlag = false;
       player.hasTNT = false;
       player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-      player.currentRoundPoints = 0;
+      player.currentRoundPointsEarned = 0;
+      player.setPoints(GameSettings.getInt("InitialPoints"));
     }
 
     redFlagTaken = false;
@@ -536,7 +537,7 @@ public class CTFGameMode extends GameMode {
                   break;
                 }
                 World.getWorld()
-                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPoints);
+                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned);
               }
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;

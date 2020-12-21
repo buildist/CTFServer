@@ -43,7 +43,6 @@ import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.CTFGameMode;
-import org.opencraft.server.game.impl.CTFPlayerUI;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.net.ActionSender;
 import org.opencraft.server.net.MinecraftSession;
@@ -51,7 +50,6 @@ import org.opencraft.server.net.PingList;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -101,7 +99,7 @@ public class Player extends Entity {
   public long rocketTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
-  public int currentRoundPoints = 0;
+  public int currentRoundPointsEarned = 0;
   public Player duelChallengedBy = null;
   public Player duelPlayer = null;
   public int duelKills = 0;
@@ -124,6 +122,7 @@ public class Player extends Entity {
   public final PingList pingList = new PingList();
   private final PlayerUI ui;
   public Position safePosition = new Position(0, 0, 0);
+  private int currentRoundPoints = Constants.INITIAL_PLAYER_POINTS;
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();
@@ -160,6 +159,7 @@ public class Player extends Entity {
     ui = World.getWorld().getGameMode().createPlayerUI(this);
     setAmmo(GameSettings.getInt("Ammo"));
     setHealth(GameSettings.getInt("Health"));
+    setPoints(GameSettings.getInt("InitialPoints"));
   }
 
   public boolean isVisible() {
@@ -652,29 +652,20 @@ public class Player extends Entity {
   }
 
   public void addPoints(int n) {
-    if (getAttribute("points") == null) {
-      setAttribute("points", 0);
-    }
+    currentRoundPointsEarned += n;
     currentRoundPoints += n;
-    setAttribute("points", (Integer) getAttribute("points") + n);
   }
 
   public int getPoints() {
-    return (Integer) getAttribute("points");
+    return currentRoundPoints;
   }
 
   public void setPoints(int n) {
-    if (getAttribute("points") == null) {
-      setAttribute("points", 0);
-    }
-    setAttribute("points", n);
+    currentRoundPoints = n;
   }
 
   public void subtractPoints(int n) {
-    if (getAttribute("points") == null) {
-      setAttribute("points", 0);
-    }
-    setAttribute("points", (Integer) getAttribute("points") - n);
+    currentRoundPoints -= n;
   }
 
   public void kickForHacking() {
@@ -781,7 +772,7 @@ public class Player extends Entity {
   }
 
   public String getListName() {
-    String listName = (getColoredName() + "    &f" + currentRoundPoints);
+    String listName = (getColoredName() + "    &f" + currentRoundPointsEarned);
     return listName.substring(0, Math.min(64, listName.length()));
   }
 

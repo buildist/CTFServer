@@ -411,7 +411,8 @@ public abstract class GameMode {
                 player.team = -1;
                 player.hasVoted = false;
                 player.hasNominated = false;
-                player.currentRoundPoints = 0;
+                player.currentRoundPointsEarned = 0;
+                player.setPoints(GameSettings.getInt("InitialPoints"));
                 for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
                   player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
                 }
@@ -466,7 +467,7 @@ public abstract class GameMode {
     HashMap<Integer, Player> leaderboard = new HashMap<Integer, Player>(16);
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.team != -1) {
-        leaderboard.put(p.currentRoundPoints, p);
+        leaderboard.put(p.currentRoundPointsEarned, p);
       }
     }
 

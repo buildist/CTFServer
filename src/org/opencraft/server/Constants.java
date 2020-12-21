@@ -178,4 +178,5 @@ public final class Constants {
   public static int SAFE_TIME = 3000;
 
   public static final int FLAME_THROWER_FUEL = 10000;
+  public static final int INITIAL_PLAYER_POINTS = 100;
 }
