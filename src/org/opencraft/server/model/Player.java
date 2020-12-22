@@ -195,7 +195,9 @@ public class Player extends Entity {
 
       for (z = l.ceiling - 4; z > 0; z--) {
         block = l.getBlock(x, y, z);
-        if (block != 0) break;
+        if (block != 0) {
+          break;
+        }
       }
       if (block != 0) {
         done = true;
@@ -209,13 +211,17 @@ public class Player extends Entity {
   public static Player getPlayer(String name, ActionSender source) {
     Player player = null;
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.getName().toLowerCase().equals(name.toLowerCase())) return p;
+      if (p.getName().toLowerCase().equals(name.toLowerCase())) {
+        return p;
+      }
       if (p.getName().toLowerCase().contains(name.toLowerCase())) {
-        if (player == null) player = p;
-        else {
+        if (player == null) {
+          player = p;
+        } else {
           player = null;
-          if (source != null)
+          if (source != null) {
             source.sendChatMessage("- &e\"" + name + "\" matches multiple players.");
+          }
           break;
         }
       }
@@ -245,14 +251,20 @@ public class Player extends Entity {
   public static String getAttributeFor(String name, String k, ActionSender source) {
     Player player = getPlayer(name, source);
     if (player != null) {
-      if (player.getAttribute(k) == null) return null;
-      else return player.getAttribute(k).toString();
+      if (player.getAttribute(k) == null) {
+        return null;
+      } else {
+        return player.getAttribute(k).toString();
+      }
     } else {
       Player p = new Player(null, name);
       try {
         new LoadPersistenceRequest(p).perform();
-        if (p.getAttribute(k) == null) return null;
-        else return p.getAttribute(k).toString();
+        if (p.getAttribute(k) == null) {
+          return null;
+        } else {
+          return p.getAttribute(k).toString();
+        }
       } catch (Exception e) {
         source.sendChatMessage("- &eError getting attribute: " + e.toString());
         Server.log(e);
@@ -299,7 +311,9 @@ public class Player extends Entity {
   }
 
   public void toggleFlameThrower() {
-    if (team == -1) return;
+    if (team == -1) {
+      return;
+    }
 
     if (isFlamethrowerEnabled()) {
       disableFlameThrower();
@@ -325,13 +339,16 @@ public class Player extends Entity {
   }
 
   public void gotKill(Player defender) {
-    if (defender.team == -1 || defender.team == team) return;
+    if (defender.team == -1 || defender.team == team) {
+      return;
+    }
 
     killstreak++;
     Killstats.kill(this, defender);
-    if (killstreak % 5 == 0)
+    if (killstreak % 5 == 0) {
       World.getWorld()
           .broadcast("- " + getColoredName() + " &bhas a killstreak of " + killstreak + "!");
+    }
     setIfMax("maxKillstreak", killstreak);
     if (duelPlayer == defender) {
       duelKills++;
@@ -360,8 +377,9 @@ public class Player extends Entity {
   }
 
   public void follow(final Player p) {
-    if (p == null && followThread != null) follow.set(false);
-    else if (p != null) {
+    if (p == null && followThread != null) {
+      follow.set(false);
+    } else if (p != null) {
       if (followThread != null) {
         follow.set(false);
         followThread.interrupt();
@@ -390,7 +408,7 @@ public class Player extends Entity {
   }
 
   public void died(Player attacker) {
-    if (killstreak >= 10)
+    if (killstreak >= 10) {
       World.getWorld()
           .broadcast(
               "- "
@@ -399,6 +417,7 @@ public class Player extends Entity {
                   + getColoredName()
                   + "&b's killstreak of "
                   + killstreak);
+    }
     killstreak = 0;
     attacker.setIfMax("maxKillstreakEnded", killstreak);
     incStat("deaths");
@@ -448,20 +467,28 @@ public class Player extends Entity {
 
   public String getNameChar() {
     if (isOp()) {
-      if (team == 0) return "&4";
-      else if (team == 1) return "&1";
-      else return "&8";
+      if (team == 0) {
+        return "&4";
+      } else if (team == 1) {
+        return "&1";
+      } else {
+        return "&8";
+      }
     } else {
-      if (team == 0) return "&c";
-      else if (team == 1) return "&9";
-      else return "&7";
+      if (team == 0) {
+        return "&c";
+      } else if (team == 1) {
+        return "&9";
+      } else {
+        return "&7";
+      }
     }
   }
 
   public boolean isVIP() {
     return (!GameSettings.getBoolean("Tournament")
-            && getAttribute("VIP") != null
-            && getAttribute("VIP").equals("true"))
+        && getAttribute("VIP") != null
+        && getAttribute("VIP").equals("true"))
         || isOp();
   }
 
@@ -475,24 +502,33 @@ public class Player extends Entity {
 
   public void makeInvisible() {
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (this != p) p.getActionSender().sendRemoveEntity(instance);
+      if (this != p) {
+        p.getActionSender().sendRemoveEntity(instance);
+      }
     }
   }
 
   public void makeVisible() {
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (this != p) p.getActionSender().sendExtSpawn(instance);
+      if (this != p) {
+        p.getActionSender().sendExtSpawn(instance);
+      }
     }
   }
 
   public void autoJoinTeam() {
     GameMode gameMode = World.getWorld().getGameMode();
     String team;
-    if (gameMode.redPlayers > gameMode.bluePlayers) team = "blue";
-    else if (gameMode.bluePlayers > gameMode.redPlayers) team = "red";
-    else {
-      if (Math.random() < 0.5) team = "red";
-      else team = "blue";
+    if (gameMode.redPlayers > gameMode.bluePlayers) {
+      team = "blue";
+    } else if (gameMode.bluePlayers > gameMode.redPlayers) {
+      team = "red";
+    } else {
+      if (Math.random() < 0.5) {
+        team = "red";
+      } else {
+        team = "blue";
+      }
     }
     joinTeam(team);
   }
@@ -502,7 +538,9 @@ public class Player extends Entity {
   }
 
   public void joinTeam(String team, boolean sendMessage) {
-    if (!(team.equals("red") || team.equals("blue") || team.equals("spec"))) return;
+    if (!(team.equals("red") || team.equals("blue") || team.equals("spec"))) {
+      return;
+    }
     if (this.team == -1 && !team.equals("spec")) {
       getActionSender()
           .sendChatMessage(
@@ -516,14 +554,22 @@ public class Player extends Entity {
     }
     Level l = World.getWorld().getLevel();
     GameMode gameMode = World.getWorld().getGameMode();
-    if (gameMode.voting) return;
-    if (this.team == 0) gameMode.redPlayers--;
-    else if (this.team == 1) gameMode.bluePlayers--;
+    if (gameMode.voting) {
+      return;
+    }
+    if (this.team == 0) {
+      gameMode.redPlayers--;
+    } else if (this.team == 1) {
+      gameMode.bluePlayers--;
+    }
     int diff = gameMode.redPlayers - gameMode.bluePlayers;
     boolean unbalanced = false;
     if (!GameSettings.getBoolean("Tournament")) {
-      if (diff >= 1 && team.equals("red")) unbalanced = true;
-      else if (diff <= -1 && team.equals("blue")) unbalanced = true;
+      if (diff >= 1 && team.equals("red")) {
+        unbalanced = true;
+      } else if (diff <= -1 && team.equals("blue")) {
+        unbalanced = true;
+      }
     }
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p != this) {
@@ -532,7 +578,9 @@ public class Player extends Entity {
     }
     gameMode.playerChangedTeam(this);
     if (team.equals("red")) {
-      if (this.team == -1) makeVisible();
+      if (this.team == -1) {
+        makeVisible();
+      }
       if (unbalanced && gameMode.redPlayers > gameMode.bluePlayers) {
         gameMode.bluePlayers++;
         this.team = 1;
@@ -543,7 +591,9 @@ public class Player extends Entity {
         this.team = 0;
       }
     } else if (team.equals("blue")) {
-      if (this.team == -1) makeVisible();
+      if (this.team == -1) {
+        makeVisible();
+      }
       if (unbalanced && gameMode.bluePlayers > gameMode.redPlayers) {
         gameMode.redPlayers++;
         this.team = 0;
@@ -566,8 +616,9 @@ public class Player extends Entity {
         p.getActionSender().sendAddPlayer(this, p == this);
       }
     }
-    if (sendMessage)
+    if (sendMessage) {
       World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
+    }
     Position position = getTeamSpawn();
     getActionSender().sendTeleport(position, getTeamSpawnRotation());
     setPosition(position);
@@ -634,8 +685,11 @@ public class Player extends Entity {
 
   public void sendToTeamSpawn() {
     // If player dies while flamethrower is on, don't leave remnants on the map.
-    if (isFlamethrowerEnabled()) World.getWorld().getLevel().clearFire(linePosition, lineRotation);
-    getActionSender().sendTeleport(getTeamSpawn(), new Rotation(team == 0 ? 64 : 192, 0));  }
+    if (isFlamethrowerEnabled()) {
+      World.getWorld().getLevel().clearFire(linePosition, lineRotation);
+    }
+    getActionSender().sendTeleport(getTeamSpawn(), new Rotation(team == 0 ? 64 : 192, 0));
+  }
 
   public Position getTeamSpawn() {
     if (World.getWorld().getLevel().mode == Level.TDM) {
@@ -677,10 +731,10 @@ public class Player extends Entity {
   /**
    * Sets an attribute of this player.
    *
-   * @param name The name of the attribute.
+   * @param name  The name of the attribute.
    * @param value The value of the attribute.
    * @return The old value of the attribute, or <code>null</code> if there was no previous attribute
-   *     with that name.
+   * with that name.
    */
   public Object setAttribute(String name, Object value) {
     return attributes.put(name, value);
@@ -711,7 +765,7 @@ public class Player extends Entity {
    *
    * @param name The name of the attribute.
    * @return The old value of the attribute, or <code>null</code> if an attribute with that name did
-   *     not exist.
+   * not exist.
    */
   public Object removeAttribute(String name) {
     return attributes.remove(name);
@@ -727,7 +781,7 @@ public class Player extends Entity {
   }
 
   public String getListName() {
-    String listName = (getColoredName()+"    &f"+currentRoundPoints);
+    String listName = (getColoredName() + "    &f" + currentRoundPoints);
     return listName.substring(0, Math.min(64, listName.length()));
   }
 
@@ -756,8 +810,11 @@ public class Player extends Entity {
    * @return The action sender.
    */
   public ActionSender getActionSender() {
-    if (session != null) return session.getActionSender();
-    else return actionSender;
+    if (session != null) {
+      return session.getActionSender();
+    } else {
+      return actionSender;
+    }
   }
 
   public void setActionSender(ActionSender actionSender) {
@@ -801,13 +858,14 @@ public class Player extends Entity {
       if (isFlamethrowerEnabled()) {
         if (!getPosition().equals(linePosition)
             || !getRotation().equals(lineRotation)) {
-          if (linePosition != null)
+          if (linePosition != null) {
             World.getWorld().getLevel().clearFire(linePosition, lineRotation);
+          }
           World.getWorld().getLevel().drawFire(getPosition(), getRotation());
           linePosition = getPosition();
           lineRotation = getRotation();
         }
-        ((CTFGameMode)World.getWorld()
+        ((CTFGameMode) World.getWorld()
             .getGameMode())
             .processFlamethrower(this, linePosition, lineRotation);
       }
@@ -859,7 +917,7 @@ public class Player extends Entity {
 
   public boolean canKill(Player p, boolean sendMessage) {
     if (duelPlayer != null && p != duelPlayer) {
-      if (sendMessage)
+      if (sendMessage) {
         getActionSender()
             .sendChatMessage(
                 "- &eYou can't kill "
@@ -868,9 +926,10 @@ public class Player extends Entity {
                     + " dueling "
                     + duelPlayer.parseName()
                     + ". Only they can hurt you right now.");
+      }
       return false;
     } else if (duelPlayer == null && p.duelPlayer != null) {
-      if (sendMessage)
+      if (sendMessage) {
         getActionSender()
             .sendChatMessage(
                 "- &eYou can't kill "
@@ -880,16 +939,11 @@ public class Player extends Entity {
                     + p.duelPlayer.parseName()
                     + ". They can't capture your flag or kill "
                     + "anyone else right now.");
-      return false;
-    } else if (p.team == -1) {
-      if (sendMessage) {
-        getActionSender()
-            .sendChatMessage(
-                "- &eYou can't kill " + p.parseName() + " since they " + "are spectating.");
       }
       return false;
     } else {
-      return true;
+      // no point in sending a message anymore as specs are invisible
+      return p.team != -1;
     }
   }
 
