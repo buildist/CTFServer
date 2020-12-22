@@ -76,7 +76,7 @@ public class LeaderBoardCommand implements Command {
                 + ". "
                 + topPlayers[i].getColoredName()
                 + " &f- "
-                + topPlayers[i].currentRoundPoints;
+                + topPlayers[i].currentRoundPointsEarned;
         player.getActionSender().sendChatMessage(msg);
       }
     }

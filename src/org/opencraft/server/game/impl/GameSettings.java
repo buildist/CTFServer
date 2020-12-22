@@ -1,6 +1,7 @@
 package org.opencraft.server.game.impl;
 
 import java.util.HashMap;
+import org.opencraft.server.Constants;
 
 public class GameSettings {
   private static final int TYPE_INT = 0;
@@ -26,6 +27,7 @@ public class GameSettings {
     add("Health", TYPE_INT, 24); // number of hits taken before having to resupply
     add("ReloadStep", TYPE_INT, 3);
     add("AntiStalemate", TYPE_BOOLEAN, false);
+    add("InitialPoints", TYPE_INT, Constants.INITIAL_PLAYER_POINTS);
   }
 
   public static Object get(String k) {

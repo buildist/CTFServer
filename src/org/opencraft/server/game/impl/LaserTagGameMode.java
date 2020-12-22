@@ -122,7 +122,8 @@ public class LaserTagGameMode extends GameMode {
   @Override
   protected void resetGameMode() {
     for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-      player.currentRoundPoints = 0;
+      player.currentRoundPointsEarned = 0;
+      player.setPoints(GameSettings.getInt("InitialPoints"));
       player.setHealth(GameSettings.getInt("Health"));
       player.setAmmo(GameSettings.getInt("Ammo"));
     }
@@ -166,9 +167,9 @@ public class LaserTagGameMode extends GameMode {
               int bluePoints = 0;
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
                 if (p.team == 0) {
-                  redPoints += p.currentRoundPoints;
+                  redPoints += p.currentRoundPointsEarned;
                 } else if (p.team == 1) {
-                  bluePoints += p.currentRoundPoints;
+                  bluePoints += p.currentRoundPointsEarned;
                 }
               }
 
@@ -216,7 +217,7 @@ public class LaserTagGameMode extends GameMode {
                   break;
                 }
                 World.getWorld()
-                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPoints);
+                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned);
               }
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
