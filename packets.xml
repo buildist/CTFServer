@@ -1120,5 +1120,19 @@ Z        <field>
               </field>
           </fields>
       </packet>
+      <packet>
+          <opcode>45</opcode>
+          <name>set_hotbar</name>
+          <fields>
+              <field>
+                  <name>id</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>index</name>
+                  <type>BYTE</type>
+              </field>
+          </fields>
+      </packet>
   </outgoing>
 </packets>

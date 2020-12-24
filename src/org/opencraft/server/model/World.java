@@ -291,15 +291,15 @@ public final class World {
     World.getWorld().getGameMode().playerConnected(session.getPlayer());
 
     if (!session.levelSent && session.isExtensionSupported("HeldBlock")) {
-      session.getActionSender().sendHoldThis(1, (short) Constants.BLOCK_DETONATOR);
-      session.getActionSender().sendHoldThis(2, (short) Constants.BLOCK_MINE);
-      session.getActionSender().sendHoldThis(3, (short) 1);
-      session.getActionSender().sendHoldThis(4, (short) Constants.BLOCK_VINE);
-      session.getActionSender().sendHoldThis(5, (short) 20);
-      session.getActionSender().sendHoldThis(6, (short) 45);
-      session.getActionSender().sendHoldThis(7, (short) 21);
-      session.getActionSender().sendHoldThis(8, (short) 29);
-      session.getActionSender().sendHoldThis((short) Constants.BLOCK_TNT);
+      session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT, 0);
+      session.getActionSender().sendHotbar((short) Constants.BLOCK_DETONATOR, 1);
+      session.getActionSender().sendHotbar((short) Constants.BLOCK_MINE, 2);
+      session.getActionSender().sendHotbar((short) 1, 3);
+      session.getActionSender().sendHotbar((short) Constants.BLOCK_VINE, 4);
+      session.getActionSender().sendHotbar((short) 20, 5);
+      session.getActionSender().sendHotbar((short) 45, 6);
+      session.getActionSender().sendHotbar((short) 21, 7);
+      session.getActionSender().sendHotbar((short) 29, 8);
     }
     session.levelSent = true;
   }

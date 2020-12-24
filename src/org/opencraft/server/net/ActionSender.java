@@ -792,6 +792,14 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
+  public void sendHotbar(int id, int index) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(45));
+    bldr.putShort("id", id);
+    bldr.putByte("index", index);
+    session.send(bldr.toPacket());
+  }
+
   /**
    * Sends a chat message.
    *
