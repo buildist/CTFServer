@@ -116,6 +116,10 @@ public final class LevelGzipper {
               for (int type : DEFAULT_RESTRICTED_BLOCKS) {
                 session.getActionSender().sendBlockPermissions(type, false, false);
               }
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_RED_FLAG, false, true);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_BLUE_FLAG, false, true);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_RED, false, true);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_BLUE, false, true);
 
               session.getActionSender().sendDefineEffect(
                   Constants.EFFECT_TNT,
