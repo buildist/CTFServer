@@ -43,7 +43,6 @@ import org.opencraft.server.cmd.impl.DefuseCommand;
 import org.opencraft.server.cmd.impl.DefuseTNTCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
 import org.opencraft.server.cmd.impl.FlamethrowerCommand;
-import org.opencraft.server.cmd.impl.TntCommand;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.BlockLog;
@@ -92,7 +91,6 @@ public class CTFGameMode extends GameMode {
     registerCommand("dt", DefuseTNTCommand.getCommand());
     registerCommand("f", FlamethrowerCommand.getCommand());
     registerCommand("fd", FlagDropCommand.getCommand());
-    registerCommand("tnt", TntCommand.getCommand());
   }
 
   @Override
@@ -1036,7 +1034,7 @@ public class CTFGameMode extends GameMode {
           && z < playerZ + MAX_DISTANCE
           && z > playerZ - MAX_DISTANCE)) {
         ignore = true;
-      } else if (z > level.ceiling) {
+      } else if (z > level.ceiling && !(type == Constants.BLOCK_DETONATOR && player.hasTNT)) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &eYou're not allowed to build this high!");
         player.outOfBoundsBlockChanges++;

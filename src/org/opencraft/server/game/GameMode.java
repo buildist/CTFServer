@@ -105,7 +105,6 @@ import org.opencraft.server.cmd.impl.StatusCommand;
 import org.opencraft.server.cmd.impl.StoreCommand;
 import org.opencraft.server.cmd.impl.TeamCommand;
 import org.opencraft.server.cmd.impl.TeleportCommand;
-import org.opencraft.server.cmd.impl.TntCommand;
 import org.opencraft.server.cmd.impl.TutorialCommand;
 import org.opencraft.server.cmd.impl.UnbanCommand;
 import org.opencraft.server.cmd.impl.UnbanIPCommand;
@@ -227,7 +226,6 @@ public abstract class GameMode {
     registerCommand("stats", StatsCommand.getCommand());
     registerCommand("status", StatusCommand.getCommand());
     registerCommand("store", StoreCommand.getCommand());
-    registerCommand("t", TntCommand.getCommand());
     registerCommand("team", TeamCommand.getCommand());
     registerCommand("tp", TeleportCommand.getCommand());
     registerCommand("unban", UnbanCommand.getCommand());
