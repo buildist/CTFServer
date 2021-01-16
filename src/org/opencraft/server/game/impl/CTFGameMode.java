@@ -444,7 +444,7 @@ public class CTFGameMode extends GameMode {
 
   private void updateKillFeed(Player attacker, Player defender, String killmsg) {
     synchronized (killFeed) {
-      killFeed.add(0, new KillFeedItem(attacker, defender, 0, true));
+      killFeed.add(0, new KillFeedItem(attacker, defender, 0, true, killmsg));
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
         if (p == attacker || p == defender) {
           sendAnnouncement(p, killmsg);

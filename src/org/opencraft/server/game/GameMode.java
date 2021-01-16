@@ -731,15 +731,20 @@ public abstract class GameMode {
     public final Player target;
     public final int count;
     public final boolean isKill;
+    public final String message;
 
-    public KillFeedItem(Player source, Player target, int count, boolean isKill) {
+    public KillFeedItem(Player source, Player target, int count, boolean isKill, String message) {
       this.source = source;
       this.target = target;
       this.count = count;
       this.isKill = isKill;
+      this.message = message;
     }
 
     public String getMessage() {
+      if (this.message != null) {
+        return this.message;
+      }
       String message = "";
       if (source != null) {
         message += source.getColoredName() + " &f";

@@ -152,7 +152,7 @@ public final class LevelGzipper {
                   255,
                   255,
                   3,
-                  25,
+                  5,
                   32,
                   0,
                   32,

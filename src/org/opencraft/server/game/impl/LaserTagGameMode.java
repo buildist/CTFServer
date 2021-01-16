@@ -135,10 +135,10 @@ public class LaserTagGameMode extends GameMode {
       KillFeedItem first = killFeed.isEmpty() ? null : killFeed.get(0);
       boolean isKill = defender.getHealth() == 0;
       if (!isKill && first != null && first.source == attacker && first.target == defender) {
-        item = new KillFeedItem(attacker, defender, first.count + 1, false);
+        item = new KillFeedItem(attacker, defender, first.count + 1, false, null);
         killFeed.remove(0);
       } else {
-        item = new KillFeedItem(attacker, defender, 1, isKill);
+        item = new KillFeedItem(attacker, defender, 1, isKill, null);
         if (isKill) defender.setAmmo(0);
       }
       killFeed.add(0, item);
