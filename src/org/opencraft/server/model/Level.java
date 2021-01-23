@@ -710,7 +710,7 @@ public final class Level implements Cloneable {
                 Server.getUnsigned(id),
                 name,
                 collideType,
-                128,
+                (int) ((64 * Math.log(4*speed))/Math.log(2)),
                 textures[0],
                 textures[2],
                 textures[3],
