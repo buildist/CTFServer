@@ -60,6 +60,8 @@ public class JoinCommand implements Command {
     if (!GameSettings.getBoolean("Tournament")) {
       if (params.getArgumentCount() == 1) player.joinTeam(params.getStringArgument(0));
       else player.autoJoinTeam();
+    } else {
+      player.getActionSender().sendChatMessage("Tournament in progress, please come back later. If you are participating an OP will place you on a team.");
     }
   }
 }

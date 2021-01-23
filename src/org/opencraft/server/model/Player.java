@@ -570,8 +570,6 @@ public class Player extends Entity {
       } else if (diff <= -1 && team.equals("blue")) {
         unbalanced = true;
       }
-    } else {
-      getActionSender().sendChatMessage("Tournament in progress, please come back later. If you are participating an OP will place you on a team.");
     }
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p != this) {

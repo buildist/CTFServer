@@ -55,6 +55,10 @@ public class RedCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (!GameSettings.getBoolean("Tournament")) player.joinTeam("red");
+    if (!GameSettings.getBoolean("Tournament")) {
+      player.joinTeam("red");
+    } else {
+      player.getActionSender().sendChatMessage("Tournament in progress, please come back later. If you are participating an OP will place you on a team.");
+    }
   }
 }
