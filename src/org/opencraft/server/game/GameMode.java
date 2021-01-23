@@ -649,8 +649,7 @@ public abstract class GameMode {
           player.getActionSender().sendChatMessage("- &e" + error);
         } else {
           World.getWorld().sendChat(player, messageToSend);
-          if (!Configuration.getConfiguration().isTest()
-              && !GameSettings.getBoolean("Tournament")) {
+          if (!Configuration.getConfiguration().isTest()) {
             WebServer.run(
                 new Runnable() {
                   @Override
