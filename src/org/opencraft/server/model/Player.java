@@ -311,6 +311,11 @@ public class Player extends Entity {
   }
 
   public void toggleFlameThrower() {
+    if (!World.getWorld().getGameMode().tournamentGameStarted) {
+      this.getActionSender().sendChatMessage("- &eThe game has not started!");
+      return;
+    }
+
     if (team == -1) {
       return;
     }
