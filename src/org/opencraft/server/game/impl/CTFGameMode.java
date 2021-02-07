@@ -81,7 +81,8 @@ public class CTFGameMode extends GameMode {
   public boolean redFlagTaken = false;
   public boolean blueFlagTaken = false;
 
-  public boolean antiStalemate;
+  private boolean antiStalemate;
+  private boolean suddenDeath;
 
   public CTFGameMode() {
     super();
@@ -627,7 +628,8 @@ public class CTFGameMode extends GameMode {
   }
 
   public void checkForStalemate() {
-    if (GameSettings.getBoolean("AntiStalemate") && redFlagTaken && blueFlagTaken) {
+    if ((suddenDeath || GameSettings.getBoolean("AntiStalemate"))
+        && redFlagTaken && blueFlagTaken) {
       World.getWorld().broadcast("- &eAnti-stalemate mode activated!");
       World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");
       antiStalemate = true;
@@ -722,7 +724,7 @@ public class CTFGameMode extends GameMode {
             p.getActionSender()
                 .sendChatMessage(
                     "- &eClick your own flag to capture, or use /fd "
-                        + "to drop the flag and pass to a teammate,");
+                        + "to drop the flag and pass to a teammate");
             p.hasFlag = true;
             redFlagTaken = true;
             checkForStalemate();
@@ -744,7 +746,7 @@ public class CTFGameMode extends GameMode {
           placeBlueFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
           p.addPoints(20);
-          if (redCaptures == GameSettings.getInt("MaxCaptures")) {
+          if (redCaptures == GameSettings.getInt("MaxCaptures") || suddenDeath) {
             nominatedMaps.clear();
             endGame();
           } else {
@@ -795,7 +797,7 @@ public class CTFGameMode extends GameMode {
           placeRedFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
           p.addPoints(20);
-          if (blueCaptures == GameSettings.getInt("MaxCaptures")) {
+          if (blueCaptures == GameSettings.getInt("MaxCaptures") || suddenDeath) {
             nominatedMaps.clear();
             endGame();
           } else {
@@ -1208,9 +1210,15 @@ public class CTFGameMode extends GameMode {
     int timeLimit = GameSettings.getInt(setting);
     if (timeLimit > 0) {
       long elapsedTime = System.currentTimeMillis() - gameStartTime;
-      if (elapsedTime > timeLimit * 60 * 1000) {
-        gameStartTime = System.currentTimeMillis();
-        endGame();
+      if (elapsedTime > timeLimit * 60 * 1000 && !suddenDeath) {
+        if (getMode() == Level.CTF && redCaptures == blueCaptures) {
+            World.getWorld().broadcast("- &eSudden death mode activated!");
+            World.getWorld().broadcast("- &eThe next capture will win the game.");
+            suddenDeath = true;
+        } else {
+          gameStartTime = System.currentTimeMillis();
+          endGame();
+        }
       }
     }
   }
