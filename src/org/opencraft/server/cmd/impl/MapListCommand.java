@@ -43,6 +43,10 @@ import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class MapListCommand implements Command {
   private static final MapListCommand INSTANCE = new MapListCommand();
@@ -59,7 +63,8 @@ public class MapListCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     if (params.getArgumentCount() == 1) {
       File dir = new File(Constants.ROOT_PATH + "/maps/more");
-      String[] maps = dir.list();
+      List<String> maps = Arrays.asList(dir.list());
+      Collections.sort(maps);
       String msg = "&eAll maps: &a";
       int i = 0;
       for (String mapName : maps) {
