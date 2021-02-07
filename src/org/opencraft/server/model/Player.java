@@ -162,8 +162,8 @@ public class Player extends Entity {
     setPoints(GameSettings.getInt("InitialPoints"));
   }
 
-  public boolean isVisible() {
-    return !isHidden && team != -1;
+  public boolean canSee(Player otherPlayer) {
+    return !otherPlayer.isHidden && (otherPlayer.team != -1 || team == -1);
   }
 
   public int getAmmo() {
@@ -616,9 +616,17 @@ public class Player extends Entity {
       }
     }
     clearMines();
-    if (isVisible()) {
-      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p.canSee(this)) {
         p.getActionSender().sendAddPlayer(this, p == this);
+      }
+
+      if (p == this) continue;
+
+      if (!canSee(p)) {
+        getActionSender().sendRemoveEntity(p);
+      } else {
+        getActionSender().sendExtSpawn(p);
       }
     }
     if (sendMessage) {

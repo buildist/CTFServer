@@ -210,7 +210,7 @@ public class ActionSender {
         (byte) player.getRotation().getRotation(),
         (byte) player.getRotation().getLook(),
         isSelf,
-        player.isVisible());
+        session.getPlayer().canSee(player));
   }
 
   public void sendSpawn(
