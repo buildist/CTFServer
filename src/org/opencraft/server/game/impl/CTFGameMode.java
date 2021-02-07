@@ -1215,6 +1215,7 @@ public class CTFGameMode extends GameMode {
             World.getWorld().broadcast("- &eSudden death mode activated!");
             World.getWorld().broadcast("- &eThe next capture will win the game.");
             suddenDeath = true;
+            checkForStalemate();
         } else {
           gameStartTime = System.currentTimeMillis();
           endGame();
