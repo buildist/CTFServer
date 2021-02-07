@@ -55,14 +55,12 @@ public class MapController {
 
   public static void create() {
     levelNames.clear();
-    levelVotes.clear();
     File dir = new File(Constants.ROOT_PATH + "/maps");
     String[] maps = dir.list();
     for (String mapName : maps) {
       String[] parts = mapName.split("\\.");
       if (parts.length == 2 && parts[1].equals("cw")) {
         levelNames.add(parts[0]);
-        levelVotes.put(parts[0], 0);
       }
     }
     Collections.sort(levelNames);
@@ -91,15 +89,16 @@ public class MapController {
 
   public static boolean addVote(String id) {
     if (voteList.contains(id)) {
+      if (!levelVotes.containsKey(id)) {
+        levelVotes.put(id, 0);
+      }
       levelVotes.put(id, levelVotes.get(id) + 1);
       return true;
     } else return false;
   }
 
   public static void resetVotes() {
-    for (int i = 0; i < nLevels; i++) {
-      levelVotes.put(levelNames.get(i), 0);
-    }
+    levelVotes.clear();
   }
 
   public static ArrayList<String> getRandomMapNames(int n, String[] ignore) {
