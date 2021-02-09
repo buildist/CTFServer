@@ -432,6 +432,7 @@ public class CTFGameMode extends GameMode {
     redFlagTaken = false;
     blueFlagTaken = false;
     suddenDeath = false;
+    antiStalemate = false;
     redCaptures = 0;
     blueCaptures = 0;
 
