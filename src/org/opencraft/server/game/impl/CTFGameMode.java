@@ -747,7 +747,7 @@ public class CTFGameMode extends GameMode {
           blueFlagTaken = false;
           placeBlueFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
-          p.addPoints(20);
+          p.addPoints(40);
           if (redCaptures == GameSettings.getInt("MaxCaptures") || suddenDeath) {
             nominatedMaps.clear();
             endGame();
@@ -798,7 +798,7 @@ public class CTFGameMode extends GameMode {
           redFlagTaken = false;
           placeRedFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
-          p.addPoints(20);
+          p.addPoints(40);
           if (blueCaptures == GameSettings.getInt("MaxCaptures") || suddenDeath) {
             nominatedMaps.clear();
             endGame();
@@ -931,7 +931,7 @@ public class CTFGameMode extends GameMode {
         }
         tagged.died(tagger);
         tagger.setAttribute("tags", (Integer) tagger.getAttribute("tags") + 1);
-        tagger.addPoints(5);
+        tagger.addPoints(15);
         updateKillFeed(tagger, tagged, tagger.parseName() + " tagged " + tagged.parseName() + ".");
       }
     }

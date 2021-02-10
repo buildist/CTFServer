@@ -108,7 +108,7 @@ public class RocketCommand implements Command {
                 int by = (int) Math.round(y);
                 int bz = (int) Math.round(z);
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                if (block != 0 && block != 49) {
+                if (block != BlockConstants.AIR) {
                   ((CTFGameMode)World.getWorld()
                       .getGameMode())
                       .explodeTNT(

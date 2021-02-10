@@ -54,14 +54,14 @@ public class Store {
     addItem("BigTNT", new BigTNTItem("BigTNT", 70), "bigtnt");
     addItem(
         "Rocket",
-        new SimpleItem("Rocket", 50, "Shoots a rocket from your face", RocketCommand.getCommand()),
+        new SimpleItem("Rocket", 60, "Shoots a rocket from your face", RocketCommand.getCommand()),
         "r");
     addItem(
         "Grenade",
         new SimpleItem("Grenade", 20, "Throwable TNT", GrenadeCommand.getCommand()),
         "gr");
     addItem(
-        "Line", new SimpleItem("Line", 30, "Builds a bridge", LineCommand.getCommand()), "line");
+        "Line", new SimpleItem("Line", 25, "Builds a bridge", LineCommand.getCommand()), "line");
     addItem(
         "Creeper",
         new SimpleItem("Creeper", 40, "Makes you explode", CreeperCommand.getCommand()),
