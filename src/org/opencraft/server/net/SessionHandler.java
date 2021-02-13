@@ -62,12 +62,12 @@ public final class SessionHandler extends IoHandlerAdapter {
 
   @Override
   public void messageReceived(IoSession session, Object message) throws Exception {
-    TaskQueue.getTaskQueue().push(new SessionMessageTask(session, (Packet) message));
+    new SessionMessageTask(session, (Packet) message).execute();
   }
 
   @Override
   public void sessionClosed(IoSession session) throws Exception {
-    TaskQueue.getTaskQueue().push(new SessionClosedTask(session));
+    new SessionClosedTask(session).execute();
   }
 
   @Override
@@ -79,6 +79,6 @@ public final class SessionHandler extends IoHandlerAdapter {
             new ProtocolCodecFilter(
                 new MinecraftCodecFactory(PersistingPacketManager.getPacketManager())));
     session.getFilterChain().addFirst("websocket", new WebSocketFilter());
-    TaskQueue.getTaskQueue().push(new SessionOpenedTask(session));
+    new SessionOpenedTask(session).execute();
   }
 }
