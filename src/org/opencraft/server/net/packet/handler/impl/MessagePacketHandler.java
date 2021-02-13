@@ -75,6 +75,10 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
       session.getPlayer().partialChatMessage += message + " ";
       session.getActionSender().sendChatMessage("&7" + message);
       return;
+    } else if(id == 1) {
+      session.getPlayer().appendingChat = true;
+      session.getPlayer().partialChatMessage += message;
+      return;
     } else if (session.getPlayer().appendingChat) {
       message = session.getPlayer().partialChatMessage + message;
       session.getPlayer().partialChatMessage = "";
