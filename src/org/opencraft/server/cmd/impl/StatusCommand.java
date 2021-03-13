@@ -86,7 +86,7 @@ public class StatusCommand implements Command {
     player.getActionSender().sendChatMessage("- &d" + bluePlayers + " players on blue:");
     String bluemsg = "";
     for (Player other : names) {
-      if (other.team == 0) bluemsg += other.getName() + ", ";
+      if (other.team == 1) bluemsg += other.getName() + ", ";
     }
     if (!bluemsg.isEmpty()) player.getActionSender().sendChatMessage("- &c" + bluemsg);
 
