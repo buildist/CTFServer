@@ -560,6 +560,9 @@ public class CTFGameMode extends GameMode {
               if (GameSettings.getBoolean("Tournament")) {
                 return;
               }
+
+              // Start voting
+              Level active = World.getWorld().getLevel(); // We'll retrieve this information later to cancel sending players to new level if /newgame was called
               World.getWorld().broadcast("- &aMap voting is now open for 40 seconds...");
               World.getWorld().broadcast("- &aSay /vote [mapname] to select the next map!");
               MapController.resetVotes();
@@ -594,7 +597,16 @@ public class CTFGameMode extends GameMode {
                     }
                   })
                   .start();
+
               Thread.sleep(40 * 1000);
+
+              // Check if level has been changed with /newgame, if so, don't bother changing levels
+              if (active != World.getWorld().getLevel()) {
+                //World.getWorld().broadcast("- &3Voting cancelled due to /newgame");
+                voting = false;
+                return;
+              }
+              // Setup next level
               Level newLevel = MapController.getMostVotedForMap();
               ready = false;
               String rating = MapRatings.getRating(currentMap);
