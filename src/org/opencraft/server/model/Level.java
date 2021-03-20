@@ -51,6 +51,8 @@ import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.GameSettings;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -293,6 +295,12 @@ public final class Level implements Cloneable {
         };
     try {
       String propsPath = filename.substring(0, filename.indexOf(".")) + ".properties";
+
+      File file = new File(propsPath);
+      if (!file.exists()) {
+        Files.copy(new File("template.properties").toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+      }
+
       FileInputStream ps = new FileInputStream(propsPath);
       props.load(ps);
       ps.close();
