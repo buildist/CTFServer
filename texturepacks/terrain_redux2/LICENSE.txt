@@ -1,0 +1,18 @@
+
+----LICENSE----
+
+In this license, "texture pack" refers to the collection of files within this .zip as well as any given individual texture, such as the terrain.png.
+
+This texture pack was created by Goodly.
+Goodly can be contacted on the Discord app at Goodly#5684.
+
+YOU ARE -NOT- FREE TO DO THE FOLLOWING:
+	• Re-distribute this texture pack or an edited version of this texture pack.
+	• Edit this license.
+	
+YOU -ARE- FREE TO DO THE FOLLOWING ONLY AFTER EXPRESS PERMISSION FROM Goodly.
+	• Use, edit, or re-distribute this texture pack for use on ClassiCube servers that are not "Not Awesome 2."
+	
+YOU -ARE- FREE TO DO THE FOLLOWING:
+	• Use and edit this texture pack for use on the "Not Awesome 2" ClassiCube server.
+	• Use and edit this texture pack for personal (local machine) use.
