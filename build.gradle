@@ -1,0 +1,25 @@
+apply plugin: 'java'
+
+sourceSets.main.java.srcDirs = ['src']
+
+repositories {
+    flatDir {
+        dirs 'lib'
+    }
+}
+
+
+dependencies {
+    implementation name: 'guava-23.0'
+    implementation name: 'mina-core'
+    implementation name: 'minecraft-server'
+    implementation name: 'slf4j-api'
+    implementation name: 'slf4j-jdk'
+    implementation name: 'xstream-core'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'org.opencraft.server.Server'
+    }
+}

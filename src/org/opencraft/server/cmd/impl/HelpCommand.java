@@ -58,7 +58,7 @@ public class HelpCommand implements Command {
         .getActionSender()
         .sendChatMessage(
             "&eCommands: /help, /rules, /join, /spec, /red, "
-                + "/blue, /team, /me, /pstats, /pm, /water, /lava, /status, /stats, /store, /vote, /t, "
+                + "/blue, /team, /me, /pstats, /pm, /water, /lava, /status, /stats, /store, /vote, "
                 + "/dtnt, /d, /maps, /f, /rtv, /nominate, /cc, /b, /");
   }
 }
