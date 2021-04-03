@@ -58,7 +58,11 @@ public class RTVCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     if (!GameSettings.getBoolean("Tournament")) {
-      int requiredVotes = World.getWorld().getPlayerList().size() / 2;
+      int totalAFK = 0;
+      for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+        if (pl.AFK) totalAFK++;
+      }
+      int requiredVotes = (World.getWorld().getPlayerList().size() - totalAFK) / 2;
       if (World.getWorld().getPlayerList().size() % 2 != 0) requiredVotes++;
 
       if (World.getWorld().getGameMode().voting)

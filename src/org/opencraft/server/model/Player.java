@@ -80,6 +80,7 @@ public class Player extends Entity {
   public boolean joinedDuringTournamentMode;
   public boolean muted = false;
   public boolean frozen = false;
+  public boolean AFK = false;
   public long moveTime = 0;
   public int team = -1;
   public int outOfBoundsBlockChanges = 0;
@@ -786,7 +787,8 @@ public class Player extends Entity {
 
   public String getListName() {
     String playerHasFlag = hasFlag ? "&6[!] " : "";
-    String listName = playerHasFlag + getColoredName() + "    &f" + currentRoundPointsEarned;
+    String playerIsAFK = AFK ? "    &7(&bAFK&7)" : "";
+    String listName = playerHasFlag + getColoredName() + "    &f" + currentRoundPointsEarned + playerIsAFK;
     return listName.substring(0, Math.min(64, listName.length()));
   }
 
@@ -836,15 +838,23 @@ public class Player extends Entity {
   }
 
   public void step(int ticks) {
-    if (World.getWorld().getPlayerList().size()
-        >= Configuration.getConfiguration().getMaximumPlayers()
-        && System.currentTimeMillis() - moveTime > 5 * 60 * 1000
-        && moveTime != 0) {
-      World.getWorld().broadcast("- " + parseName() + " was kicked for being AFK");
-      getActionSender().sendLoginFailure("You were kicked for being AFK");
+    if (System.currentTimeMillis() - moveTime < 100 && AFK) {
+      World.getWorld().broadcast("- " + parseName() + " is no longer AFK");
+      AFK = false;
+      moveTime = System.currentTimeMillis();
+    }
+    if (System.currentTimeMillis() - moveTime > 10 * 60000 && !AFK && moveTime != 0) {
+      World.getWorld().broadcast("- " + parseName() + " is auto-AFK (Not moved in 10 minutes)");
+      AFK = true;
+      moveTime = System.currentTimeMillis();
+    }
+    else if (System.currentTimeMillis() - moveTime > 60 * 60000 && AFK && moveTime != 0) {
+      World.getWorld().broadcast("- " + parseName() + " was auto-kicked (AFK for 60 minutes)");
+      getActionSender().sendLoginFailure("You were auto-kicked for being AFK for 60+ minutes.");
       getSession().close();
       moveTime = System.currentTimeMillis();
     }
+
     World.getWorld().getGameMode().processPlayerMove(this);
     if (isFlamethrowerEnabled()) {
       int duration = GameSettings.getInt("FlameThrowerDuration");
