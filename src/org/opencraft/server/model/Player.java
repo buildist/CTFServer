@@ -842,6 +842,7 @@ public class Player extends Entity {
       World.getWorld().broadcast("- " + parseName() + " is no longer AFK");
       AFK = false;
     }
+    // TODO: Find a way to check if player is still AFK after changing levels
     if (System.currentTimeMillis() - moveTime > 10 * 60000 && !AFK && moveTime != 0) {
       World.getWorld().broadcast("- " + parseName() + " is auto-AFK (Not moved in 10 minutes)");
       AFK = true;

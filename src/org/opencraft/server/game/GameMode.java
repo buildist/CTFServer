@@ -542,6 +542,9 @@ public abstract class GameMode {
   }
 
   public void broadcastChatMessage(final Player player, final String message) {
+    if (player.AFK) World.getWorld().broadcast("- " + player.parseName() + " is no longer AFK");
+    player.moveTime = System.currentTimeMillis();
+    player.AFK = false;
     if (player.lastMessage != null
         && message.equals(player.lastMessage)
         && System.currentTimeMillis() - player.lastMessageTime < 750) {
