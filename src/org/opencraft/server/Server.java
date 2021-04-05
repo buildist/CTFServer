@@ -85,6 +85,7 @@ public final class Server {
   public static ArrayList<String> rulesText = new ArrayList<String>(20);
   private static Store store;
   private static ArrayList<String> ipBans = new ArrayList<String>(128);
+  private static ArrayList<String> mutes = new ArrayList<String>(128);
   private static Server instance;
 
   private static LinkedList<ConsoleMessage> messages = new LinkedList<ConsoleMessage>();
@@ -106,6 +107,12 @@ public final class Server {
     String l;
     while ((l = r.readLine()) != null) {
       ipBans.add(l);
+    }
+
+    FileInputStream muteFile = new FileInputStream("mutes.txt");
+    r = new BufferedReader(new InputStreamReader(muteFile));
+    while ((l = r.readLine()) != null) {
+      mutes.add(l);
     }
 
     FileInputStream rulesFile = new FileInputStream("rules.txt");
@@ -283,6 +290,32 @@ public final class Server {
       FileOutputStream out = new FileOutputStream("ipbans.txt");
       for (String ip : ipBans) {
         out.write((ip + "\n").getBytes());
+      }
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public static boolean isMuted(String name) {
+    return mutes.contains(name);
+  }
+
+  public static void mutePlayer(String name) {
+    mutes.add(name);
+    saveMutes();
+  }
+
+  public static void unMutePlayer(String name) {
+    mutes.remove(name);
+    saveMutes();
+  }
+
+  private static void saveMutes() {
+    try {
+      new File("mutes.txt").delete();
+      FileOutputStream out = new FileOutputStream("mutes.txt");
+      for (String name : mutes) {
+        out.write((name + "\n").getBytes());
       }
     } catch (IOException ex) {
       ex.printStackTrace();
