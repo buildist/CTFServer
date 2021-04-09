@@ -63,14 +63,14 @@ public class MuteCommand implements Command {
     // Mute in game
     if (!otherPlayer.muted) {
       otherPlayer.muted = true;
-      World.getWorld().getGameMode().mute(otherPlayer);
+      Server.mutePlayer(otherPlayer.getName());
       Server.log(player.getName() + " muted " + otherPlayer.getName());
       World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been muted!");
       otherPlayer.getActionSender().sendChatMessage("- &eYou have been muted!");
       player.getActionSender().sendChatMessage("- &eSay /mute [name] again to unmute them");
     } else {
       otherPlayer.muted = false;
-      World.getWorld().getGameMode().unmute(otherPlayer);
+      Server.unMutePlayer(otherPlayer.getName());
       Server.log(player.getName() + " unmuted " + otherPlayer.getName());
       World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been ummuted!");
       otherPlayer.getActionSender().sendChatMessage("- &eYou are no longer muted");
