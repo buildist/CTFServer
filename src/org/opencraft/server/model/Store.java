@@ -50,11 +50,11 @@ import java.util.HashMap;
 public class Store {
   private HashMap<String, StoreItem> items = new HashMap<String, StoreItem>(16);
 
-  public static int bigTNTPrice = 70;
-  public static int rocketPrice = 60;
-  public static int grenadePrice = 20;
-  public static int linePrice = 25;
-  public static int creeperPrice = 40;
+  public static final int bigTNTPrice = 70;
+  public static final int rocketPrice = 60;
+  public static final int grenadePrice = 20;
+  public static final int linePrice = 25;
+  public static final int creeperPrice = 40;
 
   public Store() {
     addItem("BigTNT", new BigTNTItem("BigTNT", bigTNTPrice), "bigtnt");
