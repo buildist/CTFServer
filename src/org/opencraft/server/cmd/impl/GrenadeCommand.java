@@ -41,6 +41,7 @@ import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
@@ -57,12 +58,20 @@ public class GrenadeCommand implements Command {
   public static GrenadeCommand getCommand() {
     return INSTANCE;
   }
+    private static final int TIMEOUT = 7;
 
   public void execute(final Player player, CommandParameters params) {
     Thread grenadeThread;
     grenadeThread =
         new Thread(
             () -> {
+                long dt = (System.currentTimeMillis() - player.grenadeTime);
+                if (dt < TIMEOUT * 1000) {
+                    player.getActionSender().sendChatMessage("- &ePlease wait " + (TIMEOUT - dt / 1000) + "" + " seconds");
+                    return;
+                }
+                player.grenadeTime = System.currentTimeMillis();
+
               Position pos = player.getPosition().toBlockPos();
               Rotation r = player.getRotation();
 

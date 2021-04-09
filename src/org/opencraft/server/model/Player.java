@@ -97,6 +97,7 @@ public class Player extends Entity {
   public long flamethrowerTime = 0;
   public float flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
   private boolean flamethrowerEnabled = false;
+  public long grenadeTime;
   public long rocketTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
