@@ -1,7 +1,6 @@
 package org.opencraft.server.model;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import javax.imageio.ImageIO;
@@ -56,6 +55,8 @@ public class TexturePackHandler {
     Graphics2D graphics = target.createGraphics();
     // Draw original image on first.
     graphics.drawImage(source, 0, 0, null);
+
+    graphics.setComposite(AlphaComposite.Src);
 
     // Draw the scaled CTF Texture onto it.
     graphics.drawImage(ctfTerrain, 0, (TEXTURE_HEIGHT_BLOCKS - ctfRows) * pxPerBlock, null);
