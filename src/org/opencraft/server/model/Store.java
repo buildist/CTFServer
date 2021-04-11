@@ -50,21 +50,27 @@ import java.util.HashMap;
 public class Store {
   private HashMap<String, StoreItem> items = new HashMap<String, StoreItem>(16);
 
+  public static final int bigTNTPrice = 70;
+  public static final int rocketPrice = 60;
+  public static final int grenadePrice = 20;
+  public static final int linePrice = 25;
+  public static final int creeperPrice = 40;
+
   public Store() {
-    addItem("BigTNT", new BigTNTItem("BigTNT", 70), "bigtnt");
+    addItem("BigTNT", new BigTNTItem("BigTNT", bigTNTPrice), "bigtnt");
     addItem(
         "Rocket",
-        new SimpleItem("Rocket", 60, "Shoots a rocket from your face", RocketCommand.getCommand()),
+        new SimpleItem("Rocket", rocketPrice, "Shoots a rocket from your face", RocketCommand.getCommand()),
         "r");
     addItem(
         "Grenade",
-        new SimpleItem("Grenade", 20, "Throwable TNT", GrenadeCommand.getCommand()),
+        new SimpleItem("Grenade", grenadePrice, "Throwable TNT", GrenadeCommand.getCommand()),
         "gr");
     addItem(
-        "Line", new SimpleItem("Line", 25, "Builds a bridge", LineCommand.getCommand()), "line");
+        "Line", new SimpleItem("Line", linePrice, "Builds a bridge", LineCommand.getCommand()), "line");
     addItem(
         "Creeper",
-        new SimpleItem("Creeper", 40, "Makes you explode", CreeperCommand.getCommand()),
+        new SimpleItem("Creeper", creeperPrice, "Makes you explode", CreeperCommand.getCommand()),
         "cr");
   }
 

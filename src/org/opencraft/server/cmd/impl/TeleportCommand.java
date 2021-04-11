@@ -61,8 +61,8 @@ public class TeleportCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    // Player using command is OP?
-    if (player.isOp()) {
+    // Check if player using command is a spectator
+    if (player.team == -1) {
       if (params.getArgumentCount() == 1) {
         Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
         if (other != null) {
@@ -75,6 +75,6 @@ public class TeleportCommand implements Command {
         player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
       } else player.getActionSender().sendChatMessage("Wrong number of arguments");
       player.getActionSender().sendChatMessage("/tp <name>");
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be a spectator to do that");
   }
 }

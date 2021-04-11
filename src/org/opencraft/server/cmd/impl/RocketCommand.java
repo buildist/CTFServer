@@ -68,12 +68,7 @@ public class RocketCommand implements Command {
             () -> {
               long dt = (System.currentTimeMillis() - player.rocketTime);
               if (dt < TIMEOUT * 1000) {
-                player
-                    .getActionSender()
-                    .sendChatMessage("- &ePlease wait " + (TIMEOUT - dt / 1000) + "" + " seconds");
-                if (!GameSettings.getBoolean("Chaos")) {
-                  player.addPoints(50);
-                }
+                player.getActionSender().sendChatMessage("- &ePlease wait " + (TIMEOUT - dt / 1000) + "" + " seconds");
                 return;
               }
               player.rocketTime = System.currentTimeMillis();

@@ -125,7 +125,7 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.PlayerUI;
 import org.opencraft.server.model.World;
 
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -151,7 +151,6 @@ public abstract class GameMode {
   public int redPlayers = 0;
   public ArrayList<String> rtvYesPlayers = new ArrayList<>();
   public ArrayList<String> rtvNoPlayers = new ArrayList<>();
-  public ArrayList<String> mutedPlayers = new ArrayList<>();
   public int rtvVotes = 0;
   public ArrayList<String> nominatedMaps = new ArrayList<>();
   protected final ArrayList<KillFeedItem> killFeed = new ArrayList<>();
@@ -323,7 +322,7 @@ public abstract class GameMode {
     WebServer.sendDiscordMessage(player.getName() + " joined the game", null);
 
     player.setAttribute("ip", player.getSession().getIP());
-    player.muted = isMuted(player.getName());
+    player.muted = Server.isMuted(player.getName());
     String rank;
     try {
       int r = Integer.parseInt(player.getAttribute("rank").toString());
@@ -543,6 +542,9 @@ public abstract class GameMode {
   }
 
   public void broadcastChatMessage(final Player player, final String message) {
+    if (player.AFK) World.getWorld().broadcast("- " + player.parseName() + " is no longer AFK");
+    player.moveTime = System.currentTimeMillis();
+    player.AFK = false;
     if (player.lastMessage != null
         && message.equals(player.lastMessage)
         && System.currentTimeMillis() - player.lastMessageTime < 750) {
@@ -695,18 +697,6 @@ public abstract class GameMode {
       }
     }
     return null;
-  }
-
-  public void mute(Player p) {
-    mutedPlayers.add(p.getName());
-  }
-
-  public void unmute(Player p) {
-    mutedPlayers.remove(p.getName());
-  }
-
-  public boolean isMuted(String name) {
-    return mutedPlayers.contains(name);
   }
 
   protected abstract void resetGameMode();

@@ -97,6 +97,7 @@ public class Player extends Entity {
   public long flamethrowerTime = 0;
   public float flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
   private boolean flamethrowerEnabled = false;
+  public long grenadeTime;
   public long rocketTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
@@ -841,18 +842,16 @@ public class Player extends Entity {
     if (System.currentTimeMillis() - moveTime < 100 && AFK) {
       World.getWorld().broadcast("- " + parseName() + " is no longer AFK");
       AFK = false;
-      moveTime = System.currentTimeMillis();
     }
+    // TODO: Find a way to check if player is still AFK after changing levels
     if (System.currentTimeMillis() - moveTime > 10 * 60000 && !AFK && moveTime != 0) {
       World.getWorld().broadcast("- " + parseName() + " is auto-AFK (Not moved in 10 minutes)");
       AFK = true;
-      moveTime = System.currentTimeMillis();
     }
     else if (System.currentTimeMillis() - moveTime > 60 * 60000 && AFK && moveTime != 0) {
       World.getWorld().broadcast("- " + parseName() + " was auto-kicked (AFK for 60 minutes)");
       getActionSender().sendLoginFailure("You were auto-kicked for being AFK for 60+ minutes.");
       getSession().close();
-      moveTime = System.currentTimeMillis();
     }
 
     World.getWorld().getGameMode().processPlayerMove(this);

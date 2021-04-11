@@ -100,7 +100,7 @@ public class NoCommand implements Command {
       }
       int requiredVotes = (World.getWorld().getPlayerList().size() - totalAFK) / 2;
       if (World.getWorld().getPlayerList().size() % 2 != 0) requiredVotes++;
-      else if (World.getWorld().getGameMode().rtvNoPlayers.contains(player.getSession().getIP()))
+      if (World.getWorld().getGameMode().rtvNoPlayers.contains(player.getSession().getIP()))
         player.getActionSender().sendChatMessage("- &eYou have already voted.");
       else if (player.team == -1)
         player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
