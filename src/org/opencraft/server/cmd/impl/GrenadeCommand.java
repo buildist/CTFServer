@@ -121,7 +121,7 @@ public class GrenadeCommand implements Command {
                           true,
                           false,
                           false,
-                          "Samsung Galaxy Note 7");
+                          "Grenade");
                   break;
                 } else {
                   World.getWorld()

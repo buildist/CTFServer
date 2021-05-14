@@ -36,15 +36,19 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import com.google.common.collect.ImmutableList;
+
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -52,6 +56,21 @@ import java.util.List;
 public class MapSetCommand implements Command {
 
   private static final MapSetCommand INSTANCE = new MapSetCommand();
+
+  private static final ImmutableList<String> OLD_SPAWN_PROPERTIES = ImmutableList.of(
+      "redSpawnX",
+      "redSpawnY",
+      "redSpawnZ",
+      "blueSpawnX",
+      "blueSpawnY",
+      "blueSpawnZ");
+  private static final ImmutableList<String> OLD_FLAG_PROPERTIES = ImmutableList.of(
+      "redFlagX",
+      "redFlagY",
+      "redFlagZ",
+      "blueFlagX",
+      "blueFlagY",
+      "blueFlagZ");
 
   /**
    * Gets the singleton instance of this command.
@@ -89,6 +108,15 @@ public class MapSetCommand implements Command {
             v += " ";
           }
         }
+
+        if (OLD_FLAG_PROPERTIES.contains(k)) {
+          player.getActionSender().sendChatMessage("- &eThis property is no longer supported, please use /mapset redFlagPosition x,y,z");
+          return;
+        } else if (OLD_SPAWN_PROPERTIES.contains(k)) {
+          player.getActionSender().sendChatMessage("- &eThis property is no longer supported, please use /setspawn red");
+          return;
+        }
+
         Server.log(player.getName() + " " + k + " set to " + v);
         doPropertyChange(k, v.trim());
         for (Player p : World.getWorld().getPlayerList().getPlayers()) {

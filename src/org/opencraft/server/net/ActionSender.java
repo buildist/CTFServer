@@ -442,7 +442,9 @@ public class ActionSender {
     Level level = World.getWorld().getLevel();
     String texturePack;
     String server = Configuration.getConfiguration().isTest() ? "127.0.0.1" : "168.235.67.212";
-    if (TexturePackHandler.hasCustomTexturePack(level.id)) {
+    if (level.props.getProperty("texturepack") != null) {
+      texturePack = "http://" + server + ":" + Constants.WEB_PORT + "/texturepack.zip?map=" + level.props.getProperty("texturepack");
+    } else if (TexturePackHandler.hasCustomTexturePack(level.id)) {
       texturePack = "http://" + server + ":" + Constants.WEB_PORT + "/texturepack.zip?map=" + level.id;
     } else {
       texturePack = "http://" + server + ":" + Constants.WEB_PORT + "/texturepack.zip?map=default";

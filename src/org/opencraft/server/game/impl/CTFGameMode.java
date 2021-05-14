@@ -404,18 +404,36 @@ public class CTFGameMode extends GameMode {
 
   public void resetRedFlagPos() {
     if (getMode() == Level.CTF) {
-      redFlagX = Integer.parseInt(map.props.getProperty("redFlagX"));
-      redFlagY = Integer.parseInt(map.props.getProperty("redFlagY"));
-      redFlagZ = Integer.parseInt(map.props.getProperty("redFlagZ"));
+      if (map.props.getProperty("redFlagPosition") != null) {
+        String[] position = map.props.getProperty("redFlagPosition")
+            .replace(" ", "")
+            .split(",");
+        redFlagX = Integer.parseInt(position[0]);
+        redFlagY = Integer.parseInt(position[1]);
+        redFlagZ = Integer.parseInt(position[2]);
+      } else {
+        redFlagX = Integer.parseInt(map.props.getProperty("redFlagX"));
+        redFlagY = Integer.parseInt(map.props.getProperty("redFlagY"));
+        redFlagZ = Integer.parseInt(map.props.getProperty("redFlagZ"));
+      }
       redFlagDropped = false;
     }
   }
 
   public void resetBlueFlagPos() {
     if (getMode() == Level.CTF) {
-      blueFlagX = Integer.parseInt(map.props.getProperty("blueFlagX"));
-      blueFlagY = Integer.parseInt(map.props.getProperty("blueFlagY"));
-      blueFlagZ = Integer.parseInt(map.props.getProperty("blueFlagZ"));
+      if (map.props.getProperty("blueFlagPosition") != null) {
+        String[] position = map.props.getProperty("blueFlagPosition")
+            .replace(" ", "")
+            .split(",");
+        blueFlagX = Integer.parseInt(position[0]);
+        blueFlagY = Integer.parseInt(position[1]);
+        blueFlagZ = Integer.parseInt(position[2]);
+      } else {
+        blueFlagX = Integer.parseInt(map.props.getProperty("blueFlagX"));
+        blueFlagY = Integer.parseInt(map.props.getProperty("blueFlagY"));
+        blueFlagZ = Integer.parseInt(map.props.getProperty("blueFlagZ"));
+      }
       blueFlagDropped = false;
     }
   }
