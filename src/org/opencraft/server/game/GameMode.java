@@ -124,6 +124,8 @@ import org.opencraft.server.model.MoveLog;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.PlayerUI;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.IRC.IRCBot;
+import org.opencraft.server.net.IRC.IRCMessageLoop;
 
 import java.io.*;
 import java.net.URLEncoder;
@@ -319,7 +321,8 @@ public abstract class GameMode {
             }
           });
     }
-    WebServer.sendDiscordMessage(player.getName() + " joined the game", null);
+    //WebServer.sendDiscordMessage(player.getName() + " joined the game", null);
+    IRCBot.SendMessage(":plus: **" + player.getName() + " " + "joined the game**");
 
     player.setAttribute("ip", player.getSession().getIP());
     player.muted = Server.isMuted(player.getName());
@@ -366,7 +369,8 @@ public abstract class GameMode {
             }
           });
     }
-    WebServer.sendDiscordMessage(p.getName() + " left the game", null);
+    //WebServer.sendDiscordMessage(p.getName() + " left the game", null);
+    IRCBot.SendMessage(":minus: **" + p.getName() + " left the game**");
 
     if (p.team == 0) {
       redPlayers--;
@@ -394,7 +398,8 @@ public abstract class GameMode {
     previousMap = currentMap;
     currentMap = map.id;
     if (World.getWorld().getPlayerList().size() > 0) {
-      WebServer.sendDiscordMessage("Switching map: " + map.id, null);
+      //WebServer.sendDiscordMessage("Switching map: " + map.id, null);
+      IRCBot.SendMessage("**Switching map:** `" + map.id + "`");
     }
     MoveLog.getInstance().logMapChange(map.id);
     new Thread(
@@ -667,7 +672,9 @@ public abstract class GameMode {
                   }
                 });
           }
-          WebServer.sendDiscordMessage(message, player.getName());
+          //WebServer.sendDiscordMessage(message, player.getName());
+          IRCBot.SendMessage("**" + player.getName() + ":** " + message);
+
         }
         Server.log(player.getName() + ": " + message);
         break;

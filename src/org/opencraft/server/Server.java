@@ -42,6 +42,7 @@ import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Store;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.IRC.IRCBot;
 import org.opencraft.server.net.SessionHandler;
 import org.opencraft.server.task.TaskQueue;
 import org.opencraft.server.task.impl.CTFProcessTask;
@@ -391,6 +392,7 @@ public final class Server {
     log("Ready for connections.");
     createStore();
     WebServer.init();
+    IRCBot.Execute();
   }
 
   public void createStore() {
