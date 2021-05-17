@@ -50,7 +50,6 @@ import org.opencraft.server.model.World;
 public class RocketCommand implements Command {
 
   private static final RocketCommand INSTANCE = new RocketCommand();
-  private static final int TIMEOUT = 10;
 
   /**
    * Gets the singleton instance of this command.
@@ -66,11 +65,6 @@ public class RocketCommand implements Command {
     rocketThread =
         new Thread(
             () -> {
-              long dt = (System.currentTimeMillis() - player.rocketTime);
-              if (dt < TIMEOUT * 1000) {
-                player.getActionSender().sendChatMessage("- &ePlease wait " + (TIMEOUT - dt / 1000) + "" + " seconds");
-                return;
-              }
               player.rocketTime = System.currentTimeMillis();
               Position pos = player.getPosition().toBlockPos();
               Rotation r = player.getRotation();

@@ -56,6 +56,9 @@ public class Store {
   public static final int linePrice = 25;
   public static final int creeperPrice = 40;
 
+  private static final int rocketRecharge = 10;
+  private static final int grenadeRecharge = 7;
+
   public Store() {
     addItem("BigTNT", new BigTNTItem("BigTNT", bigTNTPrice), "bigtnt");
     addItem(
@@ -85,6 +88,23 @@ public class Store {
       p.getActionSender().sendChatMessage("- &eYou don't have enough points!");
       return false;
     }
+
+    if (itemname == "Grenade") {
+      long grenadeCooldown = (System.currentTimeMillis() - p.grenadeTime);
+      if (grenadeCooldown < grenadeRecharge * 1000) {
+        p.getActionSender().sendChatMessage("- &ePlease wait " + (grenadeRecharge - grenadeCooldown / 1000) + "" + " seconds");
+        return false;
+      }
+    }
+
+    if (itemname == "Rocket") {
+      long rocketCooldown = (System.currentTimeMillis() - p.rocketTime);
+      if (rocketCooldown < rocketRecharge * 1000) {
+        p.getActionSender().sendChatMessage("- &ePlease wait " + (rocketRecharge - rocketCooldown / 1000) + "" + " seconds");
+        return false;
+      }
+    }
+
     if (!GameSettings.getBoolean("Chaos")) {
       p.subtractPoints(item.price);
       p.getActionSender().sendChatMessage("- &eYou have " + p.getPoints() + " points left");
