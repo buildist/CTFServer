@@ -7,20 +7,24 @@ repositories {
     flatDir {
         dirs 'lib'
     }
+    mavenCentral()
 }
 
 
 dependencies {
-    implementation name: 'guava-23.0'
-    implementation name: 'mina-core'
+    implementation 'com.google.guava:guava:30.1.1-jre'
+    implementation 'org.apache.mina:mina-core:2.1.4'
+    implementation 'com.thoughtworks.xstream:xstream:1.4.17'
+    implementation 'org.slf4j:slf4j-simple:1.7.29'
     implementation name: 'minecraft-server'
-    implementation name: 'slf4j-api'
-    implementation name: 'slf4j-jdk'
-    implementation name: 'xstream-core'
 }
 
 jar {
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
     manifest {
         attributes 'Main-Class': 'org.opencraft.server.Server'
+    }
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
     }
 }

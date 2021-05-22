@@ -39,6 +39,7 @@ package org.opencraft.server.io;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 
+import com.thoughtworks.xstream.security.AnyTypePermission;
 import org.opencraft.server.model.BlockDefinition;
 import org.opencraft.server.model.BlockManager;
 import org.opencraft.server.net.packet.PacketDefinition;
@@ -63,6 +64,7 @@ public final class PersistenceManager {
 
   /** Initializes the persistence manager. */
   private PersistenceManager() {
+    xstream.addPermission(AnyTypePermission.ANY);
     xstream.alias("packets", PacketManager.class);
     xstream.alias("packet", PacketDefinition.class);
     xstream.alias("field", PacketField.class);
