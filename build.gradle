@@ -16,6 +16,7 @@ dependencies {
     implementation 'org.apache.mina:mina-core:2.1.4'
     implementation 'com.thoughtworks.xstream:xstream:1.4.17'
     implementation 'org.slf4j:slf4j-simple:1.7.29'
+    implementation 'org.javacord:javacord:3.3.0'
     implementation name: 'minecraft-server'
 }
 

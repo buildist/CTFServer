@@ -134,6 +134,9 @@ public final class Server {
     TaskQueue.getTaskQueue().schedule(new PingTask());
     new Thread(new ConsoleTask()).start();
     new Thread(new ItemDropTask()).start();
+    if (!Configuration.getConfiguration().isTest()) {
+      new Thread(new DiscordBot()).start();
+    }
     log("Initializing game...");
   }
 

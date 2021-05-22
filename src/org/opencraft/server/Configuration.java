@@ -72,6 +72,7 @@ public class Configuration {
 
   private String statsPostURL;
   private String discordURL;
+  private String discordToken;
   private String welcomeMessage;
   private boolean test = false;
 
@@ -91,6 +92,7 @@ public class Configuration {
     gameMode = props.getProperty("game_mode", CTFGameMode.class.getName());
     statsPostURL = props.getProperty("statsPostURL");
     discordURL = props.getProperty("discordURL");
+    discordToken = props.getProperty("discordToken");
     welcomeMessage = props.getProperty("welcomeMessage");
     Constants.PORT = Integer.valueOf(props.getProperty("port"));
     Constants.WEB_PORT = Integer.valueOf(props.getProperty("webPort"));
@@ -141,6 +143,10 @@ public class Configuration {
 
   public String getDiscordURL() {
     return discordURL;
+  }
+
+  public String getDiscordToken() {
+    return discordToken;
   }
 
   public String getWelcomeMessage() {
