@@ -1,6 +1,7 @@
 apply plugin: 'java'
 
 sourceSets.main.java.srcDirs = ['src']
+compileJava.options.encoding = 'UTF-8'
 
 repositories {
     flatDir {
