@@ -788,8 +788,13 @@ public class Player extends Entity {
 
   public String getListName() {
     String playerHasFlag = hasFlag ? "&6[!] " : "";
-    String playerIsAFK = AFK ? "    &7(&bAFK&7)" : "";
-    String listName = playerHasFlag + getColoredName() + "    &f" + currentRoundPointsEarned + playerIsAFK;
+
+    String playerSuffix = "";
+    if (AFK) playerSuffix = "    &7(&bAFK&7)";
+    else if (muted) playerSuffix = "    &7(&bMuted&7)";
+    if (AFK && muted) playerSuffix = "    &7(&bAFK, Muted&7)";
+
+    String listName = playerHasFlag + getColoredName() + "    &f" + currentRoundPointsEarned + playerSuffix;
     return listName.substring(0, Math.min(64, listName.length()));
   }
 
@@ -839,19 +844,20 @@ public class Player extends Entity {
   }
 
   public void step(int ticks) {
-    if (System.currentTimeMillis() - moveTime < 100 && AFK) {
-      World.getWorld().broadcast("- " + parseName() + " is no longer AFK");
-      AFK = false;
-    }
-    // TODO: Find a way to check if player is still AFK after changing levels
-    if (System.currentTimeMillis() - moveTime > 10 * 60000 && !AFK && moveTime != 0) {
-      World.getWorld().broadcast("- " + parseName() + " is auto-AFK (Not moved in 10 minutes)");
-      AFK = true;
-    }
-    else if (System.currentTimeMillis() - moveTime > 60 * 60000 && AFK && moveTime != 0) {
-      World.getWorld().broadcast("- " + parseName() + " was auto-kicked (AFK for 60 minutes)");
-      getActionSender().sendLoginFailure("You were auto-kicked for being AFK for 60+ minutes.");
-      getSession().close();
+    if (World.getWorld().getPlayerList().size() >= Configuration.getConfiguration().getMaximumPlayers()) {
+      if (System.currentTimeMillis() - moveTime < 100 && AFK) {
+        World.getWorld().broadcast("- " + parseName() + " is no longer AFK");
+        AFK = false;
+      }
+      // TODO: Find a way to check if player is still AFK after changing levels
+      if (System.currentTimeMillis() - moveTime > 10 * 60000 && !AFK && moveTime != 0) {
+        World.getWorld().broadcast("- " + parseName() + " is auto-AFK (Not moved in 10 minutes)");
+        AFK = true;
+      } else if (System.currentTimeMillis() - moveTime > 60 * 60000 && AFK && moveTime != 0) {
+        World.getWorld().broadcast("- " + parseName() + " was auto-kicked (AFK for 60 minutes)");
+        getActionSender().sendLoginFailure("You were auto-kicked for being AFK for 60+ minutes.");
+        getSession().close();
+      }
     }
 
     World.getWorld().getGameMode().processPlayerMove(this);
