@@ -8,6 +8,10 @@ public class DiscordBot implements Runnable {
 
   private static final long CHANNEL_ID = 603405367031889940L;
 
+  public static String sanitizeDiscordInput(String input) {
+    return input.replaceAll("[^\\p{ASCII}]", "");
+  }
+
   @Override
   public void run() {
     DiscordApi api = new DiscordApiBuilder()
@@ -20,7 +24,7 @@ public class DiscordBot implements Runnable {
       System.err.println("[Discord] " + event.getMessageAuthor().getDisplayName()
           + ": " + event.getMessage().getContent());
       World.getWorld().broadcast("&5[Discord] &f" + event.getMessageAuthor().getDisplayName()
-          + ": " + event.getMessage().getContent());
+          + ": " + sanitizeDiscordInput(event.getMessage().getContent()));
     });
   }
 }
