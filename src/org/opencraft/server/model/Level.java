@@ -877,7 +877,7 @@ public final class Level implements Cloneable {
         if (System.currentTimeMillis() - activeTimers.get(type)
             > BlockManager.getBlockManager().getBlock(type).getTimer()) {
           int cyclesThisTick =
-              (activeBlocks.get(type).size() > 500 ? 500 : activeBlocks.get(type).size());
+              (Math.min(activeBlocks.get(type).size(), 500));
           for (int i = 0; i < cyclesThisTick; i++) {
             Position pos = activeBlocks.get(type).poll();
             if (pos == null) {

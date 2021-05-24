@@ -66,8 +66,7 @@ public class UpdateTask extends ScheduledTask {
     final World world = World.getWorld();
     world.getGameMode().tick();
     List<Player> players = world.getPlayerList().getPlayers();
-    for (int i = 0; i < players.size(); i++) {
-      Player player = players.get(i);
+    for (Player player : players) {
       Set<Entity> le = player.getLocalEntities();
       Object[] localEntities = le.toArray();
       for (Object object : localEntities) {
