@@ -19,10 +19,13 @@ dependencies {
     implementation name: 'minecraft-server'
 }
 
+def mainClass = "org.opencraft.server.Server"
+mainClassName = mainClass
+
 jar {
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
     manifest {
-        attributes 'Main-Class': 'org.opencraft.server.Server'
+        attributes 'Main-Class': mainClass
     }
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }

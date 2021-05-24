@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.io;
 
-import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.Level;
