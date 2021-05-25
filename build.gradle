@@ -2,6 +2,8 @@ plugins {
     id("application")
 }
 
+compileJava.options.encoding = 'UTF-8'
+
 repositories {
     flatDir {
         dirs 'lib'
