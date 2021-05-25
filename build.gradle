@@ -26,6 +26,7 @@ def mainClass = "org.opencraft.server.Server"
 mainClassName = mainClass
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
     manifest {
         attributes 'Main-Class': mainClass
