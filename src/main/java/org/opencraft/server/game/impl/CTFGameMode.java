@@ -898,11 +898,6 @@ public class CTFGameMode extends GameMode {
         }
       }
     }
-    if (blockX == blockSpawnX && blockY == blockSpawnY && blockZ == blockSpawnZ) {
-      if (p.hasFlag) {
-        dropFlag(p.team);
-      }
-    }
     if (getMode() == Level.CTF && tournamentGameStarted) {
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
         Position op = t.getPosition();
