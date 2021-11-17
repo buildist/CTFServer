@@ -54,7 +54,7 @@ public class NoteCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.isOp()) {
+    if (player.isOp() || player.isVIP()) {
       if (params.getArgumentCount() < 2) {
         player.getActionSender().sendChatMessage("- &e/note [name] [message]");
       }
