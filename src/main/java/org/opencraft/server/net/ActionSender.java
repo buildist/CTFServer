@@ -441,7 +441,7 @@ public class ActionSender {
   public void sendMapAspect() {
     Level level = World.getWorld().getLevel();
     String texturePack;
-    String server = Configuration.getConfiguration().isTest() ? "127.0.0.1" : "168.235.67.212";
+    String server = Configuration.getConfiguration().isTest() ? "127.0.0.1" : "168.235.81.79";
     if (level.props.getProperty("texturepack") != null) {
       texturePack = "http://" + server + ":" + Constants.WEB_PORT + "/texturepack.zip?map=" + level.props.getProperty("texturepack");
     } else if (TexturePackHandler.hasCustomTexturePack(level.id)) {
