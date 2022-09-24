@@ -53,7 +53,7 @@ public class NotesCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.isOp()) {
+    if (player.isOp() || player.isVIP()) {
       if (params.getArgumentCount() == 0) {
         player.getActionSender().sendChatMessage("- &e/notes [name]");
       }

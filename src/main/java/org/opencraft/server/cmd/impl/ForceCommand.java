@@ -55,7 +55,7 @@ public class ForceCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if ((player.isOp()) || player.isVIP()) {
+    if (player.isOp()) {
       String pname = params.getStringArgument(0);
       String tname = params.getStringArgument(1);
       Player other = Player.getPlayer(pname, player.getActionSender());
