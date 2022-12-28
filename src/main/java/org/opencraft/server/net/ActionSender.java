@@ -229,7 +229,8 @@ public class ActionSender {
       boolean isSelf,
       boolean isVisible) {
     if (session.isExtensionSupported("ExtPlayerList", 2)) {
-      sendAddPlayerName(nameId, name, listName, teamName, (byte) 1);
+      short fixNameId = (nameId == session.getPlayer().nameId ? -1 : nameId);
+      sendAddPlayerName(fixNameId, name, listName, teamName, (byte) 1);
       if (!isSelf && isVisible) {
         sendExtSpawn(id, colorName, skinUrl != null ? skinUrl : name, x, y, z, rotation, look);
       }
