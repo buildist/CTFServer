@@ -54,11 +54,29 @@ public class HelpCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "&eCommands: /help, /rules, /join, /spec, /red, "
-                + "/blue, /team, /me, /pstats, /pm, /water, /lava, /status, /stats, /store, /vote, "
-                + "/dtnt, /d, /maps, /f, /rtv, /nominate, /cc, /b, /");
+    if (params.getArgumentCount() == 0) {
+      player.getActionSender().sendChatMessage("&7-");
+      player.getActionSender().sendChatMessage("&eType &b/help game &eto learn how to play.");
+      player.getActionSender().sendChatMessage("&eType &b/help tnt &eto learn about &cTNT&e.");
+      player.getActionSender().sendChatMessage("&eType &b/help mines &eto learn about &8mines&e.");
+      player.getActionSender().sendChatMessage("&eType &b/help tagging &eto learn how tagging works.");
+      player.getActionSender().sendChatMessage("&eType &b/help points &eto learn how to earn and spend points.");
+      player.getActionSender().sendChatMessage("&eType &b/help stalemate &eto learn how anti-stalemate mode works.");
+      player.getActionSender().sendChatMessage("&eType &b/commands &efor a list of commands.");
+      player.getActionSender().sendChatMessage("&7-");
+      player.getActionSender().sendChatMessage("&a* You may need to scroll up to see the full message *");
+    } else if (params.getStringArgument(0).equals("game")) {
+      player.getActionSender().sendChatMessage("&7- &eThe aim of the game is to get the most flags by the end of the round. Rounds typically last for &b15 minutes &eor until a team reaches &b5 captures &efirst. Click on the other team's flag to pick it up; capture it by clicking on your own flag. The team with the most captures by the end of the round wins!");
+    } else if (params.getStringArgument(0).equals("tnt")) {
+      player.getActionSender().sendChatMessage("&7- &eThe most common way to kill other players is with &cTNT&e. Place a &cTNT &eand then a &5detonator &eblock to explode it. If a player is within a &b2-block &eradius of the TNT, it will kill them. You may only have &b1 &cTNT &eactive at a time.");
+    } else if (params.getStringArgument(0).equals("mines")) {
+      player.getActionSender().sendChatMessage("&7- &8Mines &eare blocks that explode when players get within a &b2.5-block &eradius of them. You may only have &b2 &8mines &eactive at a time. Type &b/d &eto defuse your own &8mines&e. You can defuse enemy &8mines &eby exploding them. You will not die if you get close to &8mines &eplaced by you or your teammates.");
+    } else if (params.getStringArgument(0).equals("tagging")) {
+      player.getActionSender().sendChatMessage("&e- &eMost maps have a &bdivider &ein the middle of them to differentiate between sides. If you run into players on the enemy team on &byour side&e, you will tag and kill them. Likewise, if you run into them on &btheir &eside, you will be tagged and killed. &eIf the game is in &banti-stalemate mode &eand a player is tagged, the flag carrier from the tagged player's team will automatically drop the flag.");
+    } else if (params.getStringArgument(0).equals("points")) {
+      player.getActionSender().sendChatMessage("&e- &eAll players start with &b40 &epoints. &cTNT &ekills give &b5 &epoints, the first kill of the game &egives &b50 &epoints, &btagging &egives &b15 &epoints and &bflag captures &egive &b40 &epoints. You can also find points in &6crates&e. &eYou may use your points in the &b/store&e. &ePoints reset at the end of every round.");
+    } else if (params.getStringArgument(0).equals("stalemate")) {
+      player.getActionSender().sendChatMessage("&7- &eWhen both teams have an even amount of flag captures, the game goes into &banti-stalemate mode&e. This means that next capture wins the game. If a player from your team is tagged, your flag carrier will automatically drop the flag.");
+    }
   }
 }
