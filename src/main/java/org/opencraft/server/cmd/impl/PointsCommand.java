@@ -60,7 +60,7 @@ public class PointsCommand implements Command {
                   .sendChatMessage(
                           "- &ePoints of " + other.getName() + " set to " + other.getPoints());
         }
-      } player.getActionSender().sendChatMessage("You need to be op to do that!");
+      } player.getActionSender().sendChatMessage("You must be OP to do that!");
     } else {
       player.getActionSender().sendChatMessage("Wrong number of arguments");
       player.getActionSender().sendChatMessage("/points <name> <amount>");

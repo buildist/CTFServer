@@ -55,7 +55,7 @@ public class ForceCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if ((player.isOp()) || player.isVIP()) {
+    if (player.isOp()) {
       if (params.getArgumentCount() >= 2) {
         String name = params.getStringArgument(0);
         String team = params.getStringArgument(1);
@@ -74,6 +74,6 @@ public class ForceCommand implements Command {
         player.getActionSender().sendChatMessage("Wrong number of arguments");
         player.getActionSender().sendChatMessage("/force <name> <team>");
       }
-    } else player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

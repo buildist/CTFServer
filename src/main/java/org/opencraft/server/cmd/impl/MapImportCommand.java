@@ -63,39 +63,44 @@ public class MapImportCommand implements Command {
   @Override
   public void execute(final Player player, final CommandParameters params) {
     if (player.isOp()) {
-      player.getActionSender().sendChatMessage("Downloading map...");
-      new Thread(
-              new Runnable() {
-                @Override
-                public void run() {
-                  try {
-                    String mapName = params.getStringArgument(0);
-                    String urlString =
-                        "https://persignum.com/download.php?password=IJobS0d3Mb&mapname="
-                            + URLEncoder.encode(mapName, "UTF-8");
-                    URL url = new URL(urlString);
-                    ReadableByteChannel ch = Channels.newChannel(url.openStream());
-                    if (mapName.contains("/"))
-                      mapName = mapName.substring(mapName.indexOf("/") + 1);
-                    String path = "maps/more/" + mapName + ".lvl";
-                    FileOutputStream out = new FileOutputStream(path);
-                    out.getChannel().transferFrom(ch, 0, Long.MAX_VALUE);
-                    player.getActionSender().sendChatMessage("Saved to " + path);
-                    player
-                        .getActionSender()
-                        .sendChatMessage("Use /newgame more/" + mapName + " to switch" + " to it");
-                  } catch (Exception ex) {
-                    player
-                        .getActionSender()
-                        .sendChatMessage("Error downloading map. Blame Jacob_ or Jack");
-                    player.getActionSender().sendChatMessage(ex.toString());
-                    Server.log(ex);
+      if (params.getArgumentCount() > 0) {
+        player.getActionSender().sendChatMessage("Downloading map...");
+        new Thread(
+                new Runnable() {
+                  @Override
+                  public void run() {
+                    try {
+                      String mapName = params.getStringArgument(0);
+                      String urlString =
+                              "https://persignum.com/download.php?password=IJobS0d3Mb&mapname="
+                                      + URLEncoder.encode(mapName, "UTF-8");
+                      URL url = new URL(urlString);
+                      ReadableByteChannel ch = Channels.newChannel(url.openStream());
+                      if (mapName.contains("/"))
+                        mapName = mapName.substring(mapName.indexOf("/") + 1);
+                      String path = "maps/more/" + mapName + ".lvl";
+                      FileOutputStream out = new FileOutputStream(path);
+                      out.getChannel().transferFrom(ch, 0, Long.MAX_VALUE);
+                      player.getActionSender().sendChatMessage("Saved to " + path);
+                      player
+                              .getActionSender()
+                              .sendChatMessage("Use /newgame more/" + mapName + " to switch" + " to it");
+                    } catch (Exception ex) {
+                      player
+                              .getActionSender()
+                              .sendChatMessage("Error downloading map. Blame Jacob_ or Jack");
+                      player.getActionSender().sendChatMessage(ex.toString());
+                      Server.log(ex);
+                    }
                   }
-                }
-              })
-          .start();
+                })
+                .start();
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/mapimport <map>");
+      }
     } else {
-      player.getActionSender().sendChatMessage("You need to be op to do that!");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }

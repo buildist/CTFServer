@@ -67,6 +67,6 @@ public class FollowCommand implements Command {
           }
         } else player.follow(null);
       } else player.getActionSender().sendChatMessage("You must be a spectator to do that!");
-    } else player.getActionSender().sendChatMessage("You need to be OP to do that!");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

@@ -76,7 +76,7 @@ public class WarnCommand implements Command {
         player.getActionSender().sendChatMessage("- /warn <name> <message>");
       }
     } else {
-      player.getActionSender().sendChatMessage("- &eYou need to be op to do that!");
+      player.getActionSender().sendChatMessage("- &eYou must be OP to do that!");
     }
   }
 }

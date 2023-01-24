@@ -62,17 +62,23 @@ public class ModifyCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    String key = params.getStringArgument(1);
-    Object value = params.getStringArgument(2);
     if (player.isOp()) {
-      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-      if (other != null) {
-        Object old = other.setAttribute(key, value);
-        player
-            .getActionSender()
-            .sendChatMessage(
-                "- &eChanged " + key + " of " + other.getName() + " from " + old + " to " + value);
+      if (params.getArgumentCount() >= 3) {
+        String key = params.getStringArgument(1);
+        Object value = params.getStringArgument(2);
+
+        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+        if (other != null) {
+          Object old = other.setAttribute(key, value);
+          player
+                  .getActionSender()
+                  .sendChatMessage(
+                          "- &eChanged " + key + " of " + other.getName() + " from " + old + " to " + value);
+        }
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/modify <player> <key> <value>");
       }
-    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

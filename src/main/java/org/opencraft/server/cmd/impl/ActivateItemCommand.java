@@ -56,7 +56,7 @@ public class ActivateItemCommand implements Command {
     if (!GameSettings.getBoolean("EnableStore"))
       player.getActionSender().sendChatMessage("- &eThe store is disabled");
     else if (player.team == -1)
-      player.getActionSender().sendChatMessage("- &eYou need to join a team to do that!");
+      player.getActionSender().sendChatMessage("- &eYou must join a team to do that!");
     else if (player.duelPlayer != null)
       player.getActionSender().sendChatMessage("- &eYou can't use the store while dueling!");
     else {

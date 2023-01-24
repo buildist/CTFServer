@@ -67,6 +67,6 @@ public class UnbanCommand implements Command {
         player.getActionSender().sendChatMessage("Wrong number of arguments");
         player.getActionSender().sendChatMessage("/unban <name>");
       }
-    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

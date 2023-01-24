@@ -53,7 +53,7 @@ public class NotesCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.isOp()) {
+    if (player.isOp() || player.isVIP()) {
       if (params.getArgumentCount() > 0) {
         String target = params.getStringArgument(0);
         player.getActionSender().sendChatMessage("- &eNotes for " + target + ":");
@@ -70,7 +70,7 @@ public class NotesCommand implements Command {
         player.getActionSender().sendChatMessage("/notes <name>");
       }
     } else {
-      player.getActionSender().sendChatMessage("- &eYou need to be op to do that!");
+      player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
     }
   }
 }

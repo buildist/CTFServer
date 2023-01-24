@@ -1133,7 +1133,7 @@ public class CTFGameMode extends GameMode {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
         if (player.team == -1) {
-          player.getActionSender().sendChatMessage("- &eYou need to join a team to place TNT!");
+          player.getActionSender().sendChatMessage("- &eYou must join a team to place TNT!");
           player.getActionSender().sendBlock(x, y, z, (short) 0x00);
         } else {
           if (mode == 1) {
@@ -1162,7 +1162,7 @@ public class CTFGameMode extends GameMode {
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if (type == Constants.BLOCK_MINE && mode == 1 && !ignore) { // Placing mines
         if (player.team == -1) {
-          player.getActionSender().sendChatMessage("- &eYou need to join a team to place mines!");
+          player.getActionSender().sendChatMessage("- &eYou must join a team to place mines!");
           player.getActionSender().sendBlock(x, y, z, (short) 0x00);
         } else {
           if (player.mines.size() < GameSettings.getInt("MaxMines")
