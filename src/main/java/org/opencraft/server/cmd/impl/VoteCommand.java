@@ -55,7 +55,7 @@ public class VoteCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (params.getArgumentCount() == 1) {
+    if (params.getArgumentCount() >= 1) {
       if (player.hasVoted) player.getActionSender().sendChatMessage("- &eYou have already voted!");
       else if (!World.getWorld().getGameMode().voting)
         player.getActionSender().sendChatMessage("- &eVoting is not currently open!");
@@ -67,6 +67,9 @@ public class VoteCommand implements Command {
           player.hasVoted = true;
         }
       }
+    } else {
+      player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/vote <map>");
     }
   }
 }

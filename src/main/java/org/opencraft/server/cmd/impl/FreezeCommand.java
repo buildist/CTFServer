@@ -57,20 +57,26 @@ public class FreezeCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
-      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-      if (other != null) {
-        if (!other.frozen) {
-          other.frozen = true;
-          Server.log(player.getName() + " froze " + other.getName());
-          World.getWorld().broadcast("- " + other.parseName() + " has been frozen!");
-          player.getActionSender().sendChatMessage("- &eSay /freeze [name] again to unfreeze them");
-        } else {
-          other.frozen = false;
-          Server.log(player.getName() + " unfroze " + other.getName());
+      if (params.getArgumentCount() > 0) {
+        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+
+        if (other != null) {
+          if (!other.frozen) {
+            other.frozen = true;
+            Server.log(player.getName() + " froze " + other.getName());
+            World.getWorld().broadcast("- " + other.parseName() + " has been frozen!");
+            player.getActionSender().sendChatMessage("- &eSay /freeze <name> again to unfreeze them");
+          } else {
+            other.frozen = false;
+            Server.log(player.getName() + " unfroze " + other.getName());
+          }
         }
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/freeze <name>");
       }
     } else {
-      player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
+      player.getActionSender().sendChatMessage("- &eYou must be OP to do that!");
     }
   }
 }

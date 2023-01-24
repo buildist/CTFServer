@@ -59,6 +59,6 @@ public class LogCommand implements Command {
     // Player using command is OP?
     if (player.isOp()) {
       player.sendCommandLog = !player.sendCommandLog;
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

@@ -66,7 +66,7 @@ public class FollowCommand implements Command {
             Server.log(player.getName() + " is now following " + other.getName());
           }
         } else player.follow(null);
-      } else player.getActionSender().sendChatMessage("You must be a spectator to do that");
-    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
+      } else player.getActionSender().sendChatMessage("You must be a spectator to do that!");
+    } else player.getActionSender().sendChatMessage("You need to be OP to do that!");
   }
 }

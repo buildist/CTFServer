@@ -58,17 +58,24 @@ public class XBanCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
-      String name = params.getStringArgument(0);
-      Player other = Player.setAttributeFor(name, "banned", "true", player.getActionSender());
-      if (other != null) {
-        Server.banIP(other.getSession().getIP());
-        other.getActionSender().sendLoginFailure("You were banned!");
-        other.getSession().close();
+      if (params.getArgumentCount() > 0) {
+        String name = params.getStringArgument(0);
+        Player other = Player.setAttributeFor(name, "banned", "true", player.getActionSender());
+
+        if (other != null) {
+          Server.banIP(other.getSession().getIP());
+          other.getActionSender().sendLoginFailure("You were banned!");
+          other.getSession().close();
+        } else {
+          Server.banIP(Player.getAttributeFor(name, "ip", player.getActionSender()));
+        }
+
+        Server.log(player.getName() + " xbanned " + name);
+        World.getWorld().broadcast("- " + name + "&e has been banned!");
       } else {
-        Server.banIP(Player.getAttributeFor(name, "ip", player.getActionSender()));
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/ban <name>");
       }
-      Server.log(player.getName() + " xbanned " + name);
-      World.getWorld().broadcast("- " + name + "&e has been banned!");
     } else player.getActionSender().sendChatMessage("You need to be op to do that!");
   }
 }

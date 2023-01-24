@@ -54,14 +54,20 @@ public class IgnoreCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    String name = params.getStringArgument(0);
-    Player p = Player.getPlayer(name, player.getActionSender());
-    if (p != null) {
-      if (!p.isOp()) {
-        player.ignore(p);
-      } else {
-        player.getActionSender().sendChatMessage("- &eYou cannot ignore an OP!");
+    if (params.getArgumentCount() > 0) {
+      String name = params.getStringArgument(0);
+      Player p = Player.getPlayer(name, player.getActionSender());
+
+      if (p != null) {
+        if (!p.isOp()) {
+          player.ignore(p);
+        } else {
+          player.getActionSender().sendChatMessage("- &eYou cannot ignore an OP!");
+        }
       }
+    } else {
+      player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/ignore <name>");
     }
   }
 }

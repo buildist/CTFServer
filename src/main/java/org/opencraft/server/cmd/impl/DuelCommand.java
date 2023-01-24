@@ -71,7 +71,7 @@ public class DuelCommand implements Command {
         if (p == null) {
           player.getActionSender().sendChatMessage("- &ePlayer not found.");
         } else if (p.team == player.team || p.team == -1 || player.team == -1) {
-          player.getActionSender().sendChatMessage("- &eYou must be on opposite teams to duel.");
+          player.getActionSender().sendChatMessage("You must be on opposite teams to duel!");
         } else {
           p.duelChallengedBy = player;
           p.getActionSender()

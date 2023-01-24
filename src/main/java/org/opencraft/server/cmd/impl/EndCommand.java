@@ -59,6 +59,6 @@ public class EndCommand implements Command {
     if ((player.isOp())) {
       Server.log(player.getName() + " used /end");
       World.getWorld().getGameMode().endGame();
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

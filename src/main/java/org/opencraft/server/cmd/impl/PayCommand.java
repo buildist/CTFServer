@@ -49,9 +49,7 @@ public class PayCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    if (params.getArgumentCount() != 2)
-      player.getActionSender().sendChatMessage("/pay [player] [value]");
-    else {
+    if (params.getArgumentCount() >= 2) {
       Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
       if (other != null
           && params.getIntegerArgument(1) >= 0
@@ -63,6 +61,9 @@ public class PayCommand implements Command {
             .sendChatMessage(
                 "- &ePaid " + other.getName() + " " + params.getIntegerArgument(1) + " points");
       }
+    } else {
+      player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/pay <name> <amount>");
     }
   }
 }

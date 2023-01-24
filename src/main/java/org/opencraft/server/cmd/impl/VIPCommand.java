@@ -84,7 +84,7 @@ public class VIPCommand implements Command {
         player.getActionSender().sendChatMessage("/vip <name>");
       }
     } else {
-      player.getActionSender().sendChatMessage("You must be OP to do that");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }

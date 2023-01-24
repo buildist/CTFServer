@@ -84,7 +84,7 @@ public class OperatorCommand implements Command {
         player.getActionSender().sendChatMessage("/op <name>");
       }
     } else {
-      player.getActionSender().sendChatMessage("You must be OP to do that");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }

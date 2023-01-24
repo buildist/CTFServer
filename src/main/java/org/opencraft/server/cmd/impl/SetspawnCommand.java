@@ -77,6 +77,6 @@ public class SetspawnCommand implements Command {
         MapSetCommand.doPropertyChange("blueSpawnPosition", position.toString());
         MapSetCommand.doPropertyChange("blueSpawnRotation", rotation.toString());
       }
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

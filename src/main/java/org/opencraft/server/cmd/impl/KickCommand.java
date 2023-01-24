@@ -70,7 +70,7 @@ public class KickCommand implements Command {
         Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
         if (other != null) { // Player found
           if (!player.isOp() && other.isOp()) { // Does player have correct permissions?
-            player.getActionSender().sendChatMessage("You must be OP to kick another OP");
+            player.getActionSender().sendChatMessage("You must be OP to kick another OP!");
             return;
           }
           if (params.getArgumentCount() == 1) { // No reason
@@ -97,7 +97,7 @@ public class KickCommand implements Command {
         player.getActionSender().sendChatMessage("/kick <name> <message>");
       }
     } else {
-      player.getActionSender().sendChatMessage("You must be OP to do that");
+      player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
     }
   }
 }

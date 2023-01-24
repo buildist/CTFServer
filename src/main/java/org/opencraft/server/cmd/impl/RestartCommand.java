@@ -59,7 +59,7 @@ public class RestartCommand implements Command {
       String message = params.getArgumentCount() == 1 ? params.getStringArgument(0) : null;
       Server.restartServer(message);
     } else {
-      player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
+      player.getActionSender().sendChatMessage("- &eYou must be OP or VIP to do that!");
     }
   }
 }

@@ -54,18 +54,19 @@ public class PmCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (params.getArgumentCount() == 0) {
-      player.getActionSender().sendChatMessage("- &e/pm [name] [message]");
-    }
+    if (params.getArgumentCount() >= 2) {
+      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+      String text = "";
+      for (int i = 1; i < params.getArgumentCount(); i++) {
+        text += " " + params.getStringArgument(i);
+      }
 
-    Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-    String text = "";
-    for (int i = 1; i < params.getArgumentCount(); i++) {
-      text += " " + params.getStringArgument(i);
-    }
-
-    if (other != null) {
-      World.getWorld().sendPM(player, other, text);
+      if (other != null) {
+        World.getWorld().sendPM(player, other, text);
+      }
+    } else {
+      player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/pm <name> <message>");
     }
   }
 }

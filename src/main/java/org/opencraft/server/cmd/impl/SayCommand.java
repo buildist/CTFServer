@@ -76,6 +76,6 @@ public class SayCommand implements Command {
       }
       Server.log(player.getName() + " /said " + text);
       if (!text.equals("")) World.getWorld().broadcast("* &e" + text);
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }
