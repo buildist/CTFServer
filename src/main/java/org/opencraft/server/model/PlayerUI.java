@@ -219,8 +219,9 @@ public abstract class PlayerUI {
         String listName = p.getListName();
         if (!listName.equals(playerListName.get(p))){
           playerListName.put(p, listName);
+          short id = (p == this.player ? -1 : p.nameId);
           player.getActionSender().sendAddPlayerName(
-              p.nameId, p.getName(), p.getListName(), p.getTeamName(), (byte) 1);
+              id, p.getName(), p.getListName(), p.getTeamName(), (byte) 1);
         }
       }
     }

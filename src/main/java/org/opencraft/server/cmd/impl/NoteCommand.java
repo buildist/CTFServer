@@ -60,6 +60,9 @@ public class NoteCommand implements Command {
         for (int i = 1; i < params.getArgumentCount(); i++) {
           text += " " + params.getStringArgument(i);
         }
+      if (params.getArgumentCount() < 2) {
+        player.getActionSender().sendChatMessage("- &e/note [name] [message]");
+      }
 
         String target = params.getStringArgument(0);
         String old = Player.getAttributeFor(target, "notes", player.getActionSender());
