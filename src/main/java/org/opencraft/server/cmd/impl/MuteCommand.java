@@ -90,40 +90,45 @@ public class MuteCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if (player.isOp() || player.isVIP()) {
-      boolean muteAll = params.getStringArgument(0).equals("all");
-      List<Player> other = new ArrayList<Player>();
-      // Mute everybody
-      if (muteAll) {
-        // Make sure player is OP before muting all
-        if (player.isOp()) {
-          for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-            // Don't mute VIP's or OP's.
-            if (!p.isOp() && !p.isVIP()) {
-              other.add(p);
+      if (params.getArgumentCount() >= 2) {
+        boolean muteAll = params.getStringArgument(0).equals("all");
+        List<Player> other = new ArrayList<Player>();
+        // Mute everybody
+        if (muteAll) {
+          // Make sure player is OP before muting all
+          if (player.isOp()) {
+            for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+              // Don't mute VIPs or OPs.
+              if (!p.isOp() && !p.isVIP()) {
+                other.add(p);
+              }
+            }
+          } else { // Doesn't have mute all permissions
+            player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
+          }
+        } else { // Isn't a mute all
+          Player toMute = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+          if (toMute != null) {
+            if (!player.isOp() && toMute.isOp()) { // Does not have permission to mute
+              player.getActionSender().sendChatMessage("You must be OP to mute another OP!");
+            } else {
+              other.add(toMute);
             }
           }
-        } else { // Doesn't have mute all permissions
-          player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
         }
-      } else { // Isn't a mute all
-        Player toMute = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-        if (toMute != null) {
-          if (!player.isOp() && toMute.isOp()) { // Does not have permission to mute
-            player.getActionSender().sendChatMessage("- &eYou must be op to mute another op!");
-          } else {
-            other.add(toMute);
+
+        // Go through list
+        for (Player otherPlayer : other) {
+          if (otherPlayer != null) {
+            mute(player, otherPlayer, muteAll);
           }
         }
-      }
-
-      // Go through list
-      for (Player otherPlayer : other) {
-        if (otherPlayer != null) {
-          mute(player, otherPlayer, muteAll);
-        }
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/mute <name>");
       }
     } else {
-      player.getActionSender().sendChatMessage("- &eYou must be op to do that!");
+      player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
     }
   }
 }

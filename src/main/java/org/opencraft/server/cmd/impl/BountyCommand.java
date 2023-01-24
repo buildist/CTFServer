@@ -13,11 +13,7 @@ public class BountyCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (params.getArgumentCount() != 2) {
-      player.getActionSender().sendChatMessage("/bounty [player] [value]");
-      player.getActionSender().sendChatMessage("or to remove a bounty that you have set");
-      player.getActionSender().sendChatMessage("/bounty [player] 0");
-    } else {
+    if (params.getArgumentCount() == 2) {
       Player hunted = player.getPlayer(params.getStringArgument(0), player.getActionSender());
       if (hunted.bountyAmount == 0) {
         player.bountyActive = false;
@@ -108,6 +104,10 @@ public class BountyCommand implements Command {
       } else {
         player.getActionSender().sendChatMessage("You cannot bounty someone who is not playing!");
       }
+    } else {
+      player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/bounty <player> <amount>");
+      player.getActionSender().sendChatMessage("Use 0 for the amount to remove your bounty");
     }
   }
 }

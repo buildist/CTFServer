@@ -74,7 +74,7 @@ public class MapEnvironmentCommand implements Command {
         p.getActionSender().sendMapColors();
       }
     } else {
-      player.getActionSender().sendChatMessage("You must be OP to do that");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 

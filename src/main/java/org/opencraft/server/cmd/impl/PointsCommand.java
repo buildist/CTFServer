@@ -49,17 +49,21 @@ public class PointsCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    if (params.getArgumentCount() != 2)
-      player.getActionSender().sendChatMessage("/points [player] [value]");
-    else if (player.isOp()) {
-      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-      if (other != null) {
-        other.setPoints(params.getIntegerArgument(1));
-        player
-            .getActionSender()
-            .sendChatMessage(
-                "- &ePoints of " + other.getName() + " set to " + other.getPoints());
-      }
-    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
+    if (params.getArgumentCount() == 2) {
+      if (player.isOp()) {
+        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+
+        if (other != null) {
+          other.setPoints(params.getIntegerArgument(1));
+          player
+                  .getActionSender()
+                  .sendChatMessage(
+                          "- &ePoints of " + other.getName() + " set to " + other.getPoints());
+        }
+      } player.getActionSender().sendChatMessage("You must be OP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/points <name> <amount>");
+    }
   }
 }

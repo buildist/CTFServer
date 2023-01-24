@@ -54,23 +54,29 @@ public class WarnCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
-      if (params.getArgumentCount() == 0) {
-        player.getActionSender().sendChatMessage("- &e/warn [name] [message]");
-      }
-      String target = params.getStringArgument(0);
-      Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-      if (other != null) {
-        String text = "";
-        for (int i = 1; i < params.getArgumentCount(); i++) {
-          text += " " + params.getStringArgument(i);
+      if (params.getArgumentCount() >= 2) {
+        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+
+        if (other != null) {
+          String text = "";
+          for (int i = 1; i < params.getArgumentCount(); i++) {
+            text += " " + params.getStringArgument(i);
+          }
+
+          if (!text.equals("")) {
+            other.getActionSender().sendChatMessage("&c[Warning]" + text);
+            player.getActionSender().sendChatMessage("&5-->" + other.parseName() + ">&f" + text);
+          } else {
+            player.getActionSender().sendChatMessage("Wrong number of arguments");
+            player.getActionSender().sendChatMessage("- /warn <name> <message>");
+          }
         }
-        if (!text.equals("")) {
-          other.getActionSender().sendChatMessage("&c[Warning] " + text);
-          player.getActionSender().sendChatMessage("&5-->" + other.parseName() + ">&f" + text);
-        } else player.getActionSender().sendChatMessage("- &ePlease include a message.");
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("- /warn <name> <message>");
       }
     } else {
-      player.getActionSender().sendChatMessage("- &eYou need to be op to do that!");
+      player.getActionSender().sendChatMessage("- &eYou must be OP to do that!");
     }
   }
 }

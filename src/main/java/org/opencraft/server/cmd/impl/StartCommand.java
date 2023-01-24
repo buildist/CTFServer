@@ -36,6 +36,6 @@ public class StartCommand implements Command {
                 }
               })
           .start();
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

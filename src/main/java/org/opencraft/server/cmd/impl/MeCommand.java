@@ -55,16 +55,26 @@ public class MeCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.muted) return;
-
-    String text = "";
-    for (int i = 0; i < params.getArgumentCount(); i++) {
-      text += " " + params.getStringArgument(i);
+    if (player.muted) {
+      player.getActionSender().sendChatMessage("You may not use this command as you are currently muted");
+      return;
     }
-    if (params.getArgumentCount() > 0 && !player.muted)
-      for (Player t : World.getWorld().getPlayerList().getPlayers()) {
-        if (!t.isIgnored(player))
-          t.getActionSender().sendChatMessage("* " + player.getColoredName() + " &f" + text);
+
+    if (params.getArgumentCount() > 0) {
+      String text = "";
+
+      for (int i = 0; i < params.getArgumentCount(); i++) {
+        text += " " + params.getStringArgument(i);
       }
+
+      if (params.getArgumentCount() > 0 && !player.muted)
+        for (Player t : World.getWorld().getPlayerList().getPlayers()) {
+          if (!t.isIgnored(player))
+            t.getActionSender().sendChatMessage("* " + player.getColoredName() + " &f" + text);
+        }
+    } else {
+      player.getActionSender().sendChatMessage("Wrong number of arguments");
+      player.getActionSender().sendChatMessage("/me <message>");
+    }
   }
 }

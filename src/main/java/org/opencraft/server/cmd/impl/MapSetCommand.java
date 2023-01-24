@@ -129,7 +129,7 @@ public class MapSetCommand implements Command {
         }
       }
     } else {
-      player.getActionSender().sendChatMessage("You need to be op to do that!");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 

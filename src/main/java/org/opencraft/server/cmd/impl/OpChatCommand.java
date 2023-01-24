@@ -66,6 +66,6 @@ public class OpChatCommand implements Command {
         text += " " + params.getStringArgument(i);
       }
       World.getWorld().sendOpChat(player, text);
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

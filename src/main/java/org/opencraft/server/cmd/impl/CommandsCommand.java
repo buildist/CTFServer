@@ -36,26 +36,38 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Constants;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.World;
 
-public class TutorialCommand implements Command {
-  private static final TutorialCommand INSTANCE = new TutorialCommand();
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+public class CommandsCommand implements Command {
+
+  private static final CommandsCommand INSTANCE = new CommandsCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static TutorialCommand getCommand() {
+  public static CommandsCommand getCommand() {
     return INSTANCE;
   }
 
   public void execute(Player player, CommandParameters params) {
-    player
-        .getActionSender()
-        .sendChatMessage("- &eSay /commands for a command list. " + Constants.HELP_TEXT);
+    final Map<String, Command> commands = World.getWorld().getGameMode().getCommands();
+
+    List<String> commandList = new ArrayList<String>();
+
+    for (Map.Entry<String, Command> entry : commands.entrySet()) {
+      commandList.add("/" + entry.getKey());
+    }
+
+    player.getActionSender().sendChatMessage("Command list:");
+    player.getActionSender().sendChatMessage(String.join(", ", commandList));
   }
 }

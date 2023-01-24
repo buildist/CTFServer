@@ -76,6 +76,6 @@ public class NewGameCommand implements Command {
         }
       }
       World.getWorld().getGameMode().startGame(newMap);
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
   }
 }

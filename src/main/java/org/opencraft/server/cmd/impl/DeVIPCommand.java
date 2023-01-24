@@ -65,7 +65,7 @@ public class DeVIPCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     // Player using command is OP?
     if (player.isOp()) {
-      if (params.getArgumentCount() == 1) {
+      if (params.getArgumentCount() >= 1) {
         for (Player other : World.getWorld().getPlayerList().getPlayers()) {
           if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
             Server.log(player.getName() + " de-vip'd " + other.getName());
@@ -79,6 +79,6 @@ public class DeVIPCommand implements Command {
         player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
       } else player.getActionSender().sendChatMessage("Wrong number of arguments");
       player.getActionSender().sendChatMessage("/devip <name>");
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

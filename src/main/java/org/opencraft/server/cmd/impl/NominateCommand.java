@@ -60,17 +60,21 @@ public class NominateCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     if (!GameSettings.getBoolean("Tournament")) {
       if (params.getArgumentCount() == 1) {
-        String mapname = params.getStringArgument(0);
+        String mapName = params.getStringArgument(0);
+
         if (!player.hasNominated
             && World.getWorld().getGameMode().rtvVotes > 0
-            && MapController.getLevel(mapname) != null
-            && !World.getWorld().getGameMode().nominatedMaps.contains(mapname)
-            && !mapname.equals(World.getWorld().getGameMode().currentMap)
-            && !mapname.equals(World.getWorld().getGameMode().previousMap)) {
-          World.getWorld().getGameMode().nominatedMaps.add(mapname);
-          World.getWorld().broadcast("- " + player.getColoredName() + " &3nominated " + mapname);
+            && MapController.getLevel(mapName) != null
+            && !World.getWorld().getGameMode().nominatedMaps.contains(mapName)
+            && !mapName.equals(World.getWorld().getGameMode().currentMap)
+            && !mapName.equals(World.getWorld().getGameMode().previousMap)) {
+          World.getWorld().getGameMode().nominatedMaps.add(mapName);
+          World.getWorld().broadcast("- " + player.getColoredName() + " &3nominated " + mapName);
           player.hasNominated = true;
         }
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/nominate <map>");
       }
     }
   }

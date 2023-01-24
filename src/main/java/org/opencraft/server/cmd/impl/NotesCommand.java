@@ -54,20 +54,23 @@ public class NotesCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if (player.isOp() || player.isVIP()) {
-      if (params.getArgumentCount() == 0) {
-        player.getActionSender().sendChatMessage("- &e/notes [name]");
-      }
-      String target = params.getStringArgument(0);
-      player.getActionSender().sendChatMessage("- &eNotes for " + target + ":");
-      String notes = Player.getAttributeFor(target, "notes", player.getActionSender());
-      if (notes != null) {
-        String[] parts = notes.split(";");
-        for (String note : parts) {
-          if (!note.isEmpty()) player.getActionSender().sendChatMessage("* " + note);
+      if (params.getArgumentCount() > 0) {
+        String target = params.getStringArgument(0);
+        player.getActionSender().sendChatMessage("- &eNotes for " + target + ":");
+        String notes = Player.getAttributeFor(target, "notes", player.getActionSender());
+
+        if (notes != null) {
+          String[] parts = notes.split(";");
+          for (String note : parts) {
+            if (!note.isEmpty()) player.getActionSender().sendChatMessage("* " + note);
+          }
         }
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/notes <name>");
       }
     } else {
-      player.getActionSender().sendChatMessage("- &eYou need to be op to do that!");
+      player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
     }
   }
 }

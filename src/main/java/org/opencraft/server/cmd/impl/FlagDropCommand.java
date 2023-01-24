@@ -56,8 +56,17 @@ public class FlagDropCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    ((CTFGameMode)World.getWorld()
-        .getGameMode())
-        .dropFlag(player, false, true);
+    // Check if player using command is on a team
+    if (player.team != -1) {
+      if (player.hasFlag) {
+        ((CTFGameMode) World.getWorld()
+                .getGameMode())
+                .dropFlag(player, false, true);
+      } else {
+        player.getActionSender().sendChatMessage("You do not have the flag.");
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You must be on a team to do that!");
+    }
   }
 }

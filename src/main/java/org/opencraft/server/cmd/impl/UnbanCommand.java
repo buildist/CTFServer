@@ -57,11 +57,16 @@ public class UnbanCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
-      String name = params.getStringArgument(0);
-      Server.log(player.getName() + " unbanned " + name);
-      player.getActionSender().sendChatMessage(name + " has been unbanned.");
-      Player.setAttributeFor(name, "banned", "false", player.getActionSender());
-      Server.unbanIP(player.getSession().getIP());
-    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
+      if (params.getArgumentCount() > 0) {
+        String name = params.getStringArgument(0);
+        Server.log(player.getName() + " unbanned " + name);
+        player.getActionSender().sendChatMessage(name + " has been unbanned.");
+        Player.setAttributeFor(name, "banned", "false", player.getActionSender());
+        Server.unbanIP(player.getSession().getIP());
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/unban <name>");
+      }
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

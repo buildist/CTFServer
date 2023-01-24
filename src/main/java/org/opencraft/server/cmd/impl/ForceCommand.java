@@ -56,17 +56,24 @@ public class ForceCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
-      String pname = params.getStringArgument(0);
-      String tname = params.getStringArgument(1);
-      Player other = Player.getPlayer(pname, player.getActionSender());
-      if (other != null) {
-        if (!player.isOp() && other.isOp()) {
-          player.getActionSender().sendChatMessage("You cannot force an OP.");
-        } else {
-          Server.log(player.getName() + " forced " + other.getName() + " to " + tname);
-          other.joinTeam(tname);
+      if (params.getArgumentCount() >= 2) {
+        String name = params.getStringArgument(0);
+        String team = params.getStringArgument(1);
+
+        Player other = Player.getPlayer(name, player.getActionSender());
+
+        if (other != null) {
+          if (!player.isOp() && other.isOp()) {
+            player.getActionSender().sendChatMessage("You cannot force an OP.");
+          } else {
+            Server.log(player.getName() + " forced " + other.getName() + " to " + team);
+            other.joinTeam(team);
+          }
         }
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/force <name> <team>");
       }
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

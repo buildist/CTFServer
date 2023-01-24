@@ -60,6 +60,6 @@ public class BoxCommand implements Command {
           .getActionSender()
           .sendChatMessage(
               "- &e Place a block in each corner (Are you sure " + "you want to do this?)");
-    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }

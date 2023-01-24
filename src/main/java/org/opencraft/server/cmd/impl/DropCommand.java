@@ -55,8 +55,13 @@ public class DropCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if ((player.isOp()) || player.isVIP()) {
-      int points = params.getIntegerArgument(0);
-      if (points >= 0 && points < 1001) new DropItem(points);
-    } else player.getActionSender().sendChatMessage("You must be OP to do that");
+      if (params.getArgumentCount() >= 1) {
+        int points = params.getIntegerArgument(0);
+        if (points >= 0 && points < 1001) new DropItem(points);
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/drop <1-1000>");
+      }
+    } else player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
   }
 }

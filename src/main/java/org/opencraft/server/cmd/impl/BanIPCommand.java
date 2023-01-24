@@ -58,26 +58,31 @@ public class BanIPCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     if (player.isOp()) {
-      if (params.getStringArgument(0).contains(".")) {
-        Server.log(player.getName() + " IP banned " + params.getStringArgument(0));
-        Server.banIP(params.getStringArgument(0));
-        player
-            .getActionSender()
-            .sendChatMessage(params.getStringArgument(0) + " has been IP " + "banned.");
-      } else
-        for (Player other : World.getWorld().getPlayerList().getPlayers()) {
-          if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
-            Server.banIP(other.getSession().getIP());
-            Server.log(player.getName() + " IP banned " + other.getName());
-            other.getActionSender().sendLoginFailure("You were banned!");
-            other.getSession().close();
-            player
-                .getActionSender()
-                .sendChatMessage(other.getSession().getIP() + " has been IP " + "banned.");
-            World.getWorld().broadcast("- " + other.parseName() + " has been banned!");
-            return;
+      if (params.getArgumentCount() > 0) {
+        if (params.getStringArgument(0).contains(".")) {
+          Server.log(player.getName() + " IP banned " + params.getStringArgument(0));
+          Server.banIP(params.getStringArgument(0));
+          player
+                  .getActionSender()
+                  .sendChatMessage(params.getStringArgument(0) + " has been IP " + "banned.");
+        } else
+          for (Player other : World.getWorld().getPlayerList().getPlayers()) {
+            if (other.getName().toLowerCase().equals(params.getStringArgument(0).toLowerCase())) {
+              Server.banIP(other.getSession().getIP());
+              Server.log(player.getName() + " IP banned " + other.getName());
+              other.getActionSender().sendLoginFailure("You were banned!");
+              other.getSession().close();
+              player
+                      .getActionSender()
+                      .sendChatMessage(other.getSession().getIP() + " has been IP " + "banned.");
+              World.getWorld().broadcast("- " + other.parseName() + " has been banned!");
+              return;
+            }
           }
-        }
-    } else player.getActionSender().sendChatMessage("You need to be op to do that!");
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/banip <ip>");
+      }
+    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
   }
 }
