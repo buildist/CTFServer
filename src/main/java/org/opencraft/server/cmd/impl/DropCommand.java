@@ -62,6 +62,8 @@ public class DropCommand implements Command {
         player.getActionSender().sendChatMessage("Wrong number of arguments");
         player.getActionSender().sendChatMessage("/drop <1-1000>");
       }
-    } else player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
+    }
   }
 }

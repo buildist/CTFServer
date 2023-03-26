@@ -60,6 +60,8 @@ public class HiddenCommand implements Command {
         if (p.isHidden) message += p.parseName() + ",";
       }
       player.getActionSender().sendChatMessage(message);
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }

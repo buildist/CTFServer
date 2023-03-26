@@ -74,6 +74,8 @@ public class ForceCommand implements Command {
         player.getActionSender().sendChatMessage("Wrong number of arguments");
         player.getActionSender().sendChatMessage("/force <name> <team>");
       }
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }

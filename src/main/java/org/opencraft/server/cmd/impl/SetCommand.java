@@ -88,6 +88,8 @@ public class SetCommand implements Command {
           player.getActionSender().sendChatMessage("Setting doesn't exist, or invalid value.");
         }
       }
-    } else player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
+    }
   }
 }

@@ -79,6 +79,8 @@ public class ModifyCommand implements Command {
         player.getActionSender().sendChatMessage("Wrong number of arguments");
         player.getActionSender().sendChatMessage("/modify <player> <key> <value>");
       }
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }

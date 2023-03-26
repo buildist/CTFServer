@@ -62,6 +62,8 @@ public class AddSpawnCommand implements Command {
       MapSetCommand.doPropertyChange(
           "tdmSpawns",
           existing + (position.getX() + "," + position.getZ() + "," + position.getY()));
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }

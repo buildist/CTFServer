@@ -65,16 +65,22 @@ public class TeleportCommand implements Command {
     if (player.team == -1) {
       if (params.getArgumentCount() == 1) {
         Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+
         if (other != null) {
           player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
           player.setPosition(other.getPosition());
           player.setRotation(other.getRotation());
           return;
         }
+
         // Player not found
         player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
-      } else player.getActionSender().sendChatMessage("Wrong number of arguments");
-      player.getActionSender().sendChatMessage("/tp <name>");
-    } else player.getActionSender().sendChatMessage("You must be a spectator to do that!");
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/tp <name>");
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You must be a spectator to do that!");
+    }
   }
 }

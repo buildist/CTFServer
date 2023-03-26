@@ -65,6 +65,8 @@ public class ReloadCommand implements Command {
       } catch (IOException ex) {
       }
       MapController.create();
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }

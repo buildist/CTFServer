@@ -77,8 +77,12 @@ public class DeOperatorCommand implements Command {
         }
         // Player not found
         player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
-      } else player.getActionSender().sendChatMessage("Wrong number of arguments");
-      player.getActionSender().sendChatMessage("/deop <name>");
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/deop <name>");
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }

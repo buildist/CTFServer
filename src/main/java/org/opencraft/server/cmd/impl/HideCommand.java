@@ -67,6 +67,8 @@ public class HideCommand implements Command {
         player.makeVisible();
         player.getActionSender().sendChatMessage("- &eYou are now visible");
       }
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }
