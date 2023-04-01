@@ -38,49 +38,36 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.World;
 
-public class ModifyCommand implements Command {
-  private static final ModifyCommand INSTANCE = new ModifyCommand();
+public class CoinFlipCommand implements Command {
+
+  /** The instance of this command. */
+  private static final CoinFlipCommand INSTANCE = new CoinFlipCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static ModifyCommand getCommand() {
+  public static CoinFlipCommand getCommand() {
     return INSTANCE;
   }
 
-  private static boolean isInteger(String s) {
-    try {
-      Integer.parseInt(s);
-      return true;
-    } catch (NumberFormatException ex) {
-      return false;
-    }
-  }
-
+  @Override
   public void execute(Player player, CommandParameters params) {
-    if (player.isOp()) {
-      if (params.getArgumentCount() >= 3) {
-        String key = params.getStringArgument(1);
-        Object value = params.getStringArgument(2);
+    // In tournament mode, don't allow regular players to execute the command
+    if (GameSettings.getBoolean("Tournament") && !player.isOp() && !player.isVIP()) {
+        player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
+        return;
+    }
 
-        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
-        if (other != null) {
-          Object old = other.setAttribute(key, value);
-          player
-                  .getActionSender()
-                  .sendChatMessage(
-                          "- &eChanged " + key + " of " + other.getName() + " from " + old + " to " + value);
-        }
-      } else {
-        player.getActionSender().sendChatMessage("Wrong number of arguments");
-        player.getActionSender().sendChatMessage("/modify <player> <key> <value>");
-      }
+    if (Math.random() < 0.5) {
+      World.getWorld().broadcast("- The coin landed on heads!");
     } else {
-      player.getActionSender().sendChatMessage("You must be OP to do that!");
+      World.getWorld().broadcast("- The coin landed on tails!");
     }
   }
 }

@@ -72,7 +72,7 @@ public class MuteCommand implements Command {
       otherPlayer.muted = false;
       Server.unMutePlayer(otherPlayer.getName());
       Server.log(player.getName() + " unmuted " + otherPlayer.getName());
-      World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been ummuted!");
+      World.getWorld().broadcast("- " + otherPlayer.parseName() + " has been unmuted!");
       otherPlayer.getActionSender().sendChatMessage("- &eYou are no longer muted");
     }
     // Mute them on the website
@@ -90,7 +90,7 @@ public class MuteCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     if (player.isOp() || player.isVIP()) {
-      if (params.getArgumentCount() >= 2) {
+      if (params.getArgumentCount() >= 1) {
         boolean muteAll = params.getStringArgument(0).equals("all");
         List<Player> other = new ArrayList<Player>();
         // Mute everybody
@@ -98,18 +98,21 @@ public class MuteCommand implements Command {
           // Make sure player is OP before muting all
           if (player.isOp()) {
             for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-              // Don't mute VIPs or OPs.
+              // Don't mute VIPs or OPs
               if (!p.isOp() && !p.isVIP()) {
                 other.add(p);
               }
             }
-          } else { // Doesn't have mute all permissions
+          } else {
+            // Doesn't have mute all permissions
             player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
           }
-        } else { // Isn't a mute all
+        } else {
+          // Isn't a mute all
           Player toMute = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
           if (toMute != null) {
-            if (!player.isOp() && toMute.isOp()) { // Does not have permission to mute
+            if (!player.isOp() && toMute.isOp()) {
+              // Does not have permission to mute
               player.getActionSender().sendChatMessage("You must be OP to mute another OP!");
             } else {
               other.add(toMute);

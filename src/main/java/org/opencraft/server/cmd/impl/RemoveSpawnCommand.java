@@ -65,6 +65,8 @@ public class RemoveSpawnCommand implements Command {
       } else {
         player.getActionSender().sendChatMessage("/removespawn x,y,z");
       }
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }

@@ -60,13 +60,20 @@ public class FollowCommand implements Command {
       if (player.team == -1) {
         if (params.getArgumentCount() == 1) {
           Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
+
           if (other != null) {
             player.follow(other);
             player.getActionSender().sendChatMessage("Say /follow to stop");
             Server.log(player.getName() + " is now following " + other.getName());
           }
-        } else player.follow(null);
-      } else player.getActionSender().sendChatMessage("You must be a spectator to do that!");
-    } else player.getActionSender().sendChatMessage("You must be OP to do that!");
+        } else {
+          player.follow(null);
+        }
+      } else {
+        player.getActionSender().sendChatMessage("You must be a spectator to do that!");
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }
