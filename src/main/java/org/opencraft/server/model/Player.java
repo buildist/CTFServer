@@ -113,7 +113,7 @@ public class Player extends Entity {
   public boolean bountyMode = false;
   public int lastAmount = 0;
   public boolean bountyActive = false;
-  private HashSet<String> ignorePlayers = new HashSet<String>();
+  public HashSet<String> ignorePlayers = new HashSet<String>();
   private ActionSender actionSender = null;
   private Player instance;
   private Thread followThread;

@@ -230,8 +230,10 @@ public class CTFGameMode extends GameMode {
       int ex = x  * 32 + 16;
       int ez = y  * 32 + 16;
       int ey = z  * 32 + 16;
-      player.getActionSender().sendSpawnEffect(Constants.EFFECT_TNT, ex, ey, ez, ex, ey, ez);
-      player.getActionSender().sendSpawnEffect(Constants.EFFECT_TNT_2, ex, ey, ez, ex, ey, ez);
+
+      // If the player does not want to see particles, don't show them
+      if (!player.ignorePlayers.contains("-particles")) player.getActionSender().sendSpawnEffect(Constants.EFFECT_TNT, ex, ey, ez, ex, ey, ez);
+      if (!player.ignorePlayers.contains("-particles")) player.getActionSender().sendSpawnEffect(Constants.EFFECT_TNT_2, ex, ey, ez, ex, ey, ez);
     }
   }
 
