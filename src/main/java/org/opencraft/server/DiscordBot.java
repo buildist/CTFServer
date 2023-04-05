@@ -1,6 +1,7 @@
 package org.opencraft.server;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.opencraft.server.model.Player;
@@ -42,5 +43,27 @@ public class DiscordBot implements Runnable {
                 + ": " + sanitizeDiscordInput(message));
       }
     });
+
+    String topic = null;
+    while (true) {
+      String previousTopic = topic;
+      int count = World.getWorld().getPlayerList().size();
+      if (count == 0) {
+        topic = "";
+      } else {
+        String players = World.getWorld().getPlayerList().getPlayers().stream()
+            .map(Player::getName).collect(
+                Collectors.joining(", "));
+        topic = "Online Players (%d): %s".formatted(count, players);
+      }
+      if (!topic.equals(previousTopic)) {
+        api.getServerTextChannelById(CHANNEL_ID).get().updateTopic(topic);
+      }
+
+      try {
+        Thread.sleep(60 * 1000);
+      } catch (InterruptedException e) {
+      }
+    }
   }
 }
