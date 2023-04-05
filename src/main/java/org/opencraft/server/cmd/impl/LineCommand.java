@@ -61,6 +61,8 @@ public class LineCommand implements Command {
     Position pos = player.getPosition().toBlockPos();
     Rotation r = player.getRotation();
 
+    player.lineTime = System.currentTimeMillis();
+
     double heading =
         Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
     double pitch =

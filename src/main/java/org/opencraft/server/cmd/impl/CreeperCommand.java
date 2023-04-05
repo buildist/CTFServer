@@ -65,6 +65,9 @@ public class CreeperCommand implements Command {
     int px = (pos.getX() - 16) / 32;
     int py = (pos.getY() - 16) / 32;
     int pz = ((pos.getZ() - 16) / 32);
+
+    player.creeperTime = System.currentTimeMillis();
+
     World.getWorld().broadcast("- " + player.parseName() + " &eisn't feeling so good...");
     World.getWorld().broadcast("- &esssssssSSSSSSSSS");
     ((CTFGameMode)World.getWorld()
