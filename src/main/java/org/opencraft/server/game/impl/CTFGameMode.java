@@ -693,7 +693,11 @@ public class CTFGameMode extends GameMode {
       if (p.team == 0) {
         blueFlagTaken = false;
         blueFlagDropped = true;
-        setBlueFlagPos(playerPos.getX(), playerPos.getZ() - 1, playerPos.getY());
+
+        // If the player is above the build ceiling, drop the flag at the build ceiling to prevent out of bounds issues
+        if (playerPos.getZ() > World.getWorld().getLevel().ceiling) setBlueFlagPos(playerPos.getX(), World.getWorld().getLevel().ceiling, playerPos.getY());
+        else setBlueFlagPos(playerPos.getX(), playerPos.getZ() - 1, playerPos.getY());
+
         blueFlagDroppedThread =
             new Thread(
                 new Runnable() {
@@ -716,7 +720,11 @@ public class CTFGameMode extends GameMode {
       } else {
         redFlagTaken = false;
         redFlagDropped = true;
-        setRedFlagPos(playerPos.getX(), playerPos.getZ() - 1, playerPos.getY());
+
+        // If the player is above the build ceiling, drop the flag at the build ceiling to prevent out of bounds issues
+        if (playerPos.getZ() > World.getWorld().getLevel().ceiling) setRedFlagPos(playerPos.getX(), World.getWorld().getLevel().ceiling, playerPos.getY());
+        else setRedFlagPos(playerPos.getX(), playerPos.getZ() - 1, playerPos.getY());
+
         redFlagDroppedThread =
             new Thread(
                 new Runnable() {
