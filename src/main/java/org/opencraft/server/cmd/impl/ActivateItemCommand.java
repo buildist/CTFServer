@@ -42,6 +42,7 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
+import org.opencraft.server.model.World;
 
 public class ActivateItemCommand implements Command {
   private StoreItem item = null;
@@ -59,6 +60,7 @@ public class ActivateItemCommand implements Command {
       player.getActionSender().sendChatMessage("- &eYou must join a team to do that!");
     else if (player.duelPlayer != null)
       player.getActionSender().sendChatMessage("- &eYou can't use the store while dueling!");
+    else if (!World.getWorld().getGameMode().tournamentGameStarted) player.getActionSender().sendChatMessage("- &eThe game has not started yet.");
     else {
       if (!(item.name.equals("Brush") && player.brush)) {
         boolean r = Server.getStore().buy(player, item.name);

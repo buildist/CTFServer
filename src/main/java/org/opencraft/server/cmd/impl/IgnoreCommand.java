@@ -58,12 +58,26 @@ public class IgnoreCommand implements Command {
       String name = params.getStringArgument(0);
       Player p = Player.getPlayer(name, player.getActionSender());
 
+      // Custom behaviour for allowing players to toggle particles on/off
+      if (name.equals("-particles")) {
+        if (!player.ignorePlayers.contains(name)) {
+          player.ignorePlayers.add(name);
+          player.getActionSender().sendChatMessage("- &eNow ignoring TNT particles. Use this command again to stop.");
+        } else {
+          player.ignorePlayers.remove(name);
+          player.getActionSender().sendChatMessage("- &eParticles will now show when TNT explodes.");
+        }
+        return;
+      }
+
       if (p != null) {
         if (!p.isOp()) {
           player.ignore(p);
         } else {
           player.getActionSender().sendChatMessage("- &eYou cannot ignore an OP!");
         }
+      } else {
+          player.getActionSender().sendChatMessage("- &eCould not find player &b" + name + "&e.");
       }
     } else {
       player.getActionSender().sendChatMessage("Wrong number of arguments");

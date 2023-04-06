@@ -56,8 +56,10 @@ public class Store {
   public static final int linePrice = 25;
   public static final int creeperPrice = 40;
 
-  private static final int rocketRecharge = 10;
+  private static final int creeperRecharge = 7;
   private static final int grenadeRecharge = 7;
+  private static final int lineRecharge = 7;
+  private static final int rocketRecharge = 10;
 
   public Store() {
     addItem("BigTNT", new BigTNTItem("BigTNT", bigTNTPrice), "bigtnt");
@@ -89,10 +91,26 @@ public class Store {
       return false;
     }
 
+    if (itemname == "Creeper") {
+      long creeperCooldown = (System.currentTimeMillis() - p.creeperTime);
+      if (creeperCooldown < creeperRecharge * 1000) {
+        p.getActionSender().sendChatMessage("- &ePlease wait " + (creeperRecharge - creeperCooldown / 1000) + "" + " seconds");
+        return false;
+      }
+    }
+
     if (itemname == "Grenade") {
       long grenadeCooldown = (System.currentTimeMillis() - p.grenadeTime);
       if (grenadeCooldown < grenadeRecharge * 1000) {
         p.getActionSender().sendChatMessage("- &ePlease wait " + (grenadeRecharge - grenadeCooldown / 1000) + "" + " seconds");
+        return false;
+      }
+    }
+
+    if (itemname == "Line") {
+      long lineCooldown = (System.currentTimeMillis() - p.lineTime);
+      if (lineCooldown < lineRecharge * 1000) {
+        p.getActionSender().sendChatMessage("- &ePlease wait " + (lineRecharge - lineCooldown / 1000) + "" + " seconds");
         return false;
       }
     }
