@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
+import org.javacord.api.entity.intent.Intent;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
@@ -18,7 +19,9 @@ public class DiscordBot implements Runnable {
   @Override
   public void run() {
     DiscordApi api = new DiscordApiBuilder()
-        .setToken(Configuration.getConfiguration().getDiscordToken()).login().join();
+        .setToken(Configuration.getConfiguration().getDiscordToken())
+        .addIntents(Intent.MESSAGE_CONTENT)
+        .login().join();
     api.addMessageCreateListener(event -> {
       if (event.getMessageAuthor().isYourself() || event.getMessageAuthor().isWebhook()
           || event.getChannel().getId() != CHANNEL_ID || event.getMessage().getContent()
