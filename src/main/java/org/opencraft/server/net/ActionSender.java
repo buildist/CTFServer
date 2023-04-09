@@ -795,6 +795,44 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
+  public void sendSelectionCuboid(
+          int id,
+          String label,
+          short startX,
+          short startY,
+          short startZ,
+          short endX,
+          short endY,
+          short endZ,
+          short red,
+          short green,
+          short blue,
+          short opacity) {
+    PacketBuilder bldr =
+            new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(26));
+    bldr.putByte("id", id);
+    bldr.putString("label", label);
+    bldr.putShort("start_x", startX);
+    bldr.putShort("start_y", startY);
+    bldr.putShort("start_z", startZ);
+    bldr.putShort("end_x", endX);
+    bldr.putShort("end_y", endY);
+    bldr.putShort("end_z", endZ);
+    bldr.putShort("r", red);
+    bldr.putShort("g", green);
+    bldr.putShort("b", blue);
+    bldr.putShort("opacity", opacity);
+    session.send(bldr.toPacket());
+  }
+
+  public void sendRemoveSelectionCuboid(
+          int id) {
+    PacketBuilder bldr =
+            new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(27));
+    bldr.putByte("id", id);
+    session.send(bldr.toPacket());
+  }
+
   public void sendHotbar(int id, int index) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(45));

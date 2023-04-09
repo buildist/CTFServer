@@ -148,6 +148,7 @@ public abstract class GameMode {
     registerCommand("say", SayCommand.getCommand());
     registerCommand("set", SetCommand.getCommand());
     registerCommand("setspawn", SetspawnCommand.getCommand());
+    registerCommand("setspawnzone", SetSpawnZoneCommand.getCommand());
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
     registerCommand("start", StartCommand.getCommand());
@@ -339,8 +340,20 @@ public abstract class GameMode {
                 player.hasNominated = false;
                 player.currentRoundPointsEarned = 0;
                 player.setPoints(GameSettings.getInt("InitialPoints"));
+
+                // Remove custom blocks
                 for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
                   player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
+                }
+
+                // Remove red spawn zone, if applicable
+                if (oldMap.redSpawnZoneMin != null && oldMap.redSpawnZoneMax != null) {
+                  player.getActionSender().sendRemoveSelectionCuboid(0);
+                }
+
+                // Remove blue spawn zone, if applicable
+                if (oldMap.blueSpawnZoneMin != null && oldMap.blueSpawnZoneMax != null) {
+                  player.getActionSender().sendRemoveSelectionCuboid(1); // Blue spawn zone
                 }
               }
               clearDropItems();

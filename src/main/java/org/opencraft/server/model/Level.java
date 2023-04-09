@@ -119,12 +119,18 @@ public final class Level implements Cloneable {
   private byte[] compressedBlocks1;
   /** Light depth array. */
   private short[][] lightDepths;
+
   public Position spawnPosition;
   public Rotation spawnRotation;
   public Position redSpawnPosition;
   public Rotation redSpawnRotation;
   public Position blueSpawnPosition;
   public Rotation blueSpawnRotation;
+
+  public Position redSpawnZoneMin;
+  public Position redSpawnZoneMax;
+  public Position blueSpawnZoneMin;
+  public Position blueSpawnZoneMax;
 
   private ArrayList<Position> tdmSpawns = new ArrayList<Position>();
 
@@ -541,6 +547,42 @@ public final class Level implements Cloneable {
     } else {
       props.setProperty("jumps", "1");
       jumps = 1;
+    }
+
+    if (props.getProperty("redSpawnZoneMin") != null) {
+      String[] parts = props.getProperty("redSpawnZoneMin").split(",");
+      redSpawnZoneMin =
+              new Position(
+                      Integer.parseInt(parts[0]) * 32 + 16,
+                      Integer.parseInt(parts[1]) * 32 + 16,
+                      Integer.parseInt(parts[2]) * 32 + 16);
+    }
+
+    if (props.getProperty("redSpawnZoneMax") != null) {
+      String[] parts = props.getProperty("redSpawnZoneMax").split(",");
+      redSpawnZoneMax =
+              new Position(
+                      Integer.parseInt(parts[0]) * 32 + 16,
+                      Integer.parseInt(parts[1]) * 32 + 16,
+                      Integer.parseInt(parts[2]) * 32 + 16);
+    }
+
+    if (props.getProperty("blueSpawnZoneMin") != null) {
+      String[] parts = props.getProperty("blueSpawnZoneMin").split(",");
+      blueSpawnZoneMin =
+              new Position(
+                      Integer.parseInt(parts[0]) * 32 + 16,
+                      Integer.parseInt(parts[1]) * 32 + 16,
+                      Integer.parseInt(parts[2]) * 32 + 16);
+    }
+
+    if (props.getProperty("blueSpawnZoneMax") != null) {
+      String[] parts = props.getProperty("blueSpawnZoneMax").split(",");
+      blueSpawnZoneMax =
+              new Position(
+                      Integer.parseInt(parts[0]) * 32 + 16,
+                      Integer.parseInt(parts[1]) * 32 + 16,
+                      Integer.parseInt(parts[2]) * 32 + 16);
     }
   }
 
