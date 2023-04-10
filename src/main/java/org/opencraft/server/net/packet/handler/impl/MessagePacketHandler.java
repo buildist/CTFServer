@@ -85,6 +85,11 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
     }
 
     message = Server.cleanColorCodes(message);
+
+    // Don't allow players to ping everyone on Discord
+    message = message.replace("@everyone", "@ everyone");
+    message = message.replace("@here", "@ here");
+
     if (message.startsWith("/")) {
       // interpret as command
       String tokens = message.substring(1);
