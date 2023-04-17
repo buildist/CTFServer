@@ -87,6 +87,8 @@ public class Player extends Entity {
   public int placeBlock = -1;
   public boolean placeSolid = false;
   public boolean isHidden = false;
+  public boolean isLegal = true;
+  public Position lastLegalPosition = new Position(0, 0, 0);
   public long lastBlockTimestamp;
   public int boxStartX = -1;
   public int boxStartY = -1;
