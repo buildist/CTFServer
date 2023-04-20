@@ -86,6 +86,7 @@ public final class Server {
   private static Store store;
   private static ArrayList<String> ipBans = new ArrayList<String>(128);
   private static ArrayList<String> mutes = new ArrayList<String>(128);
+  private static ArrayList<String> whitelist = new ArrayList<String>(128);
   private static Server instance;
 
   private static LinkedList<ConsoleMessage> messages = new LinkedList<ConsoleMessage>();
@@ -120,6 +121,13 @@ public final class Server {
     l = null;
     while ((l = r.readLine()) != null) {
       rulesText.add(l);
+    }
+
+    FileInputStream whitelistFile = new FileInputStream("whitelist.txt");
+    r = new BufferedReader(new InputStreamReader(rulesFile));
+    l = null;
+    while ((l = r.readLine()) != null) {
+      whitelist.add(l);
     }
 
     MapController.create();
@@ -317,6 +325,32 @@ public final class Server {
     try {
       new File("mutes.txt").delete();
       FileOutputStream out = new FileOutputStream("mutes.txt");
+      for (String name : mutes) {
+        out.write((name + "\n").getBytes());
+      }
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  public static boolean isWhitelisted(String name) {
+    return whitelist.contains(name);
+  }
+
+  public static void whitelistPlayer(String name) {
+    whitelist.add(name);
+    saveWhitelist();
+  }
+
+  public static void unWhitelistPlayer(String name) {
+    whitelist.remove(name);
+    saveWhitelist();
+  }
+
+  private static void saveWhitelist() {
+    try {
+      new File("whitelist.txt").delete();
+      FileOutputStream out = new FileOutputStream("whitelist.txt");
       for (String name : mutes) {
         out.write((name + "\n").getBytes());
       }

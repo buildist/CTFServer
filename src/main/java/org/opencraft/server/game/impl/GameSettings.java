@@ -6,6 +6,7 @@ import org.opencraft.server.Constants;
 public class GameSettings {
   private static final int TYPE_INT = 0;
   private static final int TYPE_BOOLEAN = 1;
+  private static final int TYPE_STRING = 2;
   private static final HashMap<String, GameSetting> settings = new HashMap<String, GameSetting>();
 
   static {
@@ -28,6 +29,8 @@ public class GameSettings {
     add("ReloadStep", TYPE_INT, 3);
     add("AntiStalemate", TYPE_BOOLEAN, false);
     add("InitialPoints", TYPE_INT, Constants.INITIAL_PLAYER_POINTS);
+    add("Whitelist", TYPE_BOOLEAN, false);
+    add("WhitelistMessage", TYPE_STRING, "There is a tournament going on, try again later!");
   }
 
   public static Object get(String k) {
@@ -44,6 +47,10 @@ public class GameSettings {
     return (Boolean) get(k);
   }
 
+  public static String getString(String k) {
+    return (String) get(k);
+  }
+
   public static HashMap<String, GameSetting> getSettings() {
     return settings;
   }
@@ -58,6 +65,9 @@ public class GameSettings {
             break;
           case TYPE_BOOLEAN:
             s.value = Boolean.parseBoolean(value);
+            break;
+          case TYPE_STRING:
+            s.value = value;
             break;
         }
       } catch (Exception ex) {
