@@ -196,6 +196,10 @@ public class ActionSender {
   }
 
   public void sendAddPlayer(Player player, boolean isSelf) {
+    if (player == null) {
+      return;
+    }
+
     sendSpawn(
         (byte) player.getId(),
         (byte) player.nameId,

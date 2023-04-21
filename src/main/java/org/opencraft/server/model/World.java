@@ -41,6 +41,7 @@ import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.heartbeat.HeartbeatManager;
 import org.opencraft.server.io.LevelGzipper;
 import org.opencraft.server.net.MinecraftSession;
@@ -175,6 +176,7 @@ public final class World {
    * @param verificationKey The verification key.
    */
   public void register(MinecraftSession session, String username, String verificationKey) {
+
     if (Server.isIPBanned(session.getIP())) {
       session.getActionSender().sendLoginFailure("You're banned!");
       session.close();
@@ -203,7 +205,7 @@ public final class World {
       username = "Matt";
     }
 
-    // check if name is valid
+    // Check if name is valid
     char[] nameChars = username.toCharArray();
     for (char nameChar : nameChars) {
       if (nameChar < ' ' || nameChar > '\177') {
@@ -213,21 +215,23 @@ public final class World {
       }
     }
 
-    // disconnect any existing players with the same name
+    // Disconnect any existing players with the same name
     for (Player p : playerList.getPlayers()) {
       if (p.getName().equalsIgnoreCase(username)) {
         p.getSession().getActionSender().sendLoginFailure("Logged in from another computer.");
         break;
       }
     }
-    // attempt to add the player
+    // Attempt to add the player
     final Player player = new Player(session, username);
+
     if (!playerList.add(player)) {
       player.getSession().getActionSender().sendLoginFailure("The server is full!");
       session.close();
       return;
     }
-    // final setup
+
+    // Final setup
     session.setPlayer(player);
     final Configuration c = Configuration.getConfiguration();
     boolean op = false;
@@ -244,12 +248,22 @@ public final class World {
       session.close();
       return;
     }
+
+    // If whitelist is enabled, only allow whitelisted players and OPs/VIPs
+    if (GameSettings.getBoolean("Whitelist")) {
+      if (!Server.isWhitelisted(username) && !player.isOp() && !player.isVIP()) {
+        player.getSession().getActionSender().sendLoginFailure(GameSettings.getString("WhitelistMessage"));
+        session.close();
+        return;
+      }
+    }
+
     session.getActionSender().sendLoginResponse(
         Constants.PROTOCOL_VERSION, c.getName(), c.getMessage() + "&0-hax -push" + level.getMotd(), op);
     if (!session.isExtensionSupported("HackControl")) {
       session
           .getActionSender()
-          .sendLoginFailure("Enable \"Enhanced\" mode in CS launcher settings to play");
+          .sendLoginFailure("Enable \"Enhanced\" mode in CC launcher settings to play");
       session.close();
       return;
     }

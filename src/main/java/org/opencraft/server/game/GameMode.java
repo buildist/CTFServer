@@ -163,6 +163,7 @@ public abstract class GameMode {
     registerCommand("water", WaterCommand.getCommand());
     registerCommand("warn", WarnCommand.getCommand());
     registerCommand("who", StatusCommand.getCommand());
+    registerCommand("whitelist", WhitelistCommand.getCommand());
     registerCommand("yes", YesCommand.getCommand());
     registerCommand("lb", LeaderBoardCommand.getCommand());
   }
