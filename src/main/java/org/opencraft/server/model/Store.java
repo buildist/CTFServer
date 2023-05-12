@@ -50,11 +50,11 @@ import java.util.HashMap;
 public class Store {
   private HashMap<String, StoreItem> items = new HashMap<String, StoreItem>(16);
 
-  public static final int bigTNTPrice = 70;
-  public static final int rocketPrice = 60;
-  public static final int grenadePrice = 20;
-  public static final int linePrice = 25;
-  public static final int creeperPrice = 40;
+  public static int bigTNTPrice = GameSettings.getInt("BigTNTPrice");
+  public static int rocketPrice = GameSettings.getInt("RocketPrice");
+  public static int grenadePrice = GameSettings.getInt("GrenadePrice");
+  public static int linePrice = GameSettings.getInt("LinePrice");
+  public static int creeperPrice = GameSettings.getInt("CreeperPrice");
 
   private static final int creeperRecharge = 7;
   private static final int grenadeRecharge = 7;
@@ -134,6 +134,31 @@ public class Store {
     items.put(name, item);
     item.command = command;
     World.getWorld().getGameMode().registerCommand(command, new ActivateItemCommand(item));
+  }
+
+  public void updateItem(String name, int price) {
+    StoreItem item = null;
+    String command = null;
+
+    if (name == "BigTNT") {
+      item = new BigTNTItem("BigTNT", price);
+      command = "bigtnt";
+    } else if (name == "Rocket") {
+      item = new SimpleItem("Rocket", price, "Shoots a rocket from your face", RocketCommand.getCommand());
+      command = "r";
+    } else if (name == "Grenade") {
+      item = new SimpleItem("Grenade", price, "Throwable TNT", GrenadeCommand.getCommand());
+      command = "gr";
+    } else if (name == "Line") {
+      item = new SimpleItem("Line", price, "Builds a bridge", LineCommand.getCommand());
+      command = "line";
+    } else if (name == "Creeper") {
+      item = new SimpleItem("Creeper", price, "Makes you explode", CreeperCommand.getCommand());
+      command = "cr";
+    }
+
+    items.put(name, item);
+    item.command = command;
   }
 
   public Object[] getItems() {

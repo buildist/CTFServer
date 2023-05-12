@@ -43,6 +43,7 @@ import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.game.impl.GameSettings.GameSetting;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import org.opencraft.server.model.impl.SimpleItem;
 
 public class SetCommand implements Command {
 
@@ -80,6 +81,20 @@ public class SetCommand implements Command {
                   + params.getStringArgument(0)
                   + " set to "
                   + params.getStringArgument(1));
+
+          // Reload store items if one was specified
+          int price = Integer.parseInt(params.getStringArgument(1));
+          if (params.getStringArgument(0).equals("BigTNTPrice")) {
+            Server.getStore().updateItem("BigTNT", price);
+          } else if (params.getStringArgument(0).equals("CreeperPrice")) {
+            Server.getStore().updateItem("Creeper", price);
+          } else if (params.getStringArgument(0).equals("GrenadePrice")) {
+            Server.getStore().updateItem("Grenade", price);
+          } else if (params.getStringArgument(0).equals("LinePrice")) {
+            Server.getStore().updateItem("Line", price);
+          } else if (params.getStringArgument(0).equals("RocketPrice")) {
+            Server.getStore().updateItem("Rocket", price);
+          }
         }
       } else {
         if (params.getStringArgument(0).equals("default")) {
