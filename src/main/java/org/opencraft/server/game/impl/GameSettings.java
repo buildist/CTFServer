@@ -33,7 +33,7 @@ public class GameSettings {
     add("InitialPoints", TYPE_INT, Constants.INITIAL_PLAYER_POINTS);
     add("Whitelist", TYPE_BOOLEAN, false);
     add("WhitelistMessage", TYPE_STRING, "There is a tournament going on, try again later!");
-    add("FirstBloodPoints", TYPE_INT, 30);
+    add("FirstBloodReward", TYPE_INT, 30);
     add("MineRadius", TYPE_FLOAT, 2);
     add("MinePoints", TYPE_INT, 2);
     add("BigTNTPrice", TYPE_INT, 70);

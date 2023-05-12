@@ -384,7 +384,7 @@ public abstract class GameMode {
   protected void checkFirstBlood(Player attacker, Player defender) {
     if (isFirstBlood && defender.team != -1) {
       World.getWorld().broadcast("- " + attacker.getColoredName() + " &4took the first blood!");
-      attacker.addPoints(50);
+      attacker.addPoints(GameSettings.getInt("FirstBloodReward"));
       isFirstBlood = false;
     }
   }
