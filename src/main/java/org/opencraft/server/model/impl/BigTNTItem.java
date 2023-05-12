@@ -36,13 +36,16 @@
  */
 package org.opencraft.server.model.impl;
 
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.StoreItem;
 
 public class BigTNTItem extends StoreItem {
   public BigTNTItem(String n, int p) {
     super(n, p);
-    description = "Get 7 TNTs with a 7x7 explosion";
+    int range = (GameSettings.getInt("BigTNTRadius") * 2) + 1;
+    int amount = GameSettings.getInt("BigTNTAmount");
+    description = "Get " + amount + " TNTs with a " + range + "x" + range + " explosion";
   }
 
   public StoreItem getCopy() {
@@ -51,7 +54,7 @@ public class BigTNTItem extends StoreItem {
 
   @Override
   public void activate(Player player) {
-    player.tntRadius = 3;
-    player.bigTNTRemaining = 7;
+    player.tntRadius = GameSettings.getInt("BigTNTRadius");
+    player.bigTNTRemaining = GameSettings.getInt("BigTNTAmount");
   }
 }

@@ -8,7 +8,7 @@ public class GameSettings {
   private static final int TYPE_BOOLEAN = 1;
   private static final int TYPE_STRING = 2;
   private static final int TYPE_FLOAT = 3;
-  
+
   private static final HashMap<String, GameSetting> settings = new HashMap<String, GameSetting>();
 
   static {

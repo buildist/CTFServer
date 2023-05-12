@@ -150,10 +150,10 @@ public class CTFGameMode extends GameMode {
     if (deleteSelf) {
       level.setBlock(x, y, z, 0);
     }
-    if (p.tntRadius == 3) {
+    if (p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
       p.bigTNTRemaining--;
     }
-    if (p.bigTNTRemaining <= 0 && p.tntRadius == 3) {
+    if (p.bigTNTRemaining <= 0 && p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
       p.tntRadius = 2;
       p.getActionSender().sendChatMessage("- &eYour big TNT has expired!");
     }
