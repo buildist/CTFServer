@@ -858,53 +858,58 @@ public class CTFGameMode extends GameMode {
     int x = pos.getX();
     int y = pos.getY();
     int z = pos.getZ();
-    int blockX = (x - 16) / 32;
-    int blockY = (y - 16) / 32;
-    int blockZ = (z - 16) / 32;
+
     if (p.team != -1) {
       for (Mine m : World.getWorld().getAllMines()) {
         int mx = (m.x - 16) / 32;
         int my = (m.y - 16) / 32;
         int mz = (m.z - 16) / 32;
+
         if (m.active
             && (p.duelPlayer == null || p.duelPlayer == m.owner)
             && (m.owner.duelPlayer == null || m.owner.duelPlayer == p)
             && p.team != -1
             && m.team != -1
             && p.team != m.team
-            && m.x > x - 96
-            && m.x < x + 96
-            && m.y > y - 96
-            && m.y < y + 96
-            && m.z > z - 96
-            && m.z < z + 96) {
-          Level level = World.getWorld().getLevel();
-          int r = 1;
-          level.setBlock(mx, my, mz, 0);
-          for (int cx = mx - r; cx <= mx + r; cx++) {
-            for (int cy = my - r; cy <= my + r; cy++) {
-              for (int cz = mz - r; cz <= mz + r; cz++) {
-                int oldBlock = level.getBlock(cx, cy, cz);
-                if (!level.isSolid(cx, cy, cz)
-                    && oldBlock != Constants.BLOCK_TNT
-                    && !(cx == blueFlagX && cz == blueFlagY && cy == blueFlagZ)
-                    && !(cx == redFlagX && cz == redFlagY && cy == redFlagZ)) {
-                  level.setBlock(cx, cy, cz, 0);
+        ) {
+          // Only get the MineRadius value if all requirements above have been satisfied
+          float radius = 32 + (GameSettings.getFloat("MineRadius") * 32); // We add 32 because we don't include the mine itself for its radius
+
+          if (m.x > x - radius
+              && m.x < x + radius
+              && m.y > y - radius
+              && m.y < y + radius
+              && m.z > z - radius
+              && m.z < z + radius) {
+            Level level = World.getWorld().getLevel();
+            level.setBlock(mx, my, mz, 0);
+
+            int r = 1;
+            for (int cx = mx - r; cx <= mx + r; cx++) {
+              for (int cy = my - r; cy <= my + r; cy++) {
+                for (int cz = mz - r; cz <= mz + r; cz++) {
+                  int oldBlock = level.getBlock(cx, cy, cz);
+                  if (!level.isSolid(cx, cy, cz)
+                          && oldBlock != Constants.BLOCK_TNT
+                          && !(cx == blueFlagX && cz == blueFlagY && cy == blueFlagZ)
+                          && !(cx == redFlagX && cz == redFlagY && cy == redFlagZ)) {
+                    level.setBlock(cx, cy, cz, 0);
+                  }
                 }
               }
             }
+            m.owner.gotKill(p);
+            p.sendToTeamSpawn();
+            checkFirstBlood(m.owner, p);
+            m.owner.setAttribute("mines", (Integer) m.owner.getAttribute("mines") + 1);
+            m.owner.removeMine(m);
+            World.getWorld().removeMine(m);
+            if (p.hasFlag) {
+              dropFlag(p.team);
+            }
+            p.died(m.owner);
+            updateKillFeed(m.owner, p, m.owner.parseName() + " mined " + p.parseName() + ".");
           }
-          m.owner.gotKill(p);
-          p.sendToTeamSpawn();
-          checkFirstBlood(m.owner, p);
-          m.owner.setAttribute("mines", (Integer) m.owner.getAttribute("mines") + 1);
-          m.owner.removeMine(m);
-          World.getWorld().removeMine(m);
-          if (p.hasFlag) {
-            dropFlag(p.team);
-          }
-          p.died(m.owner);
-          updateKillFeed(m.owner, p, m.owner.parseName() + " mined " + p.parseName() + ".");
         }
       }
     }

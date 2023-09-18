@@ -34,7 +34,7 @@ public class GameSettings {
     add("Whitelist", TYPE_BOOLEAN, false);
     add("WhitelistMessage", TYPE_STRING, "There is a tournament going on, try again later!");
     add("FirstBloodReward", TYPE_INT, 30);
-    add("MineRadius", TYPE_FLOAT, 2);
+    add("MineRadius", TYPE_FLOAT, 2.0f);
     add("MinePoints", TYPE_INT, 2);
     add("BigTNTPrice", TYPE_INT, 70);
     add("BigTNTAmount", TYPE_INT, 7);
@@ -64,7 +64,9 @@ public class GameSettings {
     return (String) get(k);
   }
 
-  public static Float getFloat(String k) { return (Float) get(k); }
+  public static Float getFloat(String k) {
+    return (Float) get(k);
+  }
 
   public static HashMap<String, GameSetting> getSettings() {
     return settings;
