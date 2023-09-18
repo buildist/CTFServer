@@ -44,7 +44,7 @@ package org.opencraft.server.cmd;
 public class CommandParameters {
 
   /** Arguments array. */
-  private final String[] args;
+  public final String[] args;
 
   /**
    * Creates the command parameters class.

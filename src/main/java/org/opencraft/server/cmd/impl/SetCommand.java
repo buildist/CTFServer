@@ -45,6 +45,8 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.model.impl.SimpleItem;
 
+import java.util.Arrays;
+
 public class SetCommand implements Command {
 
   private static final SetCommand INSTANCE = new SetCommand();
@@ -66,7 +68,7 @@ public class SetCommand implements Command {
         for (GameSetting setting : GameSettings.getSettings().values()) {
           player.getActionSender().sendChatMessage(setting.name + " = " + setting.value);
         }
-      } else if (params.getArgumentCount() == 2) {
+      } else if (params.getArgumentCount() >= 2) {
         // Reload store items if one was specified
         if (params.getStringArgument(0).equals("BigTNTPrice")) {
           int price = Integer.parseInt(params.getStringArgument(1));
@@ -95,20 +97,19 @@ public class SetCommand implements Command {
           Server.getStore().updateItem("Rocket", price);
         }
 
-        if (GameSettings.set(params.getStringArgument(0), params.getStringArgument(1))) {
-          World.getWorld()
-              .broadcast(
-                  "- &7Server setting "
-                      + params.getStringArgument(0)
-                      + " set "
-                      + "to "
-                      + params.getStringArgument(1));
-          Server.log(
-              player.getName()
-                  + " "
-                  + params.getStringArgument(0)
-                  + " set to "
-                  + params.getStringArgument(1));
+        String args = params.getStringArgument(1);
+
+        String type = (args.matches("\\d+")) ? "integer" : (args.equalsIgnoreCase("true")
+                || args.equalsIgnoreCase("false")) ? "boolean" : "string";
+
+        // Support spaces if the parameter is a string
+        if (type == "string" && params.getArgumentCount() > 2) {
+          args = String.join(" ", Arrays.copyOfRange(params.args, 1, params.getArgumentCount()));
+        }
+
+        if (GameSettings.set(params.getStringArgument(0), args)) {
+          World.getWorld().broadcast("- &7Server setting " + params.getStringArgument(0) + " set to " + args);
+          Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + args);
         }
       } else {
         if (params.getStringArgument(0).equals("default")) {
