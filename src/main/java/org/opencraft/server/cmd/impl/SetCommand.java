@@ -83,21 +83,25 @@ public class SetCommand implements Command {
                   + params.getStringArgument(1));
 
           // Reload store items if one was specified
-          int price = Integer.parseInt(params.getStringArgument(1));
 
           if (params.getStringArgument(0).equals("BigTNTPrice")) {
+            int price = Integer.parseInt(params.getStringArgument(1));
             Server.getStore().updateItem("BigTNT", price);
           } else if (params.getStringArgument(0).equals("BigTNTAmount") ||
                   params.getStringArgument(0).equals("BigTNTRadius")) {
             // Changing the amount/radius should update the item description, but not the price
             Server.getStore().updateItem("BigTNT", GameSettings.getInt("BigTNTPrice"));
           } else if (params.getStringArgument(0).equals("CreeperPrice")) {
+            int price = Integer.parseInt(params.getStringArgument(1));
             Server.getStore().updateItem("Creeper", price);
           } else if (params.getStringArgument(0).equals("GrenadePrice")) {
+            int price = Integer.parseInt(params.getStringArgument(1));
             Server.getStore().updateItem("Grenade", price);
           } else if (params.getStringArgument(0).equals("LinePrice")) {
+            int price = Integer.parseInt(params.getStringArgument(1));
             Server.getStore().updateItem("Line", price);
           } else if (params.getStringArgument(0).equals("RocketPrice")) {
+            int price = Integer.parseInt(params.getStringArgument(1));
             Server.getStore().updateItem("Rocket", price);
           }
         }
