@@ -67,6 +67,34 @@ public class SetCommand implements Command {
           player.getActionSender().sendChatMessage(setting.name + " = " + setting.value);
         }
       } else if (params.getArgumentCount() == 2) {
+        // Reload store items if one was specified
+        if (params.getStringArgument(0).equals("BigTNTPrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("BigTNT", price);
+        } else if (params.getStringArgument(0).equals("BigTNTAmount") ||
+                params.getStringArgument(0).equals("BigTNTRadius")) {
+          int radius = Integer.parseInt(params.getStringArgument(1));
+
+          if (radius > 7 || radius < 1) {
+            player.getActionSender().sendChatMessage("BigTNT radius must be between 1-7.");
+            return;
+          }
+          // Changing the amount/radius should update the item description, but not the price
+          Server.getStore().updateItem("BigTNT", GameSettings.getInt("BigTNTPrice"));
+        } else if (params.getStringArgument(0).equals("CreeperPrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("Creeper", price);
+        } else if (params.getStringArgument(0).equals("GrenadePrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("Grenade", price);
+        } else if (params.getStringArgument(0).equals("LinePrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("Line", price);
+        } else if (params.getStringArgument(0).equals("RocketPrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("Rocket", price);
+        }
+
         if (GameSettings.set(params.getStringArgument(0), params.getStringArgument(1))) {
           World.getWorld()
               .broadcast(
@@ -81,29 +109,6 @@ public class SetCommand implements Command {
                   + params.getStringArgument(0)
                   + " set to "
                   + params.getStringArgument(1));
-
-          // Reload store items if one was specified
-
-          if (params.getStringArgument(0).equals("BigTNTPrice")) {
-            int price = Integer.parseInt(params.getStringArgument(1));
-            Server.getStore().updateItem("BigTNT", price);
-          } else if (params.getStringArgument(0).equals("BigTNTAmount") ||
-                  params.getStringArgument(0).equals("BigTNTRadius")) {
-            // Changing the amount/radius should update the item description, but not the price
-            Server.getStore().updateItem("BigTNT", GameSettings.getInt("BigTNTPrice"));
-          } else if (params.getStringArgument(0).equals("CreeperPrice")) {
-            int price = Integer.parseInt(params.getStringArgument(1));
-            Server.getStore().updateItem("Creeper", price);
-          } else if (params.getStringArgument(0).equals("GrenadePrice")) {
-            int price = Integer.parseInt(params.getStringArgument(1));
-            Server.getStore().updateItem("Grenade", price);
-          } else if (params.getStringArgument(0).equals("LinePrice")) {
-            int price = Integer.parseInt(params.getStringArgument(1));
-            Server.getStore().updateItem("Line", price);
-          } else if (params.getStringArgument(0).equals("RocketPrice")) {
-            int price = Integer.parseInt(params.getStringArgument(1));
-            Server.getStore().updateItem("Rocket", price);
-          }
         }
       } else {
         if (params.getStringArgument(0).equals("default")) {
