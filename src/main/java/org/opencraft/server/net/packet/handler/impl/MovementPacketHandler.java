@@ -106,13 +106,13 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
       Level level = World.getWorld().getLevel();
 
       if (player.team == 0) {
-        int minX = level.redSpawnZoneMin.getX();
+        int minX = level.redSpawnZoneMin.getX() - 32;
         int minZ = level.redSpawnZoneMin.getZ();
-        int minY = level.redSpawnZoneMin.getY();
+        int minY = level.redSpawnZoneMin.getY() - 32;
 
-        int maxX = level.redSpawnZoneMax.getX();
+        int maxX = level.redSpawnZoneMax.getX() + 32;
         int maxZ = level.redSpawnZoneMax.getZ();
-        int maxY = level.redSpawnZoneMax.getY();
+        int maxY = level.redSpawnZoneMax.getY() + 32;
 
         // If player is within the zone boundaries
         if ((x >= minX && x <= maxX)
@@ -121,23 +121,25 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
           player.isLegal = false;
 
           player.getActionSender().sendTeleport(player.lastLegalPosition, player.getRotation());
-          player.getActionSender().sendChatMessage("&cYou cannot be here!", 101);
-          player.getActionSender().sendChatMessage("&7Please move back to where you were...", 102);
+          player.getActionSender().sendChatMessage("&cGo back!", 101);
+          player.getActionSender().sendChatMessage("&7You may not enter spawn with the flag.", 102);
 
           return;
-        } else {
+        } else if (!player.isLegal) {
+          player.getActionSender().sendChatMessage("", 101);
+          player.getActionSender().sendChatMessage("", 102);
           player.isLegal = true;
         }
       }
 
       else if (player.team == 1) {
-        int minX = level.blueSpawnZoneMin.getX();
+        int minX = level.blueSpawnZoneMin.getX() - 32;
         int minZ = level.blueSpawnZoneMin.getZ();
-        int minY = level.blueSpawnZoneMin.getY();
+        int minY = level.blueSpawnZoneMin.getY() - 32;
 
-        int maxX = level.blueSpawnZoneMax.getX();
+        int maxX = level.blueSpawnZoneMax.getX() + 32;
         int maxZ = level.blueSpawnZoneMax.getZ();
-        int maxY = level.blueSpawnZoneMax.getY();
+        int maxY = level.blueSpawnZoneMax.getY() + 32;
 
         // If player is within the zone boundaries
         if ((x >= minX && x <= maxX)
@@ -146,11 +148,13 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
           player.isLegal = false;
 
           player.getActionSender().sendTeleport(player.lastLegalPosition, player.getRotation());
-          player.getActionSender().sendChatMessage("&cYou cannot be here!", 101);
-          player.getActionSender().sendChatMessage("&7Please move back to where you were...", 102);
+          player.getActionSender().sendChatMessage("&cGo back!", 101);
+          player.getActionSender().sendChatMessage("&7You may not enter spawn with the flag.", 102);
 
           return;
-        } else {
+        } else if (!player.isLegal) {
+          player.getActionSender().sendChatMessage("", 101);
+          player.getActionSender().sendChatMessage("", 102);
           player.isLegal = true;
         }
       }
