@@ -241,7 +241,7 @@ public class CustomBlockDefinition {
       16,
       16,
       16,
-      Constants.BLOCK_DRAW_TRANSPARENT_GLASS,
+      Constants.BLOCK_DRAW_GAS,
       0,
       0,
       0,
