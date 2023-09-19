@@ -242,6 +242,7 @@ public class CTFGameMode extends GameMode {
     int oldBlock = level.getBlock(x, y, z);
     return level.isSolid(x, y, z)
         || oldBlock == Constants.BLOCK_TNT
+        || oldBlock == Constants.BLOCK_INVISIBLE
         || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)
         || (x == redFlagX && z == redFlagY && y == redFlagZ)
         || isMine(x, y, z);

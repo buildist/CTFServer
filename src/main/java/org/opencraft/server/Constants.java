@@ -124,6 +124,7 @@ public final class Constants {
   public static final int BLOCK_CRATE = 601;
   public static final int BLOCK_VINE = 602;
   public static final int BLOCK_FLAMETHROWER = 603;
+  public static final int BLOCK_INVISIBLE = 255;
 
   // CTF
   public static final int BLOCK_MINE = 604;

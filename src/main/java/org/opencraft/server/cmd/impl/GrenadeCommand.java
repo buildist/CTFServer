@@ -42,10 +42,7 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
-import org.opencraft.server.model.Player;
-import org.opencraft.server.model.Position;
-import org.opencraft.server.model.Rotation;
-import org.opencraft.server.model.World;
+import org.opencraft.server.model.*;
 
 public class GrenadeCommand implements Command {
   private static final GrenadeCommand INSTANCE = new GrenadeCommand();
@@ -101,7 +98,7 @@ public class GrenadeCommand implements Command {
                 int by = (int) Math.round(y);
                 int bz = (int) Math.round(z);
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                if (block != 0 && block != Constants.BLOCK_TNT) {
+                if (block != 0 && block != Constants.BLOCK_TNT && block != Constants.BLOCK_INVISIBLE) {
                   World.getWorld()
                       .getLevel()
                       .setBlock(

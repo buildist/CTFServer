@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
@@ -97,7 +98,7 @@ public class RocketCommand implements Command {
                 int by = (int) Math.round(y);
                 int bz = (int) Math.round(z);
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                if (block != BlockConstants.AIR && block != BlockConstants.OBSIDIAN) {
+                if (block != BlockConstants.AIR && block != BlockConstants.OBSIDIAN && block != Constants.BLOCK_INVISIBLE) {
                   ((CTFGameMode)World.getWorld()
                       .getGameMode())
                       .explodeTNT(
