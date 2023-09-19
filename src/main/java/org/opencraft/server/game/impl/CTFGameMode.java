@@ -998,6 +998,32 @@ public class CTFGameMode extends GameMode {
     int playerZ = (player.getPosition().getZ() - 16) / 32;
     int MAX_DISTANCE = 10;
     boolean ignore = false;
+    boolean placedInSpawnZone = false;
+
+    if (level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
+      int redMinX = level.redSpawnZoneMin.getX() / 32;
+      int redMinZ = level.redSpawnZoneMin.getZ() / 32;
+      int redMinY = level.redSpawnZoneMin.getY() / 32;
+
+      int redMaxX = level.redSpawnZoneMax.getX() / 32;
+      int redMaxZ = (level.redSpawnZoneMax.getZ() - 32) / 32;
+      int redMaxY = level.redSpawnZoneMax.getY() / 32;
+
+      if ((x >= redMinX && x <= redMaxX) && (z >= redMinZ && z <= redMaxZ) && (y >= redMinY && y <= redMaxY)) placedInSpawnZone = true;
+    }
+
+    if (level.blueSpawnZoneMin != null && level.blueSpawnZoneMax != null) {
+      int blueMinX = level.blueSpawnZoneMin.getX() / 32;
+      int blueMinZ = level.blueSpawnZoneMin.getZ() / 32;
+      int blueMinY = level.blueSpawnZoneMin.getY() / 32;
+
+      int blueMaxX = level.blueSpawnZoneMax.getX() / 32;
+      int blueMaxZ = (level.blueSpawnZoneMax.getZ() - 32) / 32;
+      int blueMaxY = level.blueSpawnZoneMax.getY() / 32;
+
+      if ((x >= blueMinX && x <= blueMaxX) && (z >= blueMinZ && z <= blueMaxZ) && (y >= blueMinY && y <= blueMaxY)) placedInSpawnZone = true;
+    }
+
     if (mode == 0) {
       type = 0x00;
     }
@@ -1065,7 +1091,14 @@ public class CTFGameMode extends GameMode {
         } else {
           player.getActionSender().sendBlock(x, y, z, (short) 0);
         }
-
+      } else if (placedInSpawnZone) {
+        ignore = true;
+        player.getActionSender().sendChatMessage("- &aYou may not place blocks at spawn.");
+        if (mode == 0) {
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
+        } else {
+          player.getActionSender().sendBlock(x, y, z, (short) 0);
+        }
       } else if (!(x < playerX + MAX_DISTANCE
           && x > playerX - MAX_DISTANCE
           && y < playerY + MAX_DISTANCE
