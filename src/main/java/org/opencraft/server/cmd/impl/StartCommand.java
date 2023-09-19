@@ -25,13 +25,15 @@ public class StartCommand implements Command {
                     Thread.sleep(10 * 1000);
                   } catch (InterruptedException ex) {
                   }
-                  World.getWorld().getGameMode().tournamentGameStarted = true;
-                  World.getWorld().getGameMode().gameStartTime = System.currentTimeMillis();
+
                   for (Player other : World.getWorld().getPlayerList().getPlayers()) {
                     if (other.team != -1) {
                       other.sendToTeamSpawn();
                     }
                   }
+
+                  World.getWorld().getGameMode().tournamentGameStarted = true;
+                  World.getWorld().getGameMode().gameStartTime = System.currentTimeMillis();
                   World.getWorld().broadcast("- &aThe game has started!");
                 }
               })
