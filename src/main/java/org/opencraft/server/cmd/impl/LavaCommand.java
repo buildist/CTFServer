@@ -54,12 +54,16 @@ public class LavaCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.placeBlock != 11) {
-      player.placeBlock = 11;
-      player.getActionSender().sendChatMessage("&e*&fNow placing lava.");
+    if (player.isOp()) {
+      if (player.placeBlock != 11) {
+        player.placeBlock = 11;
+        player.getActionSender().sendChatMessage("&e*&fNow placing lava.");
+      } else {
+        player.placeBlock = -1;
+        player.getActionSender().sendChatMessage("&e*&fNo longer placing lava.");
+      }
     } else {
-      player.placeBlock = -1;
-      player.getActionSender().sendChatMessage("&e*&fNo longer placing lava.");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }
