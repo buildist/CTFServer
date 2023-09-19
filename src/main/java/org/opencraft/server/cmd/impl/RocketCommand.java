@@ -90,6 +90,8 @@ public class RocketCommand implements Command {
               double lastX = px;
               double lastY = py;
               double lastZ = pz;
+              int lastBlock = 0;
+
               for (int i = 0; i < 256; i++) {
                 x += vx;
                 y += vy;
@@ -120,12 +122,13 @@ public class RocketCommand implements Command {
                           (int) Math.round(lastX),
                           (int) Math.round(lastY),
                           (int) Math.round(lastZ),
-                          0);
+                          lastBlock);
                   World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.OBSIDIAN);
                 }
                 lastX = x;
                 lastY = y;
                 lastZ = z;
+                lastBlock = block;
                 i++;
                 try {
                   Thread.sleep(25);
