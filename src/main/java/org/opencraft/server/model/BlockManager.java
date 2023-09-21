@@ -56,6 +56,7 @@ public final class BlockManager {
   private static final BlockManager INSTANCE =
       (BlockManager)
           PersistenceManager.getPersistenceManager().load(Constants.ROOT_PATH + "/blocks.xml");
+
   /** A list of the blocks. */
   private List<BlockDefinition> blockList = new LinkedList<BlockDefinition>();
   /** The block array (faster access by opcode than list iteration). */
@@ -102,6 +103,14 @@ public final class BlockManager {
 
   public void addCustomBlock(CustomBlockDefinition customBlockDefinition) {
     try {
+      String behaviourName = "";
+
+      // Check to see if the custom block overrides a default block
+      // If so, use the original behaviour
+      if (customBlockDefinition.id < 66) {
+        behaviourName = getBlock(customBlockDefinition.id).getBehaviourName().trim();
+      }
+
       blocksArray[customBlockDefinition.id] =
           new BlockDefinition(
               customBlockDefinition.name,
@@ -115,7 +124,7 @@ public final class BlockManager {
               0,
               true,
               0,
-              "");
+              behaviourName);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
