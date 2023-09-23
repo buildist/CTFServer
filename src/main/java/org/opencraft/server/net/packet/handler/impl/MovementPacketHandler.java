@@ -105,7 +105,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     if (player.hasFlag) {
       Level level = World.getWorld().getLevel();
 
-      if (player.team == 0) {
+      if (player.team == 0 && level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
         int minX = level.redSpawnZoneMin.getX() - 32;
         int minZ = level.redSpawnZoneMin.getZ();
         int minY = level.redSpawnZoneMin.getY() - 32;
@@ -132,7 +132,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
         }
       }
 
-      else if (player.team == 1) {
+      else if (player.team == 1 && level.blueSpawnZoneMin != null && level.blueSpawnZoneMax != null) {
         int minX = level.blueSpawnZoneMin.getX() - 32;
         int minZ = level.blueSpawnZoneMin.getZ();
         int minY = level.blueSpawnZoneMin.getY() - 32;
