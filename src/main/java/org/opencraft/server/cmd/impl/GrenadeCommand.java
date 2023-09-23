@@ -42,10 +42,7 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
-import org.opencraft.server.model.Player;
-import org.opencraft.server.model.Position;
-import org.opencraft.server.model.Rotation;
-import org.opencraft.server.model.World;
+import org.opencraft.server.model.*;
 
 public class GrenadeCommand implements Command {
   private static final GrenadeCommand INSTANCE = new GrenadeCommand();
@@ -93,6 +90,7 @@ public class GrenadeCommand implements Command {
               double lastX = px;
               double lastY = py;
               double lastZ = pz;
+              int lastBlock = 0;
               for (int i = 0; i < 256; i++) {
                 x += vx;
                 y += vy;
@@ -101,14 +99,14 @@ public class GrenadeCommand implements Command {
                 int by = (int) Math.round(y);
                 int bz = (int) Math.round(z);
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                if (block != 0 && block != Constants.BLOCK_TNT) {
+                if (block != 0 && block != Constants.BLOCK_TNT && block != Constants.BLOCK_INVISIBLE) {
                   World.getWorld()
                       .getLevel()
                       .setBlock(
                           (int) Math.round(lastX),
                           (int) Math.round(lastY),
                           (int) Math.round(lastZ),
-                          0);
+                          lastBlock);
                   ((CTFGameMode)World.getWorld()
                       .getGameMode())
                       .explodeTNT(
@@ -137,6 +135,7 @@ public class GrenadeCommand implements Command {
                 lastX = x;
                 lastY = y;
                 lastZ = z;
+                lastBlock = block;
                 i++;
                 if (vz > (double) -2) vz -= 0.15;
                 vx *= 0.95;

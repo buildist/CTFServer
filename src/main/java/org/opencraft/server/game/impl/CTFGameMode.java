@@ -242,6 +242,7 @@ public class CTFGameMode extends GameMode {
     int oldBlock = level.getBlock(x, y, z);
     return level.isSolid(x, y, z)
         || oldBlock == Constants.BLOCK_TNT
+        || oldBlock == Constants.BLOCK_INVISIBLE
         || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)
         || (x == redFlagX && z == redFlagY && y == redFlagZ)
         || isMine(x, y, z);
@@ -463,6 +464,7 @@ public class CTFGameMode extends GameMode {
     placeRedFlag();
 
     openSpawns();
+    addRoof();
   }
 
   private void updateKillFeed(Player attacker, Player defender, String killmsg) {
@@ -497,6 +499,19 @@ public class CTFGameMode extends GameMode {
       int rDoorZ = redSpawn.getZ() - 2;
       map.setBlock(rDoorX, rDoorY, rDoorZ, 0);
       map.setBlock(bDoorX, bDoorY, bDoorZ, 0);
+    }
+  }
+
+  private void addRoof() {
+    if (getMode() == Level.CTF) {
+      Level map = World.getWorld().getLevel();
+
+      for (int i = 0; i < map.width; i++) {
+        for (int j = 0; j < map.height; j++) { // For some reason map.height is the map's length...?
+          if (World.getWorld().getLevel().getBlock(i, j, map.ceiling + 1) != 0) continue; // Only replace air
+          map.setBlock(i, j, map.ceiling + 1, 255); // 255 = invisible block
+        }
+      }
     }
   }
 

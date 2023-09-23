@@ -199,6 +199,15 @@ public class BlockDefinition {
   }
 
   /**
+   * Gets the behaviour name.
+   *
+   * @return The behaviour name.
+   */
+  public String getBehaviourName() {
+    return behaviourName;
+  }
+
+  /**
    * Apply passive physics.
    *
    * @param level The level.
@@ -210,6 +219,7 @@ public class BlockDefinition {
     if (behaviour == null) {
       return;
     }
+
     this.behaviour.handlePassive(level, x, y, z, this.bid);
   }
 

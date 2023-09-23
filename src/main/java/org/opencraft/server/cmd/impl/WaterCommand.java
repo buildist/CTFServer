@@ -54,12 +54,16 @@ public class WaterCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (player.placeBlock != 9) {
-      player.placeBlock = 9;
-      player.getActionSender().sendChatMessage("&e*&fNow placing water.");
+    if (player.isOp()) {
+      if (player.placeBlock != 9) {
+        player.placeBlock = 9;
+        player.getActionSender().sendChatMessage("&e*&fNow placing water.");
+      } else {
+        player.placeBlock = -1;
+        player.getActionSender().sendChatMessage("&e*&fNo longer placing water.");
+      }
     } else {
-      player.placeBlock = -1;
-      player.getActionSender().sendChatMessage("&e*&fNo longer placing water.");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }
