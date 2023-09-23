@@ -57,16 +57,11 @@ public class ConstructionPacketHandler implements PacketHandler<MinecraftSession
       return;
     }
     Player p = session.getPlayer();
-    long time = new Date().getTime() - p.lastBlockTimestamp;
     int type = packet.getNumericField("type").intValue();
-    if (time < 5) p.kickForHacking();
-    else {
-      int x = packet.getNumericField("x").intValue();
-      int y = packet.getNumericField("y").intValue();
-      int z = packet.getNumericField("z").intValue();
-      int mode = packet.getNumericField("mode").intValue();
-      World.getWorld().getGameMode().setBlock(p, World.getWorld().getLevel(), x, y, z, mode, type);
-    }
-    p.lastBlockTimestamp = new Date().getTime();
+    int x = packet.getNumericField("x").intValue();
+    int y = packet.getNumericField("y").intValue();
+    int z = packet.getNumericField("z").intValue();
+    int mode = packet.getNumericField("mode").intValue();
+    World.getWorld().getGameMode().setBlock(p, World.getWorld().getLevel(), x, y, z, mode, type);
   }
 }
