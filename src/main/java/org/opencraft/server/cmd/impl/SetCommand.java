@@ -43,6 +43,9 @@ import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.game.impl.GameSettings.GameSetting;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import org.opencraft.server.model.impl.SimpleItem;
+
+import java.util.Arrays;
 
 public class SetCommand implements Command {
 
@@ -65,21 +68,48 @@ public class SetCommand implements Command {
         for (GameSetting setting : GameSettings.getSettings().values()) {
           player.getActionSender().sendChatMessage(setting.name + " = " + setting.value);
         }
-      } else if (params.getArgumentCount() == 2) {
-        if (GameSettings.set(params.getStringArgument(0), params.getStringArgument(1))) {
-          World.getWorld()
-              .broadcast(
-                  "- &7Server setting "
-                      + params.getStringArgument(0)
-                      + " set "
-                      + "to "
-                      + params.getStringArgument(1));
-          Server.log(
-              player.getName()
-                  + " "
-                  + params.getStringArgument(0)
-                  + " set to "
-                  + params.getStringArgument(1));
+      } else if (params.getArgumentCount() >= 2) {
+        // Reload store items if one was specified
+        if (params.getStringArgument(0).equals("BigTNTPrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("BigTNT", price);
+        } else if (params.getStringArgument(0).equals("BigTNTAmount") ||
+                params.getStringArgument(0).equals("BigTNTRadius")) {
+          int radius = Integer.parseInt(params.getStringArgument(1));
+
+          if (radius > 7 || radius < 1) {
+            player.getActionSender().sendChatMessage("BigTNT radius must be between 1-7.");
+            return;
+          }
+          // Changing the amount/radius should update the item description, but not the price
+          Server.getStore().updateItem("BigTNT", GameSettings.getInt("BigTNTPrice"));
+        } else if (params.getStringArgument(0).equals("CreeperPrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("Creeper", price);
+        } else if (params.getStringArgument(0).equals("GrenadePrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("Grenade", price);
+        } else if (params.getStringArgument(0).equals("LinePrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("Line", price);
+        } else if (params.getStringArgument(0).equals("RocketPrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("Rocket", price);
+        }
+
+        String args = params.getStringArgument(1);
+
+        String type = (args.matches("\\d+")) ? "integer" : (args.equalsIgnoreCase("true")
+                || args.equalsIgnoreCase("false")) ? "boolean" : "string";
+
+        // Support spaces if the parameter is a string
+        if (type == "string" && params.getArgumentCount() > 2) {
+          args = String.join(" ", Arrays.copyOfRange(params.args, 1, params.getArgumentCount()));
+        }
+
+        if (GameSettings.set(params.getStringArgument(0), args)) {
+          World.getWorld().broadcast("- &7Server setting " + params.getStringArgument(0) + " set to " + args);
+          Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + args);
         }
       } else {
         if (params.getStringArgument(0).equals("default")) {
