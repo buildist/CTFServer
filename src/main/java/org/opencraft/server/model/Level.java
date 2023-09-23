@@ -89,6 +89,7 @@ public final class Level implements Cloneable {
   public Properties props;
   public int divider;
   public int ceiling;
+  public boolean invisibleRoof;
   public int floor;
   public int mode = CTF;
   public String filename;
@@ -353,6 +354,7 @@ public final class Level implements Cloneable {
       }
     }
     ceiling = Integer.parseInt(props.getProperty("buildCeiling"));
+    if (props.getProperty("invisibleRoof") != null) invisibleRoof = Boolean.parseBoolean(props.getProperty("invisibleRoof"));
     floor = Integer.parseInt(props.getProperty("buildFloor", "-8"));
 
     setMapColors();

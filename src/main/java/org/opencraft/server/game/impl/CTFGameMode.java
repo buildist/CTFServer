@@ -464,7 +464,7 @@ public class CTFGameMode extends GameMode {
     placeRedFlag();
 
     openSpawns();
-    addRoof();
+    if (World.getWorld().getLevel().invisibleRoof) addRoof();
   }
 
   private void updateKillFeed(Player attacker, Player defender, String killmsg) {
