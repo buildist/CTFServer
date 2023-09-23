@@ -36,12 +36,9 @@
  */
 package org.opencraft.server.net.packet.handler.impl;
 
+import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.CTFGameMode;
-import org.opencraft.server.model.MoveLog;
-import org.opencraft.server.model.Player;
-import org.opencraft.server.model.Position;
-import org.opencraft.server.model.Rotation;
-import org.opencraft.server.model.World;
+import org.opencraft.server.model.*;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.handler.PacketHandler;
@@ -58,6 +55,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     if (!session.isAuthenticated()) {
       return;
     }
+
     final Player player = session.getPlayer();
     Position oldPosition = player.getPosition();
 
@@ -86,7 +84,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
       player.moveTime = System.currentTimeMillis();
     }
 
-    // kill floor
+    // Kill floor
     boolean belowKillFloor = (z - 16) / 32 < World.getWorld().getLevel().floor;
     if (belowKillFloor && !player.isSafe()) {
       player.markSafe();
@@ -102,6 +100,67 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     if (isOnGround && !belowKillFloor) {
       player.safePosition = position;
     }
+
+    // Check if the player has entered either spawn zones with the flag
+    if (player.hasFlag) {
+      Level level = World.getWorld().getLevel();
+
+      if (player.team == 0) {
+        int minX = level.redSpawnZoneMin.getX() - 32;
+        int minZ = level.redSpawnZoneMin.getZ();
+        int minY = level.redSpawnZoneMin.getY() - 32;
+
+        int maxX = level.redSpawnZoneMax.getX() + 32;
+        int maxZ = level.redSpawnZoneMax.getZ();
+        int maxY = level.redSpawnZoneMax.getY() + 32;
+
+        // If player is within the zone boundaries
+        if ((x >= minX && x <= maxX)
+                && (z >= minZ && z <= maxZ)
+                && (y >= minY && y <= maxY)) {
+          player.isLegal = false;
+
+          player.getActionSender().sendTeleport(player.lastLegalPosition, player.getRotation());
+          player.getActionSender().sendChatMessage("&cGo back!", 101);
+          player.getActionSender().sendChatMessage("&7You may not enter spawn with the flag.", 102);
+
+          return;
+        } else if (!player.isLegal) {
+          player.getActionSender().sendChatMessage("", 101);
+          player.getActionSender().sendChatMessage("", 102);
+          player.isLegal = true;
+        }
+      }
+
+      else if (player.team == 1) {
+        int minX = level.blueSpawnZoneMin.getX() - 32;
+        int minZ = level.blueSpawnZoneMin.getZ();
+        int minY = level.blueSpawnZoneMin.getY() - 32;
+
+        int maxX = level.blueSpawnZoneMax.getX() + 32;
+        int maxZ = level.blueSpawnZoneMax.getZ();
+        int maxY = level.blueSpawnZoneMax.getY() + 32;
+
+        // If player is within the zone boundaries
+        if ((x >= minX && x <= maxX)
+                && (z >= minZ && z <= maxZ)
+                && (y >= minY && y <= maxY)) {
+          player.isLegal = false;
+
+          player.getActionSender().sendTeleport(player.lastLegalPosition, player.getRotation());
+          player.getActionSender().sendChatMessage("&cGo back!", 101);
+          player.getActionSender().sendChatMessage("&7You may not enter spawn with the flag.", 102);
+
+          return;
+        } else if (!player.isLegal) {
+          player.getActionSender().sendChatMessage("", 101);
+          player.getActionSender().sendChatMessage("", 102);
+          player.isLegal = true;
+        }
+      }
+    }
+
+    player.lastLegalPosition = position;
 
     final int rotation = packet.getNumericField("rotation").intValue();
     final int look = packet.getNumericField("look").intValue();

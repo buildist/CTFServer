@@ -699,6 +699,70 @@ Z        <field>
       </fields>
     </packet>
     <packet>
+      <opcode>26</opcode>
+      <name>selection_cuboid</name>
+      <fields>
+        <field>
+          <name>id</name>
+          <type>BYTE</type>
+        </field>
+        <field>
+          <name>label</name>
+          <type>STRING</type>
+        </field>
+        <field>
+          <name>start_x</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>start_y</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>start_z</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>end_x</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>end_y</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>end_z</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>r</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>g</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>b</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>opacity</name>
+          <type>SHORT</type>
+        </field>
+      </fields>
+    </packet>
+    <packet>
+      <opcode>27</opcode>
+      <name>remove_selection_cuboid</name>
+      <fields>
+        <field>
+          <name>id</name>
+          <type>BYTE</type>
+        </field>
+      </fields>
+    </packet>
+    <packet>
       <opcode>43</opcode>
       <name>ping</name>
       <fields>

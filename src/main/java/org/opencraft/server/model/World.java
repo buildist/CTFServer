@@ -306,6 +306,7 @@ public final class World {
     // Notify game mode
     World.getWorld().getGameMode().playerConnected(session.getPlayer());
 
+    // Add default blocks into the hotbar
     if (!session.levelSent && session.isExtensionSupported("HeldBlock")) {
       session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT, 0);
       session.getActionSender().sendHotbar((short) Constants.BLOCK_DETONATOR, 1);
@@ -317,6 +318,46 @@ public final class World {
       session.getActionSender().sendHotbar((short) 21, 7);
       session.getActionSender().sendHotbar((short) 29, 8);
     }
+
+    // If applicable, show where the spawn zones are
+    // Min must start be the lowest coords (e.g, 0,0,0) and max must be the highest coords (e.g, 128,128,128)
+    // End result as sourced from wiki: { EndX-StartX+1, EndY-StartY+1, EndZ-StartZ+1 }
+
+    if (level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
+      session.getActionSender().sendSelectionCuboid(
+              0,
+              "RedSpawnZone",
+              (short) (level.redSpawnZoneMin.getX() / 32),
+              (short) ((level.redSpawnZoneMin.getZ() / 32) - 1),
+              (short) (level.redSpawnZoneMin.getY() / 32),
+              (short) ((level.redSpawnZoneMax.getX() / 32) + 1),
+              (short) (level.redSpawnZoneMax.getZ() / 32),
+              (short) ((level.redSpawnZoneMax.getY() / 32) + 1),
+              (short) 255,
+              (short) 0,
+              (short) 0,
+              (short) 30
+      );
+    }
+
+    if (level.blueSpawnZoneMin != null && level.blueSpawnZoneMax != null) {
+      session.getActionSender().sendSelectionCuboid(
+              1,
+              "BlueSpawnZone",
+              (short) (level.blueSpawnZoneMin.getX() / 32),
+              (short) ((level.blueSpawnZoneMin.getZ() / 32) - 1),
+              (short) (level.blueSpawnZoneMin.getY() / 32),
+              (short) ((level.blueSpawnZoneMax.getX() / 32) + 1),
+              (short) (level.blueSpawnZoneMax.getZ() / 32),
+              (short) ((level.blueSpawnZoneMax.getY() / 32) + 1),
+              (short) 0,
+              (short) 0,
+              (short) 255,
+              (short) 30
+      );
+    }
+
+    // Player has finished loading
     session.levelSent = true;
   }
 
