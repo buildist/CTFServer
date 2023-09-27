@@ -1022,7 +1022,7 @@ public class CTFGameMode extends GameMode {
 
     if (level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
       int redMinX = level.redSpawnZoneMin.getX() / 32;
-      int redMinZ = level.redSpawnZoneMin.getZ() / 32;
+      int redMinZ = (level.redSpawnZoneMin.getZ() - 32) / 32;
       int redMinY = level.redSpawnZoneMin.getY() / 32;
 
       int redMaxX = level.redSpawnZoneMax.getX() / 32;
@@ -1034,7 +1034,7 @@ public class CTFGameMode extends GameMode {
 
     if (level.blueSpawnZoneMin != null && level.blueSpawnZoneMax != null) {
       int blueMinX = level.blueSpawnZoneMin.getX() / 32;
-      int blueMinZ = level.blueSpawnZoneMin.getZ() / 32;
+      int blueMinZ = (level.blueSpawnZoneMin.getZ() - 32) / 32;
       int blueMinY = level.blueSpawnZoneMin.getY() / 32;
 
       int blueMaxX = level.blueSpawnZoneMax.getX() / 32;
