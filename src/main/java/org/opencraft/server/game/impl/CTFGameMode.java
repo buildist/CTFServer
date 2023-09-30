@@ -563,22 +563,28 @@ public class CTFGameMode extends GameMode {
                 p.hasNominated = false;
               }
               Player[] top = getTopPlayers(3);
-              World.getWorld().broadcast("- &3Top players for the round:");
+              World.getWorld().broadcast("- &3Top players: (&aKills&3/&cDeaths&3/&eCaps&3)");
+
               if (top[0] == null) {
                 World.getWorld().broadcast("- &3Nobody");
               }
+              
               for (int j = 0; j < 3; j++) {
                 Player p = top[j];
                 if (p == null) {
                   break;
                 }
+
                 World.getWorld()
-                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned);
+                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
               }
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
                 player.hasFlag = false;
                 player.hasTNT = false;
+                player.kills = 0;
+                player.deaths = 0;
+                player.captures = 0;
                 if (player.isFlamethrowerEnabled()) {
                   World.getWorld()
                       .getLevel()
@@ -798,6 +804,7 @@ public class CTFGameMode extends GameMode {
               .broadcast("- &eBlue flag captured by " + p.parseName() + " for the red" + " team!");
           sendAnnouncement("&eBlue flag captured by " + p.parseName() + "!");
           redCaptures++;
+          p.captures++;
           p.hasFlag = false;
           blueFlagTaken = false;
           placeBlueFlag();
@@ -849,6 +856,7 @@ public class CTFGameMode extends GameMode {
               .broadcast("- &eRed flag captured by " + p.parseName() + " for the blue" + " team!");
           sendAnnouncement("&eRed flag captured by " + p.parseName() + "!");
           blueCaptures++;
+          p.captures++;
           p.hasFlag = false;
           redFlagTaken = false;
           placeRedFlag();

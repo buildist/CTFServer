@@ -107,6 +107,9 @@ public class Player extends Entity {
   public int currentRoundPointsEarned = 0;
   public Player duelChallengedBy = null;
   public Player duelPlayer = null;
+  public int kills = 0;
+  public int deaths = 0;
+  public int captures = 0;
   public int duelKills = 0;
   public int bountySet = 0;
   public Player bountied = null;
@@ -353,6 +356,7 @@ public class Player extends Entity {
       return;
     }
 
+    kills++;
     killstreak++;
     Killstats.kill(this, defender);
     if (killstreak % 5 == 0) {
@@ -418,6 +422,7 @@ public class Player extends Entity {
   }
 
   public void died(Player attacker) {
+    deaths++;
     if (killstreak >= 10) {
       World.getWorld()
           .broadcast(
