@@ -120,7 +120,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
                 && (y >= minY && y <= maxY)) {
           player.isLegal = false;
 
-          player.getActionSender().sendTeleport(player.lastLegalPosition, player.getRotation());
+          player.getActionSender().sendTeleport(new Position(player.lastLegalPosition.getX(), player.lastLegalPosition.getY(), player.getPosition().getZ()), player.getRotation());
           player.getActionSender().sendChatMessage("&cGo back!", 101);
           player.getActionSender().sendChatMessage("&7You may not enter spawn with the flag.", 102);
 
@@ -147,7 +147,7 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
                 && (y >= minY && y <= maxY)) {
           player.isLegal = false;
 
-          player.getActionSender().sendTeleport(player.lastLegalPosition, player.getRotation());
+          player.getActionSender().sendTeleport(new Position(player.lastLegalPosition.getX(), player.lastLegalPosition.getY(), player.getPosition().getZ()), player.getRotation());
           player.getActionSender().sendChatMessage("&cGo back!", 101);
           player.getActionSender().sendChatMessage("&7You may not enter spawn with the flag.", 102);
 
