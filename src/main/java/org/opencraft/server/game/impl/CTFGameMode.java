@@ -568,7 +568,7 @@ public class CTFGameMode extends GameMode {
               if (top[0] == null) {
                 World.getWorld().broadcast("- &3Nobody");
               }
-              
+
               for (int j = 0; j < 3; j++) {
                 Player p = top[j];
                 if (p == null) {
@@ -932,6 +932,7 @@ public class CTFGameMode extends GameMode {
             }
             p.died(m.owner);
             updateKillFeed(m.owner, p, m.owner.parseName() + " mined " + p.parseName() + ".");
+            m.owner.addPoints(GameSettings.getInt("MinePoints"));
           }
         }
       }
