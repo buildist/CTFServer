@@ -76,8 +76,8 @@ public class CTFGameMode extends GameMode {
   public boolean blueFlagDropped = false;
   public Thread redFlagDroppedThread;
   public Thread blueFlagDroppedThread;
-  public int redCaptures;
-  public int blueCaptures;
+  public static int redCaptures;
+  public static int blueCaptures;
   public boolean redFlagTaken = false;
   public boolean blueFlagTaken = false;
 
@@ -1319,7 +1319,7 @@ public class CTFGameMode extends GameMode {
     return new CTFPlayerUI(this, p);
   }
 
-  public int getMode() {
+  public static int getMode() {
     return World.getWorld().getLevel().mode;
   }
 }

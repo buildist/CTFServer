@@ -44,6 +44,9 @@ import com.sun.net.httpserver.HttpServer;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
+import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.TexturePackHandler;
 import org.opencraft.server.model.World;
@@ -70,6 +73,8 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.opencraft.server.model.PlayerUI.prettyTime;
+
 
 public class WebServer {
   public static ArrayList<String> blockedWords = new ArrayList<String>();
@@ -85,8 +90,14 @@ public class WebServer {
       HttpServer server = HttpServer.create(addr, 0);
 
       CTFHandler ch = new CTFHandler();
+      GameHandler gh = new GameHandler();
+
       HttpContext c = server.createContext("/", ch);
       c.getFilters().add(new ParameterFilter());
+
+      HttpContext g = server.createContext("/api/game", gh);
+      g.getFilters().add(new ParameterFilter());
+
       executor = Executors.newCachedThreadPool();
       server.setExecutor(executor);
       server.start();
@@ -260,6 +271,60 @@ public class WebServer {
         hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
       }
       return new String(hexChars);
+    }
+  }
+
+  static class GameHandler implements HttpHandler {
+
+    public void handle(HttpExchange exchange) {
+      try {
+        if ("GET".equals(exchange.getRequestMethod())) {
+          String map = World.getWorld().getLevel().id;
+
+          long elapsedTime = System.currentTimeMillis() - World.getWorld().getGameMode().gameStartTime;
+
+          String timerSetting = null;
+          if (CTFGameMode.getMode() == Level.TDM) {
+            timerSetting = "TDMTimeLimit";
+          } else {
+            timerSetting = "TimeLimit";
+          }
+
+          long remaining = Math.max((GameSettings.getInt(timerSetting) * 60 * 1000 - elapsedTime) / 1000, 0);
+          if (World.getWorld().getGameMode().voting) {
+            remaining = 0;
+          } else if (!World.getWorld().getGameMode().tournamentGameStarted) {
+            remaining = GameSettings.getInt(timerSetting) * 60;
+          }
+
+          String timeRemaining = prettyTime((int) remaining);
+
+          int redCaptures = CTFGameMode.redCaptures;
+          int blueCaptures = CTFGameMode.blueCaptures;
+
+          // Construct JSON using a StringBuilder
+          StringBuilder respTextBuilder = new StringBuilder();
+          respTextBuilder.append("{\n");
+          respTextBuilder.append("  \"map\": ").append(map).append(",\n");
+          respTextBuilder.append("  \"timeRemaining\": ").append(timeRemaining).append(",\n");
+          respTextBuilder.append("  \"redCaptures\": ").append(redCaptures).append(",\n");
+          respTextBuilder.append("  \"blueCaptures\": ").append(blueCaptures).append("\n");
+          respTextBuilder.append("}");
+
+          String respText = respTextBuilder.toString();
+
+          exchange.sendResponseHeaders(200, respText.getBytes().length);
+          OutputStream output = exchange.getResponseBody();
+          output.write(respText.getBytes());
+          output.flush();
+        } else {
+          exchange.sendResponseHeaders(405, -1);// 405 Method Not Allowed
+        }
+        exchange.close();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        exchange.close();
+      }
     }
   }
 }
