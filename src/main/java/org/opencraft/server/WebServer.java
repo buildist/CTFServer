@@ -91,12 +91,16 @@ public class WebServer {
 
       CTFHandler ch = new CTFHandler();
       GameHandler gh = new GameHandler();
+      PlayerHandler ph = new PlayerHandler();
 
       HttpContext c = server.createContext("/", ch);
       c.getFilters().add(new ParameterFilter());
 
       HttpContext g = server.createContext("/api/game", gh);
       g.getFilters().add(new ParameterFilter());
+
+      HttpContext p = server.createContext("/api/player", ph);
+      p.getFilters().add(new ParameterFilter());
 
       executor = Executors.newCachedThreadPool();
       server.setExecutor(executor);
@@ -305,13 +309,70 @@ public class WebServer {
           // Construct JSON using a StringBuilder
           StringBuilder respTextBuilder = new StringBuilder();
           respTextBuilder.append("{\n");
-          respTextBuilder.append("  \"map\": ").append(map).append(",\n");
-          respTextBuilder.append("  \"timeRemaining\": ").append(timeRemaining).append(",\n");
+          respTextBuilder.append("  \"map\": ").append("\"" + map + "\"").append(",\n");
+          respTextBuilder.append("  \"timeRemaining\": ").append("\"" + timeRemaining + "\"").append(",\n");
           respTextBuilder.append("  \"redCaptures\": ").append(redCaptures).append(",\n");
           respTextBuilder.append("  \"blueCaptures\": ").append(blueCaptures).append("\n");
           respTextBuilder.append("}");
 
           String respText = respTextBuilder.toString();
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+
+          exchange.sendResponseHeaders(200, respText.getBytes().length);
+          OutputStream output = exchange.getResponseBody();
+          output.write(respText.getBytes());
+          output.flush();
+        } else {
+          exchange.sendResponseHeaders(405, -1);// 405 Method Not Allowed
+        }
+        exchange.close();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        exchange.close();
+      }
+    }
+  }
+
+  static class PlayerHandler implements HttpHandler {
+
+    public void handle(HttpExchange exchange) {
+      try {
+        if ("GET".equals(exchange.getRequestMethod())) {
+          Map<String, Object> params = (Map<String, Object>) exchange.getAttribute("parameters");
+          StringBuilder respTextBuilder = new StringBuilder();
+          respTextBuilder.append("{\n");
+
+          String username;
+          if (params.containsKey("p")) {
+            username = params.get("p").toString();
+
+            Player target = Player.getPlayer(username, null);
+            if (target == null) {
+              respTextBuilder.append("  \"error\": ").append("\"Player not found.\"").append("\n");
+              respTextBuilder.append("}");
+            } else {
+              // TODO: Once KDC monitoring has been implemented, use those values
+              int kills = 0;
+              int deaths = 0;
+              int captures = 0;
+              int points = target.getPoints();
+
+              respTextBuilder.append("  \"username\": ").append("\"" + username + "\"").append(",\n");
+              respTextBuilder.append("  \"kills\": ").append(kills).append(",\n");
+              respTextBuilder.append("  \"deaths\": ").append(deaths).append(",\n");
+              respTextBuilder.append("  \"captures\": ").append(captures).append(",\n");
+              respTextBuilder.append("  \"points\": ").append(points).append("\n");
+              respTextBuilder.append("}");
+            }
+          } else {
+            respTextBuilder.append("  \"error\": ").append("\"Player not found.\"").append("\n");
+            respTextBuilder.append("}");
+          }
+
+          String respText = respTextBuilder.toString();
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
 
           exchange.sendResponseHeaders(200, respText.getBytes().length);
           OutputStream output = exchange.getResponseBody();
