@@ -312,7 +312,26 @@ public class WebServer {
           respTextBuilder.append("  \"map\": ").append("\"" + map + "\"").append(",\n");
           respTextBuilder.append("  \"timeRemaining\": ").append("\"" + timeRemaining + "\"").append(",\n");
           respTextBuilder.append("  \"redCaptures\": ").append(redCaptures).append(",\n");
-          respTextBuilder.append("  \"blueCaptures\": ").append(blueCaptures).append("\n");
+          respTextBuilder.append("  \"blueCaptures\": ").append(blueCaptures).append(",\n");
+
+          // Add red/blue players
+
+          Player[] names = World.getWorld().getPlayerList().getPlayers().toArray(new Player[0]);
+
+          List<Player> redTeam = new ArrayList<>();
+          List<Player> blueTeam = new ArrayList<>();
+
+          for (Player other : names) {
+            if (other.team == 0) redTeam.add(other);
+            if (other.team == 1) blueTeam.add(other);
+          }
+
+          String redPlayersJSON = getPlayersJSON(redTeam);
+          String bluePlayersJSON = getPlayersJSON(blueTeam);
+
+          respTextBuilder.append("  \"redPlayers\": [").append(redPlayersJSON).append("],\n");
+          respTextBuilder.append("  \"bluePlayers\": [").append(bluePlayersJSON).append("]\n");
+
           respTextBuilder.append("}");
 
           String respText = respTextBuilder.toString();
@@ -332,6 +351,15 @@ public class WebServer {
         exchange.close();
       }
     }
+
+    private String getPlayersJSON(List<Player> players) {
+      List<String> usernames = new ArrayList<>();
+      for (Player player : players) {
+        usernames.add("\"" + player.getName() + "\"");
+      }
+      return String.join(", ", usernames);
+    }
+
   }
 
   static class PlayerHandler implements HttpHandler {
