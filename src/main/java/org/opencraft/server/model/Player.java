@@ -128,6 +128,7 @@ public class Player extends Entity {
   private final PlayerUI ui;
   public Position safePosition = new Position(0, 0, 0);
   private int currentRoundPoints = Constants.INITIAL_PLAYER_POINTS;
+  public boolean streamerMode = false;
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();

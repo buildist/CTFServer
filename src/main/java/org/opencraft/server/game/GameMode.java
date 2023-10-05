@@ -155,6 +155,7 @@ public abstract class GameMode {
     registerCommand("stats", StatsCommand.getCommand());
     registerCommand("status", StatusCommand.getCommand());
     registerCommand("store", StoreCommand.getCommand());
+    registerCommand("streamermode", StreamerModeCommand.getCommand());
     registerCommand("team", TeamCommand.getCommand());
     registerCommand("tp", TeleportCommand.getCommand());
     registerCommand("unban", UnbanCommand.getCommand());
