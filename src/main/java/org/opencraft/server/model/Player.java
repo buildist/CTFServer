@@ -810,7 +810,7 @@ public class Player extends Entity {
     }
 
     String listName =
-        playerHasFlag + getColoredName() + "    &f" + currentRoundPointsEarned + playerSuffix;
+        playerHasFlag + getColoredName() + "    &f" + currentRoundPoints + playerSuffix;
     return listName.substring(0, Math.min(64, listName.length()));
   }
 
