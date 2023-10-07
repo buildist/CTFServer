@@ -641,14 +641,17 @@ public class Player extends Entity {
         getActionSender().sendExtSpawn(p);
       }
     }
+
     if (sendMessage) {
       World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
     }
+
+    session.getActionSender().sendHackControl(Configuration.getConfiguration().isTest() || this.team == -1);
+
     Position position = getTeamSpawn();
     getActionSender().sendTeleport(position, getTeamSpawnRotation());
     setPosition(position);
-    session.getActionSender().sendHackControl(
-        Configuration.getConfiguration().isTest() || this.team == -1);
+
     if (isNewPlayer) {
       setAttribute("rules", "true");
       isNewPlayer = false;
