@@ -98,8 +98,10 @@ public class RocketCommand implements Command {
                 int bx = (int) Math.round(x);
                 int by = (int) Math.round(y);
                 int bz = (int) Math.round(z);
+
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                if (block != BlockConstants.AIR && block != BlockConstants.OBSIDIAN && block != Constants.BLOCK_INVISIBLE) {
+
+                if (block != BlockConstants.AIR && block != Constants.BLOCK_ROCKET && block != Constants.BLOCK_INVISIBLE) {
                   ((CTFGameMode)World.getWorld()
                       .getGameMode())
                       .explodeTNT(
@@ -122,7 +124,7 @@ public class RocketCommand implements Command {
                           (int) Math.round(lastY),
                           (int) Math.round(lastZ),
                           block);
-                  World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.OBSIDIAN);
+                  World.getWorld().getLevel().setBlock(bx, by, bz, Constants.BLOCK_ROCKET);
                 }
 
                 lastX = x;

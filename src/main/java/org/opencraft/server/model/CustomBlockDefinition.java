@@ -381,8 +381,35 @@ public class CustomBlockDefinition {
       new CustomBlockDefinition(
           Constants.BLOCK_RESUPPLY, "Resupply", 500, Constants.BLOCK_WALK_SOUND_METAL, 0);
 
+  public static final CustomBlockDefinition ROCKET = new CustomBlockDefinition(
+          Constants.BLOCK_ROCKET,
+          "Rocket",
+          Constants.BLOCK_SOLIDITY_SOLID,
+          128,
+          37,
+          37,
+          37,
+          37,
+          37,
+          37,
+          false,
+          Constants.BLOCK_WALK_SOUND_STONE,
+          false,
+          0,
+          0,
+          0,
+          16,
+          16,
+          16,
+          Constants.BLOCK_DRAW_OPAQUE,
+          0,
+          0,
+          0,
+          0,
+          0);
+
 
   public static final CustomBlockDefinition[] CUSTOM_BLOCKS =
       new CustomBlockDefinition[]{TNT, PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE,
-          CRATE, BLOCK_VINE, INVISIBLE};
+          CRATE, BLOCK_VINE, INVISIBLE, ROCKET};
 }
