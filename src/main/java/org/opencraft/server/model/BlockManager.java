@@ -103,12 +103,26 @@ public final class BlockManager {
 
   public void addCustomBlock(CustomBlockDefinition customBlockDefinition) {
     try {
+      // Check if the custom block has any special properties
+      boolean isHalfBlock = false;
+      boolean doesThink = false;
+      boolean isPlant = false;
+      long thinkTimer = 0;
+      int fullCounterpart = 0;
       String behaviourName = "";
 
-      // Check to see if the custom block overrides a default block
-      // If so, use the original behaviour
-      if (customBlockDefinition.id < 66) {
-        behaviourName = getBlock(customBlockDefinition.id).getBehaviourName().trim();
+      if (getBlock(customBlockDefinition.id) != null) {
+        isHalfBlock = getBlock(customBlockDefinition.id).isHalfBlock();
+        doesThink = getBlock(customBlockDefinition.id).doesThink();
+        isPlant = getBlock(customBlockDefinition.id).isPlant();
+        thinkTimer = getBlock(customBlockDefinition.id).getTimer();
+        fullCounterpart = getBlock(customBlockDefinition.id).getFullCounterpart();
+
+        // Check if the custom block overrides a default block
+        // If so, use the original behaviour
+        if (customBlockDefinition.id < 66) {
+          behaviourName = getBlock(customBlockDefinition.id).getBehaviourName().trim();
+        }
       }
 
       blocksArray[customBlockDefinition.id] =
@@ -118,12 +132,12 @@ public final class BlockManager {
               customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SOLID,
               customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SWIM_THROUGH,
               customBlockDefinition.solid == Constants.BLOCK_SOLIDITY_SOLID,
-              false,
-              false,
-              false,
-              0,
+              isHalfBlock,
+              doesThink,
+              isPlant,
+              thinkTimer,
               true,
-              0,
+              fullCounterpart,
               behaviourName);
     } catch (Exception ex) {
       ex.printStackTrace();
