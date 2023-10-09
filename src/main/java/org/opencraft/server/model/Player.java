@@ -107,6 +107,9 @@ public class Player extends Entity {
   public int currentRoundPointsEarned = 0;
   public Player duelChallengedBy = null;
   public Player duelPlayer = null;
+  public int kills = 0;
+  public int deaths = 0;
+  public int captures = 0;
   public int duelKills = 0;
   public int bountySet = 0;
   public Player bountied = null;
@@ -354,6 +357,7 @@ public class Player extends Entity {
       return;
     }
 
+    kills++;
     killstreak++;
     Killstats.kill(this, defender);
     if (killstreak % 5 == 0) {
@@ -419,6 +423,7 @@ public class Player extends Entity {
   }
 
   public void died(Player attacker) {
+    deaths++;
     if (killstreak >= 10) {
       World.getWorld()
           .broadcast(
@@ -637,14 +642,17 @@ public class Player extends Entity {
         getActionSender().sendExtSpawn(p);
       }
     }
+
     if (sendMessage) {
       World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
     }
+
+    session.getActionSender().sendHackControl(Configuration.getConfiguration().isTest() || this.team == -1);
+
     Position position = getTeamSpawn();
     getActionSender().sendTeleport(position, getTeamSpawnRotation());
     setPosition(position);
-    session.getActionSender().sendHackControl(
-        Configuration.getConfiguration().isTest() || this.team == -1);
+
     if (isNewPlayer) {
       setAttribute("rules", "true");
       isNewPlayer = false;
@@ -806,7 +814,7 @@ public class Player extends Entity {
     }
 
     String listName =
-        playerHasFlag + getColoredName() + "    &f" + currentRoundPointsEarned + playerSuffix;
+        playerHasFlag + getColoredName() + "    &f" + currentRoundPoints + playerSuffix;
     return listName.substring(0, Math.min(64, listName.length()));
   }
 

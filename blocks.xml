@@ -765,5 +765,16 @@ POSSIBILITY OF SUCH DAMAGE.
       <doesThink>false</doesThink>
       <isPlant>false</isPlant>
     </block>
+    <block>
+      <bid>617</bid>
+      <name>rocket</name>
+      <solid>true</solid>
+      <liquid>false</liquid>
+      <blocksLight>true</blocksLight>
+      <halfBlock>false</halfBlock>
+      <behaviourName></behaviourName>
+      <doesThink>false</doesThink>
+      <isPlant>false</isPlant>
+    </block>
   </blockList>
 </blocks>

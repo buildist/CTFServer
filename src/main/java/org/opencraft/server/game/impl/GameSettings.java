@@ -35,7 +35,7 @@ public class GameSettings {
     add("WhitelistMessage", TYPE_STRING, "There is a tournament going on, try again later!");
     add("FirstBloodReward", TYPE_INT, 30);
     add("MineRadius", TYPE_FLOAT, 2.0f);
-    add("MinePoints", TYPE_INT, 2);
+    add("MinePoints", TYPE_INT, 0);
     add("BigTNTPrice", TYPE_INT, 70);
     add("BigTNTAmount", TYPE_INT, 7);
     add("BigTNTRadius", TYPE_INT, 3);
