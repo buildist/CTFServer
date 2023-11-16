@@ -954,7 +954,7 @@ Z        <field>
       <fields>
         <field>
           <name>count</name>
-          <type>SHORT</type>
+          <type>BYTE</type>
         </field>
         <field>
           <name>indices</name>

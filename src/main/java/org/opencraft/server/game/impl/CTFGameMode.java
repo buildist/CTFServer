@@ -450,7 +450,7 @@ public class CTFGameMode extends GameMode {
       player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
       player.currentRoundPointsEarned = 0;
       player.setPoints(GameSettings.getInt("InitialPoints"));
-      //unblockSpawnZones(player);
+      unblockSpawnZones(player);
     }
 
     redFlagTaken = false;
@@ -596,7 +596,7 @@ public class CTFGameMode extends GameMode {
                 }
                 player.flamethrowerTime = 0;
                 player.rocketTime = 0;
-                //unblockSpawnZones(player);
+                unblockSpawnZones(player);
                 player.sendToTeamSpawn();
               }
               rtvVotes = 0;
@@ -682,7 +682,7 @@ public class CTFGameMode extends GameMode {
         placeRedFlag();
       }
       player.hasFlag = false;
-      //unblockSpawnZones(player);
+      unblockSpawnZones(player);
       World.getWorld().broadcast("- " + player.parseName() + " dropped the flag!");
     }
   }
@@ -810,7 +810,7 @@ public class CTFGameMode extends GameMode {
   public void dropFlag(Player p, final boolean instant, final boolean isVoluntary) {
     if (p.hasFlag) {
       p.hasFlag = false;
-      //unblockSpawnZones(p);
+      unblockSpawnZones(p);
       World.getWorld().broadcast("- " + p.parseName() + " dropped the flag!");
       sendAnnouncement(p.parseName() + " dropped the flag!");
       Position playerPos = p.getPosition().toBlockPos();
@@ -894,7 +894,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate");
             p.hasFlag = true;
             redFlagTaken = true;
-            //blockSpawnZones(p);
+            blockSpawnZones(p);
             checkForStalemate();
             resetRedFlagPos();
             if (redFlagDroppedThread != null) {
@@ -912,7 +912,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           blueFlagTaken = false;
-          //unblockSpawnZones(p);
+          unblockSpawnZones(p);
           placeBlueFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
           p.addPoints(40);
@@ -948,7 +948,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             blueFlagTaken = true;
-            //blockSpawnZones(p);
+            blockSpawnZones(p);
             checkForStalemate();
             resetBlueFlagPos();
             if (blueFlagDroppedThread != null) {
@@ -966,7 +966,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           redFlagTaken = false;
-          //unblockSpawnZones(p);
+          unblockSpawnZones(p);
           placeRedFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
           p.addPoints(40);
