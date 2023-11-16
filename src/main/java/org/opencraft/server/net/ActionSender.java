@@ -53,6 +53,9 @@ import org.opencraft.server.persistence.SavedGameManager;
 import org.opencraft.server.task.Task;
 import org.opencraft.server.task.TaskQueue;
 
+import java.nio.ByteBuffer;
+import java.util.List;
+
 /**
  * A utility class for sending packets.
  *
@@ -843,6 +846,40 @@ public class ActionSender {
     bldr.putShort("id", id);
     bldr.putByte("index", index);
     session.send(bldr.toPacket());
+  }
+
+  public void sendBulkBlockUpdate(List<Integer> indices, List<Short> blocks) {
+    // Prepare the packet data
+    ByteBuffer buffer = ByteBuffer.allocate(5 + indices.size() * 4 + blocks.size());
+    int count = indices.size() - 1;
+    buffer.put((byte) count);
+
+    for (int index : indices) {
+      buffer.putInt(index);
+    }
+
+    for (short block : blocks) {
+      buffer.put((byte) (block & 0xFF)); // Extract the lower byte as byte
+    }
+
+    byte[] indicesData = buffer.array();
+
+    // Construct the packet
+    PacketBuilder builder = new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(38));
+    builder.putByte("count", (byte) count);
+    builder.putByteArray("indices", indicesData);
+
+    // Trim blocks to fit 256 elements if needed
+    List<Short> trimmedBlocks = blocks.size() > 256 ? blocks.subList(0, 256) : blocks;
+    byte[] blocksData = new byte[trimmedBlocks.size()];
+
+    for (int i = 0; i < trimmedBlocks.size(); i++) {
+      blocksData[i] = (byte) (trimmedBlocks.get(i) & 0xFF); // Extract the lower byte as byte
+    }
+
+    builder.putByteArray("blocks", blocksData);
+
+    session.send(builder.toPacket());
   }
 
   /**

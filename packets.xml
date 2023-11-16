@@ -949,6 +949,24 @@ Z        <field>
       </fields>
     </packet>
     <packet>
+      <opcode>38</opcode>
+      <name>bulk_block_update</name>
+      <fields>
+        <field>
+          <name>count</name>
+          <type>SHORT</type>
+        </field>
+        <field>
+          <name>indices</name>
+          <type>BYTE_ARRAY</type>
+        </field>
+        <field>
+          <name>blocks</name>
+          <type>BYTE_ARRAY</type>
+        </field>
+      </fields>
+    </packet>
+    <packet>
       <opcode>28</opcode>
       <name>block_permissions</name>
       <fields>

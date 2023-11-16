@@ -62,7 +62,9 @@ import org.opencraft.server.model.World;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CTFGameMode extends GameMode {
 
@@ -448,6 +450,7 @@ public class CTFGameMode extends GameMode {
       player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
       player.currentRoundPointsEarned = 0;
       player.setPoints(GameSettings.getInt("InitialPoints"));
+      //unblockSpawnZones(player);
     }
 
     redFlagTaken = false;
@@ -593,6 +596,7 @@ public class CTFGameMode extends GameMode {
                 }
                 player.flamethrowerTime = 0;
                 player.rocketTime = 0;
+                //unblockSpawnZones(player);
                 player.sendToTeamSpawn();
               }
               rtvVotes = 0;
@@ -678,6 +682,7 @@ public class CTFGameMode extends GameMode {
         placeRedFlag();
       }
       player.hasFlag = false;
+      //unblockSpawnZones(player);
       World.getWorld().broadcast("- " + player.parseName() + " dropped the flag!");
     }
   }
@@ -689,6 +694,104 @@ public class CTFGameMode extends GameMode {
       World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");
       antiStalemate = true;
     }
+  }
+
+  public void blockSpawnZones(Player p) {
+    if (!p.hasFlag) return;
+
+    int minX = 0;
+    int minZ = 0;
+    int minY = 0;
+
+    int maxX = 0;
+    int maxZ = 0;
+    int maxY = 0;
+
+    Level level = World.getWorld().getLevel();
+
+    if (p.team == 0 && level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
+      // Red
+      minX = level.redSpawnZoneMin.getX() - 32;
+      minZ = level.redSpawnZoneMin.getZ();
+      minY = level.redSpawnZoneMin.getY() - 32;
+
+      maxX = level.redSpawnZoneMax.getX() + 32;
+      maxZ = level.redSpawnZoneMax.getZ();
+      maxY = level.redSpawnZoneMax.getY() + 32;
+    } else if (p.team == 1 && level.blueSpawnZoneMin != null && level.blueSpawnZoneMax != null) {
+      // Blue
+      minX = level.blueSpawnZoneMin.getX() - 32;
+      minZ = level.blueSpawnZoneMin.getZ();
+      minY = level.blueSpawnZoneMin.getY() - 32;
+
+      maxX = level.blueSpawnZoneMax.getX() + 32;
+      maxZ = level.blueSpawnZoneMax.getZ();
+      maxY = level.blueSpawnZoneMax.getY() + 32;
+    }
+
+    List<Integer> indices = new ArrayList<>();
+    List<Short> blocks = new ArrayList<>();
+
+    // Populate indices and blocks lists with the block updates to be performed
+    for (int x = minX; x < maxX; x++) {
+      for (int z = minZ; z < maxZ; z++) {
+        for (int y = minY; y < maxY; y++) {
+          if (World.getWorld().getLevel().getBlock(x, y, z) != 0) continue; // Only replace air
+          indices.add(x << 24 | y << 12 | z); // Pack coordinates into a single integer
+          blocks.add((short) Constants.BLOCK_CRATE);
+        }
+      }
+    }
+
+    p.getSession().getActionSender().sendBulkBlockUpdate(indices, blocks); // Send bulk block updates
+  }
+
+  public void unblockSpawnZones(Player p) {
+    int minX = 0;
+    int minZ = 0;
+    int minY = 0;
+
+    int maxX = 0;
+    int maxZ = 0;
+    int maxY = 0;
+
+    Level level = World.getWorld().getLevel();
+
+    if (p.team == 0 && level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
+      // Red
+      minX = level.redSpawnZoneMin.getX() - 32;
+      minZ = level.redSpawnZoneMin.getZ();
+      minY = level.redSpawnZoneMin.getY() - 32;
+
+      maxX = level.redSpawnZoneMax.getX() + 32;
+      maxZ = level.redSpawnZoneMax.getZ();
+      maxY = level.redSpawnZoneMax.getY() + 32;
+    } else if (p.team == 1 && level.blueSpawnZoneMin != null && level.blueSpawnZoneMax != null){
+      // Blue
+      minX = level.blueSpawnZoneMin.getX() - 32;
+      minZ = level.blueSpawnZoneMin.getZ();
+      minY = level.blueSpawnZoneMin.getY() - 32;
+
+      maxX = level.blueSpawnZoneMax.getX() + 32;
+      maxZ = level.blueSpawnZoneMax.getZ();
+      maxY = level.blueSpawnZoneMax.getY() + 32;
+    }
+
+    List<Integer> indices = new ArrayList<>();
+    List<Short> blocks = new ArrayList<>();
+
+    // Populate indices and blocks lists with the block updates to be performed
+    for (int x = minX; x < maxX; x++) {
+      for (int z = minZ; z < maxZ; z++) {
+        for (int y = minY; y < maxY; y++) {
+          if (World.getWorld().getLevel().getBlock(x, y, z) != Constants.BLOCK_CRATE) continue; // Only replace air
+          indices.add(x << 24 | y << 12 | z); // Pack coordinates into a single integer
+          blocks.add((short)0);
+        }
+      }
+    }
+
+    p.getSession().getActionSender().sendBulkBlockUpdate(indices, blocks); // Send bulk block updates
   }
 
   public void dropFlag(int team) {
@@ -707,6 +810,7 @@ public class CTFGameMode extends GameMode {
   public void dropFlag(Player p, final boolean instant, final boolean isVoluntary) {
     if (p.hasFlag) {
       p.hasFlag = false;
+      //unblockSpawnZones(p);
       World.getWorld().broadcast("- " + p.parseName() + " dropped the flag!");
       sendAnnouncement(p.parseName() + " dropped the flag!");
       Position playerPos = p.getPosition().toBlockPos();
@@ -790,6 +894,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate");
             p.hasFlag = true;
             redFlagTaken = true;
+            //blockSpawnZones(p);
             checkForStalemate();
             resetRedFlagPos();
             if (redFlagDroppedThread != null) {
@@ -807,6 +912,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           blueFlagTaken = false;
+          //unblockSpawnZones(p);
           placeBlueFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
           p.addPoints(40);
@@ -842,6 +948,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             blueFlagTaken = true;
+            //blockSpawnZones(p);
             checkForStalemate();
             resetBlueFlagPos();
             if (blueFlagDroppedThread != null) {
@@ -859,6 +966,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           redFlagTaken = false;
+          //unblockSpawnZones(p);
           placeRedFlag();
           p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
           p.addPoints(40);

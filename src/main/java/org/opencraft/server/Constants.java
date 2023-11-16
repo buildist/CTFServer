@@ -90,6 +90,7 @@ public final class Constants {
     "CustomParticles",
     "SetHotbar",
     "LongerMessages",
+    "BulkBlockUpdate",
   };
 
   // CPE versions
