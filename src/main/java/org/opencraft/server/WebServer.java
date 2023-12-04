@@ -380,10 +380,9 @@ public class WebServer {
               respTextBuilder.append("  \"error\": ").append("\"Player not found.\"").append("\n");
               respTextBuilder.append("}");
             } else {
-              // TODO: Once KDC monitoring has been implemented, use those values
-              int kills = 0;
-              int deaths = 0;
-              int captures = 0;
+              int kills = target.kills;
+              int deaths = target.deaths;
+              int captures = target.captures;
               int points = target.getPoints();
 
               respTextBuilder.append("  \"username\": ").append("\"" + username + "\"").append(",\n");
