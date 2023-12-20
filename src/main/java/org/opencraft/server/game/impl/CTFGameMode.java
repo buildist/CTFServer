@@ -152,13 +152,19 @@ public class CTFGameMode extends GameMode {
     if (deleteSelf) {
       level.setBlock(x, y, z, 0);
     }
-    if (p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
-      p.bigTNTRemaining--;
+
+    // Big TNT should not be triggered by rockets and grenades
+    if (type == null) {
+      if (p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
+        p.bigTNTRemaining--;
+      }
+
+      if (p.bigTNTRemaining <= 0 && p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
+        p.tntRadius = 2;
+        p.getActionSender().sendChatMessage("- &eYour big TNT has expired!");
+      }
     }
-    if (p.bigTNTRemaining <= 0 && p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
-      p.tntRadius = 2;
-      p.getActionSender().sendChatMessage("- &eYour big TNT has expired!");
-    }
+
     int n = 0;
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
