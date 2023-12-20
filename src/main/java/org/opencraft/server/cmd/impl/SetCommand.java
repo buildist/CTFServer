@@ -62,7 +62,7 @@ public class SetCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    if (player.isOp() || player.isVIP()) {
+    if (player.isOp()) {
       if (params.getArgumentCount() == 0) {
         player.getActionSender().sendChatMessage("/set [name] [value]");
         for (GameSetting setting : GameSettings.getSettings().values()) {
@@ -119,7 +119,7 @@ public class SetCommand implements Command {
         }
       }
     } else {
-      player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }
