@@ -698,6 +698,12 @@ public class CTFGameMode extends GameMode {
 
   public void blockSpawnZones(Player p) {
     if (!p.hasFlag) return;
+    // TODO: TEN_BIT_BLOCKS support
+
+    /*Level level = World.getWorld().getLevel();
+
+    if (level.redSpawnZoneMin == null || level.redSpawnZoneMax == null) return;
+    if (level.blueSpawnZoneMin == null || level.blueSpawnZoneMax == null) return;
 
     int minX = 0;
     int minZ = 0;
@@ -707,9 +713,7 @@ public class CTFGameMode extends GameMode {
     int maxZ = 0;
     int maxY = 0;
 
-    Level level = World.getWorld().getLevel();
-
-    if (p.team == 0 && level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
+    if (p.team == 0) {
       // Red
       minX = level.redSpawnZoneMin.getX() - 32;
       minZ = level.redSpawnZoneMin.getZ();
@@ -718,7 +722,7 @@ public class CTFGameMode extends GameMode {
       maxX = level.redSpawnZoneMax.getX() + 32;
       maxZ = level.redSpawnZoneMax.getZ();
       maxY = level.redSpawnZoneMax.getY() + 32;
-    } else if (p.team == 1 && level.blueSpawnZoneMin != null && level.blueSpawnZoneMax != null) {
+    } else if (p.team == 1) {
       // Blue
       minX = level.blueSpawnZoneMin.getX() - 32;
       minZ = level.blueSpawnZoneMin.getZ();
@@ -737,16 +741,24 @@ public class CTFGameMode extends GameMode {
       for (int z = minZ; z < maxZ; z++) {
         for (int y = minY; y < maxY; y++) {
           if (World.getWorld().getLevel().getBlock(x, y, z) != 0) continue; // Only replace air
-          indices.add(x << 24 | y << 12 | z); // Pack coordinates into a single integer
-          blocks.add((short) Constants.BLOCK_CRATE);
+
+          int index = ((y & 0xFF) << 16) | ((z & 0xFF) << 8) | (x & 0xFF); // Calculate the index based on x, y, and z coordinates
+          indices.add(index); // Add the calculated index to the indices list
+          blocks.add((short) Constants.BLOCK_INVISIBLE); // Replace with crates
         }
       }
     }
 
-    p.getSession().getActionSender().sendBulkBlockUpdate(indices, blocks); // Send bulk block updates
+    p.getSession().getActionSender().sendBulkBlockUpdate(indices, blocks); // Send bulk block updates*/
   }
 
   public void unblockSpawnZones(Player p) {
+    // TODO: TEN_BIT_BLOCKS support
+    /*Level level = World.getWorld().getLevel();
+
+    if (level.redSpawnZoneMin == null || level.redSpawnZoneMax == null) return;
+    if (level.blueSpawnZoneMin == null || level.blueSpawnZoneMax == null) return;
+
     int minX = 0;
     int minZ = 0;
     int minY = 0;
@@ -755,9 +767,7 @@ public class CTFGameMode extends GameMode {
     int maxZ = 0;
     int maxY = 0;
 
-    Level level = World.getWorld().getLevel();
-
-    if (p.team == 0 && level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
+    if (p.team == 0) {
       // Red
       minX = level.redSpawnZoneMin.getX() - 32;
       minZ = level.redSpawnZoneMin.getZ();
@@ -766,7 +776,7 @@ public class CTFGameMode extends GameMode {
       maxX = level.redSpawnZoneMax.getX() + 32;
       maxZ = level.redSpawnZoneMax.getZ();
       maxY = level.redSpawnZoneMax.getY() + 32;
-    } else if (p.team == 1 && level.blueSpawnZoneMin != null && level.blueSpawnZoneMax != null){
+    } else if (p.team == 1) {
       // Blue
       minX = level.blueSpawnZoneMin.getX() - 32;
       minZ = level.blueSpawnZoneMin.getZ();
@@ -784,14 +794,17 @@ public class CTFGameMode extends GameMode {
     for (int x = minX; x < maxX; x++) {
       for (int z = minZ; z < maxZ; z++) {
         for (int y = minY; y < maxY; y++) {
-          if (World.getWorld().getLevel().getBlock(x, y, z) != Constants.BLOCK_CRATE) continue; // Only replace air
-          indices.add(x << 24 | y << 12 | z); // Pack coordinates into a single integer
-          blocks.add((short)0);
+          if (World.getWorld().getLevel().getBlock(x, y, z) != Constants.BLOCK_INVISIBLE) continue; // Only replace crates
+
+          int index = ((y & 0xFF) << 16) | ((z & 0xFF) << 8) | (x & 0xFF); // Calculate the index based on x, y, and z coordinates
+          //x + z * width + y * width * length
+          indices.add(index); // Add the calculated index to the indices list
+          blocks.add((short) 0); // Replace with air
         }
       }
     }
 
-    p.getSession().getActionSender().sendBulkBlockUpdate(indices, blocks); // Send bulk block updates
+    p.getSession().getActionSender().sendBulkBlockUpdate(indices, blocks); // Send bulk block updates*/
   }
 
   public void dropFlag(int team) {
