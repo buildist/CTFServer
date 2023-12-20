@@ -1248,8 +1248,22 @@ public class CTFGameMode extends GameMode {
           player.getActionSender().sendBlock(x, y, z, (short) 0);
         }
       } else if (placedInSpawnZone) {
-        ignore = true;
-        player.getActionSender().sendChatMessage("- &aYou may not place blocks at spawn.");
+        // Allow detonator to explode last TNT, but revert the block change afterwards
+        if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
+          int radius = player.tntRadius;
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
+          explodeTNT(
+                  player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
+          player.hasTNT = false;
+          player.tntX = 0;
+          player.tntY = 0;
+          player.tntZ = 0;
+        } else {
+          ignore = true;
+          player.getActionSender().sendChatMessage("- &aYou may not place blocks at spawn.");
+        }
+
+        // Revert the block
         if (mode == 0) {
           player.getActionSender().sendBlock(x, y, z, (short) oldType);
         } else {
