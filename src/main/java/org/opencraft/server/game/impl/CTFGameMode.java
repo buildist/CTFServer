@@ -39,6 +39,7 @@ package org.opencraft.server.game.impl;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
+import org.opencraft.server.WebServer;
 import org.opencraft.server.cmd.impl.DefuseCommand;
 import org.opencraft.server.cmd.impl.DefuseTNTCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
@@ -484,6 +485,8 @@ public class CTFGameMode extends GameMode {
         sendKillFeed(p);
       }
     }
+
+    WebServer.killFeed = killFeed;
   }
 
   private void openSpawns() {

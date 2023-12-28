@@ -44,6 +44,7 @@ import com.sun.net.httpserver.HttpServer;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Level;
@@ -85,6 +86,7 @@ public class WebServer {
     consolePlayer.setActionSender(new ConsoleActionSender());
     consolePlayer.setAttribute("IsOperator", "true");
     consolePlayer.setAttribute("IsOwner", "true");
+
     try {
       InetSocketAddress addr = new InetSocketAddress(Constants.WEB_PORT);
       HttpServer server = HttpServer.create(addr, 0);
@@ -92,6 +94,7 @@ public class WebServer {
       CTFHandler ch = new CTFHandler();
       GameHandler gh = new GameHandler();
       PlayerHandler ph = new PlayerHandler();
+      KillsHandler kh = new KillsHandler();
 
       HttpContext c = server.createContext("/", ch);
       c.getFilters().add(new ParameterFilter());
@@ -101,6 +104,9 @@ public class WebServer {
 
       HttpContext p = server.createContext("/api/player", ph);
       p.getFilters().add(new ParameterFilter());
+
+      HttpContext k = server.createContext("/api/kills", kh);
+      k.getFilters().add(new ParameterFilter());
 
       executor = Executors.newCachedThreadPool();
       server.setExecutor(executor);
@@ -279,7 +285,6 @@ public class WebServer {
   }
 
   static class GameHandler implements HttpHandler {
-
     public void handle(HttpExchange exchange) {
       try {
         if ("GET".equals(exchange.getRequestMethod())) {
@@ -362,8 +367,9 @@ public class WebServer {
 
   }
 
-  static class PlayerHandler implements HttpHandler {
+  public static ArrayList<GameMode.KillFeedItem> killFeed; // A copy of CTFGameMode.killFeed that does not purge after 10 seconds
 
+  static class PlayerHandler implements HttpHandler {
     public void handle(HttpExchange exchange) {
       try {
         if ("GET".equals(exchange.getRequestMethod())) {
@@ -396,6 +402,57 @@ public class WebServer {
             respTextBuilder.append("  \"error\": ").append("\"Player not found.\"").append("\n");
             respTextBuilder.append("}");
           }
+
+          String respText = respTextBuilder.toString();
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+
+          exchange.sendResponseHeaders(200, respText.getBytes().length);
+          OutputStream output = exchange.getResponseBody();
+          output.write(respText.getBytes());
+          output.flush();
+        } else {
+          exchange.sendResponseHeaders(405, -1);// 405 Method Not Allowed
+        }
+        exchange.close();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        exchange.close();
+      }
+    }
+  }
+
+  static class KillsHandler implements HttpHandler {
+    public void handle(HttpExchange exchange) {
+      try {
+        if ("GET".equals(exchange.getRequestMethod())) {
+          StringBuilder respTextBuilder = new StringBuilder();
+
+          respTextBuilder.append("{\n");
+
+          if (killFeed == null) {
+            respTextBuilder.append("  \"1\": null").append(",\n");
+            respTextBuilder.append("  \"2\": null").append(",\n");
+            respTextBuilder.append("  \"3\": null").append("\n");
+          } else {
+            for (int i = 0; i < 3; i++) {
+              System.out.println("kf size " + killFeed.size());
+              System.out.println("i " + i);
+              if (i >= killFeed.size()) {
+                respTextBuilder.append("  \"" + i + "\": null");
+              } else {
+                respTextBuilder.append("  \"" + i + "\": ").append(killFeed.get(i).getMessage());
+              }
+
+              if (i < 2) {
+                respTextBuilder.append(",\n");
+              } else {
+                respTextBuilder.append("\n");
+              }
+            }
+          }
+
+          respTextBuilder.append("}");
 
           String respText = respTextBuilder.toString();
           Headers responseHeaders = exchange.getResponseHeaders();

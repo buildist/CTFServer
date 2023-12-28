@@ -81,7 +81,7 @@ public abstract class GameMode {
   public ArrayList<String> rtvNoPlayers = new ArrayList<>();
   public int rtvVotes = 0;
   public ArrayList<String> nominatedMaps = new ArrayList<>();
-  protected final ArrayList<KillFeedItem> killFeed = new ArrayList<>();
+  public final ArrayList<KillFeedItem> killFeed = new ArrayList<>();
   public String currentMap = null;
   public String previousMap = null;
   public Level map;
