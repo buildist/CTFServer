@@ -436,12 +436,10 @@ public class WebServer {
             respTextBuilder.append("  \"3\": null").append("\n");
           } else {
             for (int i = 0; i < 3; i++) {
-              System.out.println("kf size " + killFeed.size());
-              System.out.println("i " + i);
               if (i >= killFeed.size()) {
                 respTextBuilder.append("  \"" + i + "\": null");
               } else {
-                respTextBuilder.append("  \"" + i + "\": ").append(killFeed.get(i).getMessage());
+                respTextBuilder.append("  \"" + i + "\": ").append("\"" + killFeed.get(i).getMessage() + "\"");
               }
 
               if (i < 2) {
