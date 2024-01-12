@@ -172,7 +172,7 @@ public abstract class PlayerUI {
     return builder.toString();
   }
 
-  protected static String prettyTime(int seconds) {
+  public static String prettyTime(int seconds) {
     int ms = (int) Math.floor(seconds / 60 % 60);
     int sr = (int) Math.floor(seconds / 1 % 60);
     String mm, ss;

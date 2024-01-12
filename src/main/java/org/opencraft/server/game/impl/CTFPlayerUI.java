@@ -24,6 +24,10 @@ public class CTFPlayerUI extends PlayerUI {
 
   @Override
   protected String getStatus0() {
+    if (player.streamerMode) {
+      return "";
+    }
+
     String redFlag = ctf.redFlagTaken ? " &6[!]" : "";
     String blueFlag = ctf.blueFlagTaken ? " &6[!]" : "";
     return "Map: "
@@ -47,6 +51,10 @@ public class CTFPlayerUI extends PlayerUI {
 
   @Override
   protected String getStatus2() {
+    if (player.streamerMode) {
+      return "";
+    }
+
     if(hasTimer()) {
       return getFlamethrowerMessage();
     } else {
@@ -61,6 +69,7 @@ public class CTFPlayerUI extends PlayerUI {
   private String getTimerMessage() {
     String timerSetting = null;
     String timerMessage = null;
+
     if (ctf.getMode() == Level.TDM) {
       timerSetting = "TDMTimeLimit";
       timerMessage = "Team Deathmatch";
@@ -78,6 +87,14 @@ public class CTFPlayerUI extends PlayerUI {
     } else if (!World.getWorld().getGameMode().tournamentGameStarted) {
       remaining = GameSettings.getInt(timerSetting) * 60;
     }
+
+    // If streamer mode is enabled, minimize the HUD
+    if (player.streamerMode) {
+      String redFlag = ctf.redFlagTaken ? " &6[!]" : "";
+      String blueFlag = ctf.blueFlagTaken ? " &6[!]" : "";
+      return "&c" + ctf.redCaptures + redFlag + " &9" + ctf.blueCaptures + blueFlag + " &f" + prettyTime((int) remaining);
+    }
+
     return timerMessage + " | " + prettyTime((int) remaining);
   }
 

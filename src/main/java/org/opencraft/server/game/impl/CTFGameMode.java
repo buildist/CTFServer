@@ -39,6 +39,7 @@ package org.opencraft.server.game.impl;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
+import org.opencraft.server.WebServer;
 import org.opencraft.server.cmd.impl.DefuseCommand;
 import org.opencraft.server.cmd.impl.DefuseTNTCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
@@ -76,8 +77,8 @@ public class CTFGameMode extends GameMode {
   public boolean blueFlagDropped = false;
   public Thread redFlagDroppedThread;
   public Thread blueFlagDroppedThread;
-  public int redCaptures;
-  public int blueCaptures;
+  public static int redCaptures;
+  public static int blueCaptures;
   public boolean redFlagTaken = false;
   public boolean blueFlagTaken = false;
 
@@ -484,6 +485,8 @@ public class CTFGameMode extends GameMode {
         sendKillFeed(p);
       }
     }
+
+    WebServer.killFeed = killFeed;
   }
 
   private void openSpawns() {
@@ -1328,7 +1331,7 @@ public class CTFGameMode extends GameMode {
     return new CTFPlayerUI(this, p);
   }
 
-  public int getMode() {
+  public static int getMode() {
     return World.getWorld().getLevel().mode;
   }
 }
