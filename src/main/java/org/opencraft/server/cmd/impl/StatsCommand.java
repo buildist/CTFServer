@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import de.gesundkrank.jskills.Rating;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;

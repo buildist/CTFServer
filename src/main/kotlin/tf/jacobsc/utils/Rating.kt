@@ -10,7 +10,10 @@ import org.opencraft.server.model.Player
 import org.opencraft.server.model.World
 
 fun displayRating(rating: Rating): String = with(rating) {
-    "$mean+/-$conservativeRating"
+    val conservative = conservativeRating.roundToInt()
+    val mean = mean.roundToInt()
+    val dev = (conservativeStandardDeviationMultiplier * standardDeviation).roundToInt()
+    "$conservative ($mean+/-$dev)"
 }
 
 data class NewPlayerRating(
@@ -132,7 +135,7 @@ interface RatingSystem {
         const val initialMean = 1000.0
 
         // the initial standard deviation of ratings. The recommended value is a third of initialMean
-        const val initialStandardDevation = 350.0
+        const val initialStandardDevation = initialMean / 3.0
 
 
         // In (2), TrueSkill  β defines the length of the “skill
@@ -145,7 +148,7 @@ interface RatingSystem {
 
         // Default distance that guarantees about 76% chance of winning.
         // The recommended value is a half of sigma.
-        const val beta = 175.0
+        const val beta = initialStandardDevation / 2.0
 
         // Without τ, the TrueSkill algorithm would always cause the player’s standard deviation ( ) term to shrink
         //and therefore become more certain about a player. Before skill updates are calculated, we add in to

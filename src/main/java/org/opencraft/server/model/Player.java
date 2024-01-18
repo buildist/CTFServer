@@ -175,34 +175,41 @@ public class Player extends Entity implements IPlayer {
     setPoints(GameSettings.getInt("InitialPoints"));
   }
 
-  public Rating getDuelRating() {
-    try {
-      return new Rating(
-          (double) getAttribute("duelRatingMu"),
-          (double) getAttribute("duelRatingSigma"));
-    } catch (NumberFormatException e) {
+  private Rating getRating(String type) {
+    Object mu = getAttribute(type + "RatingMu");
+    Object sigma = getAttribute(type + "RatingSigma");
+    if (mu == null || sigma == null) {
       return RatingSystem.Companion.getDefaultRating();
     }
+
+    try {
+      return new Rating(
+          (double) mu,
+          (double) sigma);
+    } catch (Exception e) {
+      return RatingSystem.Companion.getDefaultRating();
+    }
+  }
+
+  private void setRating(String type, Rating rating) {
+    setAttribute(type + "RatingMu", rating.getMean());
+    setAttribute(type + "RatingSigma", rating.getStandardDeviation());
   }
 
   public Rating getTeamRating() {
-    try {
-      return new Rating(
-          (double) getAttribute("teamRatingMu"),
-          (double) getAttribute("teamRatingSigma"));
-    } catch (NumberFormatException e) {
-      return RatingSystem.Companion.getDefaultRating();
-    }
+    return getRating("team");
+  }
+
+  public Rating getDuelRating() {
+    return getRating("duel");
   }
 
   public void setDuelRating(Rating rating) {
-    setAttribute("duelRatingMu", rating.getMean());
-    setAttribute("duelRatingSigma", rating.getStandardDeviation());
+    setRating("duel", rating);
   }
 
   public void setTeamRating(Rating rating) {
-    setAttribute("teamRatingMu", rating.getMean());
-    setAttribute("teamRatingSigma", rating.getStandardDeviation());
+    setRating("team", rating);
   }
 
   public boolean canSee(Player otherPlayer) {
