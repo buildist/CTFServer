@@ -36,6 +36,8 @@
  */
 package org.opencraft.server.model;
 
+import de.gesundkrank.jskills.IPlayer;
+import de.gesundkrank.jskills.Rating;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
@@ -54,13 +56,15 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import tf.jacobsc.utils.DuelRatingSystem;
+import tf.jacobsc.utils.RatingSystem;
 
 /**
  * Represents a connected player.
  *
  * @author Graham Edgecombe
  */
-public class Player extends Entity {
+public class Player extends Entity implements IPlayer {
 
   public static short NAME_ID = 0;
 
@@ -169,6 +173,36 @@ public class Player extends Entity {
     setAmmo(GameSettings.getInt("Ammo"));
     setHealth(GameSettings.getInt("Health"));
     setPoints(GameSettings.getInt("InitialPoints"));
+  }
+
+  public Rating getDuelRating() {
+    try {
+      return new Rating(
+          (double) getAttribute("duelRatingMu"),
+          (double) getAttribute("duelRatingSigma"));
+    } catch (NumberFormatException e) {
+      return RatingSystem.Companion.getDefaultRating();
+    }
+  }
+
+  public Rating getTeamRating() {
+    try {
+      return new Rating(
+          (double) getAttribute("teamRatingMu"),
+          (double) getAttribute("teamRatingSigma"));
+    } catch (NumberFormatException e) {
+      return RatingSystem.Companion.getDefaultRating();
+    }
+  }
+
+  public void setDuelRating(Rating rating) {
+    setAttribute("duelRatingMu", rating.getMean());
+    setAttribute("duelRatingSigma", rating.getStandardDeviation());
+  }
+
+  public void setTeamRating(Rating rating) {
+    setAttribute("teamRatingMu", rating.getMean());
+    setAttribute("teamRatingSigma", rating.getStandardDeviation());
   }
 
   public boolean canSee(Player otherPlayer) {
@@ -376,6 +410,7 @@ public class Player extends Entity {
                     + duelPlayer.getColoredName()
                     + " &bin a duel!");
         incStat("duelWins");
+        DuelRatingSystem.INSTANCE.setRatings(this, duelPlayer);
         duelPlayer.incStat("duelLosses");
 
         duelChallengedBy = null;
@@ -647,7 +682,8 @@ public class Player extends Entity {
       World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
     }
 
-    session.getActionSender().sendHackControl(Configuration.getConfiguration().isTest() || this.team == -1);
+    session.getActionSender()
+        .sendHackControl(Configuration.getConfiguration().isTest() || this.team == -1);
 
     Position position = getTeamSpawn();
     getActionSender().sendTeleport(position, getTeamSpawnRotation());

@@ -152,6 +152,7 @@ public abstract class GameMode {
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
     registerCommand("start", StartCommand.getCommand());
+    registerCommand("quality", QualityCommand.getCommand());
     registerCommand("stats", StatsCommand.getCommand());
     registerCommand("status", StatusCommand.getCommand());
     registerCommand("store", StoreCommand.getCommand());

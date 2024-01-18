@@ -107,8 +107,7 @@ public class SavePersistenceRequest extends PersistenceRequest {
 
         c.disconnect();
       }
-      if (!player.joinedDuringTournamentMode)
-        xs.toXML(player.getAttributes(), new FileOutputStream(file));
+      xs.toXML(player.getAttributes(), new FileOutputStream(file));
     } catch (Exception ex) {
       ex.printStackTrace();
     }

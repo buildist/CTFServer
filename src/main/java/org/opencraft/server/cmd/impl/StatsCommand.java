@@ -39,6 +39,7 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
+import tf.jacobsc.utils.RatingKt;
 
 public class StatsCommand implements Command {
   private static final StatsCommand INSTANCE = new StatsCommand();
@@ -81,5 +82,7 @@ public class StatsCommand implements Command {
                 + player.getAttribute("mines")
                 + " ");
     player.getActionSender().sendChatMessage("- &eRagequits: " + player.getAttribute("ragequits"));
+    player.getActionSender().sendChatMessage("- &eTeam Rating: " + RatingKt.displayRating(player.getTeamRating()));
+    player.getActionSender().sendChatMessage("- &eDuel Rating: " + RatingKt.displayRating(player.getDuelRating()));
   }
 }

@@ -1,9 +1,12 @@
 package org.opencraft.server.cmd.impl;
 
+import java.util.ArrayList;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.TeamRatingSystem;
 
 public class StartCommand implements Command {
 
@@ -16,7 +19,9 @@ public class StartCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     if ((player.isOp()) || player.isVIP()) {
+      int quality = RatingKt.matchQuality();
       World.getWorld().broadcast("- &aGame will start in 10 seconds!");
+      World.getWorld().broadcast("- &aGame quality is " + quality + "%!");
       new Thread(
               new Runnable() {
                 @Override

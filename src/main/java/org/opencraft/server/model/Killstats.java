@@ -38,6 +38,10 @@ package org.opencraft.server.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import org.opencraft.server.game.GameMode;
+import tf.jacobsc.utils.DuelRatingSystem;
+import tf.jacobsc.utils.NewPlayerRating;
 
 public class Killstats {
   public static ArrayList<PlayerKillRecord> killRecords = new ArrayList<PlayerKillRecord>(32);
@@ -83,29 +87,35 @@ public class Killstats {
       return (other.p1 == p1 && other.p2 == p2) || (other.p2 == p1 && other.p1 == p2);
     }
 
+    private void dominate(Player dominator, Player dominated) {
+      this.dominator = dominator;
+      World.getWorld()
+          .broadcast("- " + dominator.getColoredName() + "&b is DOMINATING " + dominated.getColoredName());
+      dominator.incStat("domination");
+
+      boolean isTournamentActive = World.getWorld().getGameMode().tournamentGameStarted;
+      if (isTournamentActive) {
+        DuelRatingSystem.INSTANCE.setRatings(dominator, dominated);
+      }
+    }
+
+    private void revenge(Player dominator, Player dominated) {
+      this.dominator = null;
+      World.getWorld()
+          .broadcast("- " + dominated.getColoredName() + "&b got REVENGE on " + dominator.getColoredName());
+      dominated.incStat("revenge");
+      balance = 0;
+    }
+
     public void checkBalance() {
       if (balance == 5 && dominator == null) {
-        dominator = p1;
-        World.getWorld()
-            .broadcast("- " + p1.getColoredName() + "&b is DOMINATING " + p2.getColoredName());
-        dominator.incStat("domination");
+        dominate(p1, p2);
       } else if (balance == -5 && dominator == null) {
-        dominator = p2;
-        World.getWorld()
-            .broadcast("- " + p2.getColoredName() + "&b is DOMINATING " + p1.getColoredName());
-        dominator.incStat("domination");
+        dominate(p2, p1);
       } else if (balance < 5 && dominator == p1) {
-        dominator = null;
-        World.getWorld()
-            .broadcast("- " + p2.getColoredName() + "&b got REVENGE on " + p1.getColoredName());
-        p2.incStat("revenge");
-        balance = 0;
+        revenge(dominator, p2);
       } else if (balance > -5 && dominator == p2) {
-        dominator = null;
-        World.getWorld()
-            .broadcast("- " + p1.getColoredName() + "&b got REVENGE on " + p2.getColoredName());
-        p1.incStat("revenge");
-        balance = 0;
+        revenge(dominator, p1);
       }
     }
   }

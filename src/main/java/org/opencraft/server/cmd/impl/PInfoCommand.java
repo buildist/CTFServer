@@ -40,6 +40,7 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
+import tf.jacobsc.utils.RatingKt;
 
 public class PInfoCommand implements Command {
 
@@ -101,6 +102,8 @@ public class PInfoCommand implements Command {
       player
           .getActionSender()
           .sendChatMessage("- &eRagequits: " + target.getAttribute("ragequits"));
+      player.getActionSender().sendChatMessage("- &eTeam Rating: " + RatingKt.displayRating(target.getTeamRating()));
+      player.getActionSender().sendChatMessage("- &eDuel Rating: " + RatingKt.displayRating(target.getDuelRating()));
       player.getActionSender().sendChatMessage("- &ePoints: " + target.getPoints());
     }
   }
