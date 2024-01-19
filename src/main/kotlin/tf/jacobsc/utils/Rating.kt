@@ -6,21 +6,27 @@ import org.opencraft.server.game.impl.GameSettings
 import org.opencraft.server.model.Player
 import org.opencraft.server.model.World
 
+enum class RatingType {
+    Casual,
+    Duel,
+    Team;
+
+    fun lowerName() = name.lowercase()
+}
+
 fun Rating.displayRating(): String = "${conservativeRating.roundToInt()}"
+
+fun gameCountColor(count: Int): String = when {
+    count < 10 -> "&0"
+    count < 20 -> "&7"
+    else -> "&7"
+}
 
 fun Rating.displayFullRating(): String {
     val conservative = conservativeRating.roundToInt()
     val mean = mean.roundToInt()
     val dev = (conservativeStandardDeviationMultiplier * standardDeviation).roundToInt()
     return "$conservative ($mean±$dev)"
-}
-
-fun Player.ratingDisplay(): String {
-    val rating = if (GameSettings.getBoolean("Tournament")) {
-        teamRating
-    } else duelRating
-
-    return rating.displayRating()
 }
 
 fun Player.deductRatingForTeamAbandonmentIfTournamentRunningAndOnTeam() {
@@ -44,7 +50,7 @@ fun Player.deductRatingForTeamAbandonmentIfTournamentRunningAndOnTeam() {
             newRating.player == this
         } ?: return
 
-        teamRating = newRating.rating
+        setRating(RatingType.Team, newRating.rating)
     }
 }
 

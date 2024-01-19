@@ -64,6 +64,7 @@ import java.util.TreeSet;
 import tf.jacobsc.ctf.server.commands.QualityCommand;
 import tf.jacobsc.utils.DuelKt;
 import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.RatingType;
 
 public abstract class GameMode {
 
@@ -272,7 +273,14 @@ public abstract class GameMode {
     } catch (Exception ex) {
       rank = "";
     }
-    rank += " (TS: " + RatingKt.ratingDisplay(player) + ")";
+
+    if (player.getRatedGamesFor(RatingType.Team) > 10) {
+      rank += " (TR:" + RatingKt.displayRating(player.getTeamRating()) + ")";
+    }
+    if (player.getRatedGamesFor(RatingType.Duel) > 10) {
+      rank += " (DR:" + RatingKt.displayRating(player.getDuelRating()) + ")";
+    }
+
     World.getWorld().broadcast("&a" + player.getName() + " joined the game" + rank);
     if (!player.getSession().ccUser) {
       player

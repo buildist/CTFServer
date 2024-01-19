@@ -7,6 +7,6 @@ object DuelRatingSystem : RatingSystem {
     override fun getRating(p: Player): Rating = p.duelRating
 
     override fun setRating(p: Player, r: Rating) {
-        p.duelRating = r
+        p.setRating(RatingType.Duel, r)
     }
 }

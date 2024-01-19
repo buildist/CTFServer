@@ -7,6 +7,6 @@ object TeamRatingSystem : RatingSystem {
     override fun getRating(p: Player): Rating = p.teamRating
 
     override fun setRating(p: Player, r: Rating) {
-        p.teamRating = r
+        p.setRating(RatingType.Team, r)
     }
 }

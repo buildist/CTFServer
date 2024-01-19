@@ -60,6 +60,7 @@ import tf.jacobsc.utils.DuelKt;
 import tf.jacobsc.utils.DuelRatingSystem;
 import tf.jacobsc.utils.RatingKt;
 import tf.jacobsc.utils.RatingSystem;
+import tf.jacobsc.utils.RatingType;
 
 /**
  * Represents a connected player.
@@ -177,9 +178,10 @@ public class Player extends Entity implements IPlayer {
     setPoints(GameSettings.getInt("InitialPoints"));
   }
 
-  private Rating getRating(String type) {
-    Object mu = getAttribute(type + "RatingMu");
-    Object sigma = getAttribute(type + "RatingSigma");
+  public Rating getRating(RatingType type) {
+    String name = type.lowerName();
+    Object mu = getAttribute(name + "RatingMu");
+    Object sigma = getAttribute(name + "RatingSigma");
     if (mu == null || sigma == null) {
       return RatingSystem.Companion.getDefaultRating();
     }
@@ -193,25 +195,23 @@ public class Player extends Entity implements IPlayer {
     }
   }
 
-  private void setRating(String type, Rating rating) {
-    setAttribute(type + "RatingMu", rating.getMean());
-    setAttribute(type + "RatingSigma", rating.getStandardDeviation());
-  }
-
   public Rating getTeamRating() {
-    return getRating("team");
+    return getRating(RatingType.Team);
   }
 
   public Rating getDuelRating() {
-    return getRating("duel");
+    return getRating(RatingType.Team);
   }
 
-  public void setDuelRating(Rating rating) {
-    setRating("duel", rating);
+  public Integer getRatedGamesFor(RatingType type) {
+    return getIntAttribute(type.lowerName() + "MatchesCount");
   }
 
-  public void setTeamRating(Rating rating) {
-    setRating("team", rating);
+  public void setRating(RatingType type, Rating rating) {
+    String name = type.lowerName();
+    setAttribute(name + "RatingMu", rating.getMean());
+    setAttribute(name + "RatingSigma", rating.getStandardDeviation());
+    incIntAttribute(name + "MatchesCount");
   }
 
   public boolean canSee(Player otherPlayer) {
@@ -817,6 +817,12 @@ public class Player extends Entity implements IPlayer {
     Object value = attributes.get(name);
     if (value == null) return 0;
     return (Integer) value;
+  }
+
+  public Integer incIntAttribute(String name) {
+    Integer inc = getIntAttribute(name) + 1;
+    setAttribute(name, inc);
+    return inc;
   }
 
   /**

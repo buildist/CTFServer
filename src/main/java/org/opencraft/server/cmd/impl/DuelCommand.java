@@ -41,6 +41,7 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.RatingType;
 
 /**
  * Official /deop command **NEEDS PERSISTENCE
@@ -74,10 +75,12 @@ public class DuelCommand implements Command {
         } else if (p.team == player.team || p.team == -1 || player.team == -1) {
           player.getActionSender().sendChatMessage("You must be on opposite teams to duel!");
         } else {
+          Integer pGames = p.getRatedGamesFor(RatingType.Duel);
+          Integer playerGames = p.getRatedGamesFor(RatingType.Duel);
           p.duelChallengedBy = player;
           p.getActionSender()
               .sendChatMessage(
-                  "- " + player.getColoredName() + " &b(TS: " + RatingKt.ratingDisplay(player) + ") has challenged you (TS: " + RatingKt.ratingDisplay(p) + ") to a duel!");
+                  "- " + player.getColoredName() + " &b(DR:" + RatingKt.gameCountColor(playerGames) + RatingKt.displayRating(player.getDuelRating()) + "&b) has challenged you (DR:" + RatingKt.gameCountColor(pGames) + RatingKt.displayRating(p.getDuelRating()) + "&b) to a duel!");
           p.getActionSender()
               .sendChatMessage("- &bSay /accept if you would like to accept their challenge");
         }
