@@ -61,6 +61,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+import tf.jacobsc.ctf.server.commands.QualityCommand;
 import tf.jacobsc.utils.DuelKt;
 import tf.jacobsc.utils.RatingKt;
 
@@ -154,7 +155,7 @@ public abstract class GameMode {
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
     registerCommand("start", StartCommand.getCommand());
-    registerCommand("quality", QualityCommand.getCommand());
+    registerCommand("quality", QualityCommand.INSTANCE);
     registerCommand("stats", StatsCommand.getCommand());
     registerCommand("status", StatusCommand.getCommand());
     registerCommand("store", StoreCommand.getCommand());

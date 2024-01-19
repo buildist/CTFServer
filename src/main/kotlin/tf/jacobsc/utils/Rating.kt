@@ -12,7 +12,7 @@ fun Rating.displayFullRating(): String {
     val conservative = conservativeRating.roundToInt()
     val mean = mean.roundToInt()
     val dev = (conservativeStandardDeviationMultiplier * standardDeviation).roundToInt()
-    return "$conservative ($mean+/-$dev)"
+    return "$conservative ($mean±$dev)"
 }
 
 fun Player.ratingDisplay(): String {
@@ -60,12 +60,6 @@ fun separatePlayers(): Pair<List<Player>, List<Player>> {
     }
 
     return team1 to team2
-}
-
-fun sumTeamTrueSkill(): Pair<Int, Int> {
-    val (redTeam, blueTeam) = separatePlayers()
-    return redTeam.sumOf { it.teamRating.conservativeRating }
-        .roundToInt() to blueTeam.sumOf { it.teamRating.conservativeRating }.roundToInt()
 }
 
 fun matchQuality(): Int {
