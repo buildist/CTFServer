@@ -5,6 +5,7 @@ import kotlin.math.roundToInt
 import org.opencraft.server.cmd.Command
 import org.opencraft.server.cmd.CommandParameters
 import org.opencraft.server.model.Player
+import org.opencraft.server.model.World
 import tf.jacobsc.utils.RatingType
 import tf.jacobsc.utils.displayRating
 import tf.jacobsc.utils.gameCountColor
@@ -38,6 +39,8 @@ object QualityCommand : Command {
 
         val redTeam = red.sortedByDescending { it.teamRating.conservativeRating }
         val blueTeam = blue.sortedByDescending { it.teamRating.conservativeRating }
+        val specTeam = World.getWorld().playerList.players.filter { it.team < 0 && !it.AFK}
+            .sortedByDescending { it.teamRating.conservativeRating }
 
         val rows = max(redTeam.size, blueTeam.size)
 
@@ -56,6 +59,10 @@ object QualityCommand : Command {
                     redPlayerText.padEnd(columnWidth) +
                             bluePlayerText.padStart(columnWidth)
                 )
+            }
+
+            specTeam.forEach { player ->
+                appendLine(printPlayer(player))
             }
         }
     }
