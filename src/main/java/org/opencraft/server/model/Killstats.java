@@ -38,11 +38,8 @@ package org.opencraft.server.model;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.GameSettings;
 import tf.jacobsc.utils.DuelRatingSystem;
-import tf.jacobsc.utils.NewPlayerRating;
 
 public class Killstats {
   public static ArrayList<PlayerKillRecord> killRecords = new ArrayList<PlayerKillRecord>(32);

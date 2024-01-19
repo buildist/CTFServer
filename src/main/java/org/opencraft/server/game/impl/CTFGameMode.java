@@ -65,7 +65,6 @@ import org.opencraft.server.persistence.SavePersistenceRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import tf.jacobsc.utils.RatingKt;
-import tf.jacobsc.utils.TeamRatingSystem;
 
 public class CTFGameMode extends GameMode {
 
