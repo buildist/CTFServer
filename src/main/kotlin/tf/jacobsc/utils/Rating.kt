@@ -29,7 +29,8 @@ fun Player.ratingDisplay(): String {
 
 fun Player.deductRatingForTeamAbandonmentIfTournamentRunningAndOnTeam() {
     val isTournament = GameSettings.getBoolean("Tournament")
-    val gameIsRunning = World.getWorld().gameMode.tournamentGameStarted && !World.getWorld().gameMode.voting
+    val gameIsRunning =
+        World.getWorld().gameMode.tournamentGameStarted && !World.getWorld().gameMode.voting
     val playerWasOnATeam = team >= 0
 
     if (isTournament && gameIsRunning && playerWasOnATeam) {
@@ -94,6 +95,12 @@ fun separatePlayers(): Pair<List<Player>, List<Player>> {
     }
 
     return team1 to team2
+}
+
+fun sumTeamTrueSkill(): Pair<Int, Int> {
+    val (redTeam, blueTeam) = separatePlayers()
+    return redTeam.sumOf { it.teamRating.conservativeRating }
+        .roundToInt() to blueTeam.sumOf { it.teamRating.conservativeRating }.roundToInt()
 }
 
 fun matchQuality(): Int {

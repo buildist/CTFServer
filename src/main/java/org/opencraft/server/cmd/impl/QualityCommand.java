@@ -1,5 +1,6 @@
 package org.opencraft.server.cmd.impl;
 
+import kotlin.Pair;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
@@ -17,6 +18,11 @@ public class QualityCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     int quality = RatingKt.matchQuality();
+    Pair<Integer, Integer> totals = RatingKt.sumTeamTrueSkill();
+
     player.getActionSender().sendChatMessage("- &bGame quality is " + quality + "%");
+    player.getActionSender().sendChatMessage("- &bRed team total " + totals.getFirst());
+    player.getActionSender().sendChatMessage("- &bBlue team total " + totals.getSecond());
+    player.getActionSender().sendChatMessage("- &bPlayer skill uncertainty will make game quality worse.");
   }
 }
