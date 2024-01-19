@@ -852,14 +852,14 @@ public class Player extends Entity implements IPlayer {
   public String getListName() {
     String playerHasFlag = hasFlag ? "&6[!] " : "";
 
-    String playerSuffix = "   &7(&bTS:" + RatingKt.ratingDisplay(this) + "&7)";
+    String playerSuffix = "";
     if (AFK) {
-      playerSuffix = "   &7(&bAFK&7)";
+      playerSuffix = "    &7(&bAFK&7)";
     } else if (muted) {
-      playerSuffix = "   &7(&bMuted&7)";
+      playerSuffix = "    &7(&bMuted&7)";
     }
     if (AFK && muted) {
-      playerSuffix = "   &7(&bAFK, Muted&7)";
+      playerSuffix = "    &7(&bAFK, Muted&7)";
     }
 
     String listName =
