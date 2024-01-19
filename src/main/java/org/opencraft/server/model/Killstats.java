@@ -90,11 +90,6 @@ public class Killstats {
       World.getWorld()
           .broadcast("- " + dominator.getColoredName() + "&b is DOMINATING " + dominated.getColoredName());
       dominator.incStat("domination");
-
-      boolean isTournamentActive = GameSettings.getBoolean("Tournament");
-      if (isTournamentActive) {
-        DuelRatingSystem.INSTANCE.setRatings(dominator, dominated);
-      }
     }
 
     private void revenge(Player dominator, Player dominated) {
