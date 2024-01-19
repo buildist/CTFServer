@@ -16,11 +16,7 @@ public class QualityCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    try {
-      int quality = RatingKt.matchQuality();
-    } catch (Exception e) {
-      throw e
-    }
+    int quality = RatingKt.matchQuality();
     player.getActionSender().sendChatMessage("- &bGame quality is " + quality + "%.");
   }
 }
