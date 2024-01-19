@@ -22,6 +22,11 @@ fun gameCountColor(count: Int): String = when {
     else -> "&7"
 }
 
+fun showFullRatingWithGames(rating: Rating, games: Int): String {
+    val gamesColor = gameCountColor(games)
+    return rating.displayFullRating() + " &b($gamesColor$games&b)"
+}
+
 fun Rating.displayFullRating(): String {
     val conservative = conservativeRating.roundToInt()
     val mean = mean.roundToInt()

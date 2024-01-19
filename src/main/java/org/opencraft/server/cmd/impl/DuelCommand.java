@@ -76,7 +76,7 @@ public class DuelCommand implements Command {
           player.getActionSender().sendChatMessage("You must be on opposite teams to duel!");
         } else {
           Integer pGames = p.getRatedGamesFor(RatingType.Duel);
-          Integer playerGames = p.getRatedGamesFor(RatingType.Duel);
+          Integer playerGames = player.getRatedGamesFor(RatingType.Duel);
           p.duelChallengedBy = player;
           p.getActionSender()
               .sendChatMessage(

@@ -199,7 +199,11 @@ public class Player extends Entity implements IPlayer {
   }
 
   public Rating getDuelRating() {
-    return getRating(RatingType.Team);
+    return getRating(RatingType.Duel);
+  }
+
+  public Rating getCasualRating() {
+    return getRating(RatingType.Casual);
   }
 
   public Integer getRatedGamesFor(RatingType type) {
@@ -419,6 +423,8 @@ public class Player extends Entity implements IPlayer {
                     + " &bin a duel!");
         incStat("duelWins");
         (new RatingSystem(RatingType.Duel)).setRatings(this, duelPlayer);
+        getActionSender().sendChatMessage("- &eDR: " + RatingKt.displayRating(getDuelRating()));
+        duelPlayer.getActionSender().sendChatMessage("- &eDR: " + RatingKt.displayRating(duelPlayer.getDuelRating()));
         duelPlayer.incStat("duelLosses");
 
         duelChallengedBy = null;

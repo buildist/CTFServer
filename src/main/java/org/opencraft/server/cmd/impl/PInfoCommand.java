@@ -41,6 +41,7 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.RatingType;
 
 public class PInfoCommand implements Command {
 
@@ -102,9 +103,12 @@ public class PInfoCommand implements Command {
       player
           .getActionSender()
           .sendChatMessage("- &eRagequits: " + target.getIntAttribute("ragequits"));
-      player.getActionSender().sendChatMessage("- &eTeam Rating: " + RatingKt.displayFullRating(target.getTeamRating()));
-      player.getActionSender().sendChatMessage("- &eDuel Rating: " + RatingKt.displayFullRating(target.getDuelRating()));
-      player.getActionSender().sendChatMessage("- &ePoints: " + target.getPoints());
+      Integer trGames = target.getRatedGamesFor(RatingType.Team);
+      Integer drGames = target.getRatedGamesFor(RatingType.Duel);
+      Integer crGames = target.getRatedGamesFor(RatingType.Casual);
+      player.getActionSender().sendChatMessage("- &eTR: " + RatingKt.showFullRatingWithGames(target.getTeamRating(), trGames));
+      player.getActionSender().sendChatMessage("- &eDR: " + RatingKt.showFullRatingWithGames(target.getDuelRating(), drGames));
+      player.getActionSender().sendChatMessage("- &eCasual: " + RatingKt.showFullRatingWithGames(target.getCasualRating(), crGames));
     }
   }
 }
