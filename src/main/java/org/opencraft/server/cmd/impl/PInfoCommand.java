@@ -108,7 +108,7 @@ public class PInfoCommand implements Command {
       Integer crGames = target.getRatedGamesFor(RatingType.Casual);
       player.getActionSender().sendChatMessage("- &eTR: " + RatingKt.showFullRatingWithGames(target.getTeamRating(), trGames));
       player.getActionSender().sendChatMessage("- &eDR: " + RatingKt.showFullRatingWithGames(target.getDuelRating(), drGames));
-      player.getActionSender().sendChatMessage("- &eCasual: " + RatingKt.showFullRatingWithGames(target.getCasualRating(), crGames));
+//      player.getActionSender().sendChatMessage("- &eCasual: " + RatingKt.showFullRatingWithGames(target.getCasualRating(), crGames));
     }
   }
 }
