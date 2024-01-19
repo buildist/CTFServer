@@ -190,7 +190,7 @@ public class CTFGameMode extends GameMode {
             checkFirstBlood(p, t);
           }
           if (t.team != -1 && t.team != p.team) {
-            p.setAttribute("explodes", p.getIntAttribute("explodes") + 1);
+            p.incIntAttribute("explodes");
             p.addPoints(5);
           }
           if (t.hasFlag) {
@@ -558,10 +558,10 @@ public class CTFGameMode extends GameMode {
               }
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
                 if (p.team != -1) {
-                  p.setAttribute("games", p.getIntAttribute("games") + 1);
+                  p.incIntAttribute("games");
                 }
                 if (p.team == winnerID) {
-                  p.setAttribute("wins", p.getIntAttribute("wins") + 1);
+                  p.incIntAttribute("wins");
                 }
                 p.hasVoted = false;
                 p.hasNominated = false;
@@ -824,7 +824,7 @@ public class CTFGameMode extends GameMode {
           p.hasFlag = false;
           blueFlagTaken = false;
           placeBlueFlag();
-          p.setAttribute("captures", p.getIntAttribute("captures") + 1);
+          p.incIntAttribute("captures");
           p.addPoints(40);
           if (redCaptures == GameSettings.getInt("MaxCaptures") || suddenDeath) {
             nominatedMaps.clear();
@@ -876,7 +876,7 @@ public class CTFGameMode extends GameMode {
           p.hasFlag = false;
           redFlagTaken = false;
           placeRedFlag();
-          p.setAttribute("captures", p.getIntAttribute("captures") + 1);
+          p.incIntAttribute("captures");
           p.addPoints(40);
           if (blueCaptures == GameSettings.getInt("MaxCaptures") || suddenDeath) {
             nominatedMaps.clear();
@@ -940,7 +940,7 @@ public class CTFGameMode extends GameMode {
             m.owner.gotKill(p);
             p.sendToTeamSpawn();
             checkFirstBlood(m.owner, p);
-            m.owner.setAttribute("mines", m.owner.getIntAttribute("mines") + 1);
+            m.owner.incIntAttribute("mines");
             m.owner.removeMine(m);
             World.getWorld().removeMine(m);
             if (p.hasFlag) {
@@ -1010,7 +1010,7 @@ public class CTFGameMode extends GameMode {
           dropFlag(tagged.team);
         }
         tagged.died(tagger);
-        tagger.setAttribute("tags", tagger.getIntAttribute("tags") + 1);
+        tagger.incIntAttribute("tags");
         tagger.addPoints(15);
         updateKillFeed(tagger, tagged, tagger.parseName() + " tagged " + tagged.parseName() + ".");
       }

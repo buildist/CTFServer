@@ -57,6 +57,6 @@ public class RagequitCommand implements Command {
     player.getActionSender().sendLoginFailure("Hope you feel better soon!");
     player.getSession().close();
     World.getWorld().broadcast("- &4" + player.getName() + " ragequit!!");
-    player.setAttribute("ragequits", player.getIntAttribute("ragequits") + 1);
+    player.incIntAttribute("ragequits");
   }
 }
