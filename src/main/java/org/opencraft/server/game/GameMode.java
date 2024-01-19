@@ -277,9 +277,6 @@ public abstract class GameMode {
     if (player.getRatedGamesFor(RatingType.Team) > 10) {
       rank += " (TR:" + RatingKt.displayRating(player.getTeamRating()) + ")";
     }
-    if (player.getRatedGamesFor(RatingType.Duel) > 10) {
-      rank += " (DR:" + RatingKt.displayRating(player.getDuelRating()) + ")";
-    }
 
     World.getWorld().broadcast("&a" + player.getName() + " joined the game" + rank);
     if (!player.getSession().ccUser) {
