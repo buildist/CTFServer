@@ -123,7 +123,11 @@ interface RatingSystem {
         matchQuality(listOf(p1), listOf(p2))
 
     fun matchQuality(team1: List<Player>, team2: List<Player>): Int =
-        (TrueSkillCalculator.calculateMatchQuality(gameInfo, teams(team1, team2)) * 100).roundToInt()
+        if (team1.isNotEmpty() && team2.isNotEmpty())
+            (TrueSkillCalculator.calculateMatchQuality(
+                gameInfo,
+                teams(team1, team2)
+            ) * 100).roundToInt() else 0
 
     companion object {
         // Sources
