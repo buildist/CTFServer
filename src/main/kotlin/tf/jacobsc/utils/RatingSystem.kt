@@ -7,9 +7,9 @@ import de.gesundkrank.jskills.TrueSkillCalculator
 import kotlin.math.roundToInt
 import org.opencraft.server.model.Player
 
-interface RatingSystem {
-    fun getRating(p: Player): Rating
-    fun setRating(p: Player, r: Rating)
+class RatingSystem(private val ratingType: RatingType) {
+    private fun getRating(p: Player): Rating = p.getRating(ratingType)
+    private fun setRating(p: Player, r: Rating) = p.setRating(ratingType, r)
 
     fun setRatings(winners: List<Player>, losers: List<Player>) =
         rateMatch(winners, losers).forEach { (player, rating) ->

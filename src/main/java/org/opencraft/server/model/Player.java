@@ -57,7 +57,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import tf.jacobsc.utils.DuelKt;
-import tf.jacobsc.utils.DuelRatingSystem;
 import tf.jacobsc.utils.RatingKt;
 import tf.jacobsc.utils.RatingSystem;
 import tf.jacobsc.utils.RatingType;
@@ -419,7 +418,7 @@ public class Player extends Entity implements IPlayer {
                     + duelPlayer.getColoredName()
                     + " &bin a duel!");
         incStat("duelWins");
-        DuelRatingSystem.INSTANCE.setRatings(this, duelPlayer);
+        (new RatingSystem(RatingType.Duel)).setRatings(this, duelPlayer);
         duelPlayer.incStat("duelLosses");
 
         duelChallengedBy = null;
@@ -622,7 +621,7 @@ public class Player extends Entity implements IPlayer {
     } else if (this.team == 1) {
       gameMode.bluePlayers--;
     }
-    RatingKt.deductRatingForTeamAbandonmentIfTournamentRunningAndOnTeam(this);
+    RatingKt.checkForTeamAbandonment(this);
     int diff = gameMode.redPlayers - gameMode.bluePlayers;
     boolean unbalanced = false;
     if (!GameSettings.getBoolean("Tournament")) {

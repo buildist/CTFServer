@@ -29,20 +29,21 @@ fun Rating.displayFullRating(): String {
     return "$conservative ($mean±$dev)"
 }
 
-fun Player.deductRatingForTeamAbandonmentIfTournamentRunningAndOnTeam() {
+fun Player.checkForTeamAbandonment() {
     val isTournament = GameSettings.getBoolean("Tournament")
     val gameIsRunning =
         World.getWorld().gameMode.tournamentGameStarted && !World.getWorld().gameMode.voting
     val playerWasOnATeam = team >= 0
 
     if (isTournament && gameIsRunning && playerWasOnATeam) {
+        val ratingSystem = RatingSystem(RatingType.Team)
         val (team1, team2) = separatePlayers()
 
         if (team1.isEmpty() || team2.isEmpty()) return
 
         val newPlayerRatings = when (team) {
-            team1.first().team -> TeamRatingSystem.rateMatch(team2, (team1 + this).distinct())
-            team2.first().team -> TeamRatingSystem.rateMatch(team1, (team2 + this).distinct())
+            team1.first().team -> ratingSystem.rateMatch(team2, (team1 + this).distinct())
+            team2.first().team -> ratingSystem.rateMatch(team1, (team2 + this).distinct())
             else -> return
         }
 
@@ -71,10 +72,10 @@ fun separatePlayers(): Pair<List<Player>, List<Player>> {
 fun matchQuality(): Int {
     val (team1, team2) = separatePlayers()
 
-    return TeamRatingSystem.matchQuality(team1, team2)
+    return RatingSystem(RatingType.Team).matchQuality(team1, team2)
 }
 
-fun rateMatch(winningTeam: Int) {
+private fun rateMatch(winningTeam: Int, type: RatingType) {
     val winningPlayers = mutableListOf<Player>()
     val losingPlayers = mutableListOf<Player>()
 
@@ -90,5 +91,13 @@ fun rateMatch(winningTeam: Int) {
         }
     }
 
-    TeamRatingSystem.setRatings(winningPlayers, losingPlayers)
+    RatingSystem(type).setRatings(winningPlayers, losingPlayers)
+}
+
+fun rateTeamMatch(winningTeam: Int) {
+    rateMatch(winningTeam, RatingType.Team)
+}
+
+fun rateCasualMatch(winningTeam: Int) {
+    rateMatch(winningTeam, RatingType.Casual)
 }

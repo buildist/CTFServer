@@ -583,11 +583,13 @@ public class CTFGameMode extends GameMode {
                     .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
               }
 
-              if (GameSettings.getBoolean("Tournament")) {
-                // If you ever change this so that ties are rated
-                // the rating system needs to have a draw probability > 0
-                if (winnerID >= 0) {
-                  RatingKt.rateMatch(winnerID);
+              if (winnerID >= 0) {
+                if (GameSettings.getBoolean("Tournament")) {
+                  // If you ever change this so that ties are rated
+                  // the rating system needs to have a draw probability > 0
+                  RatingKt.rateTeamMatch(winnerID);
+                } {
+                  RatingKt.rateCasualMatch(winnerID);
                 }
               }
 

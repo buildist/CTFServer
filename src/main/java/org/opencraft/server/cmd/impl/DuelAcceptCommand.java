@@ -40,7 +40,8 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
-import tf.jacobsc.utils.DuelRatingSystem;
+import tf.jacobsc.utils.RatingSystem;
+import tf.jacobsc.utils.RatingType;
 
 /**
  * Official /deop command **NEEDS PERSISTENCE
@@ -77,7 +78,7 @@ public class DuelAcceptCommand implements Command {
     } else if (player.team == -1 || player.duelChallengedBy.team == -1) {
       player.getActionSender().sendChatMessage("You must be on a team to duel!");
     } else {
-      int balance = DuelRatingSystem.INSTANCE.matchQuality(player, player.duelChallengedBy);
+      int balance = (new RatingSystem(RatingType.Duel)).matchQuality(player, player.duelChallengedBy);
 
       player
           .getActionSender()
