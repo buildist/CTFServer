@@ -61,6 +61,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+import tf.jacobsc.utils.DuelKt;
+import tf.jacobsc.utils.RatingKt;
 
 public abstract class GameMode {
 
@@ -230,7 +232,8 @@ public abstract class GameMode {
     }
   }
 
-  public void tick() {}
+  public void tick() {
+  }
 
   public void playerConnected(Player player) {
     Server.log(player.getName() + " (" + player.getSession().getIP() + ") joined the game");
@@ -248,7 +251,8 @@ public abstract class GameMode {
                             + "joined the game[/color][/b]",
                         "UTF-8");
                 Server.httpGet(Constants.URL_SENDCHAT + "&msg=" + urlMessage);
-              } catch (Exception ex) {}
+              } catch (Exception ex) {
+              }
             }
           });
     }
@@ -260,13 +264,14 @@ public abstract class GameMode {
     try {
       int r = Integer.parseInt(player.getAttribute("rank").toString());
       if (r != 0) {
-        rank = " &f(Rank " + r + ", " + player.getAttribute("games").toString() + " games played)";
+        rank = " &f(Rank " + r + ", " + player.getIntAttribute("games") + " games played)";
       } else {
         rank = "";
       }
     } catch (Exception ex) {
       rank = "";
     }
+    rank += " (TS: " + RatingKt.ratingDisplay(player) + ")";
     World.getWorld().broadcast("&a" + player.getName() + " joined the game" + rank);
     if (!player.getSession().ccUser) {
       player
@@ -299,6 +304,13 @@ public abstract class GameMode {
             }
           });
     }
+
+    // calculate a rating loss for them
+    RatingKt.deductRatingForTeamAbandonmentIfTournamentRunningAndOnTeam(p);
+    if (GameSettings.getBoolean("Tournament") && p.team >= 0 && World.getWorld()
+        .getGameMode().tournamentGameStarted) {
+    }
+
     WebServer.sendDiscordMessage(p.getName() + " left the game", null);
 
     if (p.team == 0) {
@@ -306,10 +318,7 @@ public abstract class GameMode {
     } else if (p.team == 1) {
       bluePlayers--;
     }
-    if (p.duelPlayer != null) {
-      p.duelPlayer.duelPlayer = null;
-      p.duelPlayer = null;
-    }
+    DuelKt.abandonDuel(p);
     World.getWorld().broadcast("&a" + p.getName() + " left the game");
 
     if (World.getWorld().getPlayerList().size() == 0) {
@@ -486,7 +495,9 @@ public abstract class GameMode {
   }
 
   public void broadcastChatMessage(final Player player, final String message) {
-    if (player.AFK) World.getWorld().broadcast("- " + player.parseName() + " is no longer AFK");
+    if (player.AFK) {
+      World.getWorld().broadcast("- " + player.parseName() + " is no longer AFK");
+    }
     player.moveTime = System.currentTimeMillis();
     player.AFK = false;
     if (player.lastMessage != null
@@ -644,10 +655,16 @@ public abstract class GameMode {
   }
 
   protected abstract void resetGameMode();
-  public abstract  void setBlock(Player player, Level level, int x, int y, int z, int mode, int type);
+
+  public abstract void setBlock(Player player, Level level, int x, int y, int z, int mode,
+      int type);
+
   public abstract boolean isSolidBlock(Level level, int x, int y, int z);
+
   public abstract void playerChangedTeam(Player player);
+
   public abstract void endGame();
+
   public abstract PlayerUI createPlayerUI(Player p);
 
   public void processPlayerMove(Player p) {
@@ -659,6 +676,7 @@ public abstract class GameMode {
   }
 
   public static class KillFeedItem {
+
     public final long time = System.currentTimeMillis();
     public final Player source;
     public final Player target;
@@ -684,7 +702,9 @@ public abstract class GameMode {
       }
       message += (isKill ? PlayerUI.KILL_ICON : PlayerUI.HIT_ICON)
           + " " + target.getColoredName();
-      if (count > 1) message += " &f(x" + count + ")";
+      if (count > 1) {
+        message += " &f(x" + count + ")";
+      }
       return message;
     }
   }

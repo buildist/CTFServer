@@ -56,7 +56,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import tf.jacobsc.utils.DuelKt;
 import tf.jacobsc.utils.DuelRatingSystem;
+import tf.jacobsc.utils.RatingKt;
 import tf.jacobsc.utils.RatingSystem;
 
 /**
@@ -620,6 +622,7 @@ public class Player extends Entity implements IPlayer {
     } else if (this.team == 1) {
       gameMode.bluePlayers--;
     }
+    RatingKt.deductRatingForTeamAbandonmentIfTournamentRunningAndOnTeam(this);
     int diff = gameMode.redPlayers - gameMode.bluePlayers;
     boolean unbalanced = false;
     if (!GameSettings.getBoolean("Tournament")) {
@@ -663,11 +666,8 @@ public class Player extends Entity implements IPlayer {
       }
     } else {
       this.team = -1;
-      if (duelPlayer != null) {
-        duelPlayer.duelPlayer = null;
-        duelPlayer = null;
-      }
     }
+    DuelKt.abandonDuel(this);
     clearMines();
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.canSee(this)) {
@@ -813,6 +813,12 @@ public class Player extends Entity implements IPlayer {
     return attributes.get(name);
   }
 
+  public Integer getIntAttribute(String name) {
+    Object value = attributes.get(name);
+    if (value == null) return 0;
+    return (Integer) value;
+  }
+
   /**
    * Checks if an attribute is set.
    *
@@ -846,14 +852,14 @@ public class Player extends Entity implements IPlayer {
   public String getListName() {
     String playerHasFlag = hasFlag ? "&6[!] " : "";
 
-    String playerSuffix = "";
+    String playerSuffix = "   &7(&bTS:" + RatingKt.ratingDisplay(this) + "&7)";
     if (AFK) {
-      playerSuffix = "    &7(&bAFK&7)";
+      playerSuffix = "   &7(&bAFK&7)";
     } else if (muted) {
-      playerSuffix = "    &7(&bMuted&7)";
+      playerSuffix = "   &7(&bMuted&7)";
     }
     if (AFK && muted) {
-      playerSuffix = "    &7(&bAFK, Muted&7)";
+      playerSuffix = "   &7(&bAFK, Muted&7)";
     }
 
     String listName =

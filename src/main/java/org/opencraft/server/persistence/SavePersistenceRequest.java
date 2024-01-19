@@ -75,12 +75,12 @@ public class SavePersistenceRequest extends PersistenceRequest {
     final File file = new File(mgr.getPath(player));
     String data = null;
     data = URLEncoder.encode("username", "UTF-8") + "=" + player.getName() + "&";
-    data += URLEncoder.encode("tags", "UTF-8") + "=" + player.getAttribute("tags") + "&";
-    data += URLEncoder.encode("wins", "UTF-8") + "=" + player.getAttribute("wins") + "&";
-    data += URLEncoder.encode("mines", "UTF-8") + "=" + player.getAttribute("mines") + "&";
-    data += URLEncoder.encode("explodes", "UTF-8") + "=" + player.getAttribute("explodes") + "&";
-    data += URLEncoder.encode("captures", "UTF-8") + "=" + player.getAttribute("captures") + "&";
-    data += URLEncoder.encode("games", "UTF-8") + "=" + player.getAttribute("games");
+    data += URLEncoder.encode("tags", "UTF-8") + "=" + player.getIntAttribute("tags") + "&";
+    data += URLEncoder.encode("wins", "UTF-8") + "=" + player.getIntAttribute("wins") + "&";
+    data += URLEncoder.encode("mines", "UTF-8") + "=" + player.getIntAttribute("mines") + "&";
+    data += URLEncoder.encode("explodes", "UTF-8") + "=" + player.getIntAttribute("explodes") + "&";
+    data += URLEncoder.encode("captures", "UTF-8") + "=" + player.getIntAttribute("captures") + "&";
+    data += URLEncoder.encode("games", "UTF-8") + "=" + player.getIntAttribute("games");
     URL url = null;
     String statsURL = Configuration.getConfiguration().getStatsPostURL();
     try {

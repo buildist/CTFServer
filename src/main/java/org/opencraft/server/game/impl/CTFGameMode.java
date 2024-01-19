@@ -191,7 +191,7 @@ public class CTFGameMode extends GameMode {
             checkFirstBlood(p, t);
           }
           if (t.team != -1 && t.team != p.team) {
-            p.setAttribute("explodes", (Integer) p.getAttribute("explodes") + 1);
+            p.setAttribute("explodes", p.getIntAttribute("explodes") + 1);
             p.addPoints(5);
           }
           if (t.hasFlag) {
@@ -559,10 +559,10 @@ public class CTFGameMode extends GameMode {
               }
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
                 if (p.team != -1) {
-                  p.setAttribute("games", (Integer) p.getAttribute("games") + 1);
+                  p.setAttribute("games", p.getIntAttribute("games") + 1);
                 }
                 if (p.team == winnerID) {
-                  p.setAttribute("wins", (Integer) p.getAttribute("wins") + 1);
+                  p.setAttribute("wins", p.getIntAttribute("wins") + 1);
                 }
                 p.hasVoted = false;
                 p.hasNominated = false;
@@ -583,6 +583,15 @@ public class CTFGameMode extends GameMode {
                 World.getWorld()
                     .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
               }
+
+              if (GameSettings.getBoolean("Tournament")) {
+                // If you ever change this so that ties are rated
+                // the rating system needs to have a draw probability > 0
+                if (winnerID >= 0) {
+                  RatingKt.rateMatch(winnerID);
+                }
+              }
+
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
                 player.hasFlag = false;
@@ -603,11 +612,8 @@ public class CTFGameMode extends GameMode {
               rtvVotes = 0;
               rtvYesPlayers.clear();
               rtvNoPlayers.clear();
-              if (GameSettings.getBoolean("Tournament")) {
-                if (winnerID >= 0) {
-                  RatingKt.rateMatch(winnerID);
-                }
 
+              if (GameSettings.getBoolean("Tournament")) {
                 return;
               }
 
@@ -817,7 +823,7 @@ public class CTFGameMode extends GameMode {
           p.hasFlag = false;
           blueFlagTaken = false;
           placeBlueFlag();
-          p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
+          p.setAttribute("captures", p.getIntAttribute("captures") + 1);
           p.addPoints(40);
           if (redCaptures == GameSettings.getInt("MaxCaptures") || suddenDeath) {
             nominatedMaps.clear();
@@ -869,7 +875,7 @@ public class CTFGameMode extends GameMode {
           p.hasFlag = false;
           redFlagTaken = false;
           placeRedFlag();
-          p.setAttribute("captures", (Integer) p.getAttribute("captures") + 1);
+          p.setAttribute("captures", p.getIntAttribute("captures") + 1);
           p.addPoints(40);
           if (blueCaptures == GameSettings.getInt("MaxCaptures") || suddenDeath) {
             nominatedMaps.clear();
@@ -933,7 +939,7 @@ public class CTFGameMode extends GameMode {
             m.owner.gotKill(p);
             p.sendToTeamSpawn();
             checkFirstBlood(m.owner, p);
-            m.owner.setAttribute("mines", (Integer) m.owner.getAttribute("mines") + 1);
+            m.owner.setAttribute("mines", m.owner.getIntAttribute("mines") + 1);
             m.owner.removeMine(m);
             World.getWorld().removeMine(m);
             if (p.hasFlag) {
@@ -1003,7 +1009,7 @@ public class CTFGameMode extends GameMode {
           dropFlag(tagged.team);
         }
         tagged.died(tagger);
-        tagger.setAttribute("tags", (Integer) tagger.getAttribute("tags") + 1);
+        tagger.setAttribute("tags", tagger.getIntAttribute("tags") + 1);
         tagger.addPoints(15);
         updateKillFeed(tagger, tagged, tagger.parseName() + " tagged " + tagged.parseName() + ".");
       }
@@ -1210,7 +1216,7 @@ public class CTFGameMode extends GameMode {
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if (type == Constants.BLOCK_TNT && mode == 1 && !ignore) // Placing tnt
       {
-        if (player.getAttribute("explodes").toString().equals("0")) {
+        if (player.getIntAttribute("explodes") == 0) {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
         if (player.team == -1) {

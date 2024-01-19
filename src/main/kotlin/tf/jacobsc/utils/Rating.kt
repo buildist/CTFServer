@@ -6,14 +6,49 @@ import de.gesundkrank.jskills.ITeam
 import de.gesundkrank.jskills.Rating
 import de.gesundkrank.jskills.TrueSkillCalculator
 import kotlin.math.roundToInt
+import org.opencraft.server.game.impl.GameSettings
 import org.opencraft.server.model.Player
 import org.opencraft.server.model.World
 
-fun displayRating(rating: Rating): String = with(rating) {
+fun Rating.displayRating(): String = "${conservativeRating.roundToInt()}"
+
+fun Rating.displayFullRating(): String {
     val conservative = conservativeRating.roundToInt()
     val mean = mean.roundToInt()
     val dev = (conservativeStandardDeviationMultiplier * standardDeviation).roundToInt()
-    "$conservative ($mean+/-$dev)"
+    return "$conservative ($mean+/-$dev)"
+}
+
+fun Player.ratingDisplay(): String {
+    val rating = if (GameSettings.getBoolean("Tournament")) {
+        teamRating
+    } else duelRating
+
+    return rating.displayRating()
+}
+
+fun Player.deductRatingForTeamAbandonmentIfTournamentRunningAndOnTeam() {
+    val isTournament = GameSettings.getBoolean("Tournament")
+    val gameIsRunning = World.getWorld().gameMode.tournamentGameStarted && !World.getWorld().gameMode.voting
+    val playerWasOnATeam = team >= 0
+
+    if (isTournament && gameIsRunning && playerWasOnATeam) {
+        val (team1, team2) = separatePlayers()
+
+        if (team1.isEmpty() || team2.isEmpty()) return
+
+        val newPlayerRatings = when (team) {
+            team1.first().team -> TeamRatingSystem.rateMatch(team2, (team1 + this).distinct())
+            team2.first().team -> TeamRatingSystem.rateMatch(team1, (team2 + this).distinct())
+            else -> return
+        }
+
+        val newRating = newPlayerRatings.firstOrNull { newRating ->
+            newRating.player == this
+        } ?: return
+
+        teamRating = newRating.rating
+    }
 }
 
 data class NewPlayerRating(

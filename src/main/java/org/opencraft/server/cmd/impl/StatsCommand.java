@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import de.gesundkrank.jskills.Rating;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
@@ -59,31 +58,31 @@ public class StatsCommand implements Command {
         .getActionSender()
         .sendChatMessage(
             "- &eWins: "
-                + player.getAttribute("wins")
+                + player.getIntAttribute("wins")
                 + " - "
                 + "Games Played: "
-                + player.getAttribute("games")
+                + player.getIntAttribute("games")
                 + " ");
     player
         .getActionSender()
         .sendChatMessage(
             "- &eTags: "
-                + player.getAttribute("tags")
+                + player.getIntAttribute("tags")
                 + " - "
                 + "Captures: "
-                + player.getAttribute("captures")
+                + player.getIntAttribute("captures")
                 + " ");
     player
         .getActionSender()
         .sendChatMessage(
             "- &eExplodes: "
-                + player.getAttribute("explodes")
+                + player.getIntAttribute("explodes")
                 + " - "
                 + "Mines: "
-                + player.getAttribute("mines")
+                + player.getIntAttribute("mines")
                 + " ");
-    player.getActionSender().sendChatMessage("- &eRagequits: " + player.getAttribute("ragequits"));
-    player.getActionSender().sendChatMessage("- &eTeam Rating: " + RatingKt.displayRating(player.getTeamRating()));
-    player.getActionSender().sendChatMessage("- &eDuel Rating: " + RatingKt.displayRating(player.getDuelRating()));
+    player.getActionSender().sendChatMessage("- &eRagequits: " + player.getIntAttribute("ragequits"));
+    player.getActionSender().sendChatMessage("- &eTeam Rating: " + RatingKt.displayFullRating(player.getTeamRating()));
+    player.getActionSender().sendChatMessage("- &eDuel Rating: " + RatingKt.displayFullRating(player.getDuelRating()));
   }
 }

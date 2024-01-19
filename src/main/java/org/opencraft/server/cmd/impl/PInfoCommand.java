@@ -76,34 +76,34 @@ public class PInfoCommand implements Command {
           .getActionSender()
           .sendChatMessage(
               "- &eWins: "
-                  + target.getAttribute("wins")
+                  + target.getIntAttribute("wins")
                   + " - "
                   + "Games Played: "
-                  + target.getAttribute("games")
+                  + target.getIntAttribute("games")
                   + " ");
       player
           .getActionSender()
           .sendChatMessage(
               "- &eTags: "
-                  + target.getAttribute("tags")
+                  + target.getIntAttribute("tags")
                   + " - "
                   + "Captures: "
-                  + target.getAttribute("captures")
+                  + target.getIntAttribute("captures")
                   + " ");
       player
           .getActionSender()
           .sendChatMessage(
               "- &eExplodes: "
-                  + target.getAttribute("explodes")
+                  + target.getIntAttribute("explodes")
                   + " - "
                   + "Mines: "
-                  + target.getAttribute("mines")
+                  + target.getIntAttribute("mines")
                   + " ");
       player
           .getActionSender()
-          .sendChatMessage("- &eRagequits: " + target.getAttribute("ragequits"));
-      player.getActionSender().sendChatMessage("- &eTeam Rating: " + RatingKt.displayRating(target.getTeamRating()));
-      player.getActionSender().sendChatMessage("- &eDuel Rating: " + RatingKt.displayRating(target.getDuelRating()));
+          .sendChatMessage("- &eRagequits: " + target.getIntAttribute("ragequits"));
+      player.getActionSender().sendChatMessage("- &eTeam Rating: " + RatingKt.displayFullRating(target.getTeamRating()));
+      player.getActionSender().sendChatMessage("- &eDuel Rating: " + RatingKt.displayFullRating(target.getDuelRating()));
       player.getActionSender().sendChatMessage("- &ePoints: " + target.getPoints());
     }
   }
