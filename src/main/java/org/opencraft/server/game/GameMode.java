@@ -147,6 +147,7 @@ public abstract class GameMode {
     registerCommand("rules", RulesCommand.getCommand());
     registerCommand("say", SayCommand.getCommand());
     registerCommand("set", SetCommand.getCommand());
+    registerCommand("setscore", SetScoreCommand.getCommand());
     registerCommand("setspawn", SetspawnCommand.getCommand());
     registerCommand("setspawnzone", SetSpawnZoneCommand.getCommand());
     registerCommand("solid", SolidCommand.getCommand());
