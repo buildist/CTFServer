@@ -84,10 +84,13 @@ public final class MinecraftProtocolEncoder extends ProtocolEncoderAdapter {
           break;
         case STRING:
           String str = packet.getStringField(field.getName());
-          ByteBuffer bytes = Charset.forName("Cp437").encode(str);
-          buf.put(bytes);
-          for (int i = str.length(); i < 64; i++) {
-            buf.put((byte) 0x20);
+          byte[] bytes = str.getBytes("Cp437");
+          for (int i = 0; i < 64; i++) {
+            if (i >= bytes.length) {
+              buf.put((byte) 0x20);
+            } else {
+              buf.put(bytes[i]);
+            }
           }
           break;
       }
