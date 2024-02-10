@@ -1,6 +1,7 @@
 plugins {
     id("application")
     id("java-library")
+    kotlin("jvm") version libs.versions.kotlin.get()
 }
 
 repositories {
@@ -8,10 +9,12 @@ repositories {
 }
 
 dependencies {
+    implementation(kotlin("stdlib-jdk8"))
     implementation(libs.guava)
     implementation(libs.mina)
     implementation(libs.xstream)
     implementation(libs.javacord)
+    implementation(libs.jskills)
     implementation(fileTree(mapOf("dir" to "lib", "include" to listOf("*.jar"))))
 
     testImplementation(libs.junit)

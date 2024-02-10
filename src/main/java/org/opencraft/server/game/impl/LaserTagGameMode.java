@@ -198,10 +198,10 @@ public class LaserTagGameMode extends GameMode {
 
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
                 if (p.team != -1) {
-                  p.setAttribute("games", (Integer) p.getAttribute("games") + 1);
+                  p.incIntAttribute("games");
                 }
                 if (p.team == winnerID) {
-                  p.setAttribute("wins", (Integer) p.getAttribute("wins") + 1);
+                  p.incIntAttribute("wins");
                 }
                 p.hasVoted = false;
                 p.hasNominated = false;
