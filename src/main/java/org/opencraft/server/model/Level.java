@@ -189,13 +189,14 @@ public final class Level implements Cloneable {
     int side = Integer.signum(length);
     int dir = Integer.signum(distance);
 
-    double px = (pos.getX());
-    double py = (pos.getY());
-    double pz = (pos.getZ()) - 1;
+    double px = pos.getX();
+    double py = pos.getY();
+    double pz = pos.getZ();
 
     double vx = Math.cos(heading) * Math.cos(pitch);
     double vy = Math.sin(heading) * Math.cos(pitch);
     double vz = Math.sin(pitch);
+
     double x = px;
     double y = py;
     double z = pz;
@@ -258,9 +259,9 @@ public final class Level implements Cloneable {
     int length = GameSettings.getInt("FlameThrowerLength");
     int side = Integer.signum(length);
 
-    double px = (pos.getX());
-    double py = (pos.getY());
-    double pz = (pos.getZ()) - 1;
+    double px = pos.getX();
+    double py = pos.getY();
+    double pz = pos.getZ();
 
     double vx = Math.cos(heading) * Math.cos(pitch);
     double vy = Math.sin(heading) * Math.cos(pitch);
