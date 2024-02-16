@@ -342,7 +342,7 @@ public class Player extends Entity {
   }
 
   public void disableFlameThrower() {
-    World.getWorld().getLevel().clearFire(this.linePosition, this.lineRotation);
+    World.getWorld().getLevel().clearFire(this, this.linePosition, this.lineRotation);
     this.flamethrowerEnabled = false;
     this.getActionSender().sendChatMessage("- &eFlame thrower disabled.");
   }
@@ -705,7 +705,7 @@ public class Player extends Entity {
   public void sendToTeamSpawn() {
     // If player dies while flamethrower is on, don't leave remnants on the map.
     if (isFlamethrowerEnabled()) {
-      World.getWorld().getLevel().clearFire(linePosition, lineRotation);
+      World.getWorld().getLevel().clearFire(this, linePosition, lineRotation);
     }
     getActionSender().sendTeleport(getTeamSpawn(), new Rotation(team == 0 ? 64 : 192, 0));
   }
@@ -899,9 +899,9 @@ public class Player extends Entity {
         if (!getPosition().equals(linePosition)
             || !getRotation().equals(lineRotation)) {
           if (linePosition != null) {
-            World.getWorld().getLevel().clearFire(linePosition, lineRotation);
+            World.getWorld().getLevel().clearFire(this, linePosition, lineRotation);
           }
-          World.getWorld().getLevel().drawFire(getPosition(), getRotation());
+          World.getWorld().getLevel().drawFire(this, getPosition(), getRotation());
           linePosition = getPosition();
           lineRotation = getRotation();
         }

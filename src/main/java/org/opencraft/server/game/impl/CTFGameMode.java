@@ -597,7 +597,7 @@ public class CTFGameMode extends GameMode {
                 if (player.isFlamethrowerEnabled()) {
                   World.getWorld()
                       .getLevel()
-                      .clearFire(player.linePosition, player.lineRotation);
+                      .clearFire(player, player.linePosition, player.lineRotation);
                   player.disableFlameThrower();
                 }
                 player.flamethrowerTime = 0;
