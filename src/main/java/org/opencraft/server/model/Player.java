@@ -604,6 +604,10 @@ public class Player extends Entity {
       } else {
         gameMode.redPlayers++;
         this.team = 0;
+
+        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_RED, 0); // Add red TNT to the hotbar
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 1); // Add red TNT to the block menu
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 0); // Remove blue TNT from the block menu
       }
     } else if (team.equals("blue")) {
       if (this.team == -1) {
@@ -617,6 +621,10 @@ public class Player extends Entity {
       } else {
         gameMode.bluePlayers++;
         this.team = 1;
+
+        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_BLUE, 0); // Add blue TNT to the hotbar
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 1); // Add blue TNT to the block menu
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 0); // Remove red TNT from the block menu
       }
     } else {
       this.team = -1;

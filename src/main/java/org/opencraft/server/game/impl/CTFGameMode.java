@@ -249,7 +249,7 @@ public class CTFGameMode extends GameMode {
   public boolean isSolidBlock(Level level, int x, int y, int z) {
     int oldBlock = level.getBlock(x, y, z);
     return level.isSolid(x, y, z)
-        || oldBlock == Constants.BLOCK_TNT
+        || oldBlock == Constants.BLOCK_TNT_RED || oldBlock == Constants.BLOCK_TNT_BLUE
         || oldBlock == Constants.BLOCK_INVISIBLE
         || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)
         || (x == redFlagX && z == redFlagY && y == redFlagZ)
@@ -1040,7 +1040,8 @@ public class CTFGameMode extends GameMode {
                 for (int cz = mz - r; cz <= mz + r; cz++) {
                   int oldBlock = level.getBlock(cx, cy, cz);
                   if (!level.isSolid(cx, cy, cz)
-                          && oldBlock != Constants.BLOCK_TNT
+                          && oldBlock != Constants.BLOCK_TNT_RED
+                          && oldBlock != Constants.BLOCK_TNT_BLUE
                           && !(cx == blueFlagX && cz == blueFlagY && cy == blueFlagZ)
                           && !(cx == redFlagX && cz == redFlagY && cy == redFlagZ)) {
                     level.setBlock(cx, cy, cz, 0);
@@ -1301,9 +1302,10 @@ public class CTFGameMode extends GameMode {
           && z == player.headBlockPosition.getZ()) {
         ignore = true;
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
-      } else if (player.brush && type != Constants.BLOCK_TNT) {
+      } else if (player.brush && type != Constants.BLOCK_TNT_RED && type != Constants.BLOCK_TNT_BLUE) {
         int height = 3;
         int radius = 3;
+
         for (int offsetZ = -height; offsetZ <= radius; offsetZ++) {
           for (int offsetY = -radius; offsetY <= radius; offsetY++) {
             for (int offsetX = -radius; offsetX <= radius; offsetX++) {
@@ -1337,10 +1339,10 @@ public class CTFGameMode extends GameMode {
           && !GameSettings.getBoolean("Chaos")) {
         player.getActionSender().sendBlock(x, y, z, (short) level.getBlock(x, y, z));
       } else if (isTNT(x, y, z) && !ignore) { // Deleting tnt
-        player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_TNT);
+        player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_TNT_RED); // TODO: Support for blue TNT
       } else if (isMine(x, y, z) && !ignore) { // Deleting mines
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
-      } else if (type == Constants.BLOCK_TNT && mode == 1 && !ignore) // Placing tnt
+      } else if ((type == Constants.BLOCK_TNT_RED || type == Constants.BLOCK_TNT_BLUE) && mode == 1 && !ignore) // Placing tnt
       {
         if (player.getAttribute("explodes").toString().equals("0")) {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
