@@ -1347,6 +1347,21 @@ public class CTFGameMode extends GameMode {
         if (player.getAttribute("explodes").toString().equals("0")) {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
+
+        // Red player places blue TNT
+        if (player.team == 0 && type == Constants.BLOCK_TNT_BLUE) {
+          player.getActionSender().sendChatMessage("- &eYou are not allowed to place blue TNT!");
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          return;
+        }
+
+        // Blue player places red TNT
+        if (player.team == 1 && type == Constants.BLOCK_TNT_RED) {
+          player.getActionSender().sendChatMessage("- &eYou are not allowed to place red TNT!");
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          return;
+        }
+
         if (player.team == -1) {
           player.getActionSender().sendChatMessage("- &eYou must join a team to place TNT!");
           player.getActionSender().sendBlock(x, y, z, (short) 0x00);
