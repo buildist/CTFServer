@@ -19,7 +19,7 @@ fun Rating.displayRating(): String = "${conservativeRating.roundToInt()}"
 fun gameCountColor(count: Int): String = when {
     count < 10 -> "&0"
     count < 30 -> "&7"
-    else -> "&7"
+    else -> "&f"
 }
 
 fun showFullRatingWithGames(rating: Rating, games: Int): String {
