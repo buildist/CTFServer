@@ -62,6 +62,7 @@ public class HelpCommand implements Command {
       player.getActionSender().sendChatMessage("&eType &b/help tagging &eto learn how tagging works.");
       player.getActionSender().sendChatMessage("&eType &b/help points &eto learn how to earn and spend points.");
       player.getActionSender().sendChatMessage("&eType &b/help stalemate &eto learn how anti-stalemate mode works.");
+      player.getActionSender().sendChatMessage("&eType &b/help rating &eto learn how rating works.");
       player.getActionSender().sendChatMessage("&eType &b/commands &efor a list of commands.");
       player.getActionSender().sendChatMessage("&7-");
       player.getActionSender().sendChatMessage("&a* You may need to scroll up to see the full message *");
@@ -77,6 +78,8 @@ public class HelpCommand implements Command {
       player.getActionSender().sendChatMessage("&7- &eAll players start with &b40 &epoints. &cTNT &ekills give &b5 &epoints, the first kill of the game &egives &b50 &epoints, &btagging &egives &b15 &epoints and &bflag captures &egive &b40 &epoints. You can also find points in &6crates&e. &eYou may use your points in the &b/store&e. &ePoints reset at the end of every round.");
     } else if (params.getStringArgument(0).equals("stalemate")) {
       player.getActionSender().sendChatMessage("&7- &eWhen both teams have an even amount of flag captures or both teams are currently holding the flag, the game goes into &banti-stalemate mode&e. This means that the first flag carrier to die will have their flag respawn immediately. If a player from your team is tagged, your flag carrier will automatically drop the flag.");
+    } else if (params.getStringArgument(0).equals("rating")) {
+      player.getActionSender().sendChatMessage("&7- &eEach player is assigned a &bTeam Rating (TR)&e, and a &bDuel Rating (DR)&e. Ratings are calculated using &bTrueSkill&e. You may earn or lose TR depending on how &eyour team performs in tournament games and who is on the &eenemy team. Similarly, you &emay earn or lose DR &edepending on how you perform in duels and who you go &eagainst. For &emore info on how &bTrueSkill &eworks, see &bhttps://en.wikipedia.org/wiki/TrueSkill");
     }
   }
 }

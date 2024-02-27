@@ -39,56 +39,28 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
-import tf.jacobsc.utils.RatingKt;
-import tf.jacobsc.utils.RatingType;
+import org.opencraft.server.model.World;
 
-public class StatsCommand implements Command {
-  private static final StatsCommand INSTANCE = new StatsCommand();
+public class StreamerModeCommand implements Command {
+
+  private static final StreamerModeCommand INSTANCE = new StreamerModeCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static StatsCommand getCommand() {
+  public static StreamerModeCommand getCommand() {
     return INSTANCE;
   }
 
   public void execute(Player player, CommandParameters params) {
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eWins: "
-                + player.getIntAttribute("wins")
-                + " - "
-                + "Games Played: "
-                + player.getIntAttribute("games")
-                + " ");
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eTags: "
-                + player.getIntAttribute("tags")
-                + " - "
-                + "Captures: "
-                + player.getIntAttribute("captures")
-                + " ");
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eExplodes: "
-                + player.getIntAttribute("explodes")
-                + " - "
-                + "Mines: "
-                + player.getIntAttribute("mines")
-                + " ");
-    player.getActionSender().sendChatMessage("- &eRagequits: " + player.getIntAttribute("ragequits"));
+    player.streamerMode = !player.streamerMode;
 
-    Integer trGames = player.getRatedGamesFor(RatingType.Team);
-    Integer drGames = player.getRatedGamesFor(RatingType.Duel);
-    Integer crGames = player.getRatedGamesFor(RatingType.Casual);
-    player.getActionSender().sendChatMessage("- &eTR: " + RatingKt.showFullRatingWithGames(player.getTeamRating(), trGames));
-    player.getActionSender().sendChatMessage("- &eDR: " + RatingKt.showFullRatingWithGames(player.getDuelRating(), drGames));
-//    player.getActionSender().sendChatMessage("- &eCasual: " + RatingKt.showFullRatingWithGames(player.getCasualRating(), crGames));
+    if (player.streamerMode) {
+      player.getActionSender().sendChatMessage("- &eStreamer mode enabled.");
+    } else {
+      player.getActionSender().sendChatMessage("- &eStreamer mode disabled.");
+    }
   }
 }

@@ -40,6 +40,8 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
+import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.RatingType;
 
 public class PInfoCommand implements Command {
 
@@ -75,33 +77,38 @@ public class PInfoCommand implements Command {
           .getActionSender()
           .sendChatMessage(
               "- &eWins: "
-                  + target.getAttribute("wins")
+                  + target.getIntAttribute("wins")
                   + " - "
                   + "Games Played: "
-                  + target.getAttribute("games")
+                  + target.getIntAttribute("games")
                   + " ");
       player
           .getActionSender()
           .sendChatMessage(
               "- &eTags: "
-                  + target.getAttribute("tags")
+                  + target.getIntAttribute("tags")
                   + " - "
                   + "Captures: "
-                  + target.getAttribute("captures")
+                  + target.getIntAttribute("captures")
                   + " ");
       player
           .getActionSender()
           .sendChatMessage(
               "- &eExplodes: "
-                  + target.getAttribute("explodes")
+                  + target.getIntAttribute("explodes")
                   + " - "
                   + "Mines: "
-                  + target.getAttribute("mines")
+                  + target.getIntAttribute("mines")
                   + " ");
       player
           .getActionSender()
-          .sendChatMessage("- &eRagequits: " + target.getAttribute("ragequits"));
-      player.getActionSender().sendChatMessage("- &ePoints: " + target.getPoints());
+          .sendChatMessage("- &eRagequits: " + target.getIntAttribute("ragequits"));
+      Integer trGames = target.getRatedGamesFor(RatingType.Team);
+      Integer drGames = target.getRatedGamesFor(RatingType.Duel);
+      Integer crGames = target.getRatedGamesFor(RatingType.Casual);
+      player.getActionSender().sendChatMessage("- &eTR: " + RatingKt.showFullRatingWithGames(target.getTeamRating(), trGames));
+      player.getActionSender().sendChatMessage("- &eDR: " + RatingKt.showFullRatingWithGames(target.getDuelRating(), drGames));
+//      player.getActionSender().sendChatMessage("- &eCasual: " + RatingKt.showFullRatingWithGames(target.getCasualRating(), crGames));
     }
   }
 }

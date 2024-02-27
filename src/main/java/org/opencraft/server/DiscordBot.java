@@ -5,11 +5,15 @@ import java.util.stream.Collectors;
 import org.javacord.api.DiscordApi;
 import org.javacord.api.DiscordApiBuilder;
 import org.javacord.api.entity.intent.Intent;
+import org.javacord.api.entity.server.Server;
+import org.javacord.api.entity.user.User;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
 public class DiscordBot implements Runnable {
 
+
+  private static final long SERVER_ID = 187774973543317504L;
   private static final long CHANNEL_ID = 603405367031889940L;
 
   public static String sanitizeDiscordInput(String input) {
@@ -23,14 +27,16 @@ public class DiscordBot implements Runnable {
         .addIntents(Intent.MESSAGE_CONTENT)
         .login().join();
     api.addMessageCreateListener(event -> {
-      if (event.getMessageAuthor().isYourself() || event.getMessageAuthor().isWebhook()
+      if (!event.getMessageAuthor().isUser() || event.getMessageAuthor().isYourself() || event.getMessageAuthor().isWebhook()
           || event.getChannel().getId() != CHANNEL_ID || event.getMessage().getContent()
           .isBlank()) {
         return;
       }
       String message = event.getMessage().getContent();
-      System.err.println("[Discord] " + event.getMessageAuthor().getDisplayName()
-          + ": " + message);
+      User user = event.getMessageAuthor().asUser().get();
+      Server server = api.getServerById(SERVER_ID).get();
+      String name = user.getNickname(server).orElse(user.getDisplayName(server));
+      System.err.println("[Discord] " + name + ": " + message);
       switch (message) {
         case ".who", ".players" -> {
           List<Player> players = World.getWorld().getPlayerList().getPlayers();
@@ -42,8 +48,7 @@ public class DiscordBot implements Runnable {
           event.getChannel().sendMessage(messageBuilder.toString());
         }
         default -> World.getWorld()
-            .broadcast("&5[Discord] &f" + event.getMessageAuthor().getDisplayName()
-                + ": " + sanitizeDiscordInput(message));
+            .broadcast("&5[Discord] &f" + sanitizeDiscordInput(name) + ": " + sanitizeDiscordInput(message));
       }
     });
 

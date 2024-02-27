@@ -36,6 +36,8 @@
  */
 package org.opencraft.server.model;
 
+import de.gesundkrank.jskills.IPlayer;
+import de.gesundkrank.jskills.Rating;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
@@ -54,13 +56,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import tf.jacobsc.utils.DuelKt;
+import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.RatingSystem;
+import tf.jacobsc.utils.RatingType;
 
 /**
  * Represents a connected player.
  *
  * @author Graham Edgecombe
  */
-public class Player extends Entity {
+public class Player extends Entity implements IPlayer {
 
   public static short NAME_ID = 0;
 
@@ -131,6 +137,7 @@ public class Player extends Entity {
   private final PlayerUI ui;
   public Position safePosition = new Position(0, 0, 0);
   private int currentRoundPoints = Constants.INITIAL_PLAYER_POINTS;
+  public boolean streamerMode = false;
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();
@@ -168,6 +175,46 @@ public class Player extends Entity {
     setAmmo(GameSettings.getInt("Ammo"));
     setHealth(GameSettings.getInt("Health"));
     setPoints(GameSettings.getInt("InitialPoints"));
+  }
+
+  public Rating getRating(RatingType type) {
+    String name = type.lowerName();
+    Object mu = getAttribute(name + "RatingMu");
+    Object sigma = getAttribute(name + "RatingSigma");
+    if (mu == null || sigma == null) {
+      return RatingSystem.Companion.getDefaultRating();
+    }
+
+    try {
+      return new Rating(
+          (double) mu,
+          (double) sigma);
+    } catch (Exception e) {
+      return RatingSystem.Companion.getDefaultRating();
+    }
+  }
+
+  public Rating getTeamRating() {
+    return getRating(RatingType.Team);
+  }
+
+  public Rating getDuelRating() {
+    return getRating(RatingType.Duel);
+  }
+
+  public Rating getCasualRating() {
+    return getRating(RatingType.Casual);
+  }
+
+  public Integer getRatedGamesFor(RatingType type) {
+    return getIntAttribute(type.lowerName() + "MatchesCount");
+  }
+
+  public void setRating(RatingType type, Rating rating) {
+    String name = type.lowerName();
+    setAttribute(name + "RatingMu", rating.getMean());
+    setAttribute(name + "RatingSigma", rating.getStandardDeviation());
+    incIntAttribute(name + "MatchesCount");
   }
 
   public boolean canSee(Player otherPlayer) {
@@ -375,6 +422,9 @@ public class Player extends Entity {
                     + duelPlayer.getColoredName()
                     + " &bin a duel!");
         incStat("duelWins");
+        (new RatingSystem(RatingType.Duel)).setRatings(this, duelPlayer);
+        getActionSender().sendChatMessage("- &eDR: " + RatingKt.displayRating(getDuelRating()));
+        duelPlayer.getActionSender().sendChatMessage("- &eDR: " + RatingKt.displayRating(duelPlayer.getDuelRating()));
         duelPlayer.incStat("duelLosses");
 
         duelChallengedBy = null;
@@ -577,6 +627,7 @@ public class Player extends Entity {
     } else if (this.team == 1) {
       gameMode.bluePlayers--;
     }
+    RatingKt.checkForTeamAbandonment(this);
     int diff = gameMode.redPlayers - gameMode.bluePlayers;
     boolean unbalanced = false;
     if (!GameSettings.getBoolean("Tournament")) {
@@ -628,11 +679,8 @@ public class Player extends Entity {
       }
     } else {
       this.team = -1;
-      if (duelPlayer != null) {
-        duelPlayer.duelPlayer = null;
-        duelPlayer = null;
-      }
     }
+    DuelKt.abandonDuel(this);
     clearMines();
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.canSee(this)) {
@@ -654,7 +702,8 @@ public class Player extends Entity {
       World.getWorld().broadcast("- " + parseName() + " joined the " + team + " team");
     }
 
-    session.getActionSender().sendHackControl(Configuration.getConfiguration().isTest() || this.team == -1);
+    session.getActionSender()
+        .sendHackControl(Configuration.getConfiguration().isTest() || this.team == -1);
 
     Position position = getTeamSpawn();
     getActionSender().sendTeleport(position, getTeamSpawnRotation());
@@ -775,6 +824,18 @@ public class Player extends Entity {
    */
   public Object getAttribute(String name) {
     return attributes.get(name);
+  }
+
+  public Integer getIntAttribute(String name) {
+    Object value = attributes.get(name);
+    if (value == null) return 0;
+    return (Integer) value;
+  }
+
+  public Integer incIntAttribute(String name) {
+    Integer inc = getIntAttribute(name) + 1;
+    setAttribute(name, inc);
+    return inc;
   }
 
   /**

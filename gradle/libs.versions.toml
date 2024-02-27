@@ -1,0 +1,10 @@
+[versions]
+kotlin = "1.9.22"
+
+[libraries]
+guava = { group = "com.google.guava", name = "guava", version = "30.1.1-jre" }
+mina = { group = "org.apache.mina", name = "mina-core", version = "2.1.4" }
+xstream = { group = "com.thoughtworks.xstream", name = "xstream", version = "1.4.20" }
+slf4jSimple = { group = "org.slf4j", name = "slf4j-simple", version = "2.0.9" }
+junit = { group = "org.junit.jupiter", name = "junit-jupiter", version = "5.7.2" }
+jskills = { group = "de.gesundkrank.jskills", name = "jskills", version = "1.1"}

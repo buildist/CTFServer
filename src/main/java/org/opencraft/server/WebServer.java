@@ -44,6 +44,10 @@ import com.sun.net.httpserver.HttpServer;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.GameMode;
+import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
+import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.TexturePackHandler;
 import org.opencraft.server.model.World;
@@ -70,6 +74,8 @@ import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static org.opencraft.server.model.PlayerUI.prettyTime;
+
 
 public class WebServer {
   public static ArrayList<String> blockedWords = new ArrayList<String>();
@@ -80,13 +86,28 @@ public class WebServer {
     consolePlayer.setActionSender(new ConsoleActionSender());
     consolePlayer.setAttribute("IsOperator", "true");
     consolePlayer.setAttribute("IsOwner", "true");
+
     try {
       InetSocketAddress addr = new InetSocketAddress(Constants.WEB_PORT);
       HttpServer server = HttpServer.create(addr, 0);
 
       CTFHandler ch = new CTFHandler();
+      GameHandler gh = new GameHandler();
+      PlayerHandler ph = new PlayerHandler();
+      KillsHandler kh = new KillsHandler();
+
       HttpContext c = server.createContext("/", ch);
       c.getFilters().add(new ParameterFilter());
+
+      HttpContext g = server.createContext("/api/game", gh);
+      g.getFilters().add(new ParameterFilter());
+
+      HttpContext p = server.createContext("/api/player", ph);
+      p.getFilters().add(new ParameterFilter());
+
+      HttpContext k = server.createContext("/api/kills", kh);
+      k.getFilters().add(new ParameterFilter());
+
       executor = Executors.newCachedThreadPool();
       server.setExecutor(executor);
       server.start();
@@ -260,6 +281,193 @@ public class WebServer {
         hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
       }
       return new String(hexChars);
+    }
+  }
+
+  static class GameHandler implements HttpHandler {
+    public void handle(HttpExchange exchange) {
+      try {
+        if ("GET".equals(exchange.getRequestMethod())) {
+          String map = World.getWorld().getLevel().id;
+
+          long elapsedTime = System.currentTimeMillis() - World.getWorld().getGameMode().gameStartTime;
+
+          String timerSetting = null;
+          if (CTFGameMode.getMode() == Level.TDM) {
+            timerSetting = "TDMTimeLimit";
+          } else {
+            timerSetting = "TimeLimit";
+          }
+
+          long remaining = Math.max((GameSettings.getInt(timerSetting) * 60 * 1000 - elapsedTime) / 1000, 0);
+          if (World.getWorld().getGameMode().voting) {
+            remaining = 0;
+          } else if (!World.getWorld().getGameMode().tournamentGameStarted) {
+            remaining = GameSettings.getInt(timerSetting) * 60;
+          }
+
+          String timeRemaining = prettyTime((int) remaining);
+
+          int redCaptures = CTFGameMode.redCaptures;
+          int blueCaptures = CTFGameMode.blueCaptures;
+
+          // Construct JSON using a StringBuilder
+          StringBuilder respTextBuilder = new StringBuilder();
+          respTextBuilder.append("{\n");
+          respTextBuilder.append("  \"map\": ").append("\"" + map + "\"").append(",\n");
+          respTextBuilder.append("  \"timeRemaining\": ").append("\"" + timeRemaining + "\"").append(",\n");
+          respTextBuilder.append("  \"redCaptures\": ").append(redCaptures).append(",\n");
+          respTextBuilder.append("  \"blueCaptures\": ").append(blueCaptures).append(",\n");
+
+          // Add red/blue players
+
+          Player[] names = World.getWorld().getPlayerList().getPlayers().toArray(new Player[0]);
+
+          List<Player> redTeam = new ArrayList<>();
+          List<Player> blueTeam = new ArrayList<>();
+
+          for (Player other : names) {
+            if (other.team == 0) redTeam.add(other);
+            if (other.team == 1) blueTeam.add(other);
+          }
+
+          String redPlayersJSON = getPlayersJSON(redTeam);
+          String bluePlayersJSON = getPlayersJSON(blueTeam);
+
+          respTextBuilder.append("  \"redPlayers\": [").append(redPlayersJSON).append("],\n");
+          respTextBuilder.append("  \"bluePlayers\": [").append(bluePlayersJSON).append("]\n");
+
+          respTextBuilder.append("}");
+
+          String respText = respTextBuilder.toString();
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+
+          exchange.sendResponseHeaders(200, respText.getBytes().length);
+          OutputStream output = exchange.getResponseBody();
+          output.write(respText.getBytes());
+          output.flush();
+        } else {
+          exchange.sendResponseHeaders(405, -1);// 405 Method Not Allowed
+        }
+        exchange.close();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        exchange.close();
+      }
+    }
+
+    private String getPlayersJSON(List<Player> players) {
+      List<String> usernames = new ArrayList<>();
+      for (Player player : players) {
+        usernames.add("\"" + player.getName() + "\"");
+      }
+      return String.join(", ", usernames);
+    }
+
+  }
+
+  public static ArrayList<GameMode.KillFeedItem> killFeed; // A copy of CTFGameMode.killFeed that does not purge after 10 seconds
+
+  static class PlayerHandler implements HttpHandler {
+    public void handle(HttpExchange exchange) {
+      try {
+        if ("GET".equals(exchange.getRequestMethod())) {
+          Map<String, Object> params = (Map<String, Object>) exchange.getAttribute("parameters");
+          StringBuilder respTextBuilder = new StringBuilder();
+          respTextBuilder.append("{\n");
+
+          String username;
+          if (params.containsKey("p")) {
+            username = params.get("p").toString();
+
+            Player target = Player.getPlayer(username, null);
+            if (target == null) {
+              respTextBuilder.append("  \"error\": ").append("\"Player not found.\"").append("\n");
+              respTextBuilder.append("}");
+            } else {
+              int kills = target.kills;
+              int deaths = target.deaths;
+              int captures = target.captures;
+              int points = target.getPoints();
+
+              respTextBuilder.append("  \"username\": ").append("\"" + username + "\"").append(",\n");
+              respTextBuilder.append("  \"kills\": ").append(kills).append(",\n");
+              respTextBuilder.append("  \"deaths\": ").append(deaths).append(",\n");
+              respTextBuilder.append("  \"captures\": ").append(captures).append(",\n");
+              respTextBuilder.append("  \"points\": ").append(points).append("\n");
+              respTextBuilder.append("}");
+            }
+          } else {
+            respTextBuilder.append("  \"error\": ").append("\"Player not found.\"").append("\n");
+            respTextBuilder.append("}");
+          }
+
+          String respText = respTextBuilder.toString();
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+
+          exchange.sendResponseHeaders(200, respText.getBytes().length);
+          OutputStream output = exchange.getResponseBody();
+          output.write(respText.getBytes());
+          output.flush();
+        } else {
+          exchange.sendResponseHeaders(405, -1);// 405 Method Not Allowed
+        }
+        exchange.close();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        exchange.close();
+      }
+    }
+  }
+
+  static class KillsHandler implements HttpHandler {
+    public void handle(HttpExchange exchange) {
+      try {
+        if ("GET".equals(exchange.getRequestMethod())) {
+          StringBuilder respTextBuilder = new StringBuilder();
+
+          respTextBuilder.append("{\n");
+
+          if (killFeed == null) {
+            respTextBuilder.append("  \"1\": null").append(",\n");
+            respTextBuilder.append("  \"2\": null").append(",\n");
+            respTextBuilder.append("  \"3\": null").append("\n");
+          } else {
+            for (int i = 0; i < 3; i++) {
+              if (i >= killFeed.size()) {
+                respTextBuilder.append("  \"" + i + "\": null");
+              } else {
+                respTextBuilder.append("  \"" + i + "\": ").append("\"" + killFeed.get(i).getMessage() + "\"");
+              }
+
+              if (i < 2) {
+                respTextBuilder.append(",\n");
+              } else {
+                respTextBuilder.append("\n");
+              }
+            }
+          }
+
+          respTextBuilder.append("}");
+
+          String respText = respTextBuilder.toString();
+          Headers responseHeaders = exchange.getResponseHeaders();
+          responseHeaders.set("Access-Control-Allow-Origin", "*");
+
+          exchange.sendResponseHeaders(200, respText.getBytes().length);
+          OutputStream output = exchange.getResponseBody();
+          output.write(respText.getBytes());
+          output.flush();
+        } else {
+          exchange.sendResponseHeaders(405, -1);// 405 Method Not Allowed
+        }
+        exchange.close();
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        exchange.close();
+      }
     }
   }
 }

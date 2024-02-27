@@ -38,57 +38,42 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
-import tf.jacobsc.utils.RatingKt;
-import tf.jacobsc.utils.RatingType;
+import org.opencraft.server.model.Position;
+import org.opencraft.server.model.Rotation;
 
-public class StatsCommand implements Command {
-  private static final StatsCommand INSTANCE = new StatsCommand();
+public class SetScoreCommand implements Command {
+
+  /** The instance of this command. */
+  private static final SetScoreCommand INSTANCE = new SetScoreCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static StatsCommand getCommand() {
+  public static SetScoreCommand getCommand() {
     return INSTANCE;
   }
 
+  @Override
   public void execute(Player player, CommandParameters params) {
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eWins: "
-                + player.getIntAttribute("wins")
-                + " - "
-                + "Games Played: "
-                + player.getIntAttribute("games")
-                + " ");
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eTags: "
-                + player.getIntAttribute("tags")
-                + " - "
-                + "Captures: "
-                + player.getIntAttribute("captures")
-                + " ");
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eExplodes: "
-                + player.getIntAttribute("explodes")
-                + " - "
-                + "Mines: "
-                + player.getIntAttribute("mines")
-                + " ");
-    player.getActionSender().sendChatMessage("- &eRagequits: " + player.getIntAttribute("ragequits"));
+    // Player using command is OP?
+    if (player.isOp()) {
+      if (params.getArgumentCount() < 2) {
+        player.getActionSender().sendChatMessage("/setscore red/blue [number]");
+        return;
+      }
 
-    Integer trGames = player.getRatedGamesFor(RatingType.Team);
-    Integer drGames = player.getRatedGamesFor(RatingType.Duel);
-    Integer crGames = player.getRatedGamesFor(RatingType.Casual);
-    player.getActionSender().sendChatMessage("- &eTR: " + RatingKt.showFullRatingWithGames(player.getTeamRating(), trGames));
-    player.getActionSender().sendChatMessage("- &eDR: " + RatingKt.showFullRatingWithGames(player.getDuelRating(), drGames));
-//    player.getActionSender().sendChatMessage("- &eCasual: " + RatingKt.showFullRatingWithGames(player.getCasualRating(), crGames));
+      if (params.getStringArgument(0).equals("red")) {
+        CTFGameMode.redCaptures = params.getIntegerArgument(1);
+      } else if (params.getStringArgument(0).equals("blue")) {
+        CTFGameMode.blueCaptures = params.getIntegerArgument(1);
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }
