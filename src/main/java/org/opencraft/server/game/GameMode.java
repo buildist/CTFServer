@@ -359,6 +359,9 @@ public abstract class GameMode {
                 player.hasNominated = false;
                 player.currentRoundPointsEarned = 0;
                 player.setPoints(GameSettings.getInt("InitialPoints"));
+                player.kills = 0;
+                player.deaths = 0;
+                player.captures = 0;
 
                 // Remove custom blocks
                 for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {

@@ -177,7 +177,7 @@ public final class Level implements Cloneable {
     customBlockDefinitions.clear();
   }
 
-  public void drawFire(Position pos, Rotation r) {
+  public void drawFire(Player p, Position pos, Rotation r) {
     pos = pos.toBlockPos();
     double heading =
         Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
@@ -185,17 +185,20 @@ public final class Level implements Cloneable {
         Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
+    if (p.pingList.averagePing() > 90) distance += 1; // If the player has over 90ms ping, move the flamethrower 1 block in front to account for ping
+
     int length = GameSettings.getInt("FlameThrowerLength");
     int side = Integer.signum(length);
     int dir = Integer.signum(distance);
 
-    double px = (pos.getX());
-    double py = (pos.getY());
-    double pz = (pos.getZ()) - 1;
+    double px = pos.getX();
+    double py = pos.getY();
+    double pz = pos.getZ();
 
     double vx = Math.cos(heading) * Math.cos(pitch);
     double vy = Math.sin(heading) * Math.cos(pitch);
     double vz = Math.sin(pitch);
+
     double x = px;
     double y = py;
     double z = pz;
@@ -247,7 +250,7 @@ public final class Level implements Cloneable {
     }
   }
 
-  public void clearFire(Position pos, Rotation r) {
+  public void clearFire(Player p, Position pos, Rotation r) {
     pos = pos.toBlockPos();
     double heading =
         Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
@@ -255,12 +258,14 @@ public final class Level implements Cloneable {
         Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
 
     int distance = GameSettings.getInt("FlameThrowerStartDistanceFromPlayer");
+    if (p.pingList.averagePing() > 90) distance += 1; // If the player has over 90ms ping, move the flamethrower 1 block in front to account for ping
+
     int length = GameSettings.getInt("FlameThrowerLength");
     int side = Integer.signum(length);
 
-    double px = (pos.getX());
-    double py = (pos.getY());
-    double pz = (pos.getZ()) - 1;
+    double px = pos.getX();
+    double py = pos.getY();
+    double pz = pos.getZ();
 
     double vx = Math.cos(heading) * Math.cos(pitch);
     double vy = Math.sin(heading) * Math.cos(pitch);

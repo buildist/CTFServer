@@ -63,7 +63,9 @@ import org.opencraft.server.model.World;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import tf.jacobsc.utils.RatingKt;
 
 public class CTFGameMode extends GameMode {
@@ -152,13 +154,19 @@ public class CTFGameMode extends GameMode {
     if (deleteSelf) {
       level.setBlock(x, y, z, 0);
     }
-    if (p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
-      p.bigTNTRemaining--;
+
+    // Big TNT should not be triggered by rockets and grenades
+    if (type == null) {
+      if (p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
+        p.bigTNTRemaining--;
+      }
+
+      if (p.bigTNTRemaining <= 0 && p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
+        p.tntRadius = 2;
+        p.getActionSender().sendChatMessage("- &eYour big TNT has expired!");
+      }
     }
-    if (p.bigTNTRemaining <= 0 && p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
-      p.tntRadius = 2;
-      p.getActionSender().sendChatMessage("- &eYour big TNT has expired!");
-    }
+
     int n = 0;
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
@@ -243,7 +251,7 @@ public class CTFGameMode extends GameMode {
   public boolean isSolidBlock(Level level, int x, int y, int z) {
     int oldBlock = level.getBlock(x, y, z);
     return level.isSolid(x, y, z)
-        || oldBlock == Constants.BLOCK_TNT
+        || oldBlock == Constants.BLOCK_TNT_RED || oldBlock == Constants.BLOCK_TNT_BLUE
         || oldBlock == Constants.BLOCK_INVISIBLE
         || (x == blueFlagX && z == blueFlagY && y == blueFlagZ)
         || (x == redFlagX && z == redFlagY && y == redFlagZ)
@@ -450,6 +458,7 @@ public class CTFGameMode extends GameMode {
       player.flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
       player.currentRoundPointsEarned = 0;
       player.setPoints(GameSettings.getInt("InitialPoints"));
+      unblockSpawnZones(player);
     }
 
     redFlagTaken = false;
@@ -603,11 +612,12 @@ public class CTFGameMode extends GameMode {
                 if (player.isFlamethrowerEnabled()) {
                   World.getWorld()
                       .getLevel()
-                      .clearFire(player.linePosition, player.lineRotation);
+                      .clearFire(player, player.linePosition, player.lineRotation);
                   player.disableFlameThrower();
                 }
                 player.flamethrowerTime = 0;
                 player.rocketTime = 0;
+                unblockSpawnZones(player);
                 player.sendToTeamSpawn();
               }
               rtvVotes = 0;
@@ -694,6 +704,7 @@ public class CTFGameMode extends GameMode {
         placeRedFlag();
       }
       player.hasFlag = false;
+      unblockSpawnZones(player);
       World.getWorld().broadcast("- " + player.parseName() + " dropped the flag!");
     }
   }
@@ -705,6 +716,117 @@ public class CTFGameMode extends GameMode {
       World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");
       antiStalemate = true;
     }
+  }
+
+  public void blockSpawnZones(Player p) {
+    if (!p.hasFlag) return;
+    // TODO: TEN_BIT_BLOCKS support
+
+    /*Level level = World.getWorld().getLevel();
+
+    if (level.redSpawnZoneMin == null || level.redSpawnZoneMax == null) return;
+    if (level.blueSpawnZoneMin == null || level.blueSpawnZoneMax == null) return;
+
+    int minX = 0;
+    int minZ = 0;
+    int minY = 0;
+
+    int maxX = 0;
+    int maxZ = 0;
+    int maxY = 0;
+
+    if (p.team == 0) {
+      // Red
+      minX = level.redSpawnZoneMin.getX() - 32;
+      minZ = level.redSpawnZoneMin.getZ();
+      minY = level.redSpawnZoneMin.getY() - 32;
+
+      maxX = level.redSpawnZoneMax.getX() + 32;
+      maxZ = level.redSpawnZoneMax.getZ();
+      maxY = level.redSpawnZoneMax.getY() + 32;
+    } else if (p.team == 1) {
+      // Blue
+      minX = level.blueSpawnZoneMin.getX() - 32;
+      minZ = level.blueSpawnZoneMin.getZ();
+      minY = level.blueSpawnZoneMin.getY() - 32;
+
+      maxX = level.blueSpawnZoneMax.getX() + 32;
+      maxZ = level.blueSpawnZoneMax.getZ();
+      maxY = level.blueSpawnZoneMax.getY() + 32;
+    }
+
+    List<Integer> indices = new ArrayList<>();
+    List<Short> blocks = new ArrayList<>();
+
+    // Populate indices and blocks lists with the block updates to be performed
+    for (int x = minX; x < maxX; x++) {
+      for (int z = minZ; z < maxZ; z++) {
+        for (int y = minY; y < maxY; y++) {
+          if (World.getWorld().getLevel().getBlock(x, y, z) != 0) continue; // Only replace air
+
+          int index = ((y & 0xFF) << 16) | ((z & 0xFF) << 8) | (x & 0xFF); // Calculate the index based on x, y, and z coordinates
+          indices.add(index); // Add the calculated index to the indices list
+          blocks.add((short) Constants.BLOCK_INVISIBLE); // Replace with crates
+        }
+      }
+    }
+
+    p.getSession().getActionSender().sendBulkBlockUpdate(indices, blocks); // Send bulk block updates*/
+  }
+
+  public void unblockSpawnZones(Player p) {
+    // TODO: TEN_BIT_BLOCKS support
+    /*Level level = World.getWorld().getLevel();
+
+    if (level.redSpawnZoneMin == null || level.redSpawnZoneMax == null) return;
+    if (level.blueSpawnZoneMin == null || level.blueSpawnZoneMax == null) return;
+
+    int minX = 0;
+    int minZ = 0;
+    int minY = 0;
+
+    int maxX = 0;
+    int maxZ = 0;
+    int maxY = 0;
+
+    if (p.team == 0) {
+      // Red
+      minX = level.redSpawnZoneMin.getX() - 32;
+      minZ = level.redSpawnZoneMin.getZ();
+      minY = level.redSpawnZoneMin.getY() - 32;
+
+      maxX = level.redSpawnZoneMax.getX() + 32;
+      maxZ = level.redSpawnZoneMax.getZ();
+      maxY = level.redSpawnZoneMax.getY() + 32;
+    } else if (p.team == 1) {
+      // Blue
+      minX = level.blueSpawnZoneMin.getX() - 32;
+      minZ = level.blueSpawnZoneMin.getZ();
+      minY = level.blueSpawnZoneMin.getY() - 32;
+
+      maxX = level.blueSpawnZoneMax.getX() + 32;
+      maxZ = level.blueSpawnZoneMax.getZ();
+      maxY = level.blueSpawnZoneMax.getY() + 32;
+    }
+
+    List<Integer> indices = new ArrayList<>();
+    List<Short> blocks = new ArrayList<>();
+
+    // Populate indices and blocks lists with the block updates to be performed
+    for (int x = minX; x < maxX; x++) {
+      for (int z = minZ; z < maxZ; z++) {
+        for (int y = minY; y < maxY; y++) {
+          if (World.getWorld().getLevel().getBlock(x, y, z) != Constants.BLOCK_INVISIBLE) continue; // Only replace crates
+
+          int index = ((y & 0xFF) << 16) | ((z & 0xFF) << 8) | (x & 0xFF); // Calculate the index based on x, y, and z coordinates
+          //x + z * width + y * width * length
+          indices.add(index); // Add the calculated index to the indices list
+          blocks.add((short) 0); // Replace with air
+        }
+      }
+    }
+
+    p.getSession().getActionSender().sendBulkBlockUpdate(indices, blocks); // Send bulk block updates*/
   }
 
   public void dropFlag(int team) {
@@ -723,6 +845,7 @@ public class CTFGameMode extends GameMode {
   public void dropFlag(Player p, final boolean instant, final boolean isVoluntary) {
     if (p.hasFlag) {
       p.hasFlag = false;
+      unblockSpawnZones(p);
       World.getWorld().broadcast("- " + p.parseName() + " dropped the flag!");
       sendAnnouncement(p.parseName() + " dropped the flag!");
       Position playerPos = p.getPosition().toBlockPos();
@@ -806,6 +929,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate");
             p.hasFlag = true;
             redFlagTaken = true;
+            blockSpawnZones(p);
             checkForStalemate();
             resetRedFlagPos();
             if (redFlagDroppedThread != null) {
@@ -823,6 +947,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           blueFlagTaken = false;
+          unblockSpawnZones(p);
           placeBlueFlag();
           p.incIntAttribute("captures");
           p.addPoints(40);
@@ -858,6 +983,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             blueFlagTaken = true;
+            blockSpawnZones(p);
             checkForStalemate();
             resetBlueFlagPos();
             if (blueFlagDroppedThread != null) {
@@ -875,6 +1001,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           redFlagTaken = false;
+          unblockSpawnZones(p);
           placeRedFlag();
           p.incIntAttribute("captures");
           p.addPoints(40);
@@ -929,7 +1056,8 @@ public class CTFGameMode extends GameMode {
                 for (int cz = mz - r; cz <= mz + r; cz++) {
                   int oldBlock = level.getBlock(cx, cy, cz);
                   if (!level.isSolid(cx, cy, cz)
-                          && oldBlock != Constants.BLOCK_TNT
+                          && oldBlock != Constants.BLOCK_TNT_RED
+                          && oldBlock != Constants.BLOCK_TNT_BLUE
                           && !(cx == blueFlagX && cz == blueFlagY && cy == blueFlagZ)
                           && !(cx == redFlagX && cz == redFlagY && cy == redFlagZ)) {
                     level.setBlock(cx, cy, cz, 0);
@@ -1137,8 +1265,22 @@ public class CTFGameMode extends GameMode {
           player.getActionSender().sendBlock(x, y, z, (short) 0);
         }
       } else if (placedInSpawnZone) {
-        ignore = true;
-        player.getActionSender().sendChatMessage("- &aYou may not place blocks at spawn.");
+        // Allow detonator to explode last TNT, but revert the block change afterwards
+        if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
+          int radius = player.tntRadius;
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
+          explodeTNT(
+                  player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
+          player.hasTNT = false;
+          player.tntX = 0;
+          player.tntY = 0;
+          player.tntZ = 0;
+        } else {
+          ignore = true;
+          player.getActionSender().sendChatMessage("- &aYou may not place blocks at spawn.");
+        }
+
+        // Revert the block
         if (mode == 0) {
           player.getActionSender().sendBlock(x, y, z, (short) oldType);
         } else {
@@ -1176,9 +1318,10 @@ public class CTFGameMode extends GameMode {
           && z == player.headBlockPosition.getZ()) {
         ignore = true;
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
-      } else if (player.brush && type != Constants.BLOCK_TNT) {
+      } else if (player.brush && type != Constants.BLOCK_TNT_RED && type != Constants.BLOCK_TNT_BLUE) {
         int height = 3;
         int radius = 3;
+
         for (int offsetZ = -height; offsetZ <= radius; offsetZ++) {
           for (int offsetY = -radius; offsetY <= radius; offsetY++) {
             for (int offsetX = -radius; offsetX <= radius; offsetX++) {
@@ -1212,14 +1355,29 @@ public class CTFGameMode extends GameMode {
           && !GameSettings.getBoolean("Chaos")) {
         player.getActionSender().sendBlock(x, y, z, (short) level.getBlock(x, y, z));
       } else if (isTNT(x, y, z) && !ignore) { // Deleting tnt
-        player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_TNT);
+        player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_TNT_RED); // TODO: Support for blue TNT
       } else if (isMine(x, y, z) && !ignore) { // Deleting mines
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
-      } else if (type == Constants.BLOCK_TNT && mode == 1 && !ignore) // Placing tnt
+      } else if ((type == Constants.BLOCK_TNT_RED || type == Constants.BLOCK_TNT_BLUE) && mode == 1 && !ignore) // Placing tnt
       {
         if (player.getIntAttribute("explodes") == 0) {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
+
+        // Red player places blue TNT
+        if (player.team == 0 && type == Constants.BLOCK_TNT_BLUE) {
+          player.getActionSender().sendChatMessage("- &eYou are not allowed to place blue TNT!");
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          return;
+        }
+
+        // Blue player places red TNT
+        if (player.team == 1 && type == Constants.BLOCK_TNT_RED) {
+          player.getActionSender().sendChatMessage("- &eYou are not allowed to place red TNT!");
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          return;
+        }
+
         if (player.team == -1) {
           player.getActionSender().sendChatMessage("- &eYou must join a team to place TNT!");
           player.getActionSender().sendBlock(x, y, z, (short) 0x00);

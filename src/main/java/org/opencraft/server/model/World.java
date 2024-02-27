@@ -308,7 +308,7 @@ public final class World {
 
     // Add default blocks into the hotbar
     if (!session.levelSent && session.isExtensionSupported("HeldBlock")) {
-      session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT, 0);
+      session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_RED, 0);
       session.getActionSender().sendHotbar((short) Constants.BLOCK_DETONATOR, 1);
       session.getActionSender().sendHotbar((short) Constants.BLOCK_MINE, 2);
       session.getActionSender().sendHotbar((short) 1, 3);

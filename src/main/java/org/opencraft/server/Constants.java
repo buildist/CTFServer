@@ -90,11 +90,12 @@ public final class Constants {
     "CustomParticles",
     "SetHotbar",
     "LongerMessages",
+    "BulkBlockUpdate",
   };
 
   // CPE versions
   public static final int[] CPE_EXT_VERSIONS =
-      {1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+      {1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   public static final int NUM_CPE_EXTENSIONS = CPE_EXT_NAMES.length;
   public static final int COLOR_SKY = 0;
   public static final int COLOR_CLOUD = 1;
@@ -131,10 +132,11 @@ public final class Constants {
   public static final int BLOCK_MINE = 604;
   public static final int BLOCK_MINE_RED = 605;
   public static final int BLOCK_MINE_BLUE = 606;
-  public static final int BLOCK_TNT = 607;
+  public static final int BLOCK_TNT_RED = 607;
   public static final int BLOCK_RED_FLAG = 608;
   public static final int BLOCK_BLUE_FLAG = 609;
   public static final int BLOCK_DETONATOR = 610;
+  public static final int BLOCK_TNT_BLUE = 611;
 
   // Laser tag
   public static final int HIT_RED = 612;

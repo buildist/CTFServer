@@ -389,7 +389,7 @@ public class Player extends Entity implements IPlayer {
   }
 
   public void disableFlameThrower() {
-    World.getWorld().getLevel().clearFire(this.linePosition, this.lineRotation);
+    World.getWorld().getLevel().clearFire(this, this.linePosition, this.lineRotation);
     this.flamethrowerEnabled = false;
     this.getActionSender().sendChatMessage("- &eFlame thrower disabled.");
   }
@@ -655,6 +655,10 @@ public class Player extends Entity implements IPlayer {
       } else {
         gameMode.redPlayers++;
         this.team = 0;
+
+        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_RED, 0); // Add red TNT to the hotbar
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 1); // Add red TNT to the block menu
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 0); // Remove blue TNT from the block menu
       }
     } else if (team.equals("blue")) {
       if (this.team == -1) {
@@ -668,6 +672,10 @@ public class Player extends Entity implements IPlayer {
       } else {
         gameMode.bluePlayers++;
         this.team = 1;
+
+        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_BLUE, 0); // Add blue TNT to the hotbar
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 1); // Add blue TNT to the block menu
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 0); // Remove red TNT from the block menu
       }
     } else {
       this.team = -1;
@@ -754,7 +762,7 @@ public class Player extends Entity implements IPlayer {
   public void sendToTeamSpawn() {
     // If player dies while flamethrower is on, don't leave remnants on the map.
     if (isFlamethrowerEnabled()) {
-      World.getWorld().getLevel().clearFire(linePosition, lineRotation);
+      World.getWorld().getLevel().clearFire(this, linePosition, lineRotation);
     }
     getActionSender().sendTeleport(getTeamSpawn(), new Rotation(team == 0 ? 64 : 192, 0));
   }
@@ -960,9 +968,9 @@ public class Player extends Entity implements IPlayer {
         if (!getPosition().equals(linePosition)
             || !getRotation().equals(lineRotation)) {
           if (linePosition != null) {
-            World.getWorld().getLevel().clearFire(linePosition, lineRotation);
+            World.getWorld().getLevel().clearFire(this, linePosition, lineRotation);
           }
-          World.getWorld().getLevel().drawFire(getPosition(), getRotation());
+          World.getWorld().getLevel().drawFire(this, getPosition(), getRotation());
           linePosition = getPosition();
           lineRotation = getRotation();
         }

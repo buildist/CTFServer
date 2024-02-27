@@ -153,9 +153,9 @@ public class CustomBlockDefinition {
         inventoryOrder);
   }
 
-  public static final CustomBlockDefinition TNT =
+  public static final CustomBlockDefinition TNT_RED =
       new CustomBlockDefinition(
-          Constants.BLOCK_TNT,
+          Constants.BLOCK_TNT_RED,
           "TNT",
           Constants.BLOCK_SOLIDITY_SOLID,
           128,
@@ -180,6 +180,35 @@ public class CustomBlockDefinition {
           0,
           0,
           1);
+
+  public static final CustomBlockDefinition TNT_BLUE =
+          new CustomBlockDefinition(
+                  Constants.BLOCK_TNT_BLUE,
+                  "Blue TNT",
+                  Constants.BLOCK_SOLIDITY_SOLID,
+                  128,
+                  508,
+                  507,
+                  507,
+                  507,
+                  507,
+                  509,
+                  false,
+                  Constants.BLOCK_WALK_SOUND_METAL,
+                  false,
+                  0,
+                  0,
+                  0,
+                  16,
+                  16,
+                  16,
+                  Constants.BLOCK_DRAW_OPAQUE,
+                  0,
+                  0,
+                  0,
+                  0,
+                  255);
+
   public static final CustomBlockDefinition PURPLE =
       new CustomBlockDefinition(
           Constants.BLOCK_DETONATOR, "Detonator", 501, Constants.BLOCK_WALK_SOUND_METAL, 2);
@@ -410,6 +439,6 @@ public class CustomBlockDefinition {
 
 
   public static final CustomBlockDefinition[] CUSTOM_BLOCKS =
-      new CustomBlockDefinition[]{TNT, PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE,
+      new CustomBlockDefinition[]{TNT_RED, TNT_BLUE, PURPLE, MINE, MINE_RED, MINE_BLUE, FLAG_RED, FLAG_BLUE,
           CRATE, BLOCK_VINE, INVISIBLE, ROCKET};
 }

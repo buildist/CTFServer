@@ -84,22 +84,29 @@ public class GrenadeCommand implements Command {
               vx /= length;
               vz /= length;
               vy /= length;
+
               double x = px;
               double y = py;
               double z = pz;
+
               double lastX = px;
               double lastY = py;
               double lastZ = pz;
+
               int lastBlock = 0;
+
               for (int i = 0; i < 256; i++) {
                 x += vx;
                 y += vy;
                 z += vz;
+
                 int bx = (int) Math.round(x);
                 int by = (int) Math.round(y);
                 int bz = (int) Math.round(z);
+
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-                if (block != 0 && block != Constants.BLOCK_TNT && block != Constants.BLOCK_INVISIBLE) {
+
+                if (block != 0 && block != Constants.BLOCK_TNT_RED && block != Constants.BLOCK_TNT_BLUE && block != Constants.BLOCK_INVISIBLE) {
                   World.getWorld()
                       .getLevel()
                       .setBlock(
@@ -107,6 +114,7 @@ public class GrenadeCommand implements Command {
                           (int) Math.round(lastY),
                           (int) Math.round(lastZ),
                           lastBlock);
+
                   ((CTFGameMode)World.getWorld()
                       .getGameMode())
                       .explodeTNT(
@@ -129,8 +137,10 @@ public class GrenadeCommand implements Command {
                           (int) Math.round(lastY),
                           (int) Math.round(lastZ),
                           0);
-                  if (block == 0)
-                    World.getWorld().getLevel().setBlock(bx, by, bz, Constants.BLOCK_TNT);
+                  if (block == 0) {
+                      if (player.team == 0) World.getWorld().getLevel().setBlock(bx, by, bz, Constants.BLOCK_TNT_RED);
+                      else if (player.team == 1) World.getWorld().getLevel().setBlock(bx, by, bz, Constants.BLOCK_TNT_BLUE);
+                  }
                 }
                 lastX = x;
                 lastY = y;
