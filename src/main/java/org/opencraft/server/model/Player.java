@@ -651,6 +651,11 @@ public class Player extends Entity implements IPlayer {
         gameMode.bluePlayers++;
         this.team = 1;
         team = "blue";
+
+        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_BLUE, 0); // Add blue TNT to the hotbar
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 1); // Add blue TNT to the block menu
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 0); // Remove red TNT from the block menu
+
         getActionSender().sendChatMessage("- Red team is full.");
       } else {
         gameMode.redPlayers++;
@@ -668,6 +673,11 @@ public class Player extends Entity implements IPlayer {
         gameMode.redPlayers++;
         this.team = 0;
         team = "red";
+
+        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_RED, 0); // Add red TNT to the hotbar
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 1); // Add red TNT to the block menu
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 0); // Remove blue TNT from the block menu
+
         this.getActionSender().sendChatMessage("- Blue team is full.");
       } else {
         gameMode.bluePlayers++;
