@@ -41,6 +41,7 @@ import org.opencraft.server.cmd.impl.CreeperCommand;
 import org.opencraft.server.cmd.impl.GrenadeCommand;
 import org.opencraft.server.cmd.impl.LineCommand;
 import org.opencraft.server.cmd.impl.RocketCommand;
+import org.opencraft.server.cmd.impl.SmokeGrenadeCommand;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.impl.BigTNTItem;
 import org.opencraft.server.model.impl.SimpleItem;
@@ -55,11 +56,13 @@ public class Store {
   public static int grenadePrice = GameSettings.getInt("GrenadePrice");
   public static int linePrice = GameSettings.getInt("LinePrice");
   public static int creeperPrice = GameSettings.getInt("CreeperPrice");
+  public static int smokeGrenadePrice = GameSettings.getInt("SmokeGrenadePrice");
 
   private static final int creeperRecharge = 7;
   private static final int grenadeRecharge = 7;
   private static final int lineRecharge = 7;
   private static final int rocketRecharge = 10;
+  private static final int smokeGrenadeRecharge = 10;
 
   public Store() {
     addItem("BigTNT", new BigTNTItem("BigTNT", bigTNTPrice), "bigtnt");
@@ -77,6 +80,10 @@ public class Store {
         "Creeper",
         new SimpleItem("Creeper", creeperPrice, "Makes you explode", CreeperCommand.getCommand()),
         "cr");
+    addItem(
+        "SmokeGrenade",
+        new SimpleItem("SmokeGrenade", smokeGrenadePrice, "Fogs an area temporarily", SmokeGrenadeCommand.getCommand()),
+        "sg");
   }
 
   public boolean buy(Player p, String itemname) {
@@ -123,6 +130,14 @@ public class Store {
       }
     }
 
+    if (itemname == "SmokeGrenade") {
+      long smokeGrenadeCooldown = (System.currentTimeMillis() - p.smokeGrenadeTime);
+      if (smokeGrenadeCooldown < smokeGrenadeRecharge * 1000) {
+        p.getActionSender().sendChatMessage("- &ePlease wait " + (smokeGrenadeRecharge - smokeGrenadeCooldown / 1000) + "" + " seconds");
+        return false;
+      }
+    }
+
     if (!GameSettings.getBoolean("Chaos")) {
       p.subtractPoints(item.price);
       p.getActionSender().sendChatMessage("- &eYou have " + p.getPoints() + " points left");
@@ -155,6 +170,9 @@ public class Store {
     } else if (name == "Creeper") {
       item = new SimpleItem("Creeper", price, "Makes you explode", CreeperCommand.getCommand());
       command = "cr";
+    } else if (name == "SmokeGrenade") {
+      item = new SimpleItem("SmokeGrenade", price, "Fogs an area temporarily", SmokeGrenadeCommand.getCommand());
+      command = "sg";
     }
 
     items.put(name, item);

@@ -108,6 +108,7 @@ public class Player extends Entity implements IPlayer {
   public long grenadeTime;
   public long lineTime;
   public long rocketTime;
+  public long smokeGrenadeTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
   public int currentRoundPointsEarned = 0;
