@@ -117,13 +117,14 @@ public abstract class GameMode {
     registerCommand("hidden", HiddenCommand.getCommand());
     registerCommand("hide", HideCommand.getCommand());
     registerCommand("ignore", IgnoreCommand.getCommand());
+    registerCommand("importmap", ImportMapCommand.getCommand());
+    registerCommand("importprops", ImportPropsCommand.getCommand());
     registerCommand("join", JoinCommand.getCommand());
     registerCommand("k", KickCommand.getCommand());
     registerCommand("kick", KickCommand.getCommand());
     registerCommand("lava", LavaCommand.getCommand());
     registerCommand("log", LogCommand.getCommand());
     registerCommand("mapenvironment", MapEnvironmentCommand.getCommand());
-    registerCommand("mapimport", MapImportCommand.getCommand());
     registerCommand("maps", MapListCommand.getCommand());
     registerCommand("mapset", MapSetCommand.getCommand());
     registerCommand("me", MeCommand.getCommand());
