@@ -86,7 +86,7 @@ public class ImportMapCommand implements Command {
 
                       try (InputStream in = new URL(urlString).openStream()) {
                         Files.copy(in, Paths.get(path), StandardCopyOption.REPLACE_EXISTING);
-                      } catch (IOException e) { }
+                      }
 
                       player.getActionSender().sendChatMessage("&aSaved to " + path);
                       player.getActionSender().sendChatMessage("Use /newgame " + mapName + " to switch" + " to it");
