@@ -139,6 +139,7 @@ public class Player extends Entity implements IPlayer {
   private int currentRoundPoints = Constants.INITIAL_PLAYER_POINTS;
   public boolean streamerMode = false;
   public Player following = null;
+  public int followingIndex = -1;
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();

@@ -40,8 +40,12 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.World;
 import tf.jacobsc.utils.RatingKt;
 import tf.jacobsc.utils.RatingType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class POVCommand implements Command {
 
@@ -62,6 +66,71 @@ public class POVCommand implements Command {
     // Check if player using command is a spectator
     if (player.team == -1) {
       if (params.getArgumentCount() == 1) {
+        if (params.getStringArgument(0).equals("-reset")) {
+          player.following = null;
+          return;
+        }
+
+        if (params.getStringArgument(0).equals("-next")) {
+          List<Player> players = new ArrayList<>();
+
+          for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+            if (pl.team == 0 || pl.team == 1) {
+              players.add(pl);
+            }
+          }
+
+          if (players.size() == 0) {
+            return;
+          }
+
+          if (player.followingIndex >= players.size() - 1) {
+            player.followingIndex = -1;
+          }
+
+          player.followingIndex++;
+
+          Player other = players.get(player.followingIndex);
+
+          if (other != null) {
+            player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
+            player.setPosition(other.getPosition());
+            player.setRotation(other.getRotation());
+          }
+
+          return;
+        }
+
+        if (params.getStringArgument(0).equals("-back")) {
+          List<Player> players = new ArrayList<>();
+
+          for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+            if (pl.team == 0 || pl.team == 1) {
+              players.add(pl);
+            }
+          }
+
+          if (players.size() == 0) {
+            return;
+          }
+
+          if (player.followingIndex <= 0) {
+            player.followingIndex = players.size();
+          }
+
+          player.followingIndex--;
+
+          Player other = players.get(player.followingIndex);
+
+          if (other != null) {
+            player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
+            player.setPosition(other.getPosition());
+            player.setRotation(other.getRotation());
+          }
+
+          return;
+        }
+
         Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
 
         if (other != null) {
@@ -73,7 +142,10 @@ public class POVCommand implements Command {
         player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
       } else {
         player.getActionSender().sendChatMessage("Wrong number of arguments");
-        player.getActionSender().sendChatMessage("/pov <name>");
+        player.getActionSender().sendChatMessage("/pov <name> - Switches to <name>'s POV");
+        player.getActionSender().sendChatMessage("/pov -next - Switches to the next player's POV");
+        player.getActionSender().sendChatMessage("/pov -back - Switches to the last player's POV");
+        player.getActionSender().sendChatMessage("/pov -reset - Reverts back to your own POV");
       }
     } else {
       player.getActionSender().sendChatMessage("You must be a spectator to do that!");
