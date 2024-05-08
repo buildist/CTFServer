@@ -34,39 +34,49 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.opencraft.server.task.impl;
+package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.game.GameMode;
+import org.opencraft.server.cmd.Command;
+import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
-import org.opencraft.server.task.ScheduledTask;
+import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.RatingType;
 
-public class CTFProcessTask extends ScheduledTask {
+public class POVCommand implements Command {
 
-  private static final long DELAY = 100;
-  private static GameMode gameMode = World.getWorld().getGameMode();
-  private static World world = World.getWorld();
-  private static int ticks = 0;
+  /** The instance of this command. */
+  private static final POVCommand INSTANCE = new POVCommand();
 
-  public CTFProcessTask() {
-    super(DELAY);
+  /**
+   * Gets the singleton instance of this command.
+   *
+   * @return The singleton instance of this command.
+   */
+  public static POVCommand getCommand() {
+    return INSTANCE;
   }
 
-  public void execute() {
-    for (Player player : world.getPlayerList().getPlayers()) {
-      player.step(ticks);
+  @Override
+  public void execute(Player player, CommandParameters params) {
+    // Check if player using command is a spectator
+    if (player.team == -1) {
+      if (params.getArgumentCount() == 1) {
+        Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
 
-      if (player.following != null) {
-        player.getActionSender().sendTeleport(player.following.getPosition(), player.following.getRotation());
-        player.setPosition(player.following.getPosition());
-        player.setRotation(player.following.getRotation());
+        if (other != null) {
+          player.following = other;
+          return;
+        }
+
+        // Player not found
+        player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/pov <name>");
       }
-    }
-    gameMode.step();
-
-    ticks++;
-    if (ticks == 10) {
-      ticks = 0;
+    } else {
+      player.getActionSender().sendChatMessage("You must be a spectator to do that!");
     }
   }
 }
