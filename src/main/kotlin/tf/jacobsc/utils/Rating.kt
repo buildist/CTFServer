@@ -96,6 +96,10 @@ private fun rateMatch(winningTeam: Int, type: RatingType) {
         }
     }
 
+    if (winningPlayers.isEmpty() || losingPlayers.isEmpty()) {
+        return
+    }
+
     RatingSystem(type).setRatings(winningPlayers, losingPlayers)
 }
 
