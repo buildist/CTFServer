@@ -1491,7 +1491,9 @@ public class CTFGameMode extends GameMode {
             checkForStalemate();
         } else {
           gameStartTime = System.currentTimeMillis();
-          endGame();
+          if (!voting) {
+            endGame();
+          }
         }
       }
     }
