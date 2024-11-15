@@ -220,6 +220,11 @@ public class Player extends Entity implements IPlayer {
   }
 
   public boolean canSee(Player otherPlayer) {
+    // Hide spectators in tourney mode
+    if (team == -1 && otherPlayer.team == -1 && GameSettings.getBoolean("Tournament") && World.getWorld().getGameMode().tournamentGameStarted) {
+      return false;
+    }
+
     return !otherPlayer.isHidden && (otherPlayer.team != -1 || team == -1);
   }
 

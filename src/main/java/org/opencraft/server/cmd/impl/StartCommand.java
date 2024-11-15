@@ -38,6 +38,22 @@ public class StartCommand implements Command {
                   World.getWorld().getGameMode().tournamentGameStarted = true;
                   World.getWorld().getGameMode().gameStartTime = System.currentTimeMillis();
                   World.getWorld().broadcast("- &aThe game has started!");
+
+                  // Hide other spectators during tournament games for viewability
+                  for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                    if (p.team != -1) {
+                      continue;
+                    }
+
+                    for (Player other : World.getWorld().getPlayerList().getPlayers()) {
+                      // Don't hide self or non-spec players
+                      if (other == p || other.team != -1) {
+                        continue;
+                      }
+
+                      p.getActionSender().sendRemoveEntity(other); // Hide their player entity
+                    }
+                  }
                 }
               })
           .start();
