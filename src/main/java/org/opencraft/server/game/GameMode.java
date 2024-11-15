@@ -380,6 +380,7 @@ public abstract class GameMode {
               }
               clearDropItems();
               World.getWorld().clearMines();
+              World.getWorld().clearSmokeZones();
               startNewMap = null;
               blockSpawnX = (map.getSpawnPosition().getX() - 16) / 32;
               blockSpawnY = (map.getSpawnPosition().getY() - 16) / 32;

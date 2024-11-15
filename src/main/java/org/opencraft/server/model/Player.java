@@ -83,6 +83,7 @@ public class Player extends Entity implements IPlayer {
   public long lastMessageTime;
   public long lastPacketTime;
   public int heldBlock = 0;
+  public boolean isInSmokeZone = false;
   public boolean joinedDuringTournamentMode;
   public boolean muted = false;
   public boolean frozen = false;

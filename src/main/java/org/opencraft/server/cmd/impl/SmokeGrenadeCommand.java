@@ -107,7 +107,25 @@ public class SmokeGrenadeCommand implements Command {
                 int block = World.getWorld().getLevel().getBlock(bx, by, bz);
 
                 if (block != 0 && block != BlockConstants.CLOTH_DARKGRAY && block != Constants.BLOCK_INVISIBLE) {
-                  // TODO: Fog the area around the block
+                    int zones = World.getWorld().getNumberOfSmokeZones();
+                    int id = zones + 1;
+                    int radius = 8;
+                    final SmokeZone zone = new SmokeZone(bx - radius, by - radius, bz, bx + radius, by + radius, bz + radius, id);
+
+                    try {
+                        World.getWorld().addSmokeZone(zone);
+                        zone.updateDensity(255);
+                        Thread.sleep(2000);
+                        zone.updateDensity(191);
+                        Thread.sleep(2000);
+                        zone.updateDensity(127);
+                        Thread.sleep(2000);
+                        zone.updateDensity(64);
+                        Thread.sleep(2000);
+                        World.getWorld().removeSmokeZone(zone);
+                    } catch (InterruptedException ex) {
+                        World.getWorld().removeSmokeZone(zone);
+                    }
                   break;
                 } else {
                   World.getWorld()

@@ -608,7 +608,7 @@ public final class Level implements Cloneable {
     setMapColor("diffuseColor", 4);
   }
 
-  private void setMapColor(String propertyName, int id) {
+  public void setMapColor(String propertyName, int id) {
     if (props.getProperty(propertyName) != null) {
       String hexColor = props.getProperty(propertyName);
       Color color;
