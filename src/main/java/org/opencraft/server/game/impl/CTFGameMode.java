@@ -576,7 +576,19 @@ public class CTFGameMode extends GameMode {
                 }
 
                 World.getWorld()
-                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
+                    .broadcast("- " + (j + 1) + ". &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
+              }
+
+              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                int placement = getPlayerPlacement(p);
+                if (placement == -1) {
+                  p.getActionSender().sendChatMessage("- &eYou did not get any points this game.");
+                  continue;
+                }
+                
+                if (placement <= 3) continue;
+
+                p.getActionSender().sendChatMessage("- " + (placement) + ". &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
               }
 
               if (winnerID >= 0) {
