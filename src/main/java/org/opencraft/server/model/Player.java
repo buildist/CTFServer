@@ -83,6 +83,7 @@ public class Player extends Entity implements IPlayer {
   public long lastMessageTime;
   public long lastPacketTime;
   public int heldBlock = 0;
+  public boolean isInSmokeZone = false;
   public boolean joinedDuringTournamentMode;
   public boolean muted = false;
   public boolean frozen = false;
@@ -108,6 +109,7 @@ public class Player extends Entity implements IPlayer {
   public long grenadeTime;
   public long lineTime;
   public long rocketTime;
+  public long smokeGrenadeTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
   public int currentRoundPointsEarned = 0;
@@ -220,6 +222,11 @@ public class Player extends Entity implements IPlayer {
   }
 
   public boolean canSee(Player otherPlayer) {
+    // Hide spectators in tourney mode
+    if (team == -1 && otherPlayer.team == -1 && GameSettings.getBoolean("Tournament") && World.getWorld().getGameMode().tournamentGameStarted) {
+      return false;
+    }
+
     return !otherPlayer.isHidden && (otherPlayer.team != -1 || team == -1);
   }
 
@@ -653,14 +660,17 @@ public class Player extends Entity implements IPlayer {
         gameMode.bluePlayers++;
         this.team = 1;
         team = "blue";
+
+        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_BLUE, 0); // Add blue TNT to the hotbar
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 1); // Add blue TNT to the block menu
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 0); // Remove red TNT from the block menu
+
         getActionSender().sendChatMessage("- Red team is full.");
       } else {
         gameMode.redPlayers++;
         this.team = 0;
 
-        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_RED, 0); // Add red TNT to the hotbar
-        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 1); // Add red TNT to the block menu
-        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 0); // Remove blue TNT from the block menu
+
       }
     } else if (team.equals("blue")) {
       if (this.team == -1) {
@@ -670,18 +680,30 @@ public class Player extends Entity implements IPlayer {
         gameMode.redPlayers++;
         this.team = 0;
         team = "red";
+
+        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_RED, 0); // Add red TNT to the hotbar
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 1); // Add red TNT to the block menu
+        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 0); // Remove blue TNT from the block menu
+
         this.getActionSender().sendChatMessage("- Blue team is full.");
       } else {
         gameMode.bluePlayers++;
         this.team = 1;
-
-        session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_BLUE, 0); // Add blue TNT to the hotbar
-        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 1); // Add blue TNT to the block menu
-        session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 0); // Remove red TNT from the block menu
       }
     } else {
       this.team = -1;
     }
+
+    if (this.team == 0) {
+      session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_RED, 0); // Add red TNT to the hotbar
+      session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 1); // Add red TNT to the block menu
+      session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 0); // Remove blue TNT from the block menu
+    } else if (this.team == 1) {
+      session.getActionSender().sendHotbar((short) Constants.BLOCK_TNT_BLUE, 0); // Add blue TNT to the hotbar
+      session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_BLUE, 1); // Add blue TNT to the block menu
+      session.getActionSender().sendInventoryOrder((short) Constants.BLOCK_TNT_RED, 0); // Remove red TNT from the block menu
+    }
+
     DuelKt.abandonDuel(this);
     clearMines();
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {

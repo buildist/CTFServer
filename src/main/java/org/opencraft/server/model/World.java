@@ -82,6 +82,8 @@ public final class World {
   private final PlayerList playerList = new PlayerList();
 
   private ArrayList<Mine> mines = new ArrayList<>(64);
+  private ArrayList<SmokeZone> smokeZones = new ArrayList<>(64);
+
   /** The level. */
   private Level level;
   /** The game mode. */
@@ -122,6 +124,61 @@ public final class World {
 
   public Iterable<Mine> getAllMines() {
     return new ArrayList<>(mines);
+  }
+
+  public void addSmokeZone(SmokeZone z) {
+    smokeZones.add(z);
+  }
+
+  public void removeSmokeZone(SmokeZone z) {
+    smokeZones.remove(z);
+
+    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+        player.getSession().getActionSender().sendRemoveSelectionCuboid(z.id);
+
+      int minX = z.minX;
+      int minZ = z.minZ;
+      int minY = z.minY;
+
+      int maxX = z.maxX;
+      int maxZ = z.maxZ;
+      int maxY = z.maxY;
+
+      // If player is within the zone boundaries at the time of removal
+      if ((player.getPosition().getX() / 32 >= minX && player.getPosition().getX() / 32 <= maxX)
+              && (player.getPosition().getZ() / 32 >= minZ && player.getPosition().getZ() / 32 <= maxZ)
+              && (player.getPosition().getY() / 32 >= minY && player.getPosition().getY() / 32 <= maxY)) {
+        player.getActionSender().sendMapProperty(4, World.getWorld().getLevel().viewDistance);
+        player.getActionSender().sendMapColor(2, Constants.DEFAULT_COLORS[2][0], Constants.DEFAULT_COLORS[2][1], Constants.DEFAULT_COLORS[2][2]);
+
+        short[][] colors = World.getWorld().getLevel().colors;
+        if (colors[2][0] == -1) {
+          player.getActionSender().sendMapColor(2, Constants.DEFAULT_COLORS[2][0], Constants.DEFAULT_COLORS[2][1], Constants.DEFAULT_COLORS[2][2]);
+        } else {
+          player.getActionSender().sendMapColor(2, colors[2][0], colors[2][1], colors[2][2]);
+        }
+
+        player.isInSmokeZone = false;
+      }
+    }
+  }
+
+  public void clearSmokeZones() {
+    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+      for (SmokeZone z : smokeZones) {
+        player.getSession().getActionSender().sendRemoveSelectionCuboid(z.id);
+      }
+    }
+
+    smokeZones.clear();
+  }
+
+  public Iterable<SmokeZone> getAllSmokeZones() {
+    return new ArrayList<>(smokeZones);
+  }
+
+  public int getNumberOfSmokeZones() {
+    return smokeZones.size();
   }
 
   /**

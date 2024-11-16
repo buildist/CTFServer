@@ -492,7 +492,7 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
-  private void sendMapProperty(int type, int value) {
+  public void sendMapProperty(int type, int value) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(41));
     bldr.putByte("type", type);
@@ -500,7 +500,7 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
-  private void sendMapColor(int id, short r, short g, short b) {
+  public void sendMapColor(int id, short r, short g, short b) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(25));
     bldr.putByte("color", id);

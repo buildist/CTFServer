@@ -95,6 +95,9 @@ public class SetCommand implements Command {
         } else if (params.getStringArgument(0).equals("RocketPrice")) {
           int price = Integer.parseInt(params.getStringArgument(1));
           Server.getStore().updateItem("Rocket", price);
+        } else if (params.getStringArgument(0).equals("SmokeGrenadePrice")) {
+          int price = Integer.parseInt(params.getStringArgument(1));
+          Server.getStore().updateItem("SmokeGrenade", price);
         }
 
         String args = params.getStringArgument(1);

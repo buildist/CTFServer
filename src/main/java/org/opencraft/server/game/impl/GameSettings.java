@@ -43,6 +43,7 @@ public class GameSettings {
     add("GrenadePrice", TYPE_INT, 35);
     add("LinePrice", TYPE_INT, 25);
     add("RocketPrice", TYPE_INT, 60);
+    add("SmokeGrenadePrice", TYPE_INT, 50);
     add("RocketSpeed", TYPE_INT, 25);
   }
 

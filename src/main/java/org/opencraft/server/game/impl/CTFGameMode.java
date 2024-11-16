@@ -45,21 +45,8 @@ import org.opencraft.server.cmd.impl.DefuseTNTCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
 import org.opencraft.server.cmd.impl.FlamethrowerCommand;
 import org.opencraft.server.game.GameMode;
-import org.opencraft.server.model.BlockConstants;
-import org.opencraft.server.model.BlockLog;
+import org.opencraft.server.model.*;
 import org.opencraft.server.model.BlockLog.BlockInfo;
-import org.opencraft.server.model.BuildMode;
-import org.opencraft.server.model.DropItem;
-import org.opencraft.server.model.Level;
-import org.opencraft.server.model.MapController;
-import org.opencraft.server.model.MapRatings;
-import org.opencraft.server.model.Mine;
-import org.opencraft.server.model.MineActivator;
-import org.opencraft.server.model.Player;
-import org.opencraft.server.model.PlayerUI;
-import org.opencraft.server.model.Position;
-import org.opencraft.server.model.Rotation;
-import org.opencraft.server.model.World;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 
 import java.io.IOException;
@@ -589,7 +576,19 @@ public class CTFGameMode extends GameMode {
                 }
 
                 World.getWorld()
-                    .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
+                    .broadcast("- " + (j + 1) + ". &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
+              }
+
+              for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+                int placement = getPlayerPlacement(p);
+                if (placement == -1) {
+                  p.getActionSender().sendChatMessage("- &eYou did not get any points this game.");
+                  continue;
+                }
+                
+                if (placement <= 3) continue;
+
+                p.getActionSender().sendChatMessage("- " + (placement) + ". &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
               }
 
               if (winnerID >= 0) {

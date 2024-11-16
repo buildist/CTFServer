@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.net.packet.handler.impl;
 
+import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.*;
@@ -82,6 +83,45 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
 
     if (dx != 0 || dy != 0 || dz != 0) { // for AFK kick
       player.moveTime = System.currentTimeMillis();
+    }
+
+    for (SmokeZone zone : World.getWorld().getAllSmokeZones()) {
+      int minX = zone.minX;
+      int minZ = zone.minZ;
+      int minY = zone.minY;
+
+      int maxX = zone.maxX - 1;
+      int maxZ = zone.maxZ;
+      int maxY = zone.maxY - 1;
+
+      // If player is within the zone boundaries
+      if ((x / 32 >= minX && x / 32 <= maxX)
+              && (z / 32 >= minZ && z / 32 <= maxZ)
+              && (y / 32 >= minY && y / 32 <= maxY)) {
+                short fogDensity = 0;
+                if (zone.density == 255) fogDensity = 1;
+                if (zone.density == 191) fogDensity = 7;
+                if (zone.density == 127) fogDensity = 14;
+                if (zone.density == 64) fogDensity = 28;
+
+                player.getActionSender().sendMapProperty(4, fogDensity);
+                player.getActionSender().sendMapColor(2, (short)34, (short)34, (short)34);
+                player.isInSmokeZone = true;
+      } else {
+        if (player.isInSmokeZone) {
+          player.getActionSender().sendMapProperty(4, World.getWorld().getLevel().viewDistance);
+          player.getActionSender().sendMapColor(2, Constants.DEFAULT_COLORS[2][0], Constants.DEFAULT_COLORS[2][1], Constants.DEFAULT_COLORS[2][2]);
+
+          short[][] colors = World.getWorld().getLevel().colors;
+          if (colors[2][0] == -1) {
+            player.getActionSender().sendMapColor(2, Constants.DEFAULT_COLORS[2][0], Constants.DEFAULT_COLORS[2][1], Constants.DEFAULT_COLORS[2][2]);
+          } else {
+            player.getActionSender().sendMapColor(2, colors[2][0], colors[2][1], colors[2][2]);
+          }
+
+          player.isInSmokeZone = false;
+        }
+      }
     }
 
     // Kill floor

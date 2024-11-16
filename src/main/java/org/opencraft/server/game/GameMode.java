@@ -382,6 +382,7 @@ public abstract class GameMode {
               }
               clearDropItems();
               World.getWorld().clearMines();
+              World.getWorld().clearSmokeZones();
               startNewMap = null;
               blockSpawnX = (map.getSpawnPosition().getX() - 16) / 32;
               blockSpawnY = (map.getSpawnPosition().getY() - 16) / 32;
@@ -446,6 +447,33 @@ public abstract class GameMode {
     }
     return top;
   }
+
+  public int getPlayerPlacement(Player player) {
+    HashMap<Integer, Player> leaderboard = new HashMap<>(16);
+
+    // Fill the leaderboard with players who are part of a team
+    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      if (p.team != -1) {
+        leaderboard.put(p.currentRoundPointsEarned, p);
+      }
+    }
+
+    NavigableSet<Integer> set = new TreeSet<>(leaderboard.keySet());
+    Iterator<Integer> itr = set.descendingIterator();
+
+    int rank = 1;
+    while (itr.hasNext()) {
+      Player currentPlayer = leaderboard.get(itr.next());
+
+      if (currentPlayer.equals(player)) {
+        return rank;
+      }
+      rank++;
+    }
+
+    return -1; // Player is not on the leaderboard
+  }
+
 
   private void clearKillFeed() {
     synchronized (killFeed) {
