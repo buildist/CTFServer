@@ -141,6 +141,7 @@ public abstract class GameMode {
     registerCommand("players", ClientsCommand.getCommand());
     registerCommand("pm", PmCommand.getCommand());
     registerCommand("points", PointsCommand.getCommand());
+    registerCommand("pov", POVCommand.getCommand());
     registerCommand("pstats", PInfoCommand.getCommand());
     registerCommand("ragequit", RagequitCommand.getCommand());
     registerCommand("removespawn", RemoveSpawnCommand.getCommand());

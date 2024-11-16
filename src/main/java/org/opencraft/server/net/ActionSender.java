@@ -189,7 +189,22 @@ public class ActionSender {
   public void sendTeleport(Position position, Rotation rotation) {
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(8));
+
     bldr.putByte("id", -1);
+    bldr.putShort("x", position.getX());
+    bldr.putShort("y", position.getY());
+    bldr.putShort("z", position.getZ());
+    bldr.putByte("rotation", rotation.getRotation());
+    bldr.putByte("look", rotation.getLook());
+    session.send(bldr.toPacket());
+  }
+
+  public void sendExtEntityTeleport(Position position, Rotation rotation) {
+    PacketBuilder bldr =
+            new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(54));
+
+    bldr.putByte("id", 255);
+    bldr.putByte("behaviour", 0b00000111);
     bldr.putShort("x", position.getX());
     bldr.putShort("y", position.getY());
     bldr.putShort("z", position.getZ());
