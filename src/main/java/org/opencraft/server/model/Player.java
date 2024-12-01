@@ -1086,7 +1086,6 @@ public class Player extends Entity implements IPlayer {
 
   public boolean isSafe() {
     long curTime = System.currentTimeMillis();
-    boolean creeperShield = GameSettings.getBoolean("CreeperShield");
 
     return curTime - safeTime < Constants.SAFE_TIME
       || (
