@@ -46,8 +46,6 @@ import org.opencraft.server.model.World;
 
 public class CreeperCommand implements Command {
   private static final CreeperCommand INSTANCE = new CreeperCommand();
-  private static final int DELAY = 2000;
-  private static final int RADIUS = 4;
   private static final boolean LETHAL = true;
   private static final boolean TEAMKILL = true;
   private static final String NAME = "Creeper";
@@ -72,20 +70,14 @@ public class CreeperCommand implements Command {
         w.broadcast("- &esssssssSSSSSSSSS");
 
         try {
-          Thread.sleep(DELAY);
+          Thread.sleep((long)(1000 * GameSettings.getFloat("CreeperTime")));
         } catch (InterruptedException ex) {}
 
-        Position pos = player.getPosition();
-        int px = pos.getX();
-        int py = pos.getY();
-        int pz = pos.getZ();
-
-        px = (px - 16) / 32;
-        py = (py - 16) / 32;
-        pz = (pz - 16) / 32;
-
-        CTFGameMode gm = (CTFGameMode)w.getGameMode();
-        gm.explodeTNT(player, w.getLevel(), px, py, pz, RADIUS, LETHAL, TEAMKILL, false, NAME);
+        int radius = GameSettings.getInt("CreeperRadius");
+	Position pos = player.getPosition().toBlockPos();
+        ((CTFGameMode)w.getGameMode()).explodeTNT(
+	  player, w.getLevel(), pos.getX(), pos.getY(), pos.getZ(), radius, LETHAL, TEAMKILL, false, NAME
+	);
       }
     );
     
