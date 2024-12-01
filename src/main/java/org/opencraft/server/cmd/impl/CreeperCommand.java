@@ -46,6 +46,11 @@ import org.opencraft.server.model.World;
 
 public class CreeperCommand implements Command {
   private static final CreeperCommand INSTANCE = new CreeperCommand();
+  private static final int DELAY = 2000;
+  private static final int RADIUS = 4;
+  private static final boolean LETHAL = true;
+  private static final boolean TEAMKILL = true;
+  private static final String NAME = "Creeper";
 
   /**
    * Gets the singleton instance of this command.
@@ -57,21 +62,33 @@ public class CreeperCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if (GameSettings.getBoolean("Tournament")) {
-      player.getActionSender().sendChatMessage("- &e/cr is disabled during the tournament.");
-      return;
-    }
-    Position pos = player.getPosition();
-    int px = (pos.getX() - 16) / 32;
-    int py = (pos.getY() - 16) / 32;
-    int pz = ((pos.getZ() - 16) / 32);
+    Thread creeperThread;
+    creeperThread = new Thread(
+      () -> {
+        player.creeperTime = System.currentTimeMillis();
 
-    player.creeperTime = System.currentTimeMillis();
+        World w = World.getWorld();
+        w.broadcast("- " + player.parseName() + " &eisn't feeling so good...");
+        w.broadcast("- &esssssssSSSSSSSSS");
 
-    World.getWorld().broadcast("- " + player.parseName() + " &eisn't feeling so good...");
-    World.getWorld().broadcast("- &esssssssSSSSSSSSS");
-    ((CTFGameMode)World.getWorld()
-        .getGameMode())
-        .explodeTNT(player, World.getWorld().getLevel(), px, py, pz, 4, true, true, false, null);
+        try {
+          Thread.sleep(DELAY);
+        } catch (InterruptedException ex) {}
+
+        Position pos = player.getPosition();
+        int px = pos.getX();
+        int py = pos.getY();
+        int pz = pos.getZ();
+
+        px = (px - 16) / 32;
+        py = (py - 16) / 32;
+        pz = (pz - 16) / 32;
+
+        CTFGameMode gm = (CTFGameMode)w.getGameMode();
+        gm.explodeTNT(player, w.getLevel(), px, py, pz, RADIUS, LETHAL, TEAMKILL, false, NAME);
+      }
+    );
+    
+    creeperThread.start();
   }
 }
