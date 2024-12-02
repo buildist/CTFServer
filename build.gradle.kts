@@ -61,6 +61,10 @@ tasks {
         options.encoding = "UTF-8"
     }
 
+    named<JavaExec>("run") {
+        standardInput = System.`in`
+    }
+
     test {
         useJUnitPlatform()
     }
