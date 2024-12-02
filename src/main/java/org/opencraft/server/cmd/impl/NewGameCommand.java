@@ -43,6 +43,7 @@ import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import tf.jacobsc.ctf.server.StatsKt;
 
 public class NewGameCommand implements Command {
   private static final NewGameCommand INSTANCE = new NewGameCommand();
@@ -75,6 +76,12 @@ public class NewGameCommand implements Command {
           return;
         }
       }
+      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+        if (p.team != -1) {
+          p.incIntAttribute("games");
+        }
+      }
+      StatsKt.savePlayerStats(World.getWorld());
       World.getWorld().getGameMode().startGame(newMap);
     } else {
       player.getActionSender().sendChatMessage("You must be OP or VIP to do that!");

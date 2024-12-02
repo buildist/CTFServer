@@ -53,6 +53,8 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+
+import tf.jacobsc.ctf.server.StatsKt;
 import tf.jacobsc.utils.RatingKt;
 
 public class CTFGameMode extends GameMode {
@@ -623,6 +625,7 @@ public class CTFGameMode extends GameMode {
               rtvYesPlayers.clear();
               rtvNoPlayers.clear();
 
+              new Thread(() -> StatsKt.savePlayerStats(World.getWorld())).start();
               if (GameSettings.getBoolean("Tournament")) {
                 return;
               }
@@ -651,19 +654,6 @@ public class CTFGameMode extends GameMode {
                       "- &3Did you like the map you just played ("
                           + currentMap
                           + ")? Say /yes or /no followed by a reason (optional) to vote!");
-              new Thread(
-                  new Runnable() {
-                    public void run() {
-                      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-                        try {
-                          new SavePersistenceRequest(p).perform();
-                        } catch (IOException ex) {
-                        }
-                      }
-                    }
-                  })
-                  .start();
-
               Thread.sleep(40 * 1000);
 
               // Check if level has been changed with /newgame, if so, don't bother changing levels
