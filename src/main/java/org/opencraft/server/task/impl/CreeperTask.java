@@ -34,34 +34,61 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.opencraft.server.cmd.impl;
+package org.opencraft.server.task.impl;
 
-import org.opencraft.server.cmd.Command;
-import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.model.Position;
+import org.opencraft.server.model.Level;
 import org.opencraft.server.model.World;
-import org.opencraft.server.task.TaskQueue;
-import org.opencraft.server.task.impl.CreeperTask;
+import org.opencraft.server.task.ScheduledTask;
 
-public class CreeperCommand implements Command {
-  private static final CreeperCommand INSTANCE = new CreeperCommand();
+/* Does the delayed explosion for creeper item. */
+public class CreeperTask extends ScheduledTask {
+  private static final boolean LETHAL = true;
+  private static final boolean TEAMKILL = true;
+  private static final String NAME = "Creeper";
 
-  /**
-   * Gets the singleton instance of this command.
-   *
-   * @return The singleton instance of this command.
-   */
-  public static CreeperCommand getCommand() {
-    return INSTANCE;
+  private CTFGameMode ctf;
+  private Player invoker;
+  private int pastDeaths;
+  private Level level;
+
+  public CreeperTask(Player invoker, Level level) {
+    super(0);
+
+    this.ctf = (CTFGameMode)World.getWorld().getGameMode();
+    this.invoker = invoker;
+    this.pastDeaths = invoker.deaths;
+    this.level = level;
+
+    float creeperTime = GameSettings.getFloat("CreeperTime");
+    if (creeperTime > 0.0f) {
+      this.setDelay((long)(1000 * creeperTime));
+    }
   }
 
-  public void execute(Player player, CommandParameters params) {
-    player.creeperTime = System.currentTimeMillis();
+  public void execute() {
+    // Do not explode if the player died.
+    if (pastDeaths == invoker.deaths) {
+      doCreeper();
+    }
+  }
 
-    World w = World.getWorld();
-    w.broadcast("- " + player.parseName() + " &eisn't feeling so good...");
-    w.broadcast("- &esssssssSSSSSSSSS");
+  private void doCreeper() {
+    int radius = GameSettings.getInt("CreeperRadius");
+    if (radius < 0) {
+      radius = 0;
+    }
 
-    TaskQueue.getTaskQueue().schedule(new CreeperTask(player, w.getLevel()));
+    Position pos = this.invoker.getPosition().toBlockPos();
+
+    ctf.explodeTNT(
+      this.invoker, this.level, pos.getX(), pos.getY(), pos.getZ(),
+      radius, LETHAL, TEAMKILL, false, NAME
+    );
+
+    this.stop();
   }
 }
