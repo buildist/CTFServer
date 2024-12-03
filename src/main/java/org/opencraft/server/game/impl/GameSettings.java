@@ -39,7 +39,10 @@ public class GameSettings {
     add("BigTNTPrice", TYPE_INT, 70);
     add("BigTNTAmount", TYPE_INT, 7);
     add("BigTNTRadius", TYPE_INT, 3);
-    add("CreeperPrice", TYPE_INT, 40);
+    add("CreeperPrice", TYPE_INT, 30);
+    add("CreeperRadius", TYPE_INT, 4);
+    add("CreeperTime", TYPE_FLOAT, 2.0f);
+    add("CreeperShield", TYPE_BOOLEAN, false);
     add("GrenadePrice", TYPE_INT, 35);
     add("LinePrice", TYPE_INT, 25);
     add("RocketPrice", TYPE_INT, 60);
