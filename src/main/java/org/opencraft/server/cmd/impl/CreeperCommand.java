@@ -60,27 +60,45 @@ public class CreeperCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    Thread creeperThread;
-    creeperThread = new Thread(
-      () -> {
-        player.creeperTime = System.currentTimeMillis();
+    player.creeperTime = System.currentTimeMillis();
+    float creeperTimeSetting = GameSettings.getFloat("CreeperTime");
 
-        World w = World.getWorld();
-        w.broadcast("- " + player.parseName() + " &eisn't feeling so good...");
-        w.broadcast("- &esssssssSSSSSSSSS");
+    World w = World.getWorld();
+    w.broadcast("- " + player.parseName() + " &eisn't feeling so good...");
+    w.broadcast("- &esssssssSSSSSSSSS");
 
-        try {
-          Thread.sleep((long)(1000 * GameSettings.getFloat("CreeperTime")));
-        } catch (InterruptedException ex) {}
+    if (creeperTimeSetting > 0.0f) {
+      Thread creeperThread;
+      creeperThread = new Thread(
+        () -> {
+          try {
+            Thread.sleep((long)(1000 * GameSettings.getFloat("CreeperTime")));
+          } catch (InterruptedException ex) {}
 
-        int radius = GameSettings.getInt("CreeperRadius");
-	Position pos = player.getPosition().toBlockPos();
-        ((CTFGameMode)w.getGameMode()).explodeTNT(
-	  player, w.getLevel(), pos.getX(), pos.getY(), pos.getZ(), radius, LETHAL, TEAMKILL, false, NAME
-	);
+          int radius = GameSettings.getInt("CreeperRadius");
+          if (radius < 0) {
+            radius = 0;
+          }
+
+          Position pos = player.getPosition().toBlockPos();
+          World w_ = World.getWorld();
+          ((CTFGameMode)w.getGameMode()).explodeTNT(
+            player, w_.getLevel(), pos.getX(), pos.getY(), pos.getZ(), radius, LETHAL, TEAMKILL, false, NAME
+          );
+        }
+      );
+
+      creeperThread.start();
+    } else {
+      int radius = GameSettings.getInt("CreeperRadius");
+      if (radius < 0) {
+        radius = 0;
       }
-    );
-    
-    creeperThread.start();
+
+      Position pos = player.getPosition().toBlockPos();
+      ((CTFGameMode)w.getGameMode()).explodeTNT(
+        player, w.getLevel(), pos.getX(), pos.getY(), pos.getZ(), radius, LETHAL, TEAMKILL, false, NAME
+      );
+    }
   }
 }
