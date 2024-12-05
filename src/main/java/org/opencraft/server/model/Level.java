@@ -722,6 +722,9 @@ public final class Level implements Cloneable {
   }
 
   public void clearSolidBlock(int x, int y, int z) {
+    if (x < 0 || y < 0 || z < 0 || x >= width || y >= height || z >= depth) {
+      return;
+    }
     solidBlocks[x][y][z] = false;
   }
 
