@@ -715,12 +715,15 @@ public class CTFGameMode extends GameMode {
   }
 
   public void checkForStalemate() {
+    if (redFlagTaken && blueFlagTaken) {
+      antiStalemateStartTime = System.currentTimeMillis();
+    }
+
     if ((suddenDeath || GameSettings.getBoolean("AntiStalemate"))
         && redFlagTaken && blueFlagTaken) {
       World.getWorld().broadcast("- &eAnti-stalemate mode activated!");
       World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");
       antiStalemate = true;
-      antiStalemateStartTime = System.currentTimeMillis();
     }
   }
 
@@ -1489,7 +1492,7 @@ public class CTFGameMode extends GameMode {
   public void step() {
     super.step();
 
-    if (antiStalemate) {
+    if (redFlagTaken && blueFlagTaken) {
       long stalemateElapsedTime = System.currentTimeMillis() - antiStalemateStartTime;
 
       // If 90 seconds have passed, end the stalemate by making everyone drop the flag
@@ -1500,7 +1503,6 @@ public class CTFGameMode extends GameMode {
           }
         }
 
-        antiStalemate = false;
         minuteBroadcasted = false;
         thirtySecBroadcasted = false;
         tenSecBroadcasted = false;
