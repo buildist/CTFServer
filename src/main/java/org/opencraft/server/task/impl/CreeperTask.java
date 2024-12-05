@@ -52,7 +52,6 @@ public class CreeperTask extends ScheduledTask {
 
   private CTFGameMode ctf;
   private Player invoker;
-  private int pastDeaths;
   private Level level;
 
   public CreeperTask(Player invoker, Level level) {
@@ -60,7 +59,6 @@ public class CreeperTask extends ScheduledTask {
 
     this.ctf = (CTFGameMode)World.getWorld().getGameMode();
     this.invoker = invoker;
-    this.pastDeaths = invoker.deaths;
     this.level = level;
 
     float creeperTime = GameSettings.getFloat("CreeperTime");
@@ -70,10 +68,21 @@ public class CreeperTask extends ScheduledTask {
   }
 
   public void execute() {
-    // Do not explode if the player died.
-    if (pastDeaths == invoker.deaths) {
+    /* Only explode if:
+     * - the player hasn't died
+     * - the player hasn't changed teams
+     * - the player hasn't rejoined his own team
+     * - the game hasn't ended
+     * - a new game hasn't started
+     * - the player's session hasn't been unregistered */
+    if (
+      invoker.isCreepering
+        && invoker.getSession().getPlayer() != null
+    ) {
       doCreeper();
     }
+
+    this.stop();
   }
 
   private void doCreeper() {
@@ -89,6 +98,6 @@ public class CreeperTask extends ScheduledTask {
       radius, LETHAL, TEAMKILL, false, NAME
     );
 
-    this.stop();
+    invoker.isCreepering = false;
   }
 }

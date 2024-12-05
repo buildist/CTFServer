@@ -605,6 +605,7 @@ public class CTFGameMode extends GameMode {
                 player.team = -1;
                 player.hasFlag = false;
                 player.hasTNT = false;
+		player.isCreepering = false;
                 player.kills = 0;
                 player.deaths = 0;
                 player.captures = 0;

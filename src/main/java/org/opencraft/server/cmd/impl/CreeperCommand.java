@@ -57,6 +57,7 @@ public class CreeperCommand implements Command {
 
   public void execute(Player player, CommandParameters params) {
     player.creeperTime = System.currentTimeMillis();
+    player.isCreepering = true;
 
     World w = World.getWorld();
     w.broadcast("- " + player.parseName() + " &eisn't feeling so good...");

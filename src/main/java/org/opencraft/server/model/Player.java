@@ -158,6 +158,7 @@ public class Player extends Entity implements IPlayer {
   public boolean hasNominated = false;
   // STORE STUFF
   public int bigTNTRemaining = 0;
+  public boolean isCreepering = false;
 
   // Laser Tag
   private int ammo;
@@ -482,6 +483,7 @@ public class Player extends Entity implements IPlayer {
 
   public void died(Player attacker) {
     deaths++;
+    this.isCreepering = false;
     if (killstreak >= 10) {
       World.getWorld()
           .broadcast(
@@ -620,6 +622,7 @@ public class Player extends Entity implements IPlayer {
           .sendChatMessage(
               "- &aThis map was contributed by: " + World.getWorld().getLevel().getCreator());
     }
+    this.isCreepering = false;
     if (isHidden && !team.equals("spec")) {
       Server.log(getName() + " is now unhidden");
       makeVisible();

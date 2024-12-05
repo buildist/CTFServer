@@ -104,6 +104,10 @@ public class Store {
         p.getActionSender().sendChatMessage("- &ePlease wait " + (creeperRecharge - creeperCooldown / 1000) + "" + " seconds");
         return false;
       }
+      if (p.isCreepering) {
+        p.getActionSender().sendChatMessage("- &eYou need to explode before using this again!");
+        return false;
+      }
     }
 
     if (itemname == "Grenade") {
