@@ -98,17 +98,19 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
       if ((x / 32 >= minX && x / 32 <= maxX)
               && (z / 32 >= minZ && z / 32 <= maxZ)
               && (y / 32 >= minY && y / 32 <= maxY)) {
-                short fogDensity = 0;
-                if (zone.density == 255) fogDensity = 1;
-                if (zone.density == 191) fogDensity = 7;
-                if (zone.density == 127) fogDensity = 14;
-                if (zone.density == 64) fogDensity = 28;
+        if (player.team != -1) {
+          short fogDensity = 0;
+          if (zone.density == 255) fogDensity = 1;
+          if (zone.density == 191) fogDensity = 7;
+          if (zone.density == 127) fogDensity = 14;
+          if (zone.density == 64) fogDensity = 28;
 
-                player.getActionSender().sendMapProperty(4, fogDensity);
-                player.getActionSender().sendMapColor(2, (short)34, (short)34, (short)34);
-                player.isInSmokeZone = true;
+          player.getActionSender().sendMapProperty(4, fogDensity);
+          player.getActionSender().sendMapColor(2, (short) 34, (short) 34, (short) 34);
+          player.isInSmokeZone = true;
+        }
       } else {
-        if (player.isInSmokeZone) {
+        if (player.isInSmokeZone && player.team != -1) {
           player.getActionSender().sendMapProperty(4, World.getWorld().getLevel().viewDistance);
           player.getActionSender().sendMapColor(2, Constants.DEFAULT_COLORS[2][0], Constants.DEFAULT_COLORS[2][1], Constants.DEFAULT_COLORS[2][2]);
 
