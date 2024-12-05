@@ -41,6 +41,7 @@ import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.*;
 
 public class SmokeGrenadeCommand implements Command {
@@ -109,19 +110,20 @@ public class SmokeGrenadeCommand implements Command {
                 if (block != 0 && block != BlockConstants.CLOTH_DARKGRAY && block != Constants.BLOCK_INVISIBLE) {
                     int zones = World.getWorld().getNumberOfSmokeZones();
                     int id = zones + 1;
-                    int radius = 8;
+                    int radius = GameSettings.getInt("SmokeGrenadeRadius");
+                    int delay = GameSettings.getInt("SmokeGrenadeDelay");
                     final SmokeZone zone = new SmokeZone(bx - radius, by - radius, bz, bx + radius, by + radius, bz + radius, id);
 
                     try {
                         World.getWorld().addSmokeZone(zone);
                         zone.updateDensity(255);
-                        Thread.sleep(2000);
+                        Thread.sleep(delay);
                         zone.updateDensity(191);
-                        Thread.sleep(2000);
+                        Thread.sleep(delay);
                         zone.updateDensity(127);
-                        Thread.sleep(2000);
+                        Thread.sleep(delay);
                         zone.updateDensity(64);
-                        Thread.sleep(2000);
+                        Thread.sleep(delay);
                         World.getWorld().removeSmokeZone(zone);
                     } catch (InterruptedException ex) {
                         World.getWorld().removeSmokeZone(zone);
