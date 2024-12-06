@@ -22,6 +22,7 @@ public class GameSettings {
     add("OnlyTDM", TYPE_BOOLEAN, false);
     add("Debug", TYPE_BOOLEAN, false);
     add("Tournament", TYPE_BOOLEAN, false);
+    add("FlagDrops", TYPE_BOOLEAN, false);
     add("FlameThrowerStartDistanceFromPlayer", TYPE_INT, 3);
     add("FlameThrowerLength", TYPE_INT, 2);
     add("FlameThrowerRechargeTime", TYPE_INT, 30);
@@ -47,6 +48,8 @@ public class GameSettings {
     add("LinePrice", TYPE_INT, 25);
     add("RocketPrice", TYPE_INT, 60);
     add("SmokeGrenadePrice", TYPE_INT, 50);
+    add("SmokeGrenadeRadius", TYPE_INT, 8);
+    add("SmokeGrenadeDelay", TYPE_INT, 2000);
     add("RocketSpeed", TYPE_INT, 25);
   }
 

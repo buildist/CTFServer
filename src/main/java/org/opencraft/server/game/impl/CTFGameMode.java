@@ -75,7 +75,13 @@ public class CTFGameMode extends GameMode {
   public boolean blueFlagTaken = false;
 
   private boolean antiStalemate;
+  private long antiStalemateStartTime;
   private boolean suddenDeath;
+
+  // TODO: Fix millisecond shenanigans in game loop so we don't need these variables
+  private boolean minuteBroadcasted = false;
+  private boolean thirtySecBroadcasted = false;
+  private boolean tenSecBroadcasted = false;
 
   public CTFGameMode() {
     super();
@@ -700,6 +706,10 @@ public class CTFGameMode extends GameMode {
   }
 
   public void checkForStalemate() {
+    if (redFlagTaken && blueFlagTaken) {
+      antiStalemateStartTime = System.currentTimeMillis();
+    }
+
     if ((suddenDeath || GameSettings.getBoolean("AntiStalemate"))
         && redFlagTaken && blueFlagTaken) {
       World.getWorld().broadcast("- &eAnti-stalemate mode activated!");
@@ -826,6 +836,9 @@ public class CTFGameMode extends GameMode {
       }
     }
     antiStalemate = false;
+    minuteBroadcasted = false;
+    thirtySecBroadcasted = false;
+    tenSecBroadcasted = false;
   }
 
   public void dropFlag(Player p) {
@@ -1469,10 +1482,41 @@ public class CTFGameMode extends GameMode {
   @Override
   public void step() {
     super.step();
+
+    if (redFlagTaken && blueFlagTaken) {
+      long stalemateElapsedTime = System.currentTimeMillis() - antiStalemateStartTime;
+
+      // If 90 seconds have passed, end the stalemate by making everyone drop the flag
+      if (stalemateElapsedTime > 1.5 * 60 * 1000) {
+        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+          if (p.hasFlag) {
+            ((CTFGameMode) World.getWorld().getGameMode()).dropFlag(p, true, false);
+          }
+        }
+
+        minuteBroadcasted = false;
+        thirtySecBroadcasted = false;
+        tenSecBroadcasted = false;
+      } else {
+        // Show messages at 60s, 30s, and 10s remaining
+        if (!minuteBroadcasted && stalemateElapsedTime > 30 * 1000 && stalemateElapsedTime < 31 * 1000) {
+          World.getWorld().broadcast("- &e1 minute remaining until the stalemate ends!");
+          minuteBroadcasted = true;
+        } else if (!thirtySecBroadcasted && stalemateElapsedTime > 60 * 1000 && stalemateElapsedTime < 61 * 1000) {
+          World.getWorld().broadcast("- &e30 seconds remaining until the stalemate ends!");
+          thirtySecBroadcasted = true;
+        } else if (!tenSecBroadcasted && stalemateElapsedTime > 80 * 1000 && stalemateElapsedTime < 81 * 1000) {
+          World.getWorld().broadcast("- &e10 seconds remaining until the stalemate ends!");
+          tenSecBroadcasted = true;
+        }
+      }
+    }
+
     String setting = getMode() == Level.TDM ? "TDMTimeLimit" : "TimeLimit";
     int timeLimit = GameSettings.getInt(setting);
     if (timeLimit > 0) {
       long elapsedTime = System.currentTimeMillis() - gameStartTime;
+
       if (elapsedTime > timeLimit * 60 * 1000 && !suddenDeath) {
         if (getMode() == Level.CTF && redCaptures == blueCaptures) {
             World.getWorld().broadcast("- &eSudden death mode activated!");

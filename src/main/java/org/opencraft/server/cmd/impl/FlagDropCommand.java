@@ -39,6 +39,7 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
@@ -56,6 +57,11 @@ public class FlagDropCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
+    if (!GameSettings.getBoolean("FlagDrops")) {
+      player.getActionSender().sendChatMessage("Flag dropping is disabled.");
+      return;
+    }
+
     // Check if player using command is on a team
     if (player.team != -1) {
       if (player.hasFlag) {

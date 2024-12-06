@@ -59,20 +59,40 @@ public class SmokeZone {
 
       this.density = density;
 
-      player.getSession().getActionSender().sendSelectionCuboid(
-              this.id,
-              "SmokeZone" + this.id,
-              (short) minX,
-              (short) minZ,
-              (short) minY,
-              (short) maxX,
-              (short) maxZ,
-              (short) maxY,
-              (short) 36,
-              (short) 36,
-              (short) 36,
-              (short) density
-      );
+      if (player.team == -1) {
+        // Increase visibility for spectators, but also show that there is a smoke zone
+        player.getSession().getActionSender().sendSelectionCuboid(
+                this.id,
+                "SmokeZone" + this.id,
+                (short) minX,
+                (short) minZ,
+                (short) minY,
+                (short) maxX,
+                (short) maxZ,
+                (short) maxY,
+                (short) 36,
+                (short) 36,
+                (short) 36,
+                (short) 40
+        );
+      }
+
+      else {
+        player.getSession().getActionSender().sendSelectionCuboid(
+                this.id,
+                "SmokeZone" + this.id,
+                (short) minX,
+                (short) minZ,
+                (short) minY,
+                (short) maxX,
+                (short) maxZ,
+                (short) maxY,
+                (short) 36,
+                (short) 36,
+                (short) 36,
+                (short) density
+        );
+      }
     }
   }
 
