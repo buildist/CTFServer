@@ -1483,7 +1483,7 @@ public class CTFGameMode extends GameMode {
   public void step() {
     super.step();
 
-    if (redFlagTaken && blueFlagTaken) {
+    if (redFlagTaken && blueFlagTaken && GameSettings.getBoolean("AntiStalemate")) {
       long stalemateElapsedTime = System.currentTimeMillis() - antiStalemateStartTime;
 
       // If 90 seconds have passed, end the stalemate by making everyone drop the flag
