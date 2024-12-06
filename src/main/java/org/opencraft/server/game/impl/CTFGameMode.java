@@ -710,7 +710,7 @@ public class CTFGameMode extends GameMode {
       antiStalemateStartTime = System.currentTimeMillis();
     }
 
-    if ((suddenDeath || GameSettings.getBoolean("AntiStalemate"))
+    if ((suddenDeath || GameSettings.getBoolean("StalemateTags"))
         && redFlagTaken && blueFlagTaken) {
       World.getWorld().broadcast("- &eAnti-stalemate mode activated!");
       World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");

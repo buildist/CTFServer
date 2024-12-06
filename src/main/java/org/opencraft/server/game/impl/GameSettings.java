@@ -30,7 +30,8 @@ public class GameSettings {
     add("Ammo", TYPE_INT, 20); // number of shots before reloading
     add("Health", TYPE_INT, 24); // number of hits taken before having to resupply
     add("ReloadStep", TYPE_INT, 3);
-    add("AntiStalemate", TYPE_BOOLEAN, false);
+    add("AntiStalemate", TYPE_BOOLEAN, true);
+    add("StalemateTags", TYPE_BOOLEAN, false);
     add("InitialPoints", TYPE_INT, Constants.INITIAL_PLAYER_POINTS);
     add("Whitelist", TYPE_BOOLEAN, false);
     add("WhitelistMessage", TYPE_STRING, "There is a tournament going on, try again later!");
