@@ -81,8 +81,8 @@ public class CommandParameters {
    * @return The argument.
    * @throws NumberFormatException if the argument is not a double.
    */
-  public double getDoubleArgument(int pos) {
-    return Double.valueOf(args[pos]);
+  public double getDoubleArgument(int pos) throws NumberFormatException {
+    return Double.parseDouble(args[pos]);
   }
 
   /**
@@ -92,7 +92,7 @@ public class CommandParameters {
    * @return The argument.
    * @throws NumberFormatException if the argument is not an integer.
    */
-  public int getIntegerArgument(int pos) {
-    return Integer.valueOf(args[pos]);
+  public int getIntegerArgument(int pos) throws NumberFormatException {
+    return Integer.parseInt(args[pos]);
   }
 }
