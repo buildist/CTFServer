@@ -11,29 +11,6 @@ object TeamsCommand : Command {
     private var red: List<String> = emptyList()
     private var blue: List<String> = emptyList()
 
-    fun players(): List<Pair<String, String>> = (red.map { it to "red" } + blue.map { it to "blue" })
-
-    @Synchronized
-    fun save(players: List<Player>) {
-        red = players.filter { it.team == Constants.RED_TEAM }.map { it.name }
-        blue = players.filter { it.team == Constants.BLUE_TEAM }.map { it.name }
-    }
-
-    fun teamStateCheck(player: Player): Boolean {
-        if (!player.isOp && !player.isVIP) {
-            player.actionSender.sendChatMessage("You must be OP or VIP to do that!")
-            return false
-        }
-
-        if (!GameSettings.getBoolean("Tournament")) {
-            player.actionSender.sendChatMessage("Must be in tournament mode for that.")
-            return false
-        }
-
-        return true
-    }
-
-
     override fun execute(player: Player, params: CommandParameters) {
         if (!teamStateCheck(player)) return
 
@@ -54,6 +31,20 @@ object TeamsCommand : Command {
             "switch" -> switch()
             else -> player.actionSender.sendChatMessage("/teams save/restore/switch")
         }
+    }
+
+    private fun teamStateCheck(player: Player): Boolean {
+        if (!player.isOp && !player.isVIP) {
+            player.actionSender.sendChatMessage("You must be OP or VIP to do that!")
+            return false
+        }
+
+        if (!GameSettings.getBoolean("Tournament")) {
+            player.actionSender.sendChatMessage("Must be in tournament mode for that.")
+            return false
+        }
+
+        return true
     }
 
     private fun save() {
@@ -77,5 +68,13 @@ object TeamsCommand : Command {
             }
         }
         save()
+    }
+
+    private fun players(): List<Pair<String, String>> = (red.map { it to "red" } + blue.map { it to "blue" })
+
+    @Synchronized
+    fun save(players: List<Player>) {
+        red = players.filter { it.team == Constants.RED_TEAM }.map { it.name }
+        blue = players.filter { it.team == Constants.BLUE_TEAM }.map { it.name }
     }
 }
