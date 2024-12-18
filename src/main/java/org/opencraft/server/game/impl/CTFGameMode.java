@@ -162,7 +162,7 @@ public class CTFGameMode extends GameMode {
       }
     }
 
-    int n = 0;
+    ArrayList<Player> killed = new ArrayList();
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
       float pr = r + 0.5f;
@@ -178,7 +178,7 @@ public class CTFGameMode extends GameMode {
             && p.canKill(t, true)
             && !t.isHidden) {
           t.markSafe();
-          n++;
+          killed.add(t);
           p.gotKill(t);
           t.sendToTeamSpawn();
           t.died(p);
@@ -212,13 +212,13 @@ public class CTFGameMode extends GameMode {
         }
       }
     }
-    if (n == 2) {
+    if (killed.size() == 2) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bDouble Kill");
-    } else if (n == 3) {
+    } else if (killed.size() == 3) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bTriple Kill");
-    } else if (n > 3) {
-      World.getWorld().broadcast("- " + p.parseName() + " &egot a &b" + n + "x Kill");
-      for (Player t : World.getWorld().getPlayerList().getPlayers()) {
+    } else if (killed.size() > 3) {
+      World.getWorld().broadcast("- " + p.parseName() + " &egot a &b" + killed.size() + "x Kill");
+      for (Player t : killed) {
         // Brodcast multi kills greater than 3 here because they won't all show up
         // in the kill feed.
         World.getWorld()
