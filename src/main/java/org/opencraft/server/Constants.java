@@ -186,4 +186,8 @@ public final class Constants {
 
   public static final int FLAME_THROWER_FUEL = 10000;
   public static final int INITIAL_PLAYER_POINTS = 40;
+
+  public static final int SPEC_TEAM = -1;
+  public static final int RED_TEAM = 0;
+  public static final int BLUE_TEAM = 1;
 }

@@ -48,13 +48,10 @@ import org.opencraft.server.cmd.impl.FlamethrowerCommand;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.*;
 import org.opencraft.server.model.BlockLog.BlockInfo;
-import org.opencraft.server.persistence.SavePersistenceRequest;
 
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.List;
 
+import tf.jacobsc.ctf.server.StalemateKt;
 import tf.jacobsc.ctf.server.StatsKt;
 import tf.jacobsc.utils.RatingKt;
 
@@ -75,14 +72,11 @@ public class CTFGameMode extends GameMode {
   public boolean redFlagTaken = false;
   public boolean blueFlagTaken = false;
 
-  private boolean antiStalemate;
-  private long antiStalemateStartTime;
+  private boolean stalemateTags;
   private boolean suddenDeath;
 
-  // TODO: Fix millisecond shenanigans in game loop so we don't need these variables
-  private boolean minuteBroadcasted = false;
-  private boolean thirtySecBroadcasted = false;
-  private boolean tenSecBroadcasted = false;
+  private Thread antiStalemateThread = null;
+
 
   public CTFGameMode() {
     super();
@@ -163,7 +157,7 @@ public class CTFGameMode extends GameMode {
       }
     }
 
-    int n = 0;
+    ArrayList<Player> killed = new ArrayList<>();
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
       float pr = r + 0.5f;
@@ -179,7 +173,7 @@ public class CTFGameMode extends GameMode {
             && p.canKill(t, true)
             && !t.isHidden) {
           t.markSafe();
-          n++;
+          killed.add(t);
           p.gotKill(t);
           t.sendToTeamSpawn();
           t.died(p);
@@ -217,13 +211,13 @@ public class CTFGameMode extends GameMode {
     }
     World.getWorld().getLevel().setBlocks(blockChanges.build());
 
-    if (n == 2) {
+    if (killed.size() == 2) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bDouble Kill");
-    } else if (n == 3) {
+    } else if (killed.size() == 3) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bTriple Kill");
-    } else if (n > 3) {
-      World.getWorld().broadcast("- " + p.parseName() + " &egot a &b" + n + "x Kill");
-      for (Player t : World.getWorld().getPlayerList().getPlayers()) {
+    } else if (killed.size() > 3) {
+      World.getWorld().broadcast("- " + p.parseName() + " &egot a &b" + killed.size() + "x Kill");
+      for (Player t : killed) {
         // Brodcast multi kills greater than 3 here because they won't all show up
         // in the kill feed.
         World.getWorld()
@@ -464,7 +458,7 @@ public class CTFGameMode extends GameMode {
     redFlagTaken = false;
     blueFlagTaken = false;
     suddenDeath = false;
-    antiStalemate = false;
+    stalemateTags = false;
     redCaptures = 0;
     blueCaptures = 0;
 
@@ -598,7 +592,7 @@ public class CTFGameMode extends GameMode {
                   p.getActionSender().sendChatMessage("- &eYou did not get any points this game.");
                   continue;
                 }
-                
+
                 if (placement <= 3) continue;
 
                 p.getActionSender().sendChatMessage("- " + (placement) + ". &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
@@ -618,7 +612,7 @@ public class CTFGameMode extends GameMode {
                 player.team = -1;
                 player.hasFlag = false;
                 player.hasTNT = false;
-		player.isCreepering = false;
+                player.isCreepering = false;
                 player.kills = 0;
                 player.deaths = 0;
                 player.captures = 0;
@@ -711,15 +705,20 @@ public class CTFGameMode extends GameMode {
   }
 
   public void checkForStalemate() {
-    if (redFlagTaken && blueFlagTaken) {
-      antiStalemateStartTime = System.currentTimeMillis();
-    }
+    boolean stalemate = redFlagTaken && blueFlagTaken;
 
-    if ((suddenDeath || GameSettings.getBoolean("StalemateTags"))
-        && redFlagTaken && blueFlagTaken) {
+    if (stalemate) {
       World.getWorld().broadcast("- &eAnti-stalemate mode activated!");
-      World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");
-      antiStalemate = true;
+      if (GameSettings.getBoolean("AntiStalemate")) {
+        if (antiStalemateThread == null || !antiStalemateThread.isAlive()) {
+          antiStalemateThread = StalemateKt.staleMateThread(World.getWorld(), GameSettings.getInt("AntiStalemateTime"));
+        }
+      }
+
+      if (suddenDeath || GameSettings.getBoolean("StalemateTags")) {
+        World.getWorld().broadcast("- &eIf your teammate gets tagged you'll drop the flag");
+        stalemateTags = true;
+      }
     }
   }
 
@@ -840,14 +839,33 @@ public class CTFGameMode extends GameMode {
         dropFlag(p);
       }
     }
-    antiStalemate = false;
-    minuteBroadcasted = false;
-    thirtySecBroadcasted = false;
-    tenSecBroadcasted = false;
   }
 
   public void dropFlag(Player p) {
+    if (antiStalemateThread != null && antiStalemateThread.isAlive()) {
+      antiStalemateThread.interrupt();
+    }
     dropFlag(p, false, false);
+    stalemateTags = false;
+  }
+
+  public void returnDroppedBlueFlag() {
+    if (blueFlagDropped) {
+      World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, 0);
+      resetBlueFlagPos();
+      placeBlueFlag();
+      World.getWorld().broadcast("- &eThe blue flag has been returned!");
+    }
+  }
+
+  // Should only be used when the flag is not taken by a player
+  public void returnDroppedRedFlag() {
+    if (redFlagDropped) {
+      World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, 0);
+      resetRedFlagPos();
+      placeRedFlag();
+      World.getWorld().broadcast("- &eThe red flag has been returned!");
+    }
   }
 
   public void dropFlag(Player p, final boolean instant, final boolean isVoluntary) {
@@ -857,7 +875,7 @@ public class CTFGameMode extends GameMode {
       World.getWorld().broadcast("- " + p.parseName() + " dropped the flag!");
       sendAnnouncement(p.parseName() + " dropped the flag!");
       Position playerPos = p.getPosition().toBlockPos();
-      final boolean _antiStalemate = this.antiStalemate || (redFlagTaken && blueFlagTaken);
+      final boolean _antiStalemate = redFlagTaken && blueFlagTaken;
       if (p.team == 0) {
         blueFlagTaken = false;
         blueFlagDropped = true;
@@ -866,25 +884,27 @@ public class CTFGameMode extends GameMode {
         if (playerPos.getZ() > World.getWorld().getLevel().ceiling) setBlueFlagPos(playerPos.getX(), World.getWorld().getLevel().ceiling, playerPos.getY());
         else setBlueFlagPos(playerPos.getX(), playerPos.getZ() - 1, playerPos.getY());
 
-        blueFlagDroppedThread =
-            new Thread(
-                new Runnable() {
-                  @Override
-                  public void run() {
+        if (blueFlagDroppedThread != null)  {
+          blueFlagDroppedThread.interrupt();
+        }
+
+        if (instant) {
+          returnDroppedBlueFlag();
+        } else {
+          blueFlagDroppedThread =
+              new Thread(
+                  () -> {
                     try {
-                      if ((!_antiStalemate && !instant) || isVoluntary) {
+                      if (!_antiStalemate || isVoluntary) {
                         Thread.sleep(10 * 1000);
                       }
-                      World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, 0);
-                      resetBlueFlagPos();
-                      placeBlueFlag();
-                      World.getWorld().broadcast("- &eThe blue flag has been returned!");
+                      returnDroppedBlueFlag();
                     } catch (InterruptedException ex) {
                     }
-                  }
-                });
-        placeBlueFlag();
-        blueFlagDroppedThread.start();
+                  });
+          placeBlueFlag();
+          blueFlagDroppedThread.start();
+        }
       } else {
         redFlagTaken = false;
         redFlagDropped = true;
@@ -893,25 +913,27 @@ public class CTFGameMode extends GameMode {
         if (playerPos.getZ() > World.getWorld().getLevel().ceiling) setRedFlagPos(playerPos.getX(), World.getWorld().getLevel().ceiling, playerPos.getY());
         else setRedFlagPos(playerPos.getX(), playerPos.getZ() - 1, playerPos.getY());
 
-        redFlagDroppedThread =
-            new Thread(
-                new Runnable() {
-                  @Override
-                  public void run() {
+        if (redFlagDroppedThread != null && redFlagDroppedThread.isAlive())  {
+          redFlagDroppedThread.interrupt();
+        }
+
+        if (instant) {
+          returnDroppedRedFlag();
+        } else {
+          redFlagDroppedThread =
+              new Thread(
+                  () -> {
                     try {
-                      if ((!_antiStalemate && !instant) || isVoluntary) {
+                      if (!_antiStalemate || isVoluntary) {
                         Thread.sleep(10 * 1000);
                       }
-                      World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, 0);
-                      resetRedFlagPos();
-                      placeRedFlag();
-                      World.getWorld().broadcast("- &eThe red flag has been returned!");
+                      returnDroppedRedFlag();
                     } catch (InterruptedException ex) {
                     }
-                  }
-                });
-        placeRedFlag();
-        redFlagDroppedThread.start();
+                  });
+          placeRedFlag();
+          redFlagDroppedThread.start();
+        }
       }
     }
   }
@@ -1064,10 +1086,10 @@ public class CTFGameMode extends GameMode {
                 for (int cz = mz - r; cz <= mz + r; cz++) {
                   int oldBlock = level.getBlock(cx, cy, cz);
                   if (!level.isSolid(cx, cy, cz)
-                          && oldBlock != Constants.BLOCK_TNT_RED
-                          && oldBlock != Constants.BLOCK_TNT_BLUE
-                          && !(cx == blueFlagX && cz == blueFlagY && cy == blueFlagZ)
-                          && !(cx == redFlagX && cz == redFlagY && cy == redFlagZ)) {
+                      && oldBlock != Constants.BLOCK_TNT_RED
+                      && oldBlock != Constants.BLOCK_TNT_BLUE
+                      && !(cx == blueFlagX && cz == blueFlagY && cy == blueFlagZ)
+                      && !(cx == redFlagX && cz == redFlagY && cy == redFlagZ)) {
                     level.setBlock(cx, cy, cz, 0);
                   }
                 }
@@ -1138,7 +1160,7 @@ public class CTFGameMode extends GameMode {
         tagger.gotKill(tagged);
         tagged.sendToTeamSpawn();
         tagged.markSafe();
-        if (antiStalemate) {
+        if (stalemateTags) {
           tagger.incStat("stalemateTags");
           dropFlag(tagged.team);
         }
@@ -1278,7 +1300,7 @@ public class CTFGameMode extends GameMode {
           int radius = player.tntRadius;
           player.getActionSender().sendBlock(x, y, z, (short) oldType);
           explodeTNT(
-                  player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
+              player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
           player.hasTNT = false;
           player.tntX = 0;
           player.tntY = 0;
@@ -1488,35 +1510,6 @@ public class CTFGameMode extends GameMode {
   public void step() {
     super.step();
 
-    if (redFlagTaken && blueFlagTaken && GameSettings.getBoolean("AntiStalemate")) {
-      long stalemateElapsedTime = System.currentTimeMillis() - antiStalemateStartTime;
-
-      // If 90 seconds have passed, end the stalemate by making everyone drop the flag
-      if (stalemateElapsedTime > 1.5 * 60 * 1000) {
-        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-          if (p.hasFlag) {
-            ((CTFGameMode) World.getWorld().getGameMode()).dropFlag(p, true, false);
-          }
-        }
-
-        minuteBroadcasted = false;
-        thirtySecBroadcasted = false;
-        tenSecBroadcasted = false;
-      } else {
-        // Show messages at 60s, 30s, and 10s remaining
-        if (!minuteBroadcasted && stalemateElapsedTime > 30 * 1000 && stalemateElapsedTime < 31 * 1000) {
-          World.getWorld().broadcast("- &e1 minute remaining until the stalemate ends!");
-          minuteBroadcasted = true;
-        } else if (!thirtySecBroadcasted && stalemateElapsedTime > 60 * 1000 && stalemateElapsedTime < 61 * 1000) {
-          World.getWorld().broadcast("- &e30 seconds remaining until the stalemate ends!");
-          thirtySecBroadcasted = true;
-        } else if (!tenSecBroadcasted && stalemateElapsedTime > 80 * 1000 && stalemateElapsedTime < 81 * 1000) {
-          World.getWorld().broadcast("- &e10 seconds remaining until the stalemate ends!");
-          tenSecBroadcasted = true;
-        }
-      }
-    }
-
     String setting = getMode() == Level.TDM ? "TDMTimeLimit" : "TimeLimit";
     int timeLimit = GameSettings.getInt(setting);
     if (timeLimit > 0) {
@@ -1524,10 +1517,10 @@ public class CTFGameMode extends GameMode {
 
       if (elapsedTime > timeLimit * 60 * 1000 && !suddenDeath) {
         if (getMode() == Level.CTF && redCaptures == blueCaptures) {
-            World.getWorld().broadcast("- &eSudden death mode activated!");
-            World.getWorld().broadcast("- &eThe next capture will win the game.");
-            suddenDeath = true;
-            checkForStalemate();
+          World.getWorld().broadcast("- &eSudden death mode activated!");
+          World.getWorld().broadcast("- &eThe next capture will win the game.");
+          suddenDeath = true;
+          checkForStalemate();
         } else {
           gameStartTime = System.currentTimeMillis();
           if (!voting) {

@@ -22,7 +22,7 @@ public class GameSettings {
     add("OnlyTDM", TYPE_BOOLEAN, false);
     add("Debug", TYPE_BOOLEAN, false);
     add("Tournament", TYPE_BOOLEAN, false);
-    add("FlagDrops", TYPE_BOOLEAN, false);
+    add("FlagDrops", TYPE_BOOLEAN, true);
     add("FlameThrowerStartDistanceFromPlayer", TYPE_INT, 3);
     add("FlameThrowerLength", TYPE_INT, 2);
     add("FlameThrowerRechargeTime", TYPE_INT, 30);
@@ -31,6 +31,7 @@ public class GameSettings {
     add("Health", TYPE_INT, 24); // number of hits taken before having to resupply
     add("ReloadStep", TYPE_INT, 3);
     add("AntiStalemate", TYPE_BOOLEAN, true);
+    add("AntiStalemateTime", TYPE_INT, 90);
     add("StalemateTags", TYPE_BOOLEAN, false);
     add("InitialPoints", TYPE_INT, Constants.INITIAL_PLAYER_POINTS);
     add("Whitelist", TYPE_BOOLEAN, false);
