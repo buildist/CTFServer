@@ -58,6 +58,12 @@ public enum DataType {
   /** Fixed-length (1024) byte array data type. */
   BYTE_ARRAY(1024),
 
+  /** Fixed-length (256) byte array data type. */
+  BYTE_ARRAY_256(256),
+
+  /** Fixed-length (320) byte array data type. */
+  BYTE_ARRAY_320(320),
+
   /** Fixed length (64 ASCII bytes) string data type. */
   STRING(64);
 

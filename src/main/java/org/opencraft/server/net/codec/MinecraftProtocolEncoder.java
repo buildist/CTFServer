@@ -82,6 +82,16 @@ public final class MinecraftProtocolEncoder extends ProtocolEncoderAdapter {
           byte[] resized = Arrays.copyOf(data, 1024);
           buf.put(resized);
           break;
+        case BYTE_ARRAY_256:
+          byte[] data2 = packet.getByteArrayField(field.getName());
+          byte[] resized2 = Arrays.copyOf(data2, 256);
+          buf.put(resized2);
+          break;
+        case BYTE_ARRAY_320:
+          byte[] data3 = packet.getByteArrayField(field.getName());
+          byte[] resized3 = Arrays.copyOf(data3, 320);
+          buf.put(resized3);
+          break;
         case STRING:
           String str = packet.getStringField(field.getName());
           byte[] bytes = str.getBytes("Cp437");

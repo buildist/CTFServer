@@ -962,7 +962,7 @@ Z        <field>
         </field>
         <field>
           <name>blocks</name>
-          <type>BYTE_ARRAY</type>
+          <type>BYTE_ARRAY_320</type>
         </field>
       </fields>
     </packet>

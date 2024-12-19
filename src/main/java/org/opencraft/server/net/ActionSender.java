@@ -36,9 +36,11 @@
  */
 package org.opencraft.server.net;
 
+import com.google.common.collect.ImmutableList;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
+import org.opencraft.server.model.BlockChange;
 import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Level;
@@ -863,38 +865,43 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
-  public void sendBulkBlockUpdate(List<Integer> indices, List<Short> blocks) {
-    // Prepare the packet data
-    ByteBuffer buffer = ByteBuffer.allocate(5 + indices.size() * 4 + blocks.size());
-    int count = indices.size() - 1;
-    buffer.put((byte) count);
+  public void sendBlockUpdate(Level level, ImmutableList<BlockChange> blockChanges) {
+    byte[] indices = new byte[1024];
+    byte[] blocks = new byte[320];
 
-    for (int index : indices) {
-      buffer.putInt(index);
+    int i = 0;
+    int j = 0;
+    for (BlockChange blockChange : blockChanges) {
+      int index =
+          (blockChange.z * level.getHeight() + blockChange.y) * level.getWidth() + blockChange.x;
+
+      indices[i] = (byte) (index >>> 24);
+      indices[i + 1] = (byte) (index >>> 16);
+      indices[i + 2] = (byte) (index >>> 8);
+      indices[i + 3] = (byte) (index);
+      i += 4;
+
+      blocks[j] = (byte) blockChange.type;
+      j++;
     }
 
-    for (short block : blocks) {
-      buffer.put((byte) (block & 0xFF)); // Extract the lower byte as byte
+    // The high 2 bits of each block are packed into the remaining 64 bytes.
+    // See https://minecraft.wiki/w/Minecraft_Wiki:Projects/wiki.vg_merge/Classic_Protocol_Extension#Affect_on_BulkBlockUpdate
+    int k = 0;
+    for (BlockChange blockChange : blockChanges) {
+      int highBits = (blockChange.type & 0b1100000000) >>> 8;
+      int byteIndex = 256 + (k / 4);
+      int bitIndex = ((k % 4) * 2);
+      blocks[byteIndex] |= (byte) (highBits << bitIndex);
+      k++;
     }
 
-    byte[] indicesData = buffer.array();
-
-    // Construct the packet
-    PacketBuilder builder = new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(38));
-    builder.putByte("count", (byte) count);
-    builder.putByteArray("indices", indicesData);
-
-    // Trim blocks to fit 256 elements if needed
-    List<Short> trimmedBlocks = blocks.size() > 256 ? blocks.subList(0, 256) : blocks;
-    byte[] blocksData = new byte[trimmedBlocks.size()];
-
-    for (int i = 0; i < trimmedBlocks.size(); i++) {
-      blocksData[i] = (byte) (trimmedBlocks.get(i) & 0xFF); // Extract the lower byte as byte
-    }
-
-    builder.putByteArray("blocks", blocksData);
-
-    session.send(builder.toPacket());
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(38));
+    bldr.putByte("count", blockChanges.size() - 1);
+    bldr.putByteArray("indices", indices);
+    bldr.putByteArray320("blocks", blocks);
+    session.send(bldr.toPacket());
   }
 
   /**

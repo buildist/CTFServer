@@ -167,4 +167,22 @@ public final class PacketBuilder {
     values.put(name, value);
     return this;
   }
+
+  public PacketBuilder putByteArray256(String name, byte[] value) {
+    validateField(name, DataType.BYTE_ARRAY_256);
+    if (value.length > 256) {
+      throw new IllegalArgumentException("Byte array exceeds maximum length of 256 characters.");
+    }
+    values.put(name, value);
+    return this;
+  }
+
+  public PacketBuilder putByteArray320(String name, byte[] value) {
+    validateField(name, DataType.BYTE_ARRAY_320);
+    if (value.length > 320) {
+      throw new IllegalArgumentException("Byte array exceeds maximum length of 320 characters.");
+    }
+    values.put(name, value);
+    return this;
+  }
 }

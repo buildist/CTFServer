@@ -100,6 +100,12 @@ public final class MinecraftProtocolDecoder extends CumulativeProtocolDecoder {
           case BYTE_ARRAY:
             value = IoBuffer.allocate(1024).put(buffer);
             break;
+          case BYTE_ARRAY_256:
+            value = IoBuffer.allocate(256).put(buffer);
+            break;
+          case BYTE_ARRAY_320:
+            value = IoBuffer.allocate(320).put(buffer);
+            break;
           case STRING:
             byte[] bytes = new byte[64];
             buffer.get(bytes);

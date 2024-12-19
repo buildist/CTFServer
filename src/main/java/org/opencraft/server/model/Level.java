@@ -44,6 +44,7 @@ import com.flowpowered.nbt.ShortTag;
 import com.flowpowered.nbt.Tag;
 import com.flowpowered.nbt.stream.NBTInputStream;
 
+import com.google.common.collect.ImmutableList;
 import java.awt.Color;
 
 import org.opencraft.server.Server;
@@ -1031,6 +1032,33 @@ public final class Level implements Cloneable {
     setBlock(x, y, z, type, true);
   }
 
+  public void setBlocks(ImmutableList<BlockChange> blockChanges) {
+    ImmutableList.Builder<BlockChange> validatedChangesBuilder = ImmutableList.builder();
+    for (BlockChange blockChange : blockChanges) {
+      if (blockChange.x < 0 || blockChange.y < 0 || blockChange.z < 0
+          || blockChange.x >= width || blockChange.y >= height || blockChange.z >= depth) {
+        continue;
+      }
+      int formerBlock = this.getBlock(blockChange.x, blockChange.y, blockChange.z);
+      if (blockChange.type == formerBlock) {
+        continue;
+      }
+      validatedChangesBuilder.add(blockChange);
+    }
+    ImmutableList<BlockChange> validatedChanges = validatedChangesBuilder.build();
+
+    for (BlockChange blockChange : validatedChanges) {
+      setBlock(blockChange.x, blockChange.y, blockChange.z, blockChange.type, true, false);
+    }
+
+    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+      player.getActionSender().sendBlockUpdate(this, validatedChanges);
+    }
+  }
+
+  public void setBlock(int x, int y, int z, int type, boolean updateSelf) {
+    setBlock(x, y, z, type, updateSelf, true);
+  }
   /**
    * Sets a block.
    *
@@ -1040,7 +1068,7 @@ public final class Level implements Cloneable {
    * @param type The type id.
    * @param updateSelf Update self flag.
    */
-  public void setBlock(int x, int y, int z, int type, boolean updateSelf) {
+  public void setBlock(int x, int y, int z, int type, boolean updateSelf, boolean sendToPlayers) {
     if (x < 0 || y < 0 || z < 0 || x >= width || y >= height || z >= depth) {
       return;
     }
@@ -1053,7 +1081,7 @@ public final class Level implements Cloneable {
     }
     int formerBlock = this.getBlock(x, y, z);
     blocks[x][y][z] = (short) type;
-    if (type != formerBlock) {
+    if (sendToPlayers && type != formerBlock) {
       for (Player player : World.getWorld().getPlayerList().getPlayers()) {
         player.getSession().getActionSender().sendBlock(x, y, z, (short) type);
       }

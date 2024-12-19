@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.game.impl;
 
+import com.google.common.collect.ImmutableList;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
@@ -202,16 +203,20 @@ public class CTFGameMode extends GameMode {
         }
       }
     }
+
+    ImmutableList.Builder<BlockChange> blockChanges = ImmutableList.builder();
     for (int cx = x - r; cx <= x + r; cx++) {
       for (int cy = y - r; cy <= y + r; cy++) {
         for (int cz = z - r; cz <= z + r; cz++) {
           if (!isSolidBlock(level, cx, cy, cz)) {
-            level.setBlock(cx, cy, cz, 0);
+            blockChanges.add(new BlockChange(cx, cy, cz, 0));
           }
           defuseMineIfCan(p, cx, cy, cz);
         }
       }
     }
+    World.getWorld().getLevel().setBlocks(blockChanges.build());
+
     if (n == 2) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bDouble Kill");
     } else if (n == 3) {
