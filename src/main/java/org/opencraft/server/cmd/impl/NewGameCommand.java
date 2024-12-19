@@ -58,7 +58,8 @@ public class NewGameCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    if ((player.isOp()) || player.isVIP()) {
+    int totalPlayers = World.getWorld().getPlayerList().getPlayers().size();
+    if (player.isOp() || player.isVIP() || totalPlayers == 1) {
       Server.log(player.getName() + " used /newgame");
       String mapName;
       try {

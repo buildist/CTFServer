@@ -858,7 +858,6 @@ public class CTFGameMode extends GameMode {
     }
   }
 
-  // Should only be used when the flag is not taken by a player
   public void returnDroppedRedFlag() {
     if (redFlagDropped) {
       World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, 0);
