@@ -294,7 +294,7 @@ public class CTFGameMode extends GameMode {
     double x = px;
     double y = py;
     double z = pz;
-    for (int i = 0; i < Math.abs(length) + Math.abs(distance); i++) {
+    for (int i = 0; i <= Math.abs(length) + Math.abs(distance); i++) {
       int bx = (int) Math.round(x);
       int by = (int) Math.round(y);
       int bz = (int) Math.round(z);
