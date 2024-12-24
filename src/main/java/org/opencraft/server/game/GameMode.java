@@ -62,6 +62,7 @@ import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeSet;
 import tf.jacobsc.ctf.server.commands.QualityCommand;
+import tf.jacobsc.ctf.server.commands.StartCommand;
 import tf.jacobsc.ctf.server.commands.TeamsCommand;
 import tf.jacobsc.utils.DuelKt;
 import tf.jacobsc.utils.RatingKt;
@@ -74,6 +75,7 @@ public abstract class GameMode {
   public static int blockSpawnX;
   public static int blockSpawnY;
   public static int blockSpawnZ;
+  public boolean startCommandExecuted = false;
   public boolean tournamentGameStarted = false;
   public long gameStartTime = System.currentTimeMillis();
   public Level startNewMap;
@@ -159,7 +161,7 @@ public abstract class GameMode {
     registerCommand("setspawnzone", SetSpawnZoneCommand.getCommand());
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
-    registerCommand("start", StartCommand.getCommand());
+    registerCommand("start", StartCommand.INSTANCE);
     registerCommand("quality", QualityCommand.INSTANCE);
     registerCommand("teams", TeamsCommand.INSTANCE);
     registerCommand("stats", StatsCommand.getCommand());
@@ -357,6 +359,7 @@ public abstract class GameMode {
             try {
               gameStartTime = System.currentTimeMillis();
               tournamentGameStarted = !GameSettings.getBoolean("Tournament");
+              startCommandExecuted = false;
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
                 player.hasVoted = false;
