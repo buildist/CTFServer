@@ -222,6 +222,24 @@ public class Player extends Entity implements IPlayer {
     incIntAttribute(name + "MatchesCount");
   }
 
+  public void hideTntParticles() {
+    setAttribute("tntParticles", false);
+  }
+
+  public void showTntParticles() {
+    setAttribute("tntParticles", true);
+  }
+
+  public boolean shouldShowTntParticles() {
+    Object tntParticles = getAttribute("tntParticles");
+
+    if (tntParticles == null) {
+      return true;
+    }
+
+    return (boolean) tntParticles;
+  }
+
   public boolean canSee(Player otherPlayer) {
     // Hide spectators in tourney mode
     if (team == -1 && otherPlayer.team == -1 && GameSettings.getBoolean("Tournament") && World.getWorld().getGameMode().tournamentGameStarted) {

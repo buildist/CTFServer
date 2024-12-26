@@ -60,11 +60,11 @@ public class IgnoreCommand implements Command {
 
       // Custom behaviour for allowing players to toggle particles on/off
       if (name.equals("-particles")) {
-        if (!player.ignorePlayers.contains(name)) {
-          player.ignorePlayers.add(name);
+        if (player.shouldShowTntParticles()) {
+          player.hideTntParticles();
           player.getActionSender().sendChatMessage("- &eNow ignoring TNT particles. Use this command again to stop.");
         } else {
-          player.ignorePlayers.remove(name);
+          player.showTntParticles();
           player.getActionSender().sendChatMessage("- &eParticles will now show when TNT explodes.");
         }
         return;
