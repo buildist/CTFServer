@@ -36,11 +36,12 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import java.util.List;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import tf.jacobsc.utils.TopPlayersKt;
 
 public class LeaderBoardCommand implements Command {
   private static final LeaderBoardCommand INSTANCE = new LeaderBoardCommand();
@@ -66,17 +67,16 @@ public class LeaderBoardCommand implements Command {
         return;
       }
     }
-    CTFGameMode ctf = ((CTFGameMode)World.getWorld().getGameMode());
-    Player[] topPlayers = ctf.getTopPlayers(number);
+    List<Player> topPlayers = TopPlayersKt.topPlayers(World.getWorld(), number);
     player.getActionSender().sendChatMessage("- &eTop " + number + " players this round:");
-    for (int i = 0; i < number; i++) {
-      if (topPlayers[i] != null) {
+    for (int i = 0; i < topPlayers.size(); i++) {
+      if (topPlayers.get(i) != null) {
         String msg =
             (i + 1)
                 + ". "
-                + topPlayers[i].getColoredName()
+                + topPlayers.get(i).getColoredName()
                 + " &f- "
-                + topPlayers[i].currentRoundPointsEarned;
+                + topPlayers.get(i).currentRoundPointsEarned;
         player.getActionSender().sendChatMessage(msg);
       }
     }

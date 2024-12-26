@@ -432,55 +432,6 @@ public abstract class GameMode {
     }
   }
 
-  public Player[] getTopPlayers(int number) {
-    HashMap<Integer, Player> leaderboard = new HashMap<Integer, Player>(16);
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.team != -1) {
-        leaderboard.put(p.currentRoundPointsEarned, p);
-      }
-    }
-
-    NavigableSet<Integer> set = new TreeSet<Integer>(leaderboard.keySet());
-    Iterator<Integer> itr = set.descendingIterator();
-    Player[] top = new Player[number];
-    int i = 0;
-    while (itr.hasNext()) {
-      top[i] = leaderboard.get(itr.next());
-      i++;
-      if (i >= 3) {
-        break;
-      }
-    }
-    return top;
-  }
-
-  public int getPlayerPlacement(Player player) {
-    HashMap<Integer, Player> leaderboard = new HashMap<>(16);
-
-    // Fill the leaderboard with players who are part of a team
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (p.team != -1) {
-        leaderboard.put(p.currentRoundPointsEarned, p);
-      }
-    }
-
-    NavigableSet<Integer> set = new TreeSet<>(leaderboard.keySet());
-    Iterator<Integer> itr = set.descendingIterator();
-
-    int rank = 1;
-    while (itr.hasNext()) {
-      Player currentPlayer = leaderboard.get(itr.next());
-
-      if (currentPlayer.equals(player)) {
-        return rank;
-      }
-      rank++;
-    }
-
-    return -1; // Player is not on the leaderboard
-  }
-
-
   private void clearKillFeed() {
     synchronized (killFeed) {
       killFeed.clear();

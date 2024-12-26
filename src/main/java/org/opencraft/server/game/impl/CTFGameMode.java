@@ -37,6 +37,7 @@
 package org.opencraft.server.game.impl;
 
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import tf.jacobsc.ctf.server.StalemateKt;
 import tf.jacobsc.ctf.server.StatsKt;
 import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.TopPlayersKt;
 
 public class CTFGameMode extends GameMode {
 
@@ -569,15 +571,15 @@ public class CTFGameMode extends GameMode {
                 p.hasVoted = false;
                 p.hasNominated = false;
               }
-              Player[] top = getTopPlayers(3);
+              List<Player> top = TopPlayersKt.topPlayers(World.getWorld(), 3);
               World.getWorld().broadcast("- &3Top players: (&aKills&3/&cDeaths&3/&eCaps&3)");
 
-              if (top[0] == null) {
+              if (top.isEmpty()) {
                 World.getWorld().broadcast("- &3Nobody");
               }
 
-              for (int j = 0; j < 3; j++) {
-                Player p = top[j];
+              for (int j = 0; j < top.size(); j++) {
+                Player p = top.get(j);
                 if (p == null) {
                   break;
                 }
@@ -587,8 +589,8 @@ public class CTFGameMode extends GameMode {
               }
 
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-                int placement = getPlayerPlacement(p);
-                if (placement == -1) {
+                int placement = TopPlayersKt.playerPlacement(World.getWorld(), p);
+                if (placement <= 0) {
                   p.getActionSender().sendChatMessage("- &eYou did not get any points this game.");
                   continue;
                 }

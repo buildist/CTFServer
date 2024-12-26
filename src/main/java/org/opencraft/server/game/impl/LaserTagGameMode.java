@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.game.impl;
 
+import java.util.List;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
@@ -57,6 +58,7 @@ import org.opencraft.server.persistence.SavePersistenceRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import tf.jacobsc.utils.TopPlayersKt;
 
 public class LaserTagGameMode extends GameMode {
 
@@ -206,16 +208,12 @@ public class LaserTagGameMode extends GameMode {
                 p.hasVoted = false;
                 p.hasNominated = false;
               }
-              Player[] top = getTopPlayers(3);
+              List<Player> top = TopPlayersKt.topPlayers(World.getWorld(), 3);
               World.getWorld().broadcast("- &3Top players for the round:");
-              if (top[0] == null) {
+              if (top.isEmpty()) {
                 World.getWorld().broadcast("- &3Nobody");
               }
-              for (int j = 0; j < 3; j++) {
-                Player p = top[j];
-                if (p == null) {
-                  break;
-                }
+              for (Player p : top) {
                 World.getWorld()
                     .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned);
               }
