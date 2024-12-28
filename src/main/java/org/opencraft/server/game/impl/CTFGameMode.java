@@ -387,6 +387,12 @@ public class CTFGameMode extends GameMode {
 
   public void placeRedFlag() {
     if (getMode() == Level.CTF) {
+      Position redFlagPos = new Position(redFlagX, redFlagY, redFlagZ);
+      if (redFlagPos.equals(redFlagInitialPos())) {
+        if (antiStalemateThread != null && antiStalemateThread.isAlive() && antiStalemateThread.getId() != Thread.currentThread().getId()) {
+          antiStalemateThread.interrupt();
+        }
+      }
       World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, Constants.BLOCK_RED_FLAG);
       World.getWorld().getLevel().clearSolidBlock(redFlagX, redFlagZ, redFlagY);
     }
@@ -394,6 +400,13 @@ public class CTFGameMode extends GameMode {
 
   public void placeBlueFlag() {
     if (getMode() == Level.CTF) {
+      Position blueFlagPos = new Position(blueFlagX, blueFlagY, blueFlagZ);
+      if (blueFlagPos.equals(blueFlagInitialPos())) {
+        if (antiStalemateThread != null && antiStalemateThread.isAlive() && antiStalemateThread.getId() != Thread.currentThread().getId()) {
+          antiStalemateThread.interrupt();
+        }
+      }
+
       World.getWorld()
           .getLevel()
           .setBlock(blueFlagX, blueFlagZ, blueFlagY, Constants.BLOCK_BLUE_FLAG);
@@ -413,38 +426,60 @@ public class CTFGameMode extends GameMode {
     blueFlagZ = z;
   }
 
+  public Position redFlagInitialPos() {
+    if (map.props.getProperty("redFlagPosition") != null) {
+      String[] position = map.props.getProperty("redFlagPosition")
+          .replace(" ", "")
+          .split(",");
+      return new Position(
+          Integer.parseInt(position[0]),
+          Integer.parseInt(position[1]),
+          Integer.parseInt(position[2])
+      );
+    } else {
+      return new Position(
+          Integer.parseInt(map.props.getProperty("redFlagX")),
+          Integer.parseInt(map.props.getProperty("redFlagY")),
+          Integer.parseInt(map.props.getProperty("redFlagZ"))
+      );
+    }
+  }
+
+  public Position blueFlagInitialPos() {
+    if (map.props.getProperty("blueFlagPosition") != null) {
+      String[] position = map.props.getProperty("blueFlagPosition")
+          .replace(" ", "")
+          .split(",");
+      return new Position(
+          Integer.parseInt(position[0]),
+          Integer.parseInt(position[1]),
+          Integer.parseInt(position[2])
+      );
+    } else {
+      return new Position(
+          Integer.parseInt(map.props.getProperty("blueFlagX")),
+          Integer.parseInt(map.props.getProperty("blueFlagY")),
+          Integer.parseInt(map.props.getProperty("blueFlagZ"))
+      );
+    }
+  }
+
   public void resetRedFlagPos() {
     if (getMode() == Level.CTF) {
-      if (map.props.getProperty("redFlagPosition") != null) {
-        String[] position = map.props.getProperty("redFlagPosition")
-            .replace(" ", "")
-            .split(",");
-        redFlagX = Integer.parseInt(position[0]);
-        redFlagY = Integer.parseInt(position[1]);
-        redFlagZ = Integer.parseInt(position[2]);
-      } else {
-        redFlagX = Integer.parseInt(map.props.getProperty("redFlagX"));
-        redFlagY = Integer.parseInt(map.props.getProperty("redFlagY"));
-        redFlagZ = Integer.parseInt(map.props.getProperty("redFlagZ"));
-      }
+      Position p = redFlagInitialPos();
+      redFlagX = p.getX();
+      redFlagY = p.getY();
+      redFlagZ = p.getZ();
       redFlagDropped = false;
     }
   }
 
   public void resetBlueFlagPos() {
     if (getMode() == Level.CTF) {
-      if (map.props.getProperty("blueFlagPosition") != null) {
-        String[] position = map.props.getProperty("blueFlagPosition")
-            .replace(" ", "")
-            .split(",");
-        blueFlagX = Integer.parseInt(position[0]);
-        blueFlagY = Integer.parseInt(position[1]);
-        blueFlagZ = Integer.parseInt(position[2]);
-      } else {
-        blueFlagX = Integer.parseInt(map.props.getProperty("blueFlagX"));
-        blueFlagY = Integer.parseInt(map.props.getProperty("blueFlagY"));
-        blueFlagZ = Integer.parseInt(map.props.getProperty("blueFlagZ"));
-      }
+      Position p = blueFlagInitialPos();
+      blueFlagX = p.getX();
+      blueFlagY = p.getY();
+      blueFlagZ = p.getZ();
       blueFlagDropped = false;
     }
   }
@@ -846,9 +881,6 @@ public class CTFGameMode extends GameMode {
   }
 
   public void dropFlag(Player p) {
-    if (antiStalemateThread != null && antiStalemateThread.isAlive()) {
-      antiStalemateThread.interrupt();
-    }
     dropFlag(p, false, false);
     stalemateTags = false;
   }
