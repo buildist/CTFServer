@@ -320,9 +320,8 @@ public abstract class GameMode {
 
     // calculate a rating loss for them
     RatingKt.checkForTeamAbandonment(p);
-    if (GameSettings.getBoolean("Tournament") && p.team >= 0 && World.getWorld()
-        .getGameMode().tournamentGameStarted) {
-    }
+    p.clearTnt();
+    p.clearMines();
 
     WebServer.sendDiscordMessage(p.getName() + " left the game", null);
 

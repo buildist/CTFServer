@@ -50,14 +50,9 @@ object StartCommand : Command {
             val world = World.getWorld()
             if (!world.gameMode.startCommandExecuted) return@timedAnnouncer
 
-            for (other in world.playerList.players) {
-                if (other.team != Constants.SPEC_TEAM) {
-                    other.sendToTeamSpawn()
-                }
-            }
-            world.gameMode.tournamentGameStarted = true
-            world.gameMode.gameStartTime = System.currentTimeMillis()
-            world.broadcast("- &aThe game has started!")
+            world.playerList.players
+                .filter { it.team != Constants.SPEC_TEAM }
+                .forEach(Player::sendToTeamSpawn)
 
             // Hide other spectators during tournament games for viewability
             for (p in World.getWorld().playerList.players) {
@@ -74,6 +69,11 @@ object StartCommand : Command {
                     p.actionSender.sendRemoveEntity(other) // Hide their player entity
                 }
             }
+
+            Thread.sleep(250)
+            world.gameMode.tournamentGameStarted = true
+            world.gameMode.gameStartTime = System.currentTimeMillis()
+            world.broadcast("- &aThe game has started!")
         }
         World.getWorld().broadcast("- &aGame is rated. Game quality is $quality%")
     }

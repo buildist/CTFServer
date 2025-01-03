@@ -54,11 +54,7 @@ public class DefuseTNTCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
-    player.hasTNT = false;
-    World.getWorld().getLevel().setBlock(player.tntX, player.tntY, player.tntZ, 0);
-    player.tntX = 0;
-    player.tntY = 0;
-    player.tntZ = 0;
+    player.clearTnt();
     player.getActionSender().sendChatMessage("- &eTNT is no longer active!");
   }
 }

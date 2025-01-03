@@ -372,6 +372,16 @@ public class Player extends Entity implements IPlayer {
     }
   }
 
+  public void clearTnt() {
+    if (hasTNT) {
+      hasTNT = false;
+      World.getWorld().getLevel().setBlock(tntX, tntY, tntZ, 0);
+      tntX = 0;
+      tntY = 0;
+      tntZ = 0;
+    }
+  }
+
   public void ignore(Player p) {
     if (p.isOp()) {
       getActionSender().sendChatMessage("- &eYou can't ignore operators.");
@@ -727,7 +737,6 @@ public class Player extends Entity implements IPlayer {
     }
 
     DuelKt.abandonDuel(this);
-    clearMines();
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
       if (p.canSee(this)) {
         p.getActionSender().sendAddPlayer(this, p == this);
@@ -754,6 +763,8 @@ public class Player extends Entity implements IPlayer {
     Position position = getTeamSpawn();
     getActionSender().sendTeleport(position, getTeamSpawnRotation());
     setPosition(position);
+    clearMines();
+    clearTnt();
 
     if (isNewPlayer) {
       setAttribute("rules", "true");
