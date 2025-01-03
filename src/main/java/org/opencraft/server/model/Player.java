@@ -640,6 +640,7 @@ public class Player extends Entity implements IPlayer {
           .sendChatMessage(
               "- &aThis map was contributed by: " + World.getWorld().getLevel().getCreator());
     }
+    this.following = null;
     this.isCreepering = false;
     if (isHidden && !team.equals("spec")) {
       Server.log(getName() + " is now unhidden");
