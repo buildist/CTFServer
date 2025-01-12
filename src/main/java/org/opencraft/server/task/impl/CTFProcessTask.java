@@ -43,7 +43,7 @@ import org.opencraft.server.task.ScheduledTask;
 
 public class CTFProcessTask extends ScheduledTask {
 
-  private static final long DELAY = 50;
+  private static final long DELAY = 100;
   private static GameMode gameMode = World.getWorld().getGameMode();
   private static World world = World.getWorld();
   private static int ticks = 0;
