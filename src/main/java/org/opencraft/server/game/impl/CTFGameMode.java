@@ -678,7 +678,7 @@ public class CTFGameMode extends GameMode {
               // Start voting
               Level active = World.getWorld().getLevel(); // We'll retrieve this information later to cancel sending players to new level if /newgame was called
               World.getWorld().broadcast("- &aMap voting is now open for 40 seconds...");
-              World.getWorld().broadcast("- &aSay /vote [mapname] to select the next map!");
+              World.getWorld().broadcast("- &aSay 1,2,3 or /vote [mapname] to select the next map!");
               MapController.resetVotes();
               voting = true;
               int count = nominatedMaps.size();

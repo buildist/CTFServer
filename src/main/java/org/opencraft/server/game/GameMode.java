@@ -36,6 +36,7 @@
  */
 package org.opencraft.server.game;
 
+import com.google.common.collect.ImmutableList;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
@@ -496,6 +497,13 @@ public abstract class GameMode {
     }
     player.moveTime = System.currentTimeMillis();
     player.AFK = false;
+
+    if (voting && !player.hasVoted && ImmutableList.of("1", "2", "3").contains(message)) {
+      MapController.addVote(Integer.parseInt(message));
+      player.hasVoted = true;
+      return;
+    }
+
     if (player.lastMessage != null
         && message.equals(player.lastMessage)
         && System.currentTimeMillis() - player.lastMessageTime < 750) {

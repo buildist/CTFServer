@@ -87,6 +87,12 @@ public class MapController {
     return null;
   }
 
+  public static void addVote(int index) {
+    if (index >= 1 && index <= 3) {
+      addVote(voteList.get(index - 1));
+      World.getWorld().broadcast("- &aVote cast for " + voteList.get(index - 1));
+    }
+  }
   public static boolean addVote(String id) {
     if (voteList.contains(id)) {
       if (!levelVotes.containsKey(id)) {
