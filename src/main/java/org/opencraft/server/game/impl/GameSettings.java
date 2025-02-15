@@ -53,6 +53,8 @@ public class GameSettings {
     add("SmokeGrenadeRadius", TYPE_INT, 8);
     add("SmokeGrenadeDelay", TYPE_INT, 2000);
     add("RocketSpeed", TYPE_INT, 25);
+    add("IceMeltTime", TYPE_INT, 60000);
+    add("VineDecayTime", TYPE_INT, 30000);
   }
 
   public static Object get(String k) {
