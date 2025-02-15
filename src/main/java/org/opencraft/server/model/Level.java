@@ -152,6 +152,7 @@ public final class Level implements Cloneable {
   private final Queue<Position> updateQueue = new ArrayDeque<>();
 
   private final Queue<UpdateBlock> iceBlocks = new LinkedList<>();
+  private final Queue<UpdateBlock> vineBlocks = new LinkedList<>();
 
   /** Generates a level. */
   public Level() {
@@ -954,9 +955,23 @@ public final class Level implements Cloneable {
     synchronized (iceBlocks) {
       while (!iceBlocks.isEmpty()) {
         UpdateBlock block = iceBlocks.peek();
-        if (System.currentTimeMillis() - block.time > Constants.ICE_MELT_TIME) {
+        if (System.currentTimeMillis() - block.time > GameSettings.getInt("IceMeltTime")) {
           iceBlocks.remove();
           if (getBlock(block.position) == 60) {
+            setBlock(block.position, 0);
+          }
+        } else {
+          break;
+        }
+      }
+    }
+
+    synchronized (vineBlocks) {
+      while (!vineBlocks.isEmpty()) {
+        UpdateBlock block = vineBlocks.peek();
+        if (System.currentTimeMillis() - block.time > GameSettings.getInt("VineDecayTime")) {
+          vineBlocks.remove();
+          if (getBlock(block.position) == Constants.BLOCK_VINE) {
             setBlock(block.position, 0);
           }
         } else {
@@ -1104,6 +1119,12 @@ public final class Level implements Cloneable {
     synchronized (iceBlocks) {
       if (type == 60) {
         iceBlocks.add(new UpdateBlock(position, System.currentTimeMillis()));
+      }
+    }
+
+    synchronized (vineBlocks) {
+      if (type == Constants.BLOCK_VINE) {
+        vineBlocks.add(new UpdateBlock(position, System.currentTimeMillis()));
       }
     }
   }

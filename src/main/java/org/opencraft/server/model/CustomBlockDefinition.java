@@ -280,7 +280,7 @@ public class CustomBlockDefinition {
       Constants.BLOCK_VINE,
       "Vine",
       Constants.BLOCK_SOLIDITY_SWIM_THROUGH,
-      128,
+      96,
       506,
       506,
       506,

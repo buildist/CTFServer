@@ -38,6 +38,7 @@ package org.opencraft.server.model;
 
 import org.opencraft.server.cmd.impl.ActivateItemCommand;
 import org.opencraft.server.cmd.impl.CreeperCommand;
+import org.opencraft.server.cmd.impl.FuelCommand;
 import org.opencraft.server.cmd.impl.GrenadeCommand;
 import org.opencraft.server.cmd.impl.LineCommand;
 import org.opencraft.server.cmd.impl.RocketCommand;
@@ -57,6 +58,7 @@ public class Store {
   public static int linePrice = GameSettings.getInt("LinePrice");
   public static int creeperPrice = GameSettings.getInt("CreeperPrice");
   public static int smokeGrenadePrice = GameSettings.getInt("SmokeGrenadePrice");
+  public static int flamethrowerFuelPrice = GameSettings.getInt("FlameThrowerFuelPrice");
 
   private static final int creeperRecharge = 7;
   private static final int grenadeRecharge = 7;
@@ -84,6 +86,10 @@ public class Store {
         "SmokeGrenade",
         new SimpleItem("SmokeGrenade", smokeGrenadePrice, "Fogs an area temporarily", SmokeGrenadeCommand.getCommand()),
         "sg");
+    addItem(
+        "FlameThrowerFuel",
+        new SimpleItem("FlameThrowerFuel", flamethrowerFuelPrice, "Buys fuel to power the flamethrower", FuelCommand.getCommand()),
+        "ff");
   }
 
   public boolean buy(Player p, String itemname) {
@@ -134,7 +140,7 @@ public class Store {
       }
     }
 
-    if (itemname == "SmokeGrenade") {
+    if (itemname == "FlameThrowerFuel") {
       long smokeGrenadeCooldown = (System.currentTimeMillis() - p.smokeGrenadeTime);
       if (smokeGrenadeCooldown < smokeGrenadeRecharge * 1000) {
         p.getActionSender().sendChatMessage("- &ePlease wait " + (smokeGrenadeRecharge - smokeGrenadeCooldown / 1000) + "" + " seconds");
@@ -177,6 +183,9 @@ public class Store {
     } else if (name == "SmokeGrenade") {
       item = new SimpleItem("SmokeGrenade", price, "Fogs an area temporarily", SmokeGrenadeCommand.getCommand());
       command = "sg";
+    } else if (name == "FlameThrowerFuel") {
+      item = new SimpleItem("FlameThrowerFuel", price, "Buys fuel to power the flamethrower", FuelCommand.getCommand());
+      command = "ff";
     }
 
     items.put(name, item);

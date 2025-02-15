@@ -173,8 +173,6 @@ public final class Constants {
 
   public static final String[] MAP_EXTENSIONS = new String[] {"dat", "lvl", "cw"};
 
-  public static final int ICE_MELT_TIME = 60000;
-
   /** The protocol version of Minecraft that this version of OpenCraft is compatible with. */
   public static final int PROTOCOL_VERSION = 7;
 
