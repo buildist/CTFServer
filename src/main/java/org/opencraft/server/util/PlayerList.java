@@ -37,6 +37,7 @@
 package org.opencraft.server.util;
 
 import org.opencraft.server.Configuration;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 
 import java.util.Collections;
@@ -50,12 +51,8 @@ import java.util.List;
  */
 public class PlayerList {
   /** The player array. */
-  private final Player[] players =
-      new Player[Configuration.getConfiguration().getMaximumPlayers() + 1];
+  private final Player[] players = new Player[128];
 
-  private String owner = "this_doesnt_work";
-  /** The maximum number of players. */
-  private boolean ownerOnline = false;
   /** The size of the player array. */
   private int size = 0;
 
@@ -65,7 +62,7 @@ public class PlayerList {
    * @return A list of online players.
    */
   public List<Player> getPlayers() {
-    List<Player> playerList = new LinkedList<Player>();
+    List<Player> playerList = new LinkedList<>();
     for (Player p : players) {
       if (p != null) {
         playerList.add(p);
@@ -81,14 +78,15 @@ public class PlayerList {
    * @return <code>true</code> if they could be added, <code>false</code> if not.
    */
   public boolean add(Player player) {
+    if (size == GameSettings.getMaxPlayers()) {
+      return false;
+    }
     for (int i = 0; i < players.length; i++) {
-      if (player.getName().equals(owner)) i = players.length - 1;
-      if (i == players.length - 1 && !player.getName().equals(owner)) return false;
+      if (i == players.length - 1) return false;
       if (players[i] == null) {
         players[i] = player;
         player.setId(i);
-        if (!player.getName().equals(owner)) size++;
-        else ownerOnline = true;
+        size++;
         return true;
       }
     }
@@ -104,8 +102,7 @@ public class PlayerList {
     int id = player.getId();
     if (id != -1 && players[id] == player) {
       players[id] = null;
-      if (!player.getName().equals(owner)) size--;
-      else ownerOnline = false;
+      size--;
     }
     player.setId(-1);
   }
@@ -116,7 +113,7 @@ public class PlayerList {
    * @return The player list size.
    */
   public int size() {
-    return size + (ownerOnline ? 1 : 0);
+    return size;
   }
 
   @Override

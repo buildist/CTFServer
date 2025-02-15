@@ -37,6 +37,7 @@
 package org.opencraft.server;
 
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.EntityID;
 
 import java.io.FileInputStream;
@@ -59,8 +60,7 @@ public class Configuration {
 
   /** The server MOTD. */
   private String message;
-  /** The maximum allowed player count. */
-  private int maximumPlayers;
+
   /** The radius of a sponge's effectiveness. */
   private int spongeRadius;
   /** Public server flag. */
@@ -85,7 +85,6 @@ public class Configuration {
     test = Boolean.valueOf(props.getProperty("test", "false"));
     name = props.getProperty("name", "OpenCraft Server");
     message = props.getProperty("message", "http://opencraft.sf.net/");
-    maximumPlayers = Integer.valueOf(props.getProperty("max_players", "16"));
     publicServer = Boolean.valueOf(props.getProperty("public", "false"));
     verifyNames = Boolean.valueOf(props.getProperty("verify_names", "false"));
     spongeRadius = Integer.valueOf(props.getProperty("sponge_radius", "2"));
@@ -96,6 +95,7 @@ public class Configuration {
     welcomeMessage = props.getProperty("welcomeMessage");
     Constants.PORT = Integer.valueOf(props.getProperty("port"));
     Constants.WEB_PORT = Integer.valueOf(props.getProperty("webPort"));
+    GameSettings.add("MaxPlayers", GameSettings.TYPE_INT, Integer.valueOf(props.getProperty("max_players", "16")));
   }
 
   /**
@@ -160,15 +160,6 @@ public class Configuration {
    */
   public String getMessage() {
     return message;
-  }
-
-  /**
-   * Gets the maximum player count.
-   *
-   * @return The maximum player count.
-   */
-  public int getMaximumPlayers() {
-    return maximumPlayers;
   }
 
   /**

@@ -4,10 +4,10 @@ import java.util.HashMap;
 import org.opencraft.server.Constants;
 
 public class GameSettings {
-  private static final int TYPE_INT = 0;
-  private static final int TYPE_BOOLEAN = 1;
-  private static final int TYPE_STRING = 2;
-  private static final int TYPE_FLOAT = 3;
+  public static final int TYPE_INT = 0;
+  public static final int TYPE_BOOLEAN = 1;
+  public static final int TYPE_STRING = 2;
+  public static final int TYPE_FLOAT = 3;
 
   private static final HashMap<String, GameSetting> settings = new HashMap<String, GameSetting>();
 
@@ -106,7 +106,7 @@ public class GameSettings {
     }
   }
 
-  private static void add(String name, int type, Object value) {
+  public static void add(String name, int type, Object value) {
     settings.put(name, new GameSetting(name, type, value));
   }
 
@@ -131,4 +131,7 @@ public class GameSettings {
       type = t;
     }
   }
-}
+
+  public static int getMaxPlayers() {
+    return getInt("MaxPlayers");
+  }}

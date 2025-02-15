@@ -989,8 +989,7 @@ public class Player extends Entity implements IPlayer {
   }
 
   public void step(int ticks) {
-    if (World.getWorld().getPlayerList().size() >= Configuration.getConfiguration()
-        .getMaximumPlayers()) {
+    if (World.getWorld().getPlayerList().size() >= GameSettings.getMaxPlayers()) {
       if (System.currentTimeMillis() - moveTime < 100 && AFK) {
         World.getWorld().broadcast("- " + parseName() + " is no longer AFK");
         AFK = false;
