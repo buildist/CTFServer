@@ -1429,6 +1429,24 @@ public class CTFGameMode extends GameMode {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
 
+        if (player.hasTNT){
+          player.lagTNTs++;
+          player.lastTNTTime = System.currentTimeMillis();
+
+          if (player.lagTNTs == 3) {
+            player
+                .getActionSender()
+                .sendChatMessage(
+                    "- &cWARNING: You will be kicked automatically"
+                        + " if you continue to spam TNTs.");
+          } else if (player.lagTNTs == 7) {
+            player.getActionSender().sendLoginFailure("\"TNT spam\" is not allowed");
+            player.getSession().close();
+          }
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          return;
+        }
+
         // Red player places blue TNT
         if (player.team == 0 && type == Constants.BLOCK_TNT_BLUE) {
           player.getActionSender().sendChatMessage("- &eYou are not allowed to place blue TNT!");

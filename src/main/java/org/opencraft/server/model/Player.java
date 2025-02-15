@@ -80,6 +80,7 @@ public class Player extends Entity implements IPlayer {
   public String partialChatMessage = "";
   public String lastMessage;
   public String announcement = "";
+  public long lastTNTTime;
   public long lastMessageTime;
   public long lastPacketTime;
   public int heldBlock = 0;
@@ -91,6 +92,7 @@ public class Player extends Entity implements IPlayer {
   public long moveTime = 0;
   public int team = -1;
   public int outOfBoundsBlockChanges = 0;
+  public int lagTNTs = 0;
   public int placeBlock = -1;
   public boolean placeSolid = false;
   public boolean isHidden = false;
@@ -1004,6 +1006,12 @@ public class Player extends Entity implements IPlayer {
         getActionSender().sendLoginFailure("You were auto-kicked for being AFK for 60+ minutes.");
         getSession().close();
       }
+    }
+
+    // Reset lag TNT checker
+    if (lastTNTTime > 0 && System.currentTimeMillis() - lastTNTTime >= 5000) {
+      lagTNTs = 0;
+      lastTNTTime = 0;
     }
 
     World.getWorld().getGameMode().processPlayerMove(this);
