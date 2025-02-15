@@ -1037,16 +1037,19 @@ public class Player extends Entity implements IPlayer {
       }
     } else {
       if (flamethrowerFuel != (float) Constants.FLAME_THROWER_FUEL) {
-        int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
-        float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
-        long time = System.currentTimeMillis();
-        long dt = time - flamethrowerTime;
-        // Recharge rate in seconds, dt in milliseconds
-        flamethrowerFuel += rechargeRate * dt / 1000;
-        flamethrowerTime = time;
-        if (flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
-          flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-          getActionSender().sendChatMessage("- &eFlame thrower charged.");
+        if (GameSettings.getBoolean("AutoRechargeFlamethrower")) {
+          int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
+          float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
+          long time = System.currentTimeMillis();
+          long dt = time - flamethrowerTime;
+          // Recharge rate in seconds, dt in milliseconds
+          flamethrowerFuel += rechargeRate * dt / 1000;
+          flamethrowerTime = time;
+
+          if (flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
+            flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+            getActionSender().sendChatMessage("- &eFlame thrower charged.");
+          }
         }
       }
     }

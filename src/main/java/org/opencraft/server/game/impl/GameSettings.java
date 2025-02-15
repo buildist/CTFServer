@@ -26,7 +26,8 @@ public class GameSettings {
     add("FlameThrowerStartDistanceFromPlayer", TYPE_INT, 3);
     add("FlameThrowerLength", TYPE_INT, 2);
     add("FlameThrowerRechargeTime", TYPE_INT, 30);
-    add("FlameThrowerDuration", TYPE_INT, 8);
+    add("FlameThrowerDuration", TYPE_INT, 10);
+    add("AutoRechargeFlamethrower", TYPE_BOOLEAN, false);
     add("Ammo", TYPE_INT, 20); // number of shots before reloading
     add("Health", TYPE_INT, 24); // number of hits taken before having to resupply
     add("ReloadStep", TYPE_INT, 3);
@@ -47,8 +48,9 @@ public class GameSettings {
     add("CreeperTime", TYPE_FLOAT, 2.0f);
     add("CreeperShield", TYPE_BOOLEAN, false);
     add("GrenadePrice", TYPE_INT, 35);
-    add("LinePrice", TYPE_INT, 25);
+    add("LinePrice", TYPE_INT, 15);
     add("RocketPrice", TYPE_INT, 60);
+    add("FlameThrowerFuelPrice", TYPE_INT, 10);
     add("SmokeGrenadePrice", TYPE_INT, 50);
     add("SmokeGrenadeRadius", TYPE_INT, 8);
     add("SmokeGrenadeDelay", TYPE_INT, 2000);
