@@ -1429,6 +1429,24 @@ public class CTFGameMode extends GameMode {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
 
+        if (player.hasTNT){
+          player.lagTNTs++;
+          player.lastTNTTime = System.currentTimeMillis();
+
+          if (player.lagTNTs == 3) {
+            player
+                .getActionSender()
+                .sendChatMessage(
+                    "- &cWARNING: You will be kicked automatically"
+                        + " if you continue to spam TNTs.");
+          } else if (player.lagTNTs == 7) {
+            player.getActionSender().sendLoginFailure("\"TNT spam\" is not allowed");
+            player.getSession().close();
+          }
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          return;
+        }
+
         // Red player places blue TNT
         if (player.team == 0 && type == Constants.BLOCK_TNT_BLUE) {
           player.getActionSender().sendChatMessage("- &eYou are not allowed to place blue TNT!");
@@ -1516,6 +1534,30 @@ public class CTFGameMode extends GameMode {
           && !blueFlagTaken
           && !ignore) {
         player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_BLUE_FLAG);
+      } else if (type == Constants.BLOCK_VINE) {
+        // Prevent vine bridging by checking if all surrounding blocks are air
+
+        // Get surrounding block types
+        int blockBelow = level.getBlock(x, y, z - 1);
+        int blockRight = level.getBlock(x + 1, y, z);
+        int blockLeft = level.getBlock(x - 1, y, z);
+        int blockFront = level.getBlock(x, y + 1, z);
+        int blockBack = level.getBlock(x, y - 1, z);
+
+        if (blockBelow == 0) {
+          if ((blockRight == 0 || blockRight == Constants.BLOCK_VINE) &&
+              (blockLeft == 0 || blockLeft == Constants.BLOCK_VINE) &&
+              (blockFront == 0 || blockFront == Constants.BLOCK_VINE) &&
+              (blockBack == 0 || blockBack == Constants.BLOCK_VINE)) {
+            player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          } else {
+            player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_VINE);
+            level.setBlock(x, y, z, type);
+          }
+        } else {
+          player.getActionSender().sendBlock(x, y, z, (short) Constants.BLOCK_VINE);
+          level.setBlock(x, y, z, type);
+        }
       } else if (type > -1) {
         if (!ignore) {
           level.setBlock(x, y, z, (mode == 1 ? type : 0));

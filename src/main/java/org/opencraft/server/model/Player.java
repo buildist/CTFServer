@@ -80,6 +80,7 @@ public class Player extends Entity implements IPlayer {
   public String partialChatMessage = "";
   public String lastMessage;
   public String announcement = "";
+  public long lastTNTTime;
   public long lastMessageTime;
   public long lastPacketTime;
   public int heldBlock = 0;
@@ -91,6 +92,7 @@ public class Player extends Entity implements IPlayer {
   public long moveTime = 0;
   public int team = -1;
   public int outOfBoundsBlockChanges = 0;
+  public int lagTNTs = 0;
   public int placeBlock = -1;
   public boolean placeSolid = false;
   public boolean isHidden = false;
@@ -1005,6 +1007,12 @@ public class Player extends Entity implements IPlayer {
       }
     }
 
+    // Reset lag TNT checker
+    if (lastTNTTime > 0 && System.currentTimeMillis() - lastTNTTime >= 5000) {
+      lagTNTs = 0;
+      lastTNTTime = 0;
+    }
+
     World.getWorld().getGameMode().processPlayerMove(this);
     if (isFlamethrowerEnabled()) {
       int duration = GameSettings.getInt("FlameThrowerDuration");
@@ -1036,16 +1044,19 @@ public class Player extends Entity implements IPlayer {
       }
     } else {
       if (flamethrowerFuel != (float) Constants.FLAME_THROWER_FUEL) {
-        int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
-        float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
-        long time = System.currentTimeMillis();
-        long dt = time - flamethrowerTime;
-        // Recharge rate in seconds, dt in milliseconds
-        flamethrowerFuel += rechargeRate * dt / 1000;
-        flamethrowerTime = time;
-        if (flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
-          flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-          getActionSender().sendChatMessage("- &eFlame thrower charged.");
+        if (GameSettings.getBoolean("AutoRechargeFlamethrower")) {
+          int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
+          float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
+          long time = System.currentTimeMillis();
+          long dt = time - flamethrowerTime;
+          // Recharge rate in seconds, dt in milliseconds
+          flamethrowerFuel += rechargeRate * dt / 1000;
+          flamethrowerTime = time;
+
+          if (flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
+            flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+            getActionSender().sendChatMessage("- &eFlame thrower charged.");
+          }
         }
       }
     }
