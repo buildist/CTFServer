@@ -54,6 +54,11 @@ public class DiscordBot implements Runnable {
           }
         })
         .build();
+    try {
+      api.awaitReady();
+    } catch (InterruptedException ex) {
+      ex.printStackTrace();
+    }
 
     String topic = null;
     while (true) {
