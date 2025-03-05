@@ -30,7 +30,8 @@ public class DiscordBot implements Runnable {
           @Override
           public void onMessageReceived(MessageReceivedEvent event) {
             if (event.isWebhookMessage() || event.getChannel().getIdLong() != CHANNEL_ID
-                || event.getMember() == null || event.getMessage().getContentStripped().isBlank()) {
+                || event.getMember() == null || event.getMessage().getContentStripped().isBlank()
+                || event.getMember().getUser().isBot()) {
               return;
             }
             String message = event.getMessage().getContentStripped();
@@ -45,7 +46,7 @@ public class DiscordBot implements Runnable {
                 for (Player p : players) {
                   messageBuilder.append(" ").append(p.getName());
                 }
-                event.getChannel().sendMessage(messageBuilder.toString());
+                event.getChannel().sendMessage(messageBuilder.toString()).queue();
               }
               default -> World.getWorld()
                   .broadcast("&5[Discord] &f" + sanitizeDiscordInput(nickname) + ": "
@@ -73,7 +74,7 @@ public class DiscordBot implements Runnable {
         topic = "Online Players (%d): %s".formatted(count, players);
       }
       if (!topic.equals(previousTopic)) {
-        api.getChannelById(TextChannel.class, CHANNEL_ID).getManager().setTopic(topic);
+        api.getChannelById(TextChannel.class, CHANNEL_ID).getManager().setTopic(topic).queue();
       }
 
       try {
