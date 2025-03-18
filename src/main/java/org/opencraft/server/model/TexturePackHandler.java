@@ -72,24 +72,29 @@ public class TexturePackHandler {
         return;
       }
 
-      File fontFile = new File("texturepack_patch/default.png");
-      File particlesFile = new File("texturepack_patch/particles.png");
-      Image ctfTerrain = ImageIO.read(new File("texturepack_patch/ctf_terrain.png"));
-
       ZipFile in = new ZipFile(texturePackFile);
       ZipOutputStream out = new ZipOutputStream(new FileOutputStream(outputFile));
+
+      File fontFile = new File("texturepack_patch/default.png");
+      out.putNextEntry(new ZipEntry("default.png"));
+      Files.copy(fontFile.toPath(), out);
+      File particlesFile = new File("texturepack_patch/particles.png");
+      out.putNextEntry(new ZipEntry("particles.png"));
+      Files.copy(particlesFile.toPath(), out);
+      Image ctfTerrain = ImageIO.read(new File("texturepack_patch/ctf_terrain.png"));
+
       Enumeration<? extends ZipEntry> entries = in.entries();
       while (entries.hasMoreElements()) {
         ZipEntry entry = entries.nextElement();
-        out.putNextEntry(new ZipEntry(entry.getName()));
         switch (entry.getName()) {
           case "default.png":
-            Files.copy(fontFile.toPath(), out);
+            // use font file above
             break;
           case "particles.png":
-            Files.copy(particlesFile.toPath(), out);
+            // use particles file above
             break;
           case "terrain.png":
+            out.putNextEntry(new ZipEntry(entry.getName()));
             DataInputStream terrainData = new DataInputStream(in.getInputStream(entry));
             Image source = ImageIO.read(terrainData);
             BufferedImage imageData = mergeTerrain(ctfTerrain, source);
@@ -99,6 +104,7 @@ public class TexturePackHandler {
             terrainData.close();
             break;
           default:
+            out.putNextEntry(new ZipEntry(entry.getName()));
             DataInputStream dataIn = new DataInputStream(in.getInputStream(entry));
             byte[] bytes = new byte[(int) entry.getSize()];
             dataIn.readFully(bytes);
