@@ -329,7 +329,7 @@ public class CTFGameMode extends GameMode {
         Position blockPos = t.getPosition().toBlockPos();
         if (blockPos.getX() == bx
             && blockPos.getY() == by
-            && (blockPos.getZ() == bz + 1 || blockPos.getZ() == bz)
+            && (blockPos.getZ() == bz - 1 || blockPos.getZ() == bz)
             && (p.team != t.team)
             && !t.isSafe()
             && p.canKill(t, false)) {
