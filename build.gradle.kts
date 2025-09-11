@@ -4,6 +4,18 @@ plugins {
     kotlin("jvm") version libs.versions.kotlin.get()
 }
 
+val jvmVersion = 21
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(jvmVersion))
+    }
+}
+
+kotlin {
+    jvmToolchain(jvmVersion)
+}
+
 repositories {
     mavenCentral()
 }
