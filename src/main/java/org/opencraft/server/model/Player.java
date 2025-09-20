@@ -38,6 +38,7 @@ package org.opencraft.server.model;
 
 import de.gesundkrank.jskills.IPlayer;
 import de.gesundkrank.jskills.Rating;
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
@@ -83,6 +84,7 @@ public class Player extends Entity implements IPlayer {
   public long lastTNTTime;
   public long lastMessageTime;
   public long lastPacketTime;
+  public long lastQuoteTime;
   public int heldBlock = 0;
   public boolean isInSmokeZone = false;
   public boolean joinedDuringTournamentMode;
