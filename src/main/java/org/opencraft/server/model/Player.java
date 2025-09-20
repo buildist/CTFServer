@@ -429,11 +429,13 @@ public class Player extends Entity implements IPlayer {
   }
 
   public void disableFlameThrower() {
-    if (this.linePosition != null) {
-      World.getWorld().getLevel().clearFire(this, this.linePosition, this.lineRotation);
+    if (flamethrowerEnabled) {
+      if (this.linePosition != null) {
+        World.getWorld().getLevel().clearFire(this, this.linePosition, this.lineRotation);
+      }
+      this.flamethrowerEnabled = false;
+      this.getActionSender().sendChatMessage("- &eFlame thrower disabled.");
     }
-    this.flamethrowerEnabled = false;
-    this.getActionSender().sendChatMessage("- &eFlame thrower disabled.");
   }
 
   public boolean isFlamethrowerEnabled() {

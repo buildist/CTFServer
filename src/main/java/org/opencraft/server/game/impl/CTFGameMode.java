@@ -735,6 +735,7 @@ public class CTFGameMode extends GameMode {
       unblockSpawnZones(player);
       World.getWorld().broadcast("- " + player.parseName() + " dropped the flag!");
     }
+    player.disableFlameThrower();
   }
 
   public void checkForStalemate() {
