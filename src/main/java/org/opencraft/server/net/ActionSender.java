@@ -865,6 +865,22 @@ public class ActionSender {
     session.send(bldr.toPacket());
   }
 
+  public void sendCinematicGui(int hideCrosshair, int hideHotbar, int hideHand, int r, int g, int b, int alpha, int apertureSize) {
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(56));
+
+    bldr.putByte("id", -1);
+    bldr.putByte("hide_crosshair", hideCrosshair);
+    bldr.putByte("hide_hotbar", hideHotbar);
+    bldr.putByte("hide_hand", hideHand);
+    bldr.putByte("r", r);
+    bldr.putByte("g", g);
+    bldr.putByte("b", b);
+    bldr.putByte("alpha", alpha);
+    bldr.putShort("aperture_size", apertureSize);
+    session.send(bldr.toPacket());
+  }
+
   public void sendBlockUpdate(Level level, ImmutableList<BlockChange> blockChanges) {
     byte[] indices = new byte[1024];
     byte[] blocks = new byte[320];

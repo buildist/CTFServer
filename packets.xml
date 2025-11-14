@@ -1216,5 +1216,47 @@ Z        <field>
               </field>
           </fields>
       </packet>
+      <packet>
+          <opcode>56</opcode>
+          <name>cinematic_gui</name>
+          <fields>
+              <field>
+                  <name>id</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>hide_crosshair</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>hide_hotbar</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>hide_hand</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>r</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>g</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>b</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>opacity</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>aperture_size</name>
+                  <type>SHORT</type>
+              </field>
+          </fields>
+      </packet>
   </outgoing>
 </packets>

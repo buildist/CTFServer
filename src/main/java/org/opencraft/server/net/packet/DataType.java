@@ -46,6 +46,9 @@ public enum DataType {
   /** Standard byte data type. */
   BYTE(1),
 
+  /** Standard boolean data type. */
+  BOOLEAN(1),
+
   /** Standard short data type. */
   SHORT(2),
 
