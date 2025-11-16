@@ -36,6 +36,8 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import java.time.Duration;
+import java.time.Instant;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
@@ -76,6 +78,11 @@ public class QuoteCommand implements Command {
     if (player.muted) return;
 
     if (params.getArgumentCount() == 0) {
+      long currentTime = System.currentTimeMillis();
+      if ((currentTime - player.lastQuoteTime) < 15_000L ) {
+        return;
+      }
+      player.lastQuoteTime = currentTime;
       String quote = quotes.get((int) (Math.random() * quotes.size()));
       World.getWorld().broadcast(">> &3" + quote);
     } else {

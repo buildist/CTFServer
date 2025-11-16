@@ -70,7 +70,7 @@ public class HeartbeatTask extends ScheduledTask {
     final int players = World.getWorld().getPlayerList().size();
     final Map<String, String> parameters = new HashMap<>();
     parameters.put("users", String.valueOf(players));
-    parameters.put("max", String.valueOf(Configuration.getConfiguration().getMaximumPlayers()));
+    parameters.put("max", String.valueOf(GameSettings.getMaxPlayers()));
     parameters.put("public", String.valueOf(Configuration.getConfiguration().isPublicServer()));
     parameters.put("port", String.valueOf(Constants.PORT));
     parameters.put("salt", String.valueOf(HeartbeatManager.getHeartbeatManager().getSalt()));

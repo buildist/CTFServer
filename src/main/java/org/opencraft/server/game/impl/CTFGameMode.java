@@ -38,6 +38,7 @@ package org.opencraft.server.game.impl;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import kotlin.Pair;
 import org.opencraft.server.Configuration;
 import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
@@ -52,6 +53,7 @@ import org.opencraft.server.model.BlockLog.BlockInfo;
 
 import java.util.ArrayList;
 
+import tf.jacobsc.ctf.server.FlameTickRecord;
 import tf.jacobsc.ctf.server.StalemateKt;
 import tf.jacobsc.ctf.server.StatsKt;
 import tf.jacobsc.utils.RatingKt;
@@ -79,6 +81,7 @@ public class CTFGameMode extends GameMode {
 
   private Thread antiStalemateThread = null;
 
+  public FlameTickRecord flameTickKillRecord = new FlameTickRecord();
 
   public CTFGameMode() {
     super();
@@ -326,20 +329,11 @@ public class CTFGameMode extends GameMode {
         Position blockPos = t.getPosition().toBlockPos();
         if (blockPos.getX() == bx
             && blockPos.getY() == by
-            && (blockPos.getZ() == bz + 1 || blockPos.getZ() == bz)
+            && (blockPos.getZ() == bz - 1 || blockPos.getZ() == bz)
             && (p.team != t.team)
             && !t.isSafe()
             && p.canKill(t, false)) {
-          p.gotKill(t);
-          t.sendToTeamSpawn();
-          t.markSafe();
-          t.died(p);
-          updateKillFeed(p, t, p.parseName() + " cooked " + t.getColoredName());
-          checkFirstBlood(p, t);
-          p.addPoints(5);
-          if (t.hasFlag) {
-            dropFlag(t.team);
-          }
+          flameTickKillRecord.addFlameKill(p, t);
         }
       }
 
@@ -741,6 +735,7 @@ public class CTFGameMode extends GameMode {
       unblockSpawnZones(player);
       World.getWorld().broadcast("- " + player.parseName() + " dropped the flag!");
     }
+    player.disableFlameThrower();
   }
 
   public void checkForStalemate() {
@@ -1429,6 +1424,24 @@ public class CTFGameMode extends GameMode {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
 
+        if (player.hasTNT && z < ((player.getPosition().getZ() / 32) - 1)) {
+          player.lagTNTs++;
+          player.lastTNTTime = System.currentTimeMillis();
+
+          if (player.lagTNTs == 3) {
+            player
+                .getActionSender()
+                .sendChatMessage(
+                    "- &cWARNING: You will be kicked automatically"
+                        + " if you continue to spam TNTs.");
+          } else if (player.lagTNTs == 5) {
+            player.getActionSender().sendLoginFailure("\"TNT spam\" is not allowed");
+            player.getSession().close();
+          }
+          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          return;
+        }
+
         // Red player places blue TNT
         if (player.team == 0 && type == Constants.BLOCK_TNT_BLUE) {
           player.getActionSender().sendChatMessage("- &eYou are not allowed to place blue TNT!");
@@ -1544,6 +1557,27 @@ public class CTFGameMode extends GameMode {
   @Override
   public void step() {
     super.step();
+
+    List<Pair<Player, Player>> flameKills = flameTickKillRecord.getFlameKills();
+    for (Pair<Player, Player> pair : flameKills) {
+      Player p = pair.getFirst();
+      Player t = pair.getSecond();
+
+      p.gotKill(t);
+      t.sendToTeamSpawn();
+      t.markSafe();
+      t.died(p);
+      updateKillFeed(p, t, p.parseName() + " cooked " + t.getColoredName());
+      if (flameKills.size() == 1) {
+        // No first blood awarded in case of tie kills
+        checkFirstBlood(p, t);
+      }
+      p.addPoints(5);
+      if (t.hasFlag) {
+        dropFlag(t.team);
+      }
+    }
+    flameTickKillRecord.clear();
 
     String setting = getMode() == Level.TDM ? "TDMTimeLimit" : "TimeLimit";
     int timeLimit = GameSettings.getInt(setting);

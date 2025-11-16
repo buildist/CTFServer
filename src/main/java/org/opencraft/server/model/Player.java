@@ -38,6 +38,7 @@ package org.opencraft.server.model;
 
 import de.gesundkrank.jskills.IPlayer;
 import de.gesundkrank.jskills.Rating;
+import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
@@ -80,8 +81,10 @@ public class Player extends Entity implements IPlayer {
   public String partialChatMessage = "";
   public String lastMessage;
   public String announcement = "";
+  public long lastTNTTime;
   public long lastMessageTime;
   public long lastPacketTime;
+  public long lastQuoteTime;
   public int heldBlock = 0;
   public boolean isInSmokeZone = false;
   public boolean joinedDuringTournamentMode;
@@ -91,6 +94,7 @@ public class Player extends Entity implements IPlayer {
   public long moveTime = 0;
   public int team = -1;
   public int outOfBoundsBlockChanges = 0;
+  public int lagTNTs = 0;
   public int placeBlock = -1;
   public boolean placeSolid = false;
   public boolean isHidden = false;
@@ -427,9 +431,13 @@ public class Player extends Entity implements IPlayer {
   }
 
   public void disableFlameThrower() {
-    World.getWorld().getLevel().clearFire(this, this.linePosition, this.lineRotation);
-    this.flamethrowerEnabled = false;
-    this.getActionSender().sendChatMessage("- &eFlame thrower disabled.");
+    if (flamethrowerEnabled) {
+      if (this.linePosition != null) {
+        World.getWorld().getLevel().clearFire(this, this.linePosition, this.lineRotation);
+      }
+      this.flamethrowerEnabled = false;
+      this.getActionSender().sendChatMessage("- &eFlame thrower disabled.");
+    }
   }
 
   public boolean isFlamethrowerEnabled() {
@@ -989,8 +997,7 @@ public class Player extends Entity implements IPlayer {
   }
 
   public void step(int ticks) {
-    if (World.getWorld().getPlayerList().size() >= Configuration.getConfiguration()
-        .getMaximumPlayers()) {
+    if (World.getWorld().getPlayerList().size() >= GameSettings.getMaxPlayers()) {
       if (System.currentTimeMillis() - moveTime < 100 && AFK) {
         World.getWorld().broadcast("- " + parseName() + " is no longer AFK");
         AFK = false;
@@ -1004,6 +1011,12 @@ public class Player extends Entity implements IPlayer {
         getActionSender().sendLoginFailure("You were auto-kicked for being AFK for 60+ minutes.");
         getSession().close();
       }
+    }
+
+    // Reset lag TNT checker
+    if (lastTNTTime > 0 && System.currentTimeMillis() - lastTNTTime >= 5000) {
+      lagTNTs = 0;
+      lastTNTTime = 0;
     }
 
     World.getWorld().getGameMode().processPlayerMove(this);
@@ -1037,16 +1050,19 @@ public class Player extends Entity implements IPlayer {
       }
     } else {
       if (flamethrowerFuel != (float) Constants.FLAME_THROWER_FUEL) {
-        int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
-        float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
-        long time = System.currentTimeMillis();
-        long dt = time - flamethrowerTime;
-        // Recharge rate in seconds, dt in milliseconds
-        flamethrowerFuel += rechargeRate * dt / 1000;
-        flamethrowerTime = time;
-        if (flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
-          flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
-          getActionSender().sendChatMessage("- &eFlame thrower charged.");
+        if (GameSettings.getBoolean("AutoRechargeFlamethrower")) {
+          int chargeTime = GameSettings.getInt("FlameThrowerRechargeTime");
+          float rechargeRate = (float) Constants.FLAME_THROWER_FUEL / chargeTime;
+          long time = System.currentTimeMillis();
+          long dt = time - flamethrowerTime;
+          // Recharge rate in seconds, dt in milliseconds
+          flamethrowerFuel += rechargeRate * dt / 1000;
+          flamethrowerTime = time;
+
+          if (flamethrowerFuel >= Constants.FLAME_THROWER_FUEL) {
+            flamethrowerFuel = Constants.FLAME_THROWER_FUEL;
+            getActionSender().sendChatMessage("- &eFlame thrower charged.");
+          }
         }
       }
     }

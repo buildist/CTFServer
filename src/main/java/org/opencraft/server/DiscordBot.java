@@ -1,14 +1,16 @@
 package org.opencraft.server;
 
+import java.util.EnumSet;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.javacord.api.DiscordApi;
-import org.javacord.api.DiscordApiBuilder;
-import org.javacord.api.entity.intent.Intent;
-import org.javacord.api.entity.server.Server;
-import org.javacord.api.entity.user.User;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import net.dv8tion.jda.api.JDABuilder;
 
 public class DiscordBot implements Runnable {
 
@@ -22,35 +24,42 @@ public class DiscordBot implements Runnable {
 
   @Override
   public void run() {
-    DiscordApi api = new DiscordApiBuilder()
-        .setToken(Configuration.getConfiguration().getDiscordToken())
-        .addIntents(Intent.MESSAGE_CONTENT)
-        .login().join();
-    api.addMessageCreateListener(event -> {
-      if (!event.getMessageAuthor().isUser() || event.getMessageAuthor().isYourself() || event.getMessageAuthor().isWebhook()
-          || event.getChannel().getId() != CHANNEL_ID || event.getMessage().getContent()
-          .isBlank()) {
-        return;
-      }
-      String message = event.getMessage().getContent();
-      User user = event.getMessageAuthor().asUser().get();
-      Server server = api.getServerById(SERVER_ID).get();
-      String name = user.getNickname(server).orElse(user.getDisplayName(server));
-      System.err.println("[Discord] " + name + ": " + message);
-      switch (message) {
-        case ".who", ".players" -> {
-          List<Player> players = World.getWorld().getPlayerList().getPlayers();
-          StringBuilder messageBuilder = new StringBuilder();
-          messageBuilder.append("Players:");
-          for (Player p : players) {
-            messageBuilder.append(" ").append(p.getName());
+    JDA api = JDABuilder.createLight(Configuration.getConfiguration().getDiscordToken(), EnumSet.of(
+            GatewayIntent.GUILD_MESSAGES, GatewayIntent.MESSAGE_CONTENT))
+        .addEventListeners(new ListenerAdapter() {
+          @Override
+          public void onMessageReceived(MessageReceivedEvent event) {
+            if (event.isWebhookMessage() || event.getChannel().getIdLong() != CHANNEL_ID
+                || event.getMember() == null || event.getMessage().getContentStripped().isBlank()
+                || event.getMember().getUser().isBot()) {
+              return;
+            }
+            String message = event.getMessage().getContentStripped();
+            String nickname = event.getMember().getEffectiveName();
+            System.out.println("[Discord] " + nickname + ": " + message);
+
+            switch (message) {
+              case ".who", ".players" -> {
+                List<Player> players = World.getWorld().getPlayerList().getPlayers();
+                StringBuilder messageBuilder = new StringBuilder();
+                messageBuilder.append("Players:");
+                for (Player p : players) {
+                  messageBuilder.append(" ").append(p.getName());
+                }
+                event.getChannel().sendMessage(messageBuilder.toString()).queue();
+              }
+              default -> World.getWorld()
+                  .broadcast("&5[Discord] &f" + sanitizeDiscordInput(nickname) + ": "
+                      + sanitizeDiscordInput(message));
+            }
           }
-          event.getChannel().sendMessage(messageBuilder.toString());
-        }
-        default -> World.getWorld()
-            .broadcast("&5[Discord] &f" + sanitizeDiscordInput(name) + ": " + sanitizeDiscordInput(message));
-      }
-    });
+        })
+        .build();
+    try {
+      api.awaitReady();
+    } catch (InterruptedException ex) {
+      ex.printStackTrace();
+    }
 
     String topic = null;
     while (true) {
@@ -65,7 +74,7 @@ public class DiscordBot implements Runnable {
         topic = "Online Players (%d): %s".formatted(count, players);
       }
       if (!topic.equals(previousTopic)) {
-        api.getServerTextChannelById(CHANNEL_ID).get().updateTopic(topic);
+        api.getChannelById(TextChannel.class, CHANNEL_ID).getManager().setTopic(topic).queue();
       }
 
       try {
