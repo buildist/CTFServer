@@ -226,6 +226,24 @@ public class Player extends Entity implements IPlayer {
     incIntAttribute(name + "MatchesCount");
   }
 
+  public boolean isUsingManualTNT() {
+    Object tntParticles = getAttribute("manualTNT");
+
+    if (tntParticles == null) {
+      return false;
+    }
+
+    return (boolean) tntParticles;
+  }
+
+  public void enableManualTNT() {
+    setAttribute("manualTNT", true);
+  }
+
+  public void disableManualTNT() {
+    setAttribute("manualTNT", false);
+  }
+
   public void hideTntParticles() {
     setAttribute("tntParticles", false);
   }

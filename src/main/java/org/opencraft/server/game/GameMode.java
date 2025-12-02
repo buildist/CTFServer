@@ -170,6 +170,7 @@ public abstract class GameMode {
     registerCommand("store", StoreCommand.getCommand());
     registerCommand("streamermode", StreamerModeCommand.getCommand());
     registerCommand("team", TeamCommand.getCommand());
+    registerCommand("tnt", TNTCommand.getCommand());
     registerCommand("tp", TeleportCommand.getCommand());
     registerCommand("unban", UnbanCommand.getCommand());
     registerCommand("unbanip", UnbanIPCommand.getCommand());

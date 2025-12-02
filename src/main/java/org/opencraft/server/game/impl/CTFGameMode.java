@@ -53,6 +53,9 @@ import org.opencraft.server.model.BlockLog.BlockInfo;
 
 import java.util.ArrayList;
 
+import org.opencraft.server.task.TaskQueue;
+import org.opencraft.server.task.impl.CreeperTask;
+import org.opencraft.server.task.impl.TNTTask;
 import tf.jacobsc.ctf.server.FlameTickRecord;
 import tf.jacobsc.ctf.server.StalemateKt;
 import tf.jacobsc.ctf.server.StatsKt;
@@ -1325,16 +1328,18 @@ public class CTFGameMode extends GameMode {
           player.getActionSender().sendBlock(x, y, z, (short) 0);
         }
       } else if (placedInSpawnZone) {
-        // Allow detonator to explode last TNT, but revert the block change afterwards
+        // Allow detonator to explode last TNT (if manual mode), but revert the block change afterwards
         if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
-          int radius = player.tntRadius;
           player.getActionSender().sendBlock(x, y, z, (short) oldType);
-          explodeTNT(
-              player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
-          player.hasTNT = false;
-          player.tntX = 0;
-          player.tntY = 0;
-          player.tntZ = 0;
+
+          if (player.isUsingManualTNT()) {
+            int radius = player.tntRadius;
+            explodeTNT(player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
+            player.hasTNT = false;
+            player.tntX = 0;
+            player.tntY = 0;
+            player.tntZ = 0;
+          }
         } else {
           ignore = true;
           player.getActionSender().sendChatMessage("- &aYou may not place blocks at spawn.");
@@ -1402,14 +1407,17 @@ public class CTFGameMode extends GameMode {
           }
         }
       } else if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
-        int radius = player.tntRadius;
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
-        explodeTNT(
-            player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
-        player.hasTNT = false;
-        player.tntX = 0;
-        player.tntY = 0;
-        player.tntZ = 0;
+
+        if (player.isUsingManualTNT()) {
+          int radius = player.tntRadius;
+          explodeTNT(player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
+
+          player.hasTNT = false;
+          player.tntX = 0;
+          player.tntY = 0;
+          player.tntZ = 0;
+        }
       } else if (level.isSolid(x, y, z)
           && (!player.isOp() || !player.placeSolid)
           && !GameSettings.getBoolean("Chaos")) {
@@ -1420,7 +1428,7 @@ public class CTFGameMode extends GameMode {
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if ((type == Constants.BLOCK_TNT_RED || type == Constants.BLOCK_TNT_BLUE) && mode == 1 && !ignore) // Placing tnt
       {
-        if (player.getIntAttribute("explodes") == 0) {
+        if (player.getIntAttribute("explodes") == 0 && player.isUsingManualTNT()) {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
 
@@ -1438,6 +1446,7 @@ public class CTFGameMode extends GameMode {
             player.getActionSender().sendLoginFailure("\"TNT spam\" is not allowed");
             player.getSession().close();
           }
+
           player.getActionSender().sendBlock(x, y, z, (short) 0x00);
           return;
         }
@@ -1469,6 +1478,11 @@ public class CTFGameMode extends GameMode {
               player.tntY = y;
               player.tntZ = z;
               level.setBlock(x, y, z, type);
+
+              // TNTs explode after a certain amount of time in auto mode
+              if (!player.isUsingManualTNT()) {
+                TaskQueue.getTaskQueue().schedule(new TNTTask(player, World.getWorld().getLevel()));
+              }
             } else if (!isTNT(x, y, z)
                 && !(x == redFlagX && z == redFlagY && y == redFlagZ)
                 && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
