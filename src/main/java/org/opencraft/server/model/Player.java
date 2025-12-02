@@ -406,7 +406,7 @@ public class Player extends Entity implements IPlayer {
 
   public void ignore(Player p) {
     if (p.isOp()) {
-      getActionSender().sendChatMessage("- &eYou can't ignore operators.");
+      getActionSender().sendChatMessage("- &eYou cannot ignore operators.");
     } else {
       String name = p.name;
       if (!ignorePlayers.contains(name)) {
@@ -1120,7 +1120,7 @@ public class Player extends Entity implements IPlayer {
       if (sendMessage) {
         getActionSender()
             .sendChatMessage(
-                "- &eYou can't kill "
+                "- &eYou cannot kill "
                     + p.parseName()
                     + " since you are"
                     + " dueling "
@@ -1132,12 +1132,12 @@ public class Player extends Entity implements IPlayer {
       if (sendMessage) {
         getActionSender()
             .sendChatMessage(
-                "- &eYou can't kill "
+                "- &eYou cannot kill "
                     + p.parseName()
                     + " since they "
                     + "are dueling "
                     + p.duelPlayer.parseName()
-                    + ". They can't capture your flag or kill "
+                    + ". They cannot capture your flag or kill "
                     + "anyone else right now.");
       }
       return false;

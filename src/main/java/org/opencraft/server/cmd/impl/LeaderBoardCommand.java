@@ -63,7 +63,7 @@ public class LeaderBoardCommand implements Command {
         number = 16;
       }
       if (number <= 0) {
-        player.getActionSender().sendChatMessage("- &eCan't get " + number + " players this round.");
+        player.getActionSender().sendChatMessage("- &ecannot get " + number + " players this round.");
         return;
       }
     }

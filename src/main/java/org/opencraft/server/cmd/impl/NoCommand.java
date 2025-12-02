@@ -103,7 +103,7 @@ public class NoCommand implements Command {
       if (World.getWorld().getGameMode().rtvNoPlayers.contains(player.getSession().getIP()))
         player.getActionSender().sendChatMessage("- &eYou have already voted.");
       else if (player.team == -1)
-        player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
+        player.getActionSender().sendChatMessage("- &eYou cannot /rtv while not on a team.");
       else {
         if (World.getWorld().getGameMode().rtvYesPlayers.contains(player.getSession().getIP())) {
           World.getWorld().getGameMode().rtvVotes--;

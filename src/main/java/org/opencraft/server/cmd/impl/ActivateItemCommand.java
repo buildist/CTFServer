@@ -59,7 +59,7 @@ public class ActivateItemCommand implements Command {
     else if (player.team == -1)
       player.getActionSender().sendChatMessage("- &eYou must join a team to do that!");
     else if (player.duelPlayer != null)
-      player.getActionSender().sendChatMessage("- &eYou can't use the store while dueling!");
+      player.getActionSender().sendChatMessage("- &eYou cannot use the store while dueling!");
     else if (!World.getWorld().getGameMode().tournamentGameStarted) player.getActionSender().sendChatMessage("- &eThe game has not started yet.");
     else {
       if (!(item.name.equals("Brush") && player.brush)) {

@@ -78,6 +78,8 @@ public class CTFGameMode extends GameMode {
   public static int blueCaptures;
   public boolean redFlagTaken = false;
   public boolean blueFlagTaken = false;
+  public Player redFlagTakenBy;
+  public Player blueFlagTakenBy;
 
   private boolean stalemateTags;
   private boolean suddenDeath;
@@ -318,7 +320,7 @@ public class CTFGameMode extends GameMode {
 
       // Defuse mine if it's there
       defuseMineIfCan(p, bx, by, bz);
-      // Can't go through sand, glass, obsidian, water, or non explodable blocks
+      // cannot go through sand, glass, obsidian, water, or non explodable blocks
       if (oldBlock == BlockConstants.WATER
           || oldBlock == BlockConstants.STILL_WATER
           || oldBlock == BlockConstants.SAND
@@ -889,6 +891,7 @@ public class CTFGameMode extends GameMode {
       resetBlueFlagPos();
       placeBlueFlag();
       World.getWorld().broadcast("- &eThe blue flag has been returned!");
+      blueFlagTakenBy = null;
     }
   }
 
@@ -898,6 +901,7 @@ public class CTFGameMode extends GameMode {
       resetRedFlagPos();
       placeRedFlag();
       World.getWorld().broadcast("- &eThe red flag has been returned!");
+      redFlagTakenBy = null;
     }
   }
 
@@ -907,6 +911,7 @@ public class CTFGameMode extends GameMode {
       unblockSpawnZones(p);
       World.getWorld().broadcast("- " + p.parseName() + " dropped the flag!");
       sendAnnouncement(p.parseName() + " dropped the flag!");
+
       Position playerPos = p.getPosition().toBlockPos();
       final boolean _antiStalemate = redFlagTaken && blueFlagTaken;
       if (p.team == 0) {
@@ -979,10 +984,13 @@ public class CTFGameMode extends GameMode {
           if (getRedPlayers() == 0 || getBluePlayers() == 0) {
             placeRedFlag();
             p.getActionSender()
-                .sendChatMessage("- &eFlag can't be captured when one team has 0 " + "people");
+                .sendChatMessage("- &eFlag cannot be captured when one team has 0 " + "people");
           } else if (p.duelPlayer != null) {
             placeRedFlag();
-            p.getActionSender().sendChatMessage("- &eYou can't take the flag while dueling");
+            p.getActionSender().sendChatMessage("- &eYou cannot take the flag while dueling");
+          } else if (redFlagTakenBy == p) {
+            placeRedFlag();
+            p.getActionSender().sendChatMessage("- &eYou cannot pick up the flag after dropping");
           } else {
             World.getWorld().broadcast("- &eRed flag taken by " + p.parseName() + "!");
             sendAnnouncement("&eRed flag taken by " + p.parseName() + "!");
@@ -992,6 +1000,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate");
             p.hasFlag = true;
             redFlagTaken = true;
+            redFlagTakenBy = p;
             blockSpawnZones(p);
             checkForStalemate();
             resetRedFlagPos();
@@ -1010,6 +1019,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           blueFlagTaken = false;
+          blueFlagTakenBy = null;
           unblockSpawnZones(p);
           placeBlueFlag();
           p.incIntAttribute("captures");
@@ -1033,11 +1043,14 @@ public class CTFGameMode extends GameMode {
           if (getRedPlayers() == 0 || getBluePlayers() == 0) {
             placeBlueFlag();
             p.getActionSender()
-                .sendChatMessage("- &eFlag can't be captured when one team has 0 " + "people");
+                .sendChatMessage("- &eFlag cannot be captured when one team has 0 " + "people");
           } else if (p.duelPlayer != null) {
             placeBlueFlag();
-            p.getActionSender().sendChatMessage("- &eYou can't take the flag while dueling");
-          } else {
+            p.getActionSender().sendChatMessage("- &eYou cannot take the flag while dueling");
+          } else if (blueFlagTakenBy == p) {
+            placeBlueFlag();
+            p.getActionSender().sendChatMessage("- &eYou cannot pick up the flag after dropping");
+          }  else {
             World.getWorld().broadcast("- &eBlue flag taken by " + p.parseName() + "!");
             sendAnnouncement("&eBlue flag taken by " + p.parseName() + "!");
             p.getActionSender()
@@ -1046,6 +1059,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             blueFlagTaken = true;
+            blueFlagTakenBy = p;
             blockSpawnZones(p);
             checkForStalemate();
             resetBlueFlagPos();
@@ -1064,6 +1078,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           redFlagTaken = false;
+          redFlagTakenBy = null;
           unblockSpawnZones(p);
           placeRedFlag();
           p.incIntAttribute("captures");
@@ -1529,7 +1544,7 @@ public class CTFGameMode extends GameMode {
           || type == Constants.BLOCK_MINE_BLUE)
           && !player.isOp()) {
         player.getActionSender().sendBlock(x, y, z, (short) 0);
-        player.getActionSender().sendChatMessage("- &eYou can't place this block type!");
+        player.getActionSender().sendChatMessage("- &eYou cannot place this block type!");
       } else if (getDropItem(x, y, z) != null) {
         DropItem i = getDropItem(x, y, z);
         i.pickUp(player);

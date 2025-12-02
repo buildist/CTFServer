@@ -66,11 +66,11 @@ public class RTVCommand implements Command {
       if (World.getWorld().getPlayerList().size() % 2 != 0) requiredVotes++;
 
       if (World.getWorld().getGameMode().voting)
-        player.getActionSender().sendChatMessage("- &eYou can't /rtv during map voting.");
+        player.getActionSender().sendChatMessage("- &eYou cannot /rtv during map voting.");
       else if (World.getWorld().getGameMode().rtvYesPlayers.contains(player.getSession().getIP()))
         player.getActionSender().sendChatMessage("- &eYou have already voted.");
       else if (player.team == -1)
-        player.getActionSender().sendChatMessage("- &eYou can't /rtv while not on a team.");
+        player.getActionSender().sendChatMessage("- &eYou cannot /rtv while not on a team.");
       else {
         if (World.getWorld().getGameMode().rtvNoPlayers.contains(player.getSession().getIP())) {
           World.getWorld().getGameMode().rtvVotes++;

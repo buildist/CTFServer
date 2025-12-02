@@ -114,7 +114,7 @@ abstract class CumulativeIncomeFilter extends IoFilterAdapter {
         if (decoded) {
           if (buf.position() == oldPos) {
             throw new IllegalStateException(
-                "doDecode() can't return true when buffer is not consumed.");
+                "doDecode() cannot return true when buffer is not consumed.");
           }
 
           if (!buf.hasRemaining()) {

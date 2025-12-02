@@ -72,7 +72,7 @@ public class DuelAcceptCommand implements Command {
       player
           .getActionSender()
           .sendChatMessage(
-              "- &eYou can't duel when you have the flag or your" + " opponent has it.");
+              "- &eYou cannot duel when you have the flag or your" + " opponent has it.");
     } else if (player.duelPlayer != null || player.duelChallengedBy.duelPlayer != null) {
       player.getActionSender().sendChatMessage("You're already in a duel!");
     } else if (player.team == -1 || player.duelChallengedBy.team == -1) {

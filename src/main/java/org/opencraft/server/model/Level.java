@@ -222,7 +222,7 @@ public final class Level implements Cloneable {
         World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
       }
 
-      // Can't go through sand, glass, obsidian, water, or non explodable blocks
+      // cannot go through sand, glass, obsidian, water, or non explodable blocks
       if (oldBlock == BlockConstants.WATER
           || oldBlock == BlockConstants.STILL_WATER
           || oldBlock == BlockConstants.SAND
