@@ -956,12 +956,12 @@ public class Player extends Entity implements IPlayer {
 
     String playerSuffix = "";
     if (AFK) {
-      playerSuffix = "    &7(&bAFK&7)";
+      playerSuffix = "    &7(AFK)";
     } else if (muted) {
-      playerSuffix = "    &7(&bMuted&7)";
+      playerSuffix = "    &7(Muted)";
     }
     if (AFK && muted) {
-      playerSuffix = "    &7(&bAFK, Muted&7)";
+      playerSuffix = "    &7(AFK, Muted)";
     }
 
     String listName =
