@@ -227,13 +227,13 @@ public class Player extends Entity implements IPlayer {
   }
 
   public boolean isUsingManualTNT() {
-    Object tntParticles = getAttribute("manualTNT");
+    Object manualTNT = getAttribute("manualTNT");
 
-    if (tntParticles == null) {
+    if (manualTNT == null) {
       return false;
     }
 
-    return (boolean) tntParticles;
+    return (boolean) manualTNT;
   }
 
   public void enableManualTNT() {
