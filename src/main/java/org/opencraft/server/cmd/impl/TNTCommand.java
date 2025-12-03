@@ -38,66 +38,28 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.World;
 
-public class RTVCommand implements Command {
-  /** The instance of this command. */
-  private static final RTVCommand INSTANCE = new RTVCommand();
+public class TNTCommand implements Command {
+
+  private static final TNTCommand INSTANCE = new TNTCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static RTVCommand getCommand() {
+  public static TNTCommand getCommand() {
     return INSTANCE;
   }
 
-  @Override
   public void execute(Player player, CommandParameters params) {
-    if (!GameSettings.getBoolean("Tournament")) {
-      int totalAFK = 0;
-      for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
-        if (pl.AFK) totalAFK++;
-      }
-      int requiredVotes = (World.getWorld().getPlayerList().size() - totalAFK) / 2;
-      if (World.getWorld().getPlayerList().size() % 2 != 0) requiredVotes++;
-
-      if (World.getWorld().getGameMode().voting)
-        player.getActionSender().sendChatMessage("- &eYou cannot /rtv during map voting.");
-      else if (World.getWorld().getGameMode().rtvYesPlayers.contains(player.getSession().getIP()))
-        player.getActionSender().sendChatMessage("- &eYou have already voted.");
-      else if (player.team == -1)
-        player.getActionSender().sendChatMessage("- &eYou cannot /rtv while not on a team.");
-      else {
-        if (World.getWorld().getGameMode().rtvNoPlayers.contains(player.getSession().getIP())) {
-          World.getWorld().getGameMode().rtvVotes++;
-          World.getWorld().getGameMode().rtvNoPlayers.remove(player.getSession().getIP());
-        }
-
-        int votes = ++World.getWorld().getGameMode().rtvVotes;
-        World.getWorld()
-            .broadcast(
-                "- "
-                    + player.getColoredName()
-                    + " &3wants to rock the vote &f"
-                    + "("
-                    + votes
-                    + " votes, "
-                    + requiredVotes
-                    + " required)");
-        World.getWorld()
-            .broadcast(
-                "- &3/rtv to vote, /nominate [mapname] to nominate a map, /no "
-                    + "to stay on this map");
-        World.getWorld().getGameMode().rtvYesPlayers.add(player.getSession().getIP());
-
-        if (votes >= requiredVotes) {
-          World.getWorld().getGameMode().endGame();
-        }
-      }
+    if (player.isUsingManualTNT()) {
+      player.disableManualTNT();
+      player.getActionSender().sendChatMessage("- &eNow using auto TNT. Use this command again to switch back to manual.");
+    } else {
+      player.enableManualTNT();
+      player.getActionSender().sendChatMessage("- &eNow using manual TNT. Use this command again to switch back to auto.");
     }
   }
 }

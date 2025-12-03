@@ -38,6 +38,8 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.model.BlockConstants;
+import org.opencraft.server.model.BlockManager;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
@@ -59,8 +61,16 @@ public class StreamerModeCommand implements Command {
 
     if (player.streamerMode) {
       player.getActionSender().sendChatMessage("- &eStreamer mode enabled.");
+
+      if (player.getSession().isExtensionSupported("CinematicGui")) {
+        player.getSession().getActionSender().sendCinematicGui(0, 0, 0, 0, 0, 0, 0, 0);
+      }
     } else {
       player.getActionSender().sendChatMessage("- &eStreamer mode disabled.");
+
+      if (player.getSession().isExtensionSupported("CinematicGui")) {
+        player.getSession().getActionSender().sendCinematicGui(1, 1, 1, 0, 0, 0, 0, 0);
+      }
     }
   }
 }

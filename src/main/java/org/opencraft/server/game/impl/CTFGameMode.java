@@ -53,6 +53,9 @@ import org.opencraft.server.model.BlockLog.BlockInfo;
 
 import java.util.ArrayList;
 
+import org.opencraft.server.task.TaskQueue;
+import org.opencraft.server.task.impl.CreeperTask;
+import org.opencraft.server.task.impl.TNTTask;
 import tf.jacobsc.ctf.server.FlameTickRecord;
 import tf.jacobsc.ctf.server.StalemateKt;
 import tf.jacobsc.ctf.server.StatsKt;
@@ -75,6 +78,8 @@ public class CTFGameMode extends GameMode {
   public static int blueCaptures;
   public boolean redFlagTaken = false;
   public boolean blueFlagTaken = false;
+  public Player redFlagTakenBy;
+  public Player blueFlagTakenBy;
 
   private boolean stalemateTags;
   private boolean suddenDeath;
@@ -315,7 +320,7 @@ public class CTFGameMode extends GameMode {
 
       // Defuse mine if it's there
       defuseMineIfCan(p, bx, by, bz);
-      // Can't go through sand, glass, obsidian, water, or non explodable blocks
+      // cannot go through sand, glass, obsidian, water, or non explodable blocks
       if (oldBlock == BlockConstants.WATER
           || oldBlock == BlockConstants.STILL_WATER
           || oldBlock == BlockConstants.SAND
@@ -886,6 +891,7 @@ public class CTFGameMode extends GameMode {
       resetBlueFlagPos();
       placeBlueFlag();
       World.getWorld().broadcast("- &eThe blue flag has been returned!");
+      blueFlagTakenBy = null;
     }
   }
 
@@ -895,6 +901,7 @@ public class CTFGameMode extends GameMode {
       resetRedFlagPos();
       placeRedFlag();
       World.getWorld().broadcast("- &eThe red flag has been returned!");
+      redFlagTakenBy = null;
     }
   }
 
@@ -904,6 +911,7 @@ public class CTFGameMode extends GameMode {
       unblockSpawnZones(p);
       World.getWorld().broadcast("- " + p.parseName() + " dropped the flag!");
       sendAnnouncement(p.parseName() + " dropped the flag!");
+
       Position playerPos = p.getPosition().toBlockPos();
       final boolean _antiStalemate = redFlagTaken && blueFlagTaken;
       if (p.team == 0) {
@@ -976,10 +984,13 @@ public class CTFGameMode extends GameMode {
           if (getRedPlayers() == 0 || getBluePlayers() == 0) {
             placeRedFlag();
             p.getActionSender()
-                .sendChatMessage("- &eFlag can't be captured when one team has 0 " + "people");
+                .sendChatMessage("- &eFlag cannot be captured when one team has 0 " + "people");
           } else if (p.duelPlayer != null) {
             placeRedFlag();
-            p.getActionSender().sendChatMessage("- &eYou can't take the flag while dueling");
+            p.getActionSender().sendChatMessage("- &eYou cannot take the flag while dueling");
+          } else if (redFlagTakenBy == p) {
+            placeRedFlag();
+            p.getActionSender().sendChatMessage("- &eYou cannot pick up the flag after dropping");
           } else {
             World.getWorld().broadcast("- &eRed flag taken by " + p.parseName() + "!");
             sendAnnouncement("&eRed flag taken by " + p.parseName() + "!");
@@ -989,6 +1000,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate");
             p.hasFlag = true;
             redFlagTaken = true;
+            redFlagTakenBy = p;
             blockSpawnZones(p);
             checkForStalemate();
             resetRedFlagPos();
@@ -1007,6 +1019,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           blueFlagTaken = false;
+          blueFlagTakenBy = null;
           unblockSpawnZones(p);
           placeBlueFlag();
           p.incIntAttribute("captures");
@@ -1030,11 +1043,14 @@ public class CTFGameMode extends GameMode {
           if (getRedPlayers() == 0 || getBluePlayers() == 0) {
             placeBlueFlag();
             p.getActionSender()
-                .sendChatMessage("- &eFlag can't be captured when one team has 0 " + "people");
+                .sendChatMessage("- &eFlag cannot be captured when one team has 0 " + "people");
           } else if (p.duelPlayer != null) {
             placeBlueFlag();
-            p.getActionSender().sendChatMessage("- &eYou can't take the flag while dueling");
-          } else {
+            p.getActionSender().sendChatMessage("- &eYou cannot take the flag while dueling");
+          } else if (blueFlagTakenBy == p) {
+            placeBlueFlag();
+            p.getActionSender().sendChatMessage("- &eYou cannot pick up the flag after dropping");
+          }  else {
             World.getWorld().broadcast("- &eBlue flag taken by " + p.parseName() + "!");
             sendAnnouncement("&eBlue flag taken by " + p.parseName() + "!");
             p.getActionSender()
@@ -1043,6 +1059,7 @@ public class CTFGameMode extends GameMode {
                         + "to drop the flag and pass to a teammate,");
             p.hasFlag = true;
             blueFlagTaken = true;
+            blueFlagTakenBy = p;
             blockSpawnZones(p);
             checkForStalemate();
             resetBlueFlagPos();
@@ -1061,6 +1078,7 @@ public class CTFGameMode extends GameMode {
           p.captures++;
           p.hasFlag = false;
           redFlagTaken = false;
+          redFlagTakenBy = null;
           unblockSpawnZones(p);
           placeRedFlag();
           p.incIntAttribute("captures");
@@ -1325,16 +1343,18 @@ public class CTFGameMode extends GameMode {
           player.getActionSender().sendBlock(x, y, z, (short) 0);
         }
       } else if (placedInSpawnZone) {
-        // Allow detonator to explode last TNT, but revert the block change afterwards
+        // Allow detonator to explode last TNT (if manual mode), but revert the block change afterwards
         if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
-          int radius = player.tntRadius;
           player.getActionSender().sendBlock(x, y, z, (short) oldType);
-          explodeTNT(
-              player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
-          player.hasTNT = false;
-          player.tntX = 0;
-          player.tntY = 0;
-          player.tntZ = 0;
+
+          if (player.isUsingManualTNT()) {
+            int radius = player.tntRadius;
+            explodeTNT(player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
+            player.hasTNT = false;
+            player.tntX = 0;
+            player.tntY = 0;
+            player.tntZ = 0;
+          }
         } else {
           ignore = true;
           player.getActionSender().sendChatMessage("- &aYou may not place blocks at spawn.");
@@ -1402,14 +1422,17 @@ public class CTFGameMode extends GameMode {
           }
         }
       } else if (type == Constants.BLOCK_DETONATOR && mode == 1 && !ignore && player.hasTNT) {
-        int radius = player.tntRadius;
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
-        explodeTNT(
-            player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
-        player.hasTNT = false;
-        player.tntX = 0;
-        player.tntY = 0;
-        player.tntZ = 0;
+
+        if (player.isUsingManualTNT()) {
+          int radius = player.tntRadius;
+          explodeTNT(player, World.getWorld().getLevel(), player.tntX, player.tntY, player.tntZ, radius);
+
+          player.hasTNT = false;
+          player.tntX = 0;
+          player.tntY = 0;
+          player.tntZ = 0;
+        }
       } else if (level.isSolid(x, y, z)
           && (!player.isOp() || !player.placeSolid)
           && !GameSettings.getBoolean("Chaos")) {
@@ -1420,7 +1443,7 @@ public class CTFGameMode extends GameMode {
         player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if ((type == Constants.BLOCK_TNT_RED || type == Constants.BLOCK_TNT_BLUE) && mode == 1 && !ignore) // Placing tnt
       {
-        if (player.getIntAttribute("explodes") == 0) {
+        if (player.getIntAttribute("explodes") == 0 && player.isUsingManualTNT()) {
           player.getActionSender().sendChatMessage("- &bPlace a purple block to explode TNT.");
         }
 
@@ -1438,6 +1461,7 @@ public class CTFGameMode extends GameMode {
             player.getActionSender().sendLoginFailure("\"TNT spam\" is not allowed");
             player.getSession().close();
           }
+
           player.getActionSender().sendBlock(x, y, z, (short) 0x00);
           return;
         }
@@ -1469,6 +1493,11 @@ public class CTFGameMode extends GameMode {
               player.tntY = y;
               player.tntZ = z;
               level.setBlock(x, y, z, type);
+
+              // TNTs explode after a certain amount of time in auto mode
+              if (!player.isUsingManualTNT()) {
+                TaskQueue.getTaskQueue().schedule(new TNTTask(player, World.getWorld().getLevel()));
+              }
             } else if (!isTNT(x, y, z)
                 && !(x == redFlagX && z == redFlagY && y == redFlagZ)
                 && !(x == blueFlagX && z == blueFlagY && y == blueFlagZ)) {
@@ -1515,7 +1544,7 @@ public class CTFGameMode extends GameMode {
           || type == Constants.BLOCK_MINE_BLUE)
           && !player.isOp()) {
         player.getActionSender().sendBlock(x, y, z, (short) 0);
-        player.getActionSender().sendChatMessage("- &eYou can't place this block type!");
+        player.getActionSender().sendChatMessage("- &eYou cannot place this block type!");
       } else if (getDropItem(x, y, z) != null) {
         DropItem i = getDropItem(x, y, z);
         i.pickUp(player);

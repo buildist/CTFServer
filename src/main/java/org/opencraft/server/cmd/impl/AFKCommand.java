@@ -36,68 +36,43 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class RTVCommand implements Command {
-  /** The instance of this command. */
-  private static final RTVCommand INSTANCE = new RTVCommand();
+public class AFKCommand implements Command {
+
+  private static final AFKCommand INSTANCE = new AFKCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static RTVCommand getCommand() {
+  public static AFKCommand getCommand() {
     return INSTANCE;
   }
 
-  @Override
   public void execute(Player player, CommandParameters params) {
-    if (!GameSettings.getBoolean("Tournament")) {
-      int totalAFK = 0;
-      for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
-        if (pl.AFK) totalAFK++;
+    if (params.getArgumentCount() > 0) {
+      if (player.isOp()) {
+          String name = params.getStringArgument(0);
+          Player other = Player.setAttributeFor(name, "banned", "true", player.getActionSender());
+
+          if (other != null) {
+            other.AFK = true;
+            World.getWorld().broadcast("- " + other.parseName() + " is AFK");
+          } else {
+            player.getActionSender().sendChatMessage(params.getStringArgument(0) + " was not found");
+          }
+      } else {
+        player.getActionSender().sendChatMessage("You must be OP to do that!");
       }
-      int requiredVotes = (World.getWorld().getPlayerList().size() - totalAFK) / 2;
-      if (World.getWorld().getPlayerList().size() % 2 != 0) requiredVotes++;
-
-      if (World.getWorld().getGameMode().voting)
-        player.getActionSender().sendChatMessage("- &eYou cannot /rtv during map voting.");
-      else if (World.getWorld().getGameMode().rtvYesPlayers.contains(player.getSession().getIP()))
-        player.getActionSender().sendChatMessage("- &eYou have already voted.");
-      else if (player.team == -1)
-        player.getActionSender().sendChatMessage("- &eYou cannot /rtv while not on a team.");
-      else {
-        if (World.getWorld().getGameMode().rtvNoPlayers.contains(player.getSession().getIP())) {
-          World.getWorld().getGameMode().rtvVotes++;
-          World.getWorld().getGameMode().rtvNoPlayers.remove(player.getSession().getIP());
-        }
-
-        int votes = ++World.getWorld().getGameMode().rtvVotes;
-        World.getWorld()
-            .broadcast(
-                "- "
-                    + player.getColoredName()
-                    + " &3wants to rock the vote &f"
-                    + "("
-                    + votes
-                    + " votes, "
-                    + requiredVotes
-                    + " required)");
-        World.getWorld()
-            .broadcast(
-                "- &3/rtv to vote, /nominate [mapname] to nominate a map, /no "
-                    + "to stay on this map");
-        World.getWorld().getGameMode().rtvYesPlayers.add(player.getSession().getIP());
-
-        if (votes >= requiredVotes) {
-          World.getWorld().getGameMode().endGame();
-        }
-      }
+    } else {
+      player.AFK = true;
+      World.getWorld().broadcast("- " + player.parseName() + " &eis AFK");
     }
   }
 }

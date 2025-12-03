@@ -84,7 +84,7 @@ class RatingSystem(private val ratingType: RatingType) {
         // the dynamic factor which restrains a fixation of rating. The recommended value is sigma per cent
         const val dynamicFactor = 10.0
 
-        // can't draw in CTF, either win or lose
+        // cannot draw in CTF, either win or lose
         const val drawProbability = 0.0
 
         val defaultRating = Rating(initialMean, initialStandardDevation)

@@ -413,7 +413,7 @@ public class LaserTagGameMode extends GameMode {
           || type == BlockConstants.ADMINIUM)
           && !player.isOp()) {
         player.getActionSender().sendBlock(x, y, z, (short) 0);
-        player.getActionSender().sendChatMessage("- &eYou can't place this block type!");
+        player.getActionSender().sendChatMessage("- &eYou cannot place this block type!");
       } else if (type > -1) {
         if (!ignore) {
           level.setBlock(x, y, z, (mode == 1 ? type : 0));

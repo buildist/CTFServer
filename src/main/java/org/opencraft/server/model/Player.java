@@ -226,6 +226,24 @@ public class Player extends Entity implements IPlayer {
     incIntAttribute(name + "MatchesCount");
   }
 
+  public boolean isUsingManualTNT() {
+    Object tntParticles = getAttribute("manualTNT");
+
+    if (tntParticles == null) {
+      return false;
+    }
+
+    return (boolean) tntParticles;
+  }
+
+  public void enableManualTNT() {
+    setAttribute("manualTNT", true);
+  }
+
+  public void disableManualTNT() {
+    setAttribute("manualTNT", false);
+  }
+
   public void hideTntParticles() {
     setAttribute("tntParticles", false);
   }
@@ -388,7 +406,7 @@ public class Player extends Entity implements IPlayer {
 
   public void ignore(Player p) {
     if (p.isOp()) {
-      getActionSender().sendChatMessage("- &eYou can't ignore operators.");
+      getActionSender().sendChatMessage("- &eYou cannot ignore operators.");
     } else {
       String name = p.name;
       if (!ignorePlayers.contains(name)) {
@@ -938,12 +956,12 @@ public class Player extends Entity implements IPlayer {
 
     String playerSuffix = "";
     if (AFK) {
-      playerSuffix = "    &7(&bAFK&7)";
+      playerSuffix = "    &7(AFK)";
     } else if (muted) {
-      playerSuffix = "    &7(&bMuted&7)";
+      playerSuffix = "    &7(Muted)";
     }
     if (AFK && muted) {
-      playerSuffix = "    &7(&bAFK, Muted&7)";
+      playerSuffix = "    &7(AFK, Muted)";
     }
 
     String listName =
@@ -1102,7 +1120,7 @@ public class Player extends Entity implements IPlayer {
       if (sendMessage) {
         getActionSender()
             .sendChatMessage(
-                "- &eYou can't kill "
+                "- &eYou cannot kill "
                     + p.parseName()
                     + " since you are"
                     + " dueling "
@@ -1114,12 +1132,12 @@ public class Player extends Entity implements IPlayer {
       if (sendMessage) {
         getActionSender()
             .sendChatMessage(
-                "- &eYou can't kill "
+                "- &eYou cannot kill "
                     + p.parseName()
                     + " since they "
                     + "are dueling "
                     + p.duelPlayer.parseName()
-                    + ". They can't capture your flag or kill "
+                    + ". They cannot capture your flag or kill "
                     + "anyone else right now.");
       }
       return false;

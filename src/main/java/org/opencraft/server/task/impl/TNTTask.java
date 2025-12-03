@@ -34,56 +34,38 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package org.opencraft.server.net.packet;
+package org.opencraft.server.task.impl;
 
-/**
- * Holds the different Minecraft data types.
- *
- * @author Graham Edgecombe
- */
-public enum DataType {
+import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
+import org.opencraft.server.model.Level;
+import org.opencraft.server.model.Player;
+import org.opencraft.server.model.World;
+import org.opencraft.server.task.ScheduledTask;
 
-  /** Standard byte data type. */
-  BYTE(1),
+public class TNTTask extends ScheduledTask {
+  private CTFGameMode ctf;
+  private Player invoker;
+  private Level level;
 
-  /** Standard boolean data type. */
-  BOOLEAN(1),
+  public TNTTask(Player invoker, Level level) {
+    super(0);
 
-  /** Standard short data type. */
-  SHORT(2),
+    this.ctf = (CTFGameMode)World.getWorld().getGameMode();
+    this.invoker = invoker;
+    this.level = level;
 
-  /** Standard integer data type. */
-  INT(4),
-
-  /** Standard long data type. */
-  LONG(8),
-
-  /** Fixed-length (1024) byte array data type. */
-  BYTE_ARRAY(1024),
-
-  /** Fixed-length (256) byte array data type. */
-  BYTE_ARRAY_256(256),
-
-  /** Fixed-length (320) byte array data type. */
-  BYTE_ARRAY_320(320),
-
-  /** Fixed length (64 ASCII bytes) string data type. */
-  STRING(64);
-
-  /** The length of the data type, in bytes. */
-  private int length;
-
-  /** Creates the data type. */
-  private DataType(int length) {
-    this.length = length;
+    this.setDelay((long)(1000 * GameSettings.getFloat("TNTTime")));
   }
 
-  /**
-   * Gets the length of this data type.
-   *
-   * @return The length, in bytes.
-   */
-  public int getLength() {
-    return length;
+  public void execute() {
+    Player player = this.invoker;
+    ctf.explodeTNT(player, this.level, player.tntX, player.tntY, player.tntZ, player.tntRadius);
+    player.hasTNT = false;
+    player.tntX = 0;
+    player.tntY = 0;
+    player.tntZ = 0;
+
+    this.stop();
   }
 }
