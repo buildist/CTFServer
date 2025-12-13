@@ -90,7 +90,7 @@ public class UpdateTask extends ScheduledTask {
       }
       if (player.lastPacketTime != 0
           && System.currentTimeMillis() - player.lastPacketTime > 30000) {
-        player.getActionSender().sendLoginFailure("Too much lag`");
+        player.getActionSender().sendLoginFailure("Too much lag");
         player.getSession().close();
       }
     }

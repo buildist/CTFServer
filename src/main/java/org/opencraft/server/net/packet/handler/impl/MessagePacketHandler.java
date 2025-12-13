@@ -62,10 +62,14 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
       return;
     }
     String message = packet.getStringField("message");
-    int id = packet.getNumericField("id").byteValue();
     if (message.contains("&")) {
       session.getPlayer().kickForHacking();
       return;
+    }
+
+    int id = packet.getNumericField("id").byteValue();
+    if (id == 0) {
+      message = message.trim();
     }
 
     if (message.charAt(message.length() - 1) == '>'
