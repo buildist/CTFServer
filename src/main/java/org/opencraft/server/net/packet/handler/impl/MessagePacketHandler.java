@@ -69,7 +69,7 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
 
     int id = packet.getNumericField("id").byteValue();
     if (id == 0) {
-      message = message.trim();
+      message = message.stripTrailing();
     }
 
     if (message.charAt(message.length() - 1) == '>'
