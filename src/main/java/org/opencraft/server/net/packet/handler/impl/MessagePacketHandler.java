@@ -109,7 +109,11 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
           }
         }
         parts = partsList.toArray(new String[0]);
-        c.execute(session.getPlayer(), new CommandParameters(parts));
+        try {
+          c.execute(session.getPlayer(), new CommandParameters(parts));
+        } catch (Exception e) {
+          session.getActionSender().sendChatMessage(e.getMessage());
+        }
         for (Player p : World.getWorld().getPlayerList().getPlayers()) {
           if (p.sendCommandLog && !message.startsWith("/pm")) {
             p.getActionSender()
