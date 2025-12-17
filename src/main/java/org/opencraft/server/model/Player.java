@@ -38,7 +38,6 @@ package org.opencraft.server.model;
 
 import de.gesundkrank.jskills.IPlayer;
 import de.gesundkrank.jskills.Rating;
-import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
@@ -195,9 +194,7 @@ public class Player extends Entity implements IPlayer {
     }
 
     try {
-      return new Rating(
-          (double) mu,
-          (double) sigma);
+      return new Rating((double) mu, (double) sigma, RatingSystem.displayMultiplier);
     } catch (Exception e) {
       return RatingSystem.Companion.getDefaultRating();
     }
