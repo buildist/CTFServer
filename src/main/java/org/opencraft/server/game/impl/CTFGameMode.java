@@ -94,7 +94,7 @@ public class CTFGameMode extends GameMode {
     registerCommand("defuse", DefuseCommand.getCommand());
     registerCommand("defusetnt", DefuseTNTCommand.getCommand());
     registerCommand("dt", DefuseTNTCommand.getCommand());
-    registerCommand("f", FlamethrowerCommand.getCommand());
+    // registerCommand("f", FlamethrowerCommand.getCommand());
     registerCommand("fd", FlagDropCommand.getCommand());
   }
 
