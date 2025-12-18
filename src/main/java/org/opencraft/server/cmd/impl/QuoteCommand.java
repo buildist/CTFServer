@@ -41,6 +41,7 @@ import java.time.Instant;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
@@ -76,6 +77,7 @@ public class QuoteCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     if (player.muted) return;
+    if (GameSettings.getBoolean("Tournament")) return;
 
     if (params.getArgumentCount() == 0) {
       long currentTime = System.currentTimeMillis();
