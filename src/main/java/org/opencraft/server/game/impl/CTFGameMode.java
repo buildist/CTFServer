@@ -495,6 +495,8 @@ public class CTFGameMode extends GameMode {
 
     redFlagTaken = false;
     blueFlagTaken = false;
+    redFlagTakenBy = null;
+    blueFlagTakenBy = null;
     suddenDeath = false;
     stalemateTags = false;
     redCaptures = 0;
