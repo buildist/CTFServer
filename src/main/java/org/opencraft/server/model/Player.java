@@ -194,7 +194,7 @@ public class Player extends Entity implements IPlayer {
     }
 
     try {
-      return new Rating((double) mu, (double) sigma, RatingSystem.displayMultiplier);
+      return new Rating((double) mu, (double) sigma);
     } catch (Exception e) {
       return RatingSystem.Companion.getDefaultRating();
     }
