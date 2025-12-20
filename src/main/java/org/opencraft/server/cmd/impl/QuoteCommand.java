@@ -54,7 +54,6 @@ import java.util.Set;
 public class QuoteCommand implements Command {
   private static final QuoteCommand INSTANCE = new QuoteCommand();
   private static final ArrayList<String> quotes = new ArrayList<String>();
-  private static final long QUOTE_COOLDOWN = 10_000;
 
   static {
     try {
@@ -82,8 +81,9 @@ public class QuoteCommand implements Command {
     if (params.getArgumentCount() == 0) {
       if (GameSettings.getBoolean("Tournament")) return;
       long currentTime = System.currentTimeMillis();
-      if ((currentTime - player.lastQuoteTime) < QUOTE_COOLDOWN) {
-        player.getActionSender().sendChatMessage("- &3You must wait " + Duration.ofMillis(QUOTE_COOLDOWN - (currentTime - player.lastQuoteTime)).getSeconds() + " seconds before using /quote again.");
+      long quoteCooldown = GameSettings.getInt("QuoteCooldown") * 1000L;
+      if ((currentTime - player.lastQuoteTime) < quoteCooldown) {
+        player.getActionSender().sendChatMessage("- &3You must wait " + Duration.ofMillis(quoteCooldown - (currentTime - player.lastQuoteTime)).getSeconds() + " seconds before using /quote again.");
         return;
       }
       player.lastQuoteTime = currentTime;

@@ -58,6 +58,7 @@ public class GameSettings {
     add("IceMeltTime", TYPE_INT, 60000);
     add("VineDecayTime", TYPE_INT, 30000);
     add("TNTTime", TYPE_FLOAT, 1.0f);
+    add("QuoteCooldown", TYPE_INT, 10);
   }
 
   public static Object get(String k) {
