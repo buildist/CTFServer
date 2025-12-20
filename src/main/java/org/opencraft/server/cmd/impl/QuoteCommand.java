@@ -77,9 +77,9 @@ public class QuoteCommand implements Command {
   @Override
   public void execute(Player player, CommandParameters params) {
     if (player.muted) return;
-    if (GameSettings.getBoolean("Tournament")) return;
 
     if (params.getArgumentCount() == 0) {
+      if (GameSettings.getBoolean("Tournament")) return;
       long currentTime = System.currentTimeMillis();
       if ((currentTime - player.lastQuoteTime) < 15_000L ) {
         return;
