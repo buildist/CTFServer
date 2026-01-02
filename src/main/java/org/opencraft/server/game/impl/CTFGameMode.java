@@ -159,6 +159,9 @@ public class CTFGameMode extends GameMode {
     }
 
     if (type == null) {
+      if (p.bigTNTRemaining > 0) {
+        type = "BigTNT";
+      }
       if (p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
         p.bigTNTRemaining--;
       }
