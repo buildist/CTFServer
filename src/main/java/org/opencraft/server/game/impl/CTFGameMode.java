@@ -88,6 +88,9 @@ public class CTFGameMode extends GameMode {
 
   public FlameTickRecord flameTickKillRecord = new FlameTickRecord();
 
+  // The bottom of the player's feet is located 1.59375 (fixed-point: 51) units below the center of the viewport
+  private static final float PLAYER_POSITION_OFFSET = 0.5937f;
+
   public CTFGameMode() {
     super();
     registerCommand("d", DefuseCommand.getCommand());
@@ -155,7 +158,6 @@ public class CTFGameMode extends GameMode {
       level.setBlock(x, y, z, 0);
     }
 
-    // Big TNT should not be triggered by rockets and grenades
     if (type == null) {
       if (p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
         p.bigTNTRemaining--;
@@ -177,7 +179,7 @@ public class CTFGameMode extends GameMode {
         float tz = (t.getPosition().getZ()) / 32f;
         if (Math.abs(px - tx) < pr
             && Math.abs(py - ty) < pr
-            && Math.abs(pz - tz) < (pr + 0.25)
+            && Math.abs(pz - tz) < (pr + PLAYER_POSITION_OFFSET)
             && (p.team != t.team || (tk && (t == p || !t.hasFlag)))
             && !t.isSafe()
             && p.canKill(t, true)
