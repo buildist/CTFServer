@@ -316,7 +316,10 @@ public final class World {
     }
 
     session.getActionSender().sendLoginResponse(
-        Constants.PROTOCOL_VERSION, c.getName(), c.getMessage() + "&0-hax -push" + level.getMotd(), op);
+        Constants.PROTOCOL_VERSION,
+        c.getName().replace("_m", World.getWorld().getLevel().id),
+        c.getMessage() + "&0-hax -push" + level.getMotd(),
+        op);
     if (!session.isExtensionSupported("HackControl")) {
       session
           .getActionSender()
