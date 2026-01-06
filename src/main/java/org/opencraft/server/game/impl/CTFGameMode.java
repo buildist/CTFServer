@@ -153,6 +153,7 @@ public class CTFGameMode extends GameMode {
       boolean lethal,
       boolean tk,
       boolean deleteSelf,
+      boolean extendedVerticalRange,
       String type) {
     if (deleteSelf) {
       level.setBlock(x, y, z, 0);
@@ -176,13 +177,19 @@ public class CTFGameMode extends GameMode {
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
       float pr = r + 0.5f;
+      float prv = r;
+
+      if (extendedVerticalRange) {
+        prv += PLAYER_POSITION_OFFSET;
+      }
+
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
         float tx = (t.getPosition().getX()) / 32f;
         float ty = (t.getPosition().getY()) / 32f;
         float tz = (t.getPosition().getZ()) / 32f;
         if (Math.abs(px - tx) < pr
             && Math.abs(py - ty) < pr
-            && Math.abs(pz - tz) < (pr + PLAYER_POSITION_OFFSET)
+            && Math.abs(pz - tz) < prv
             && (p.team != t.team || (tk && (t == p || !t.hasFlag)))
             && !t.isSafe()
             && p.canKill(t, true)
@@ -286,7 +293,7 @@ public class CTFGameMode extends GameMode {
   }
 
   public void explodeTNT(Player p, Level level, int x, int y, int z, int r) {
-    explodeTNT(p, level, x, y, z, r, true, false, true, null);
+    explodeTNT(p, level, x, y, z, r, true, false, true, true, null);
   }
 
   public void processFlamethrower(Player p, Position pos, Rotation r) {

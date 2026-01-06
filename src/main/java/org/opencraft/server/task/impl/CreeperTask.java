@@ -95,7 +95,7 @@ public class CreeperTask extends ScheduledTask {
 
     ctf.explodeTNT(
       this.invoker, this.level, pos.getX(), pos.getY(), pos.getZ(),
-      radius, LETHAL, TEAMKILL, false, NAME
+      radius, LETHAL, TEAMKILL, false, true, NAME
     );
 
     invoker.isCreepering = false;

@@ -120,11 +120,12 @@ public class GrenadeCommand implements Command {
                       .explodeTNT(
                           player,
                           World.getWorld().getLevel(),
-                          (int) Math.round(lastX),
-                          (int) Math.round(lastY),
-                          (int) Math.round(lastZ),
+                          bx,
+                          by,
+                          bz,
                           2,
                           true,
+                          false,
                           false,
                           false,
                           "Grenade");

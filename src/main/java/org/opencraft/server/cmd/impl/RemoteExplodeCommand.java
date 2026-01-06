@@ -90,7 +90,7 @@ public class RemoteExplodeCommand implements Command {
         ((CTFGameMode)World.getWorld()
             .getGameMode())
             .explodeTNT(
-                player, World.getWorld().getLevel(), bx, by, bz, 3, true, false, false, null);
+                player, World.getWorld().getLevel(), bx, by, bz, 3, true, false, false, true, null);
         return;
       }
       lastX = x;

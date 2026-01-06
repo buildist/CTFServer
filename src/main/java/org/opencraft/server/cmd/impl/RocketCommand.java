@@ -114,6 +114,7 @@ public class RocketCommand implements Command {
                           true,
                           false,
                           false,
+                          true,
                           "rocket");
                   break;
                 } else {
