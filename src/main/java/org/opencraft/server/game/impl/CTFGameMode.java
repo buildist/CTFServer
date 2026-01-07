@@ -177,10 +177,12 @@ public class CTFGameMode extends GameMode {
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
       float pr = r + 0.5f;
-      float prv = pr;
+      float prv = r;
 
       if (extendedVerticalRange) {
         prv += PLAYER_POSITION_OFFSET;
+      } else {
+        prv = pr;
       }
 
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
