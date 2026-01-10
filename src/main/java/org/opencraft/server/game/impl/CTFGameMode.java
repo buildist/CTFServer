@@ -189,7 +189,9 @@ public class CTFGameMode extends GameMode {
         float tz = (t.getPosition().getZ()) / 32f;
         if (Math.abs(px - tx) < pr
             && Math.abs(py - ty) < pr
-            && Math.abs(pz - tz) < prv
+            && pz - tz < pr
+            // Extended vertical range should only be in the +z direction
+            && tz - pz < prv
             && (p.team != t.team || (tk && (t == p || !t.hasFlag)))
             && !t.isSafe()
             && p.canKill(t, true)
