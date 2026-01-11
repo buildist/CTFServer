@@ -50,7 +50,7 @@ import java.util.HashMap;
  *
  * @author Graham Edgecombe
  */
-public final class MinecraftSession extends OCSession {
+public class MinecraftSession extends OCSession {
 
   private final ActionSender actionSender = new ActionSender(this);
   /** The action sender associated with this session. */

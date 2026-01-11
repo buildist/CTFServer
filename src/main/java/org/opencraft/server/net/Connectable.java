@@ -37,6 +37,7 @@
 package org.opencraft.server.net;
 
 import org.apache.mina.core.session.IoSession;
+import org.opencraft.server.model.Player;
 import org.opencraft.server.net.packet.Packet;
 
 import java.util.ArrayDeque;
@@ -59,6 +60,14 @@ public abstract class Connectable {
   protected void send(Packet packet, IoSession session) {
     synchronized (this) {
       final String name = packet.getDefinition().getName();
+      Player player = (Player) session.getAttribute("player");
+      if (player != null && !name.equals("disconnect")) {
+        Thread currentThread = Thread.currentThread();
+        String currentThreadName = currentThread.getName();
+
+        if (player.watchingReplay && !currentThreadName.endsWith("'s replay thread")) return;
+      }
+
       final boolean unqueuedPacket =
           name.equals("authentication_response")
               || name.endsWith("level_init")

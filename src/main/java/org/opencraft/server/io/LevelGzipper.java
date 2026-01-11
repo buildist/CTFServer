@@ -66,7 +66,10 @@ public final class LevelGzipper {
   }
 
   public void gzipLevel(final MinecraftSession session) {
-    final Level level = World.getWorld().getLevel();
+    gzipLevel(session, World.getWorld().getLevel());
+  }
+
+  public void gzipLevel(final MinecraftSession session, final Level level) {
     if (session.levelSent) {
       session
           .getActionSender()

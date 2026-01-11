@@ -38,6 +38,8 @@ package org.opencraft.server.model;
 
 import de.gesundkrank.jskills.IPlayer;
 import de.gesundkrank.jskills.Rating;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
@@ -145,6 +147,8 @@ public class Player extends Entity implements IPlayer {
   public boolean streamerMode = false;
   public Player following = null;
   public int followingIndex = -1;
+  public volatile boolean watchingReplay;
+  public boolean requestedToLeaveReplay;
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();
@@ -420,6 +424,10 @@ public class Player extends Entity implements IPlayer {
 
   public boolean isIgnored(Player p) {
     return ignorePlayers.contains(p.name);
+  }
+
+  public void sendMessage(String message) {
+    getActionSender().sendChatMessage(message);
   }
 
   public void toggleFlameThrower() {
@@ -951,15 +959,14 @@ public class Player extends Entity implements IPlayer {
   public String getListName() {
     String playerHasFlag = hasFlag ? "&6[!] " : "";
 
-    String playerSuffix = "";
-    if (AFK) {
-      playerSuffix = "    &7(AFK)";
-    } else if (muted) {
-      playerSuffix = "    &7(Muted)";
+    List<String> characteristics = new ArrayList<>();
+    if (AFK) characteristics.add("AFK");
+    if (muted) characteristics.add("Muted");
+    synchronized (this) {
+      if (watchingReplay) characteristics.add("Replaying");
     }
-    if (AFK && muted) {
-      playerSuffix = "    &7(AFK, Muted)";
-    }
+    String playerSuffix = (!characteristics.isEmpty() ?
+        "    &7(" + String.join(", ", characteristics) + ")" : "");
 
     String listName =
         playerHasFlag + getColoredName() + "    &f" + currentRoundPoints + playerSuffix;
@@ -1156,5 +1163,9 @@ public class Player extends Entity implements IPlayer {
         GameSettings.getBoolean("CreeperShield")
           && (curTime - creeperTime < (long)(1000 * GameSettings.getFloat("CreeperTime")))
       );
+  }
+
+  public PlayerUI getUI() {
+    return ui;
   }
 }

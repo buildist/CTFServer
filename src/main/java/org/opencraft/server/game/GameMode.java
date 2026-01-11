@@ -438,11 +438,15 @@ public abstract class GameMode {
     synchronized (killFeed) {
       killFeed.clear();
       for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-        if (p.getSession().isExtensionSupported("MessageTypes")) {
-          for (int i = 0; i < 3; i++) {
-            p.getActionSender().sendChatMessage("", 11 + i);
-          }
-        }
+        clearKillFeedFor(p);
+      }
+    }
+  }
+
+  public void clearKillFeedFor(Player p) {
+    if (p.getSession().isExtensionSupported("MessageTypes")) {
+      for (int i = 0; i < 3; i++) {
+        p.getActionSender().sendChatMessage("", 11 + i);
       }
     }
   }

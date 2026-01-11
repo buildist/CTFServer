@@ -43,6 +43,7 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Store;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.SessionHandler;
+import org.opencraft.server.replay.ReplayFile;
 import org.opencraft.server.task.TaskQueue;
 import org.opencraft.server.task.impl.CTFProcessTask;
 import org.opencraft.server.task.impl.ConsoleTask;
@@ -71,6 +72,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -103,32 +105,11 @@ public final class Server {
     log("Starting OpenCraft server...");
     Configuration.readConfiguration();
 
-    FileInputStream ipFile = new FileInputStream("ipbans.txt");
-    BufferedReader r = new BufferedReader(new InputStreamReader(ipFile));
-    String l;
-    while ((l = r.readLine()) != null) {
-      ipBans.add(l);
-    }
-
-    FileInputStream muteFile = new FileInputStream("mutes.txt");
-    r = new BufferedReader(new InputStreamReader(muteFile));
-    while ((l = r.readLine()) != null) {
-      mutes.add(l);
-    }
-
-    FileInputStream rulesFile = new FileInputStream("rules.txt");
-    r = new BufferedReader(new InputStreamReader(rulesFile));
-    l = null;
-    while ((l = r.readLine()) != null) {
-      rulesText.add(l);
-    }
-
-    FileInputStream whitelistFile = new FileInputStream("whitelist.txt");
-    r = new BufferedReader(new InputStreamReader(rulesFile));
-    l = null;
-    while ((l = r.readLine()) != null) {
-      whitelist.add(l);
-    }
+    fill(ipBans, "ipbans.txt");
+    fill(mutes, "mutes.txt");
+    fill(rulesText, "rules.txt");
+    fill(whitelist, "whitelist.txt");
+    ReplayFile.checkReplayDirectory();
 
     MapController.create();
     log("Creating world...");
@@ -146,6 +127,16 @@ public final class Server {
       new Thread(new DiscordBot()).start();
     //}
     log("Initializing game...");
+  }
+
+  public static void fill(List<String> list, String filePath) throws IOException {
+    try (FileInputStream fileStream = new FileInputStream(filePath)) {
+      BufferedReader r = new BufferedReader(new InputStreamReader(fileStream));
+      String l;
+      while ((l = r.readLine()) != null) {
+        list.add(l);
+      }
+    }
   }
 
   /** The entry point of the server application. */
