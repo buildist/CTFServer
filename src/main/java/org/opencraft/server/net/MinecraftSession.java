@@ -73,6 +73,11 @@ public class MinecraftSession extends OCSession {
 
   public MinecraftSession(IoSession sess) {
     super(sess);
+    if (nullMode) {
+      ip = "";
+
+      return;
+    }
     sess.getConfig().setBothIdleTime(10);
     sess.getConfig().setWriteTimeout(5);
     ip = ((InetSocketAddress) sess.getRemoteAddress()).getAddress().getHostAddress();
@@ -96,6 +101,7 @@ public class MinecraftSession extends OCSession {
    *
    * @return The player.
    */
+  @Override
   public Player getPlayer() {
     return player;
   }

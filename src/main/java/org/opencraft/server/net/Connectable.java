@@ -39,6 +39,7 @@ package org.opencraft.server.net;
 import org.apache.mina.core.session.IoSession;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.net.packet.Packet;
+import org.opencraft.server.net.packet.PacketDefinition;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -59,8 +60,9 @@ public abstract class Connectable {
    */
   protected void send(Packet packet, IoSession session) {
     synchronized (this) {
-      final String name = packet.getDefinition().getName();
-      Player player = (Player) session.getAttribute("player");
+      final PacketDefinition definition = packet.getDefinition();
+      final String name = (definition == null ? "unparsed" : definition.getName());
+      final Player player = getPlayer();
       if (player != null && !name.equals("disconnect")) {
         Thread currentThread = Thread.currentThread();
         String currentThreadName = currentThread.getName();
@@ -91,4 +93,6 @@ public abstract class Connectable {
       }
     }
   }
+
+  public abstract Player getPlayer();
 }
