@@ -77,7 +77,7 @@ public abstract class OCSession extends Connectable {
    */
   public void send(Packet packet) {
     if (nullMode) {
-      ForkJoinPool.commonPool().execute(() -> ReplayManager.getInstance().registerPacket(packet));
+      Thread.ofVirtual().start(() -> ReplayManager.getInstance().registerPacket(packet));
 
       return;
     }

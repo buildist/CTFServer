@@ -67,7 +67,12 @@ public class ReplayFile implements Closeable {
   private long recordingStartTimestamp;
 
   public ReplayFile(int day, int month, int year, int id) {
-    this.file = new File((path = getFilename(day, month, year, id)));
+    Pair<String, String> possibleFilenames = getFilename(day, month, year, id);
+    String importantFilename = possibleFilenames.getSecond();
+    boolean important = (new File(importantFilename)).exists();
+
+    this.path = (important ? importantFilename : possibleFilenames.getFirst());
+    this.file = new File(path);
   }
 
   public static Pair<String, String> getFilename(int day, int month, int year, int id) {
@@ -92,7 +97,10 @@ public class ReplayFile implements Closeable {
   // only used by ReplayManager
   public static int locateFreeId(int day, int month, int year) {
     for (int id = MIN_ID; id <= MAX_ID; id++) {
-      if (!(new File(getFilename(day, month, year, id))).exists()) return id;
+      Pair<String, String> possibleFilenames = getFilename(day, month, year, id);
+
+      if (!(new File(possibleFilenames.getFirst())).exists() &&
+          !(new File(possibleFilenames.getSecond())).exists()) return id;
     }
 
     return FAILED_TO_LOCATE_FREE_ID;
@@ -101,8 +109,14 @@ public class ReplayFile implements Closeable {
   public static List<Integer> availableIds(int day, int month, int year) {
     List<Integer> result = new ArrayList<>();
     for (int id = MIN_ID; id <= MAX_ID; id++) {
-      String filename = getFilename(day, month, year, id);
-      if ((new File(filename)).exists() && !ReplayManager.getInstance().isTemporaryFile(filename)) {
+      Pair<String, String> possibleFilenames = getFilename(day, month, year, id);
+
+      String generalName = possibleFilenames.getFirst();
+      boolean anyFile = (
+          (new File(generalName)).exists() ||
+          (new File(possibleFilenames.getSecond())).exists()
+      );
+      if (anyFile && !ReplayManager.getInstance().isBusy(generalName)) {
         result.add(id);
       }
     }

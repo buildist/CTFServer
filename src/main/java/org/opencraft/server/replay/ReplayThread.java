@@ -4,16 +4,13 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
-import org.opencraft.server.ReplayManager;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.io.LevelGzipper;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
-import org.opencraft.server.net.packet.AbstractPacket;
 import org.opencraft.server.net.packet.Packet;
-import org.opencraft.server.net.packet.RawPacket;
 
 public class ReplayThread extends Thread {
     private final Player player;
@@ -102,7 +99,7 @@ public class ReplayThread extends Thread {
 
                 return;
             }
-            if (ReplayManager.getInstance().isTemporaryFile(file)) {
+            if (ReplayManager.getInstance().isBusy(file)) {
                 player.sendMessage("- &eThis replay file is not ready yet");
 
                 return;
@@ -135,7 +132,7 @@ public class ReplayThread extends Thread {
         } catch (InterruptedException e) {
             interrupt();
 
-            if (!finishedLogic) player.sendMessage("- &eThe operation was aborted");
+            if (!finishedLogic) player.sendMessage("- &eThe operation was interrupted");
         } catch (IOException e) {
             Server.log("I/O error " + (finishedLogic ?
                     "during waiting for player to quit" : "during reading a replay"));
@@ -146,10 +143,12 @@ public class ReplayThread extends Thread {
             if (!onlyViewMetadata) {
                 clearAnnouncementAndKillFeed();
 
+                /* // TODO do we actually need this?
                 for (short id = 0; id < 255; id++) { // do not remove -1 (255)
                     player.getActionSender().sendRemovePlayerName(id);
                     player.getActionSender().sendRemoveEntity(id);
                 }
+                 */
                 LevelGzipper.getLevelGzipper().gzipLevel(player.getSession());
 
                 synchronized (player) {

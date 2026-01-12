@@ -89,12 +89,16 @@ public class ReplayManager {
     return recording;
   }
 
-  public synchronized boolean isTemporaryFile(ReplayFile file) {
-    return isTemporaryFile(file.getFilename());
+  public boolean isBusy(ReplayFile file) {
+    return isBusy(file.getFilename());
   }
 
-  public synchronized boolean isTemporaryFile(String filename) {
-    return recording && replayFile.getFilename().equals(filename);
+  public boolean isBusy(String filename) {
+    if (filename.contains("important")) return false;
+
+    synchronized (this) {
+      return recording && replayFile.getFilename().equals(filename);
+    }
   }
 
   /*

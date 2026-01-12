@@ -183,6 +183,10 @@ public abstract class GameMode {
     registerCommand("whitelist", WhitelistCommand.getCommand());
     registerCommand("yes", YesCommand.getCommand());
     registerCommand("lb", LeaderBoardCommand.getCommand());
+    registerCommand("replay", ReplayCommand.getCommand());
+    registerCommand("replaymeta", ReplayMetaCommand.getCommand());
+    registerCommand("availablereplays", AvailableReplaysCommand.getCommand());
+    registerCommand("leave", LeaveCommand.getCommand());
   }
 
   public void registerCommand(String name, Command command) {
