@@ -1,12 +1,15 @@
 package org.opencraft.server.cmd.impl;
 
+import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.replay.ReplayFile;
+import org.opencraft.server.replay.ReplayManager;
 import org.opencraft.server.replay.ReplayThread;
+import org.opencraft.server.util.Pair;
 
 public class ReplayCommand implements Command {
 
@@ -20,6 +23,7 @@ public class ReplayCommand implements Command {
   public static final byte MODE_REPLAY = 0;
   public static final byte MODE_ONLY_VIEW_METADATA = 1;
   public static final byte MODE_VIEW_IDS = 2;
+  public static final byte MODE_MARK_IMPORTANT = 3;
 
   private static final ReplayCommand INSTANCE = new ReplayCommand();
 
@@ -160,6 +164,40 @@ public class ReplayCommand implements Command {
     boolean onlyViewMetadata = false;
     if (mode == MODE_REPLAY || (onlyViewMetadata = (mode == MODE_ONLY_VIEW_METADATA))) {
       (new ReplayThread(player, day, month, year, id, onlyViewMetadata)).start();
+    } else if (mode == MODE_MARK_IMPORTANT) {
+      if (!player.isOp()) {
+        player.sendMessage("- &eYou must be OP to do that!");
+
+        return;
+      }
+      Pair<String, String> filenames = ReplayFile.getFilenames(day, month, year, id);
+      String generalFilename = filenames.getFirst();
+      File important = new File(filenames.getSecond());
+
+      if (important.exists()) {
+        player.sendMessage("- &eThis replay is already marked as important");
+
+        return;
+      }
+      if (ReplayManager.getInstance().isBusy(generalFilename)) {
+        player.sendMessage("- &eThe server still has not finished writing to this replay");
+        player.sendMessage("- &ePlease try again after this game");
+
+        return;
+      }
+      File replayFile = new File(generalFilename);
+      if (!replayFile.exists()) {
+        player.sendMessage("- &eThe specified replay does not exist");
+
+        return;
+      }
+      if (!replayFile.renameTo(important)) {
+        player.sendMessage("- &eFailed to mark this replay as important");
+
+        return;
+      }
+
+      player.sendMessage("- &eThis replay is now safe from automatic cleanup");
     } else { // mode == MODE_VIEW_IDS
       List<Integer> availableIds = ReplayFile.availableIds(day, month, year);
       String answer = (availableIds.isEmpty() ? "&c<none>" :

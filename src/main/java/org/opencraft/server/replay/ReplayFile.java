@@ -69,7 +69,7 @@ public class ReplayFile implements Closeable {
   private long recordingStartTimestamp;
 
   public ReplayFile(int day, int month, int year, int id) {
-    Pair<String, String> possibleFilenames = getFilename(day, month, year, id);
+    Pair<String, String> possibleFilenames = getFilenames(day, month, year, id);
     String importantFilename = possibleFilenames.getSecond();
     boolean important = (new File(importantFilename)).exists();
 
@@ -77,7 +77,7 @@ public class ReplayFile implements Closeable {
     this.file = new File(path);
   }
 
-  public static Pair<String, String> getFilename(int day, int month, int year, int id) {
+  public static Pair<String, String> getFilenames(int day, int month, int year, int id) {
     String filename = REPLAY_DIRECTORY +
         adjust(day, 2) + "." +
         adjust(month, 2) + "." +
@@ -99,7 +99,7 @@ public class ReplayFile implements Closeable {
   // only used by ReplayManager
   public static int locateFreeId(int day, int month, int year) {
     for (int id = MIN_ID; id <= MAX_ID; id++) {
-      Pair<String, String> possibleFilenames = getFilename(day, month, year, id);
+      Pair<String, String> possibleFilenames = getFilenames(day, month, year, id);
 
       if (!(new File(possibleFilenames.getFirst())).exists() &&
           !(new File(possibleFilenames.getSecond())).exists()) return id;
@@ -111,7 +111,7 @@ public class ReplayFile implements Closeable {
   public static List<Integer> availableIds(int day, int month, int year) {
     List<Integer> result = new ArrayList<>();
     for (int id = MIN_ID; id <= MAX_ID; id++) {
-      Pair<String, String> possibleFilenames = getFilename(day, month, year, id);
+      Pair<String, String> possibleFilenames = getFilenames(day, month, year, id);
 
       String generalName = possibleFilenames.getFirst();
       boolean anyFile = (

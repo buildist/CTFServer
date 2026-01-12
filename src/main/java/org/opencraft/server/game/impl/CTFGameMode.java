@@ -255,7 +255,7 @@ public class CTFGameMode extends GameMode {
       }
     }
 
-    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player player : World.getWorld().getPlayerList().getPlayers(true)) {
       int ex = x  * 32 + 16;
       int ez = y  * 32 + 16;
       int ey = z  * 32 + 16;

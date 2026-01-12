@@ -188,6 +188,7 @@ public abstract class GameMode {
     registerCommand("replaymeta", ReplayMetaCommand.getCommand());
     registerCommand("availablereplays", AvailableReplaysCommand.getCommand());
     registerCommand("leave", LeaveCommand.getCommand());
+    registerCommand("markreplay", MarkReplayCommand.getCommand());
   }
 
   public void registerCommand(String name, Command command) {
