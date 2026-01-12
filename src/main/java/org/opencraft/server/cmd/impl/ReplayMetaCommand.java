@@ -1,6 +1,7 @@
 package org.opencraft.server.cmd.impl;
 
 public class ReplayMetaCommand extends ReplayCommand {
+
   private static final ReplayMetaCommand INSTANCE = new ReplayMetaCommand();
 
   public ReplayMetaCommand() {

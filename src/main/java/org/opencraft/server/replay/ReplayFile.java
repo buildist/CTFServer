@@ -20,7 +20,9 @@ import org.opencraft.server.net.packet.UnparsedPacket;
 import org.opencraft.server.util.Pair;
 
 public class ReplayFile implements Closeable {
+
   public record ReplayChunk(int deltaMillis, List<Packet> packets) {
+
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     public void sleepUntilSendingThisChunk(
         Player watcher, long timestampWhenReplayStarted

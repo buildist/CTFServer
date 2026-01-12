@@ -13,6 +13,7 @@ import org.opencraft.server.model.World;
 import org.opencraft.server.net.packet.Packet;
 
 public class ReplayThread extends Thread {
+
     private final Player player;
     private final int day;
     private final int month;

@@ -1,6 +1,7 @@
 package org.opencraft.server.cmd.impl;
 
 public class AvailableReplaysCommand extends ReplayCommand {
+
   private static final AvailableReplaysCommand INSTANCE = new AvailableReplaysCommand();
 
   public AvailableReplaysCommand() {

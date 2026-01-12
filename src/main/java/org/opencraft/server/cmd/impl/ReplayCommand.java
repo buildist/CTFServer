@@ -9,6 +9,7 @@ import org.opencraft.server.replay.ReplayFile;
 import org.opencraft.server.replay.ReplayThread;
 
 public class ReplayCommand implements Command {
+
   public static final int UNSPECIFIED = -2;
   public static final int BAD = -1;
   public static final int SHOULD_EXIT = 0;

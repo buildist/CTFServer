@@ -1,6 +1,7 @@
 package org.opencraft.server.net.packet;
 
 public class UnparsedPacket extends Packet {
+
   private final byte[] rawPacket;
 
   public UnparsedPacket(byte[] rawPacket) {

@@ -3,7 +3,9 @@ package org.opencraft.server.net;
 import org.opencraft.server.model.Player;
 
 public class FakePlayerBase extends Player {
+
   public static class FakeMinecraftSession extends MinecraftSession {
+
     public FakeMinecraftSession() {
       super(null);
 

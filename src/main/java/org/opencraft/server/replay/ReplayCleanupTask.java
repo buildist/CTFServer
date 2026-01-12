@@ -3,44 +3,45 @@ package org.opencraft.server.replay;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import org.opencraft.server.Server;
+import org.opencraft.server.task.ScheduledTask;
 
-public class ReplayCleanupTask implements Runnable {
-    public static final long TIMEOUT = TimeUnit.DAYS.toMillis(15L);
+public class ReplayCleanupTask extends ScheduledTask {
 
-    private static final ReplayCleanupTask INSTANCE = new ReplayCleanupTask();
+  private static final long DELAY = TimeUnit.DAYS.toMillis(1L);
+  public static final long TIMEOUT = TimeUnit.DAYS.toMillis(15L);
 
-    private ReplayCleanupTask() {
+  public ReplayCleanupTask() {
+    super(0);
+  }
+
+  private void tryToDelete(File file) {
+    if (!file.delete()) {
+      Server.log("Failed to delete " + file.getName() + " replay file");
     }
+  }
 
-    public static ReplayCleanupTask getInstance() {
-        return INSTANCE;
+  @Override
+  public void execute() {
+    if (getDelay() == 0) {
+      setDelay(DELAY);
     }
+    File[] replayFiles = new File(ReplayFile.REPLAY_DIRECTORY).listFiles();
+    if (replayFiles == null) {
+      Server.log("replayFiles == null (?)");
 
-    private void tryToDelete(File file) {
-        if (!file.delete()) {
-            Server.log("Failed to delete " + file.getName() + " replay file");
-        }
+      return;
     }
+    for (File file : replayFiles) {
+      String name;
+      if (!(name = file.getName()).endsWith(".ltr")) {
+        Server.log("Non-LTR file in \"replays\" directory: " + name);
+        tryToDelete(file);
 
-    @Override
-    public void run() {
-        File[] replayFiles = new File(ReplayFile.REPLAY_DIRECTORY).listFiles();
-        if (replayFiles == null) {
-            Server.log("replayFiles == null (?)");
+        continue;
+      }
+      if (name.contains("important")) continue;
 
-            return;
-        }
-        for (File file : replayFiles) {
-            String name;
-            if (!(name = file.getName()).endsWith(".ltr")) {
-                Server.log("Non-LTR file in \"replays\" directory: " + name);
-                tryToDelete(file);
-
-                continue;
-            }
-            if (name.contains("important")) continue;
-
-            if (System.currentTimeMillis() - file.lastModified() >= TIMEOUT) tryToDelete(file);
-        }
+      if (System.currentTimeMillis() - file.lastModified() >= TIMEOUT) tryToDelete(file);
     }
+  }
 }

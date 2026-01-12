@@ -428,7 +428,7 @@ public final class World {
    * @param message The message.
    */
   public void broadcast(Player player, String message) {
-    for (Player otherPlayer : playerList.getPlayers()) {
+    for (Player otherPlayer : playerList.getPlayers(true)) {
       otherPlayer.getSession().getActionSender().sendChatMessage(message);
     }
   }
@@ -440,7 +440,7 @@ public final class World {
   }
 
   public void broadcast(String message) {
-    for (Player player : playerList.getPlayers()) {
+    for (Player player : playerList.getPlayers(true)) {
       player.getSession().getActionSender().sendChatMessage(message);
     }
   }
@@ -480,7 +480,7 @@ public final class World {
     if (player.isVIP() && !player.isOp()) {
       chr += "[VIP] ";
     }
-    for (Player t : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player t : World.getWorld().getPlayerList().getPlayers(true)) {
       if (!t.isIgnored(player)) {
         t.getActionSender().sendChatMessage(chr + player.getName() + "&f: " + message);
       }

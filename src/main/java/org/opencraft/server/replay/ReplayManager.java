@@ -12,6 +12,7 @@ import org.opencraft.server.net.FakePlayerBase;
 import org.opencraft.server.net.packet.Packet;
 
 public class ReplayManager {
+
   private static final ReplayManager INSTANCE = new ReplayManager();
 
   private long recordingStartTimestamp;

@@ -5,6 +5,7 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
 
 public class LeaveCommand implements Command {
+
   private static final LeaveCommand INSTANCE = new LeaveCommand();
 
   public static LeaveCommand getCommand() {

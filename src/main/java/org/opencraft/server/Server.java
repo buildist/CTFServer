@@ -43,6 +43,7 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Store;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.SessionHandler;
+import org.opencraft.server.replay.ReplayCleanupTask;
 import org.opencraft.server.replay.ReplayFile;
 import org.opencraft.server.task.TaskQueue;
 import org.opencraft.server.task.impl.CTFProcessTask;
@@ -121,6 +122,7 @@ public final class Server {
     TaskQueue.getTaskQueue().schedule(new HeartbeatTask());
     TaskQueue.getTaskQueue().schedule(new MessageTask());
     TaskQueue.getTaskQueue().schedule(new PingTask());
+    TaskQueue.getTaskQueue().schedule(new ReplayCleanupTask());
     new Thread(new ConsoleTask()).start();
     new Thread(new ItemDropTask()).start();
     //if (!Configuration.getConfiguration().isTest()) {
