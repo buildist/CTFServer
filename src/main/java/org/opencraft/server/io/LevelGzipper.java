@@ -96,87 +96,85 @@ public final class LevelGzipper {
       session.getActionSender().sendDefineBlockExt(blockDef);
       session.getActionSender().sendInventoryOrder(blockDef.id, blockDef.inventoryOrder);
     }
-    Runnable job = () -> {
-      try {
-        sendBlocks(level.getCompressedBlocks0(), session.getActionSender(), false);
-        sendBlocks(level.getCompressedBlocks1(), session.getActionSender(), true);
+    service.submit(
+        new Runnable() {
+          @Override
+          public void run() {
+            try {
+              sendBlocks(level.getCompressedBlocks0(), session.getActionSender(), false);
+              sendBlocks(level.getCompressedBlocks1(), session.getActionSender(), true);
 
-        if (session.isExtensionSupported("EnvMapAspect", 1))
-          session.getActionSender().sendMapAspect();
-        if (session.isExtensionSupported("EnvColors"))
-          session.getActionSender().sendMapColors();
-        session.getActionSender().sendLevelFinish();
+              if (session.isExtensionSupported("EnvMapAspect", 1))
+                session.getActionSender().sendMapAspect();
+              if (session.isExtensionSupported("EnvColors"))
+                session.getActionSender().sendMapColors();
+              session.getActionSender().sendLevelFinish();
 
-        for (int id : level.usedSolidTypes) {
-          session.getActionSender().sendBlockPermissions(id, false, false);
-        }
+              for (int id : level.usedSolidTypes) {
+                session.getActionSender().sendBlockPermissions(id, false, false);
+              }
 
-        for (int id : level.usedBreakableTypes) {
-          session.getActionSender().sendBlockPermissions(id, true, true);
-        }
+              for (int id : level.usedBreakableTypes) {
+                session.getActionSender().sendBlockPermissions(id, true, true);
+              }
 
-        for (int type : DEFAULT_RESTRICTED_BLOCKS) {
-          session.getActionSender().sendBlockPermissions(type, false, false);
-        }
-        session.getActionSender().sendBlockPermissions(Constants.BLOCK_RED_FLAG, false, true);
-        session.getActionSender().sendBlockPermissions(Constants.BLOCK_BLUE_FLAG, false, true);
-        session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_RED, false, true);
-        session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_BLUE, false, true);
+              for (int type : DEFAULT_RESTRICTED_BLOCKS) {
+                session.getActionSender().sendBlockPermissions(type, false, false);
+              }
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_RED_FLAG, false, true);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_BLUE_FLAG, false, true);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_RED, false, true);
+              session.getActionSender().sendBlockPermissions(Constants.BLOCK_MINE_BLUE, false, true);
 
-        session.getActionSender().sendDefineEffect(
-            Constants.EFFECT_TNT,
-            0,
-            8,
-            0,
-            8,
-            255,
-            255,
-            255,
-            4,
-            100,
-            4,
-            1,
-            24,
-            10000,
-            3 * 10000,
-            1 * 10000,
-            2000,
-            0b00000000,
-            1
-        );
-        session.getActionSender().sendDefineEffect(
-            Constants.EFFECT_TNT_2,
-            0,
-            56,
-            8,
-            64,
-            255,
-            255,
-            255,
-            3,
-            5,
-            32,
-            0,
-            32,
-            200,
-            5 * 100,
-            1 * 5000,
-            10000,
-            0b00000000,
-            1
-        );
+              session.getActionSender().sendDefineEffect(
+                  Constants.EFFECT_TNT,
+                  0,
+                  8,
+                  0,
+                  8,
+                  255,
+                  255,
+                  255,
+                  4,
+                  100,
+                  4,
+                  1,
+                  24,
+                  10000,
+                  3 * 10000,
+                  1 * 10000,
+                  2000,
+                  0b00000000,
+                  1
+              );
+              session.getActionSender().sendDefineEffect(
+                  Constants.EFFECT_TNT_2,
+                  0,
+                  56,
+                  8,
+                  64,
+                  255,
+                  255,
+                  255,
+                  3,
+                  5,
+                  32,
+                  0,
+                  32,
+                  200,
+                  5 * 100,
+                  1 * 5000,
+                  10000,
+                  0b00000000,
+                  1
+              );
 
-        session.getPlayer().getLocalEntities().clear();
-      } catch (IOException ex) {
-        session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");
-      }
-    };
-    Player player = session.getPlayer();
-    if (player == FakePlayerBase.CAMERA_MAN || Thread.currentThread() instanceof ReplayThread) {
-      job.run();
-    } else {
-      service.submit(job);
-    }
+              session.getPlayer().getLocalEntities().clear();
+            } catch (IOException ex) {
+              session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");
+            }
+          }
+        });
   }
 
   private static void sendBlocks(byte[] bytes, ActionSender sender, boolean isHighBytes) {

@@ -41,7 +41,6 @@ import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.replay.ReplayManager;
-import java.util.concurrent.ForkJoinPool;
 
 /** @author Mark Farrell The base class for all sessions . */
 public abstract class OCSession extends Connectable {
@@ -58,6 +57,11 @@ public abstract class OCSession extends Connectable {
   public OCSession(IoSession session) {
     this.session = session;
     this.nullMode = (session == null);
+  }
+
+  /** Sets the state to connected. */
+  public void setConnected() {
+    this.state = State.CONNECTED;
   }
 
   /** Sets the state to authenticated. */
@@ -77,7 +81,7 @@ public abstract class OCSession extends Connectable {
    */
   public void send(Packet packet) {
     if (nullMode) {
-      Thread.ofVirtual().start(() -> ReplayManager.getInstance().registerPacket(packet));
+      ReplayManager.getInstance().registerPacket(packet);
 
       return;
     }

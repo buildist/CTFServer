@@ -250,7 +250,7 @@ public class ReplayFile implements Closeable {
       byte[] encodedData = packet.toByteArray();
 
       stream.writeInt(encodedData.length);
-      stream.write(encodedData, 0, encodedData.length);
+      stream.write(encodedData);
     }
   }
 

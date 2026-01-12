@@ -13,6 +13,64 @@ import org.opencraft.server.net.packet.Packet;
 
 public class ReplayManager {
 
+  public static class IOThread extends Thread {
+    public static final int MAX_ELEMENTS = 1024;
+    private static final IOThread INSTANCE = new IOThread();
+
+    private final List<Packet> packetQueue = new ArrayList<>(MAX_ELEMENTS);
+    private boolean notifiedSkipping;
+
+    private IOThread() {
+      setName("ReplayManager's disk I/O thread");
+      setDaemon(true);
+    }
+
+    public synchronized void enqueuePacket(Packet packet) {
+      int size;
+      if ((size = packetQueue.size()) >= MAX_ELEMENTS) {
+        if (!notifiedSkipping) {
+          Server.log("ReplayManager cannot keep up, " + size +
+              " packets are in queue to be recorded. First packet was dropped");
+
+          notifiedSkipping = true;
+        }
+
+        return;
+      }
+      packetQueue.add(packet);
+
+      notifyAll();
+    }
+
+    @Override
+    public void run() {
+      while (true) {
+        List<Packet> queueCopy;
+        synchronized (this) {
+          queueCopy = new ArrayList<>(packetQueue);
+          packetQueue.clear();
+        }
+
+        for (Packet packet : queueCopy) {
+          ReplayManager.INSTANCE.registerPacket(packet, true);
+        }
+
+        synchronized (this) {
+          try {
+            while (packetQueue.isEmpty()) wait();
+          } catch (InterruptedException e) {
+            interrupt();
+
+            Server.log(getName() + " was interrupted. This may "
+                + "lead to corrupted replay files and degraded performance");
+
+            break;
+          }
+        }
+      }
+    }
+  }
+
   private static final ReplayManager INSTANCE = new ReplayManager();
 
   private long recordingStartTimestamp;
@@ -21,6 +79,10 @@ public class ReplayManager {
 
   private long timestamp;
   private List<Packet> packetsCollected;
+
+  static {
+    IOThread.INSTANCE.start();
+  }
 
   private ReplayManager() {
   }
@@ -34,6 +96,7 @@ public class ReplayManager {
       recording = false;
 
       flushPackets();
+      FakePlayerBase.CAMERA_MAN.getSession().setConnected();
     }
     if (replayFile != null) {
       try {
@@ -102,22 +165,34 @@ public class ReplayManager {
     }
   }
 
+  public void registerPacket(Packet packet) {
+    registerPacket(packet, false);
+  }
+
   /*
    * Expected to be an outgoing (clientbound) packet.
    */
-  public synchronized void registerPacket(Packet packet) {
-    if (!recording) return;
-
-    long currentTime = System.currentTimeMillis();
-    if (currentTime == timestamp) {
-      packetsCollected.add(packet);
+  void registerPacket(Packet packet, boolean managed) {
+    if (!managed) {
+      IOThread.INSTANCE.enqueuePacket(packet);
 
       return;
     }
-    flushPackets();
-    packetsCollected = new ArrayList<>();
-    packetsCollected.add(packet);
-    timestamp = currentTime;
+
+    synchronized (this) {
+      if (!recording) return;
+
+      long currentTime = System.currentTimeMillis();
+      if (currentTime == timestamp) {
+        packetsCollected.add(packet);
+
+        return;
+      }
+      flushPackets();
+      packetsCollected = new ArrayList<>();
+      packetsCollected.add(packet);
+      timestamp = currentTime;
+    }
   }
 
   private void flushPackets() {
