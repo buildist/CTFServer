@@ -30,7 +30,7 @@ public class ReplayManager {
       if ((size = packetQueue.size()) >= MAX_ELEMENTS) {
         if (!notifiedSkipping) {
           Server.log("ReplayManager cannot keep up, " + size +
-              " packets are in queue to be recorded. First packet was dropped");
+              " packets are in queue to be recorded. A packet was ignored for the first time");
 
           notifiedSkipping = true;
         }
