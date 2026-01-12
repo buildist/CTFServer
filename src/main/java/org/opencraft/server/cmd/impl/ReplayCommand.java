@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.replay.ReplayFile;
 import org.opencraft.server.replay.ReplayManager;
 import org.opencraft.server.replay.ReplayThread;
@@ -28,13 +29,15 @@ public class ReplayCommand implements Command {
   private static final ReplayCommand INSTANCE = new ReplayCommand();
 
   private final byte mode;
+  private final boolean spectatorModeRequired;
 
   public ReplayCommand() {
-    this(MODE_REPLAY);
+    this(MODE_REPLAY, true);
   }
 
-  public ReplayCommand(byte mode) {
+  public ReplayCommand(byte mode, boolean spectatorModeRequired) {
     this.mode = mode;
+    this.spectatorModeRequired = spectatorModeRequired;
   }
 
   public static ReplayCommand getCommand() {
@@ -136,7 +139,7 @@ public class ReplayCommand implements Command {
 
   @Override
   public void execute(Player player, CommandParameters params) {
-    if (player.team != -1) {
+    if (player.team != -1 && spectatorModeRequired) {
       player.sendMessage("- &ePlease join the spectator team to use this command");
 
       return;
@@ -163,6 +166,20 @@ public class ReplayCommand implements Command {
     }
     boolean onlyViewMetadata = false;
     if (mode == MODE_REPLAY || (onlyViewMetadata = (mode == MODE_ONLY_VIEW_METADATA))) {
+      if (!onlyViewMetadata) {
+        MinecraftSession session = player.getSession();
+        if (!session.isExtensionSupported("MessageTypes") ||
+            !session.isExtensionSupported("EnvMapAspect") ||
+            !session.isExtensionSupported("EnvColors") ||
+            !session.isExtensionSupported("ExtPlayerList", 2)) {
+
+          player.sendMessage("- &eYour client does not support one of the required extension");
+          player.sendMessage("- &ePlease update the game to the latest version to view replays");
+
+          return;
+        }
+      }
+
       (new ReplayThread(player, day, month, year, id, onlyViewMetadata)).start();
     } else if (mode == MODE_MARK_IMPORTANT) {
       if (!player.isOp()) {

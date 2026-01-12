@@ -144,12 +144,6 @@ public class ReplayThread extends Thread {
             if (!onlyViewMetadata) {
                 clearAnnouncementAndKillFeed();
 
-                /* // TODO do we actually need this?
-                for (short id = 0; id < 255; id++) { // do not remove -1 (255)
-                    player.getActionSender().sendRemovePlayerName(id);
-                    player.getActionSender().sendRemoveEntity(id);
-                }
-                 */
                 LevelGzipper.getLevelGzipper().gzipLevel(player.getSession());
 
                 synchronized (player) {
