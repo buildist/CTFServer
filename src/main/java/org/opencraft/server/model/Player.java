@@ -38,6 +38,8 @@ package org.opencraft.server.model;
 
 import de.gesundkrank.jskills.IPlayer;
 import de.gesundkrank.jskills.Rating;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
@@ -47,6 +49,8 @@ import org.opencraft.server.game.GameMode;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.net.ActionSender;
+import org.opencraft.server.net.FakePlayerBase;
+import org.opencraft.server.net.FakePlayerBase.FakeMinecraftSession;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.PingList;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
@@ -145,6 +149,8 @@ public class Player extends Entity implements IPlayer {
   public boolean streamerMode = false;
   public Player following = null;
   public int followingIndex = -1;
+  public volatile boolean watchingReplay;
+  public boolean requestedToLeaveReplay;
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();
@@ -260,12 +266,16 @@ public class Player extends Entity implements IPlayer {
   }
 
   public boolean canSee(Player otherPlayer) {
+    Player camera = FakePlayerBase.CAMERA_MAN;
+    if (otherPlayer == camera) return false;
+
     // Hide spectators in tourney mode
     if (team == -1 && otherPlayer.team == -1 && GameSettings.getBoolean("Tournament") && World.getWorld().getGameMode().tournamentGameStarted) {
       return false;
     }
 
-    return !otherPlayer.isHidden && (otherPlayer.team != -1 || team == -1);
+    // Don't allow cameraman to see spectators
+    return !otherPlayer.isHidden && (otherPlayer.team != -1 || (team == -1 && this != camera));
   }
 
   public int getAmmo() {
@@ -420,6 +430,10 @@ public class Player extends Entity implements IPlayer {
 
   public boolean isIgnored(Player p) {
     return ignorePlayers.contains(p.name);
+  }
+
+  public void sendMessage(String message) {
+    getActionSender().sendChatMessage(message);
   }
 
   public void toggleFlameThrower() {
@@ -628,7 +642,7 @@ public class Player extends Entity implements IPlayer {
   }
 
   public void makeInvisible() {
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
       if (this != p) {
         p.getActionSender().sendRemoveEntity(instance);
       }
@@ -636,7 +650,7 @@ public class Player extends Entity implements IPlayer {
   }
 
   public void makeVisible() {
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
       if (this != p) {
         p.getActionSender().sendExtSpawn(instance);
       }
@@ -701,7 +715,7 @@ public class Player extends Entity implements IPlayer {
         unbalanced = true;
       }
     }
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
       if (p != this) {
         p.getActionSender().sendRemovePlayer(this);
       }
@@ -760,7 +774,7 @@ public class Player extends Entity implements IPlayer {
     }
 
     DuelKt.abandonDuel(this);
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
       if (p.canSee(this)) {
         p.getActionSender().sendAddPlayer(this, p == this);
       }
@@ -951,15 +965,14 @@ public class Player extends Entity implements IPlayer {
   public String getListName() {
     String playerHasFlag = hasFlag ? "&6[!] " : "";
 
-    String playerSuffix = "";
-    if (AFK) {
-      playerSuffix = "    &7(AFK)";
-    } else if (muted) {
-      playerSuffix = "    &7(Muted)";
+    List<String> characteristics = new ArrayList<>();
+    if (AFK) characteristics.add("AFK");
+    if (muted) characteristics.add("Muted");
+    synchronized (this) {
+      if (watchingReplay) characteristics.add("Replaying");
     }
-    if (AFK && muted) {
-      playerSuffix = "    &7(AFK, Muted)";
-    }
+    String playerSuffix = (!characteristics.isEmpty() ?
+        "    &7(" + String.join(", ", characteristics) + ")" : "");
 
     String listName =
         playerHasFlag + getColoredName() + "    &f" + currentRoundPoints + playerSuffix;
@@ -1012,7 +1025,7 @@ public class Player extends Entity implements IPlayer {
   }
 
   public void step(int ticks) {
-    if (World.getWorld().getPlayerList().size() >= GameSettings.getMaxPlayers()) {
+    if (World.getWorld().getPlayerList().size() >= GameSettings.getMaxPlayers() && !isBot()) {
       if (System.currentTimeMillis() - moveTime < 100 && AFK) {
         World.getWorld().broadcast("- " + parseName() + " is no longer AFK");
         AFK = false;
@@ -1156,5 +1169,13 @@ public class Player extends Entity implements IPlayer {
         GameSettings.getBoolean("CreeperShield")
           && (curTime - creeperTime < (long)(1000 * GameSettings.getFloat("CreeperTime")))
       );
+  }
+
+  public boolean isBot() {
+    return (getSession() instanceof FakeMinecraftSession);
+  }
+
+  public PlayerUI getUI() {
+    return ui;
   }
 }

@@ -39,9 +39,12 @@ package org.opencraft.server.io;
 import org.opencraft.server.Constants;
 import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.Level;
+import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.ActionSender;
+import org.opencraft.server.net.FakePlayerBase;
 import org.opencraft.server.net.MinecraftSession;
+import org.opencraft.server.replay.ReplayThread;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -66,7 +69,10 @@ public final class LevelGzipper {
   }
 
   public void gzipLevel(final MinecraftSession session) {
-    final Level level = World.getWorld().getLevel();
+    gzipLevel(session, World.getWorld().getLevel());
+  }
+
+  public void gzipLevel(final MinecraftSession session, final Level level) {
     if (session.levelSent) {
       session
           .getActionSender()
