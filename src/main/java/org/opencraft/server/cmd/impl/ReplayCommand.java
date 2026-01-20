@@ -171,7 +171,8 @@ public class ReplayCommand implements Command {
         if (!session.isExtensionSupported("MessageTypes") ||
             !session.isExtensionSupported("EnvMapAspect") ||
             !session.isExtensionSupported("EnvColors") ||
-            !session.isExtensionSupported("ExtPlayerList", 2)) {
+            !session.isExtensionSupported("ExtPlayerList", 2) ||
+            !session.isExtensionSupported("CustomParticles")) {
 
           player.sendMessage("- &eYour client does not support one of the required extension");
           player.sendMessage("- &ePlease update the game to the latest version to view replays");
