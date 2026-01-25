@@ -40,6 +40,8 @@ import org.opencraft.server.Server;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.FakePlayerBase;
+import org.opencraft.server.replay.ReplayManager;
 import org.opencraft.server.task.ScheduledTask;
 
 import java.util.ConcurrentModificationException;
@@ -65,7 +67,7 @@ public class UpdateTask extends ScheduledTask {
   public void execute() {
     final World world = World.getWorld();
     world.getGameMode().tick();
-    List<Player> players = world.getPlayerList().getPlayers();
+    List<Player> players = world.getPlayerList().getPlayers(true);
     for (Player player : players) {
       Set<Entity> le = player.getLocalEntities();
       Object[] localEntities = le.toArray();
@@ -81,11 +83,14 @@ public class UpdateTask extends ScheduledTask {
           player.getSession().getActionSender().sendUpdateEntity(localEntity);
         }
       }
-      for (Player otherEntity : players) {
-        if (!le.contains(otherEntity) && otherEntity != player) {
-          le.add(otherEntity);
-          player.getSession().getActionSender().sendAddPlayer(otherEntity, false);
-          Server.d("Adding " + otherEntity.getName() + " to " + player.getName());
+      Player camera = FakePlayerBase.CAMERA_MAN;
+      if (player != camera || ReplayManager.getInstance().isRecording()) {
+        for (Player otherEntity : players) {
+          if (otherEntity != camera && !le.contains(otherEntity) && otherEntity != player) {
+            le.add(otherEntity);
+            player.getSession().getActionSender().sendAddPlayer(otherEntity, false);
+            Server.d("Adding " + otherEntity.getName() + " to " + player.getName());
+          }
         }
       }
       if (player.lastPacketTime != 0

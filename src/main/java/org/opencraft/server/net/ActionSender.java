@@ -49,6 +49,7 @@ import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.TexturePackHandler;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.FakePlayerBase.FakeMinecraftSession;
 import org.opencraft.server.net.packet.PacketBuilder;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavedGameManager;
@@ -170,11 +171,14 @@ public class ActionSender {
                   // now load the player's game (TODO in the future do this in parallel with loading
                   // the
                   // level)
-                  SavedGameManager.getSavedGameManager()
-                      .queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
+                  boolean bot = (session instanceof FakeMinecraftSession);
+                  if (!bot) {
+                    SavedGameManager.getSavedGameManager()
+                        .queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
+                  }
 
                   session.setReady();
-                  World.getWorld().completeRegistration(session);
+                  if (!bot) World.getWorld().completeRegistration(session);
                 } catch (Exception ex) {
                   Server.log(ex);
                 }

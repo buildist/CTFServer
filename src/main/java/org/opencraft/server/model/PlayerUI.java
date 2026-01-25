@@ -196,7 +196,7 @@ public abstract class PlayerUI {
     return time;
   }
 
-  public void step(int ticks) {
+  public synchronized void step(int ticks) {
     update();
     String newStatus0 = getStatus0();
     if (newStatus0 != null && !status0.equals(newStatus0)) {
@@ -225,6 +225,12 @@ public abstract class PlayerUI {
         }
       }
     }
+  }
+
+  public synchronized void invalidateHUD() {
+    status0 = "invalidated";
+    status1 = "invalidated";
+    status2 = "invalidated";
   }
 
   protected void update() {}
