@@ -1062,6 +1062,10 @@ public final class Level implements Cloneable {
     }
     ImmutableList<BlockChange> validatedChanges = validatedChangesBuilder.build();
 
+    if (validatedChanges.isEmpty()) {
+      return;
+    }
+
     for (BlockChange blockChange : validatedChanges) {
       setBlock(blockChange.x, blockChange.y, blockChange.z, blockChange.type, true, false);
     }

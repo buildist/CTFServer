@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.game.impl;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import kotlin.Pair;
 import org.opencraft.server.Configuration;
@@ -46,7 +45,6 @@ import org.opencraft.server.WebServer;
 import org.opencraft.server.cmd.impl.DefuseCommand;
 import org.opencraft.server.cmd.impl.DefuseTNTCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
-import org.opencraft.server.cmd.impl.FlamethrowerCommand;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.*;
 import org.opencraft.server.model.BlockLog.BlockInfo;
@@ -54,7 +52,6 @@ import org.opencraft.server.model.BlockLog.BlockInfo;
 import java.util.ArrayList;
 
 import org.opencraft.server.task.TaskQueue;
-import org.opencraft.server.task.impl.CreeperTask;
 import org.opencraft.server.task.impl.TNTTask;
 import tf.jacobsc.ctf.server.FlameTickRecord;
 import tf.jacobsc.ctf.server.StalemateKt;
@@ -222,18 +219,16 @@ public class CTFGameMode extends GameMode {
       }
     }
 
-    ImmutableList.Builder<BlockChange> blockChanges = ImmutableList.builder();
     for (int cx = x - r; cx <= x + r; cx++) {
       for (int cy = y - r; cy <= y + r; cy++) {
         for (int cz = z - r; cz <= z + r; cz++) {
           if (!isSolidBlock(level, cx, cy, cz)) {
-            blockChanges.add(new BlockChange(cx, cy, cz, 0));
+            level.setBlock(cx, cy, cz, 0);
           }
           defuseMineIfCan(p, cx, cy, cz);
         }
       }
     }
-    World.getWorld().getLevel().setBlocks(blockChanges.build());
 
     if (killed.size() == 2) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bDouble Kill");
