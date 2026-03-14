@@ -53,7 +53,7 @@ public class CTFProcessTask extends ScheduledTask {
   }
 
   public void execute() {
-    for (Player player : world.getPlayerList().getPlayers()) {
+    for (Player player : world.getPlayerList().getPlayers(true)) {
       player.step(ticks);
 
       if (player.following != null) {

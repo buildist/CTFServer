@@ -40,12 +40,14 @@ import org.apache.mina.core.session.IoSession;
 import org.opencraft.server.Server;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.net.packet.Packet;
+import org.opencraft.server.replay.ReplayManager;
 
 /** @author Mark Farrell The base class for all sessions . */
 public abstract class OCSession extends Connectable {
 
   /** The <code>IoSession</code> associated with this <code>MinecraftSession</code>. */
   protected final IoSession session;
+  public final boolean nullMode;
 
   /**
    * Creates the Minecraft session.
@@ -54,6 +56,12 @@ public abstract class OCSession extends Connectable {
    */
   public OCSession(IoSession session) {
     this.session = session;
+    this.nullMode = (session == null);
+  }
+
+  /** Sets the state to connected. */
+  public void setConnected() {
+    this.state = State.CONNECTED;
   }
 
   /** Sets the state to authenticated. */
@@ -72,6 +80,11 @@ public abstract class OCSession extends Connectable {
    * @param packet The packet to send.
    */
   public void send(Packet packet) {
+    if (nullMode) {
+      ReplayManager.getInstance().registerPacket(packet);
+
+      return;
+    }
     this.send(packet, session);
     if (GameSettings.getBoolean("Debug")
         && packet.definition.getOpcode() != 8

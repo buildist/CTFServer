@@ -1070,7 +1070,7 @@ public final class Level implements Cloneable {
       setBlock(blockChange.x, blockChange.y, blockChange.z, blockChange.type, true, false);
     }
 
-    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player player : World.getWorld().getPlayerList().getPlayers(true)) {
       player.getActionSender().sendBlockUpdate(this, validatedChanges);
     }
   }
@@ -1101,7 +1101,7 @@ public final class Level implements Cloneable {
     int formerBlock = this.getBlock(x, y, z);
     blocks[x][y][z] = (short) type;
     if (sendToPlayers && type != formerBlock) {
-      for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+      for (Player player : World.getWorld().getPlayerList().getPlayers(true)) {
         player.getSession().getActionSender().sendBlock(x, y, z, (short) type);
       }
     }
