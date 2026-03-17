@@ -637,7 +637,7 @@ public class Player extends Entity implements IPlayer {
 
   public void makeVisible() {
     for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-      if (this != p) {
+      if (this != p && p.team == -1) {
         p.getActionSender().sendExtSpawn(instance);
       }
     }

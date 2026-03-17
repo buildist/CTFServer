@@ -67,7 +67,13 @@ public class POVCommand implements Command {
     if (player.team == -1) {
       if (params.getArgumentCount() == 1) {
         if (params.getStringArgument(0).equals("-reset")) {
+          if (player.following != null) {
+            unhidePlayerForPlayer(player.following, player); // Show the previous followed player if the follower switches targets
+          }
+          
           player.following = null;
+          player.followingIndex = -1;
+          player.makeVisible();
           return;
         }
 
@@ -90,9 +96,15 @@ public class POVCommand implements Command {
 
           player.followingIndex++;
 
+          if (player.following != null) {
+            unhidePlayerForPlayer(player.following, player); // Show the previous followed player if the follower switches targets
+          }
+
           Player other = players.get(player.followingIndex);
 
           if (other != null) {
+            player.following = other;
+            hidePlayerFromPlayer(other, player); // Hide the followed player from the player following them
             player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
             player.setPosition(other.getPosition());
             player.setRotation(other.getRotation());
@@ -120,9 +132,15 @@ public class POVCommand implements Command {
 
           player.followingIndex--;
 
+          if (player.following != null) {
+            unhidePlayerForPlayer(player.following, player); // Show the previous followed player if the follower switches targets
+          }
+
           Player other = players.get(player.followingIndex);
 
           if (other != null) {
+            player.following = other;
+            hidePlayerFromPlayer(other, player); // Hide the followed player from the player following them
             player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
             player.setPosition(other.getPosition());
             player.setRotation(other.getRotation());
@@ -134,7 +152,14 @@ public class POVCommand implements Command {
         Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
 
         if (other != null) {
+          if (other.team == -1) {
+            player.getActionSender().sendChatMessage("You may only spectate players!");
+            return;
+          }
+
           player.following = other;
+          player.makeInvisible();
+          hidePlayerFromPlayer(other, player); // Hide the followed player from the player following them
           return;
         }
 
@@ -149,6 +174,18 @@ public class POVCommand implements Command {
       }
     } else {
       player.getActionSender().sendChatMessage("You must be a spectator to do that!");
+    }
+  }
+
+  public void unhidePlayerForPlayer(Player toUnhide, Player toUnhideFrom) {
+    if (toUnhideFrom != toUnhide) {
+      toUnhideFrom.getActionSender().sendAddPlayer(toUnhide, false);
+    }
+  }
+
+  public void hidePlayerFromPlayer(Player toHide, Player hiddenFrom) {
+    if (hiddenFrom != toHide) {
+      hiddenFrom.getActionSender().sendRemoveEntity(toHide);
     }
   }
 }
