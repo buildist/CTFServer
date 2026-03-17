@@ -1015,6 +1015,19 @@ public class CTFGameMode extends GameMode {
             blockSpawnZones(p);
             checkForStalemate();
             resetRedFlagPos();
+
+            // Follow the flag carrier in auto mode
+            for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+              if (pl.followMode != "auto") continue;
+
+              if (pl.following != null) {
+                pl.getActionSender().sendAddPlayer(pl.following, false);
+              }
+
+              pl.following = p;
+              pl.getActionSender().sendRemoveEntity(p);
+            }
+
             if (redFlagDroppedThread != null) {
               redFlagDroppedThread.interrupt();
             }
@@ -1074,6 +1087,18 @@ public class CTFGameMode extends GameMode {
             blockSpawnZones(p);
             checkForStalemate();
             resetBlueFlagPos();
+
+            // Follow the flag carrier in auto mode
+            for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+              if (pl.followMode != "auto") continue;
+
+              if (pl.following != null) {
+                pl.getActionSender().sendAddPlayer(pl.following, false);
+              }
+              pl.following = p;
+              pl.getActionSender().sendRemoveEntity(p);
+            }
+
             if (blueFlagDroppedThread != null) {
               blueFlagDroppedThread.interrupt();
             }

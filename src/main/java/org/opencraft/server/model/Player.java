@@ -145,6 +145,7 @@ public class Player extends Entity implements IPlayer {
   public boolean streamerMode = false;
   public Player following = null;
   public int followingIndex = -1;
+  public String followMode = "none";
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();
