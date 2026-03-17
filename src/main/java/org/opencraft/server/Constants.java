@@ -54,17 +54,16 @@ public final class Constants {
           + "to your own side. Click the other team's flag to take it; capture it by clicking your own "
           + "flag. You can stop the enemy by tagging them when they're on your side of the map, blowing"
           + " them up with TNT (place a TNT block, then place a purple block to explode it), "
-          + "cooking them with the flamethrower (/f) or placing landmines (dark gray blocks). You gain "
-          + "points for doing well; say /store to find out how many points you have and what you can "
-          + "buy.";
+          + "or placing landmines (dark gray blocks). You gain points for doing well; say /store "
+          + "to find out how many points you have and what you can buy.";
   // /help in TDM mode
   public static final String TDM_HELP_TEXT =
       "This is Team Deathmatch mode. You can kill players "
           + "on the other team by blowing them up with TNT (place a TNT block, then place a purple "
-          + "block to explode it), cooking them with the flamethrower (/f) or placing "
-          + "landmines (dark gray blocks). You gain points for doing well; say /store to find out how "
-          + "many points you have and what you can buy. The team with the most kills after 10 minutes "
-          + "wins. (Use the ClassiCube client to see a timer!)";
+          + "block to explode it) or placing landmines (dark gray blocks). You gain points for "
+          + "doing well; say /store to find out how many points you have and what you can buy. "
+          + "The team with the most kills after 10 minutes wins. (Use the ClassiCube client to see "
+          + "a timer!)";
   // Supported Classic Protocol Extension names
   public static final String[] CPE_EXT_NAMES = {
     "HeldBlock",

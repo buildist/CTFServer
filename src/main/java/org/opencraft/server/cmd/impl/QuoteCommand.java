@@ -41,6 +41,7 @@ import java.time.Instant;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
@@ -78,8 +79,11 @@ public class QuoteCommand implements Command {
     if (player.muted) return;
 
     if (params.getArgumentCount() == 0) {
+      if (GameSettings.getBoolean("Tournament")) return;
       long currentTime = System.currentTimeMillis();
-      if ((currentTime - player.lastQuoteTime) < 15_000L ) {
+      long quoteCooldown = GameSettings.getInt("QuoteCooldown") * 1000L;
+      if ((currentTime - player.lastQuoteTime) < quoteCooldown) {
+        player.getActionSender().sendChatMessage("- &3You must wait " + Duration.ofMillis(quoteCooldown - (currentTime - player.lastQuoteTime)).getSeconds() + " seconds before using /quote again.");
         return;
       }
       player.lastQuoteTime = currentTime;

@@ -63,11 +63,7 @@ public class ImportPropsCommand implements Command {
 
   @Override
   public void execute(final Player player, final CommandParameters params) {
-    // Only trust these users to import properties
-    if (player.getName().equalsIgnoreCase("Jacob_") ||
-            player.getName().equalsIgnoreCase("jack") ||
-            player.getName().equalsIgnoreCase("Venk"))
-    {
+    if (player.isOp()) {
       if (params.getArgumentCount() > 1) {
         player.getActionSender().sendChatMessage("Downloading props...");
         new Thread(
@@ -102,7 +98,7 @@ public class ImportPropsCommand implements Command {
         player.getActionSender().sendChatMessage("/importprops <map> <url>");
       }
     } else {
-      player.getActionSender().sendChatMessage("Only Jacob_, jack, or Venk may import maps.");
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }

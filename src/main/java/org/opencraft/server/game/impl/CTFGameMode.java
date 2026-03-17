@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.game.impl;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import kotlin.Pair;
 import org.opencraft.server.Configuration;
@@ -46,7 +45,6 @@ import org.opencraft.server.WebServer;
 import org.opencraft.server.cmd.impl.DefuseCommand;
 import org.opencraft.server.cmd.impl.DefuseTNTCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
-import org.opencraft.server.cmd.impl.FlamethrowerCommand;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.*;
 import org.opencraft.server.model.BlockLog.BlockInfo;
@@ -54,7 +52,6 @@ import org.opencraft.server.model.BlockLog.BlockInfo;
 import java.util.ArrayList;
 
 import org.opencraft.server.task.TaskQueue;
-import org.opencraft.server.task.impl.CreeperTask;
 import org.opencraft.server.task.impl.TNTTask;
 import tf.jacobsc.ctf.server.FlameTickRecord;
 import tf.jacobsc.ctf.server.StalemateKt;
@@ -88,13 +85,16 @@ public class CTFGameMode extends GameMode {
 
   public FlameTickRecord flameTickKillRecord = new FlameTickRecord();
 
+  // The bottom of the player's feet is located 1.59375 (fixed-point: 51) units below the center of the viewport
+  private static final float PLAYER_POSITION_OFFSET = 0.5937f;
+
   public CTFGameMode() {
     super();
     registerCommand("d", DefuseCommand.getCommand());
     registerCommand("defuse", DefuseCommand.getCommand());
     registerCommand("defusetnt", DefuseTNTCommand.getCommand());
     registerCommand("dt", DefuseTNTCommand.getCommand());
-    registerCommand("f", FlamethrowerCommand.getCommand());
+    // registerCommand("f", FlamethrowerCommand.getCommand());
     registerCommand("fd", FlagDropCommand.getCommand());
   }
 
@@ -150,13 +150,16 @@ public class CTFGameMode extends GameMode {
       boolean lethal,
       boolean tk,
       boolean deleteSelf,
+      boolean extendedVerticalRange,
       String type) {
     if (deleteSelf) {
       level.setBlock(x, y, z, 0);
     }
 
-    // Big TNT should not be triggered by rockets and grenades
     if (type == null) {
+      if (p.bigTNTRemaining > 0) {
+        type = "BigTNT";
+      }
       if (p.tntRadius == GameSettings.getInt("BigTNTRadius")) {
         p.bigTNTRemaining--;
       }
@@ -171,13 +174,21 @@ public class CTFGameMode extends GameMode {
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
       float pr = r + 0.5f;
+      float prv = pr;
+
+      if (extendedVerticalRange) {
+        prv += PLAYER_POSITION_OFFSET;
+      }
+
       for (Player t : World.getWorld().getPlayerList().getPlayers()) {
         float tx = (t.getPosition().getX()) / 32f;
         float ty = (t.getPosition().getY()) / 32f;
         float tz = (t.getPosition().getZ()) / 32f;
         if (Math.abs(px - tx) < pr
             && Math.abs(py - ty) < pr
-            && Math.abs(pz - tz) < pr
+            && pz - tz < pr
+            // Extended vertical range should only be in the +z direction
+            && tz - pz < prv
             && (p.team != t.team || (tk && (t == p || !t.hasFlag)))
             && !t.isSafe()
             && p.canKill(t, true)
@@ -208,18 +219,16 @@ public class CTFGameMode extends GameMode {
       }
     }
 
-    ImmutableList.Builder<BlockChange> blockChanges = ImmutableList.builder();
     for (int cx = x - r; cx <= x + r; cx++) {
       for (int cy = y - r; cy <= y + r; cy++) {
         for (int cz = z - r; cz <= z + r; cz++) {
           if (!isSolidBlock(level, cx, cy, cz)) {
-            blockChanges.add(new BlockChange(cx, cy, cz, 0));
+            level.setBlock(cx, cy, cz, 0);
           }
           defuseMineIfCan(p, cx, cy, cz);
         }
       }
     }
-    World.getWorld().getLevel().setBlocks(blockChanges.build());
 
     if (killed.size() == 2) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bDouble Kill");
@@ -281,7 +290,7 @@ public class CTFGameMode extends GameMode {
   }
 
   public void explodeTNT(Player p, Level level, int x, int y, int z, int r) {
-    explodeTNT(p, level, x, y, z, r, true, false, true, null);
+    explodeTNT(p, level, x, y, z, r, true, false, true, true, null);
   }
 
   public void processFlamethrower(Player p, Position pos, Rotation r) {
@@ -495,6 +504,8 @@ public class CTFGameMode extends GameMode {
 
     redFlagTaken = false;
     blueFlagTaken = false;
+    redFlagTakenBy = null;
+    blueFlagTakenBy = null;
     suddenDeath = false;
     stalemateTags = false;
     redCaptures = 0;

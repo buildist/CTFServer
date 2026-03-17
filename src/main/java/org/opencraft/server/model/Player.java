@@ -38,7 +38,6 @@ package org.opencraft.server.model;
 
 import de.gesundkrank.jskills.IPlayer;
 import de.gesundkrank.jskills.Rating;
-import java.time.Instant;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.opencraft.server.Configuration;
@@ -195,9 +194,7 @@ public class Player extends Entity implements IPlayer {
     }
 
     try {
-      return new Rating(
-          (double) mu,
-          (double) sigma);
+      return new Rating((double) mu, (double) sigma);
     } catch (Exception e) {
       return RatingSystem.Companion.getDefaultRating();
     }
@@ -227,13 +224,13 @@ public class Player extends Entity implements IPlayer {
   }
 
   public boolean isUsingManualTNT() {
-    Object tntParticles = getAttribute("manualTNT");
+    Object manualTNT = getAttribute("manualTNT");
 
-    if (tntParticles == null) {
+    if (manualTNT == null) {
       return false;
     }
 
-    return (boolean) tntParticles;
+    return (boolean) manualTNT;
   }
 
   public void enableManualTNT() {

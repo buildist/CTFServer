@@ -58,12 +58,17 @@ public class LeaderBoardCommand implements Command {
   public void execute(Player player, CommandParameters params) {
     int number = 10;
     if (params.getArgumentCount() > 0) {
-      number = params.getIntegerArgument(0);
-      if (number > 16) {
-        number = 16;
-      }
-      if (number <= 0) {
-        player.getActionSender().sendChatMessage("- &ecannot get " + number + " players this round.");
+      try {
+        number = params.getIntegerArgument(0);
+        if (number > 16) {
+          number = 16;
+        }
+        if (number <= 0) {
+          player.getActionSender().sendChatMessage("- &ecannot get " + number + " players this round.");
+          return;
+        }
+      } catch (NumberFormatException e) {
+        player.getActionSender().sendChatMessage("Argument should be a number.");
         return;
       }
     }

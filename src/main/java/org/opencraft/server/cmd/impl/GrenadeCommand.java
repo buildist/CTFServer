@@ -127,6 +127,7 @@ public class GrenadeCommand implements Command {
                           true,
                           false,
                           false,
+                          false,
                           "Grenade");
                   break;
                 } else {

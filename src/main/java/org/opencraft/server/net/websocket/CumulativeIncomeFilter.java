@@ -151,8 +151,6 @@ abstract class CumulativeIncomeFilter extends IoFilterAdapter {
   private static class ProtocolDecoderOutputImpl extends
       AbstractProtocolDecoderOutput {
     public void flush(NextFilter nextFilter, IoSession session) {
-      Queue<Object> messageQueue = getMessageQueue();
-
       while (!messageQueue.isEmpty()) {
         nextFilter.messageReceived(session, messageQueue.poll());
       }

@@ -45,14 +45,17 @@ public class CTFPlayerUI extends PlayerUI {
     if (hasTimer()) {
       return getTimerMessage();
     } else {
-      return getFlamethrowerMessage();
+      return null;
+      // return getFlamethrowerMessage();
     }
   }
 
   @Override
   protected String getStatus2() {
+    return null;
+    /*
     if (player.streamerMode) {
-      return "";
+      return null;
     }
 
     if(hasTimer()) {
@@ -60,6 +63,7 @@ public class CTFPlayerUI extends PlayerUI {
     } else {
       return null;
     }
+     */
   }
 
   private boolean hasTimer() {

@@ -59,7 +59,7 @@ public class AFKCommand implements Command {
     if (params.getArgumentCount() > 0) {
       if (player.isOp()) {
           String name = params.getStringArgument(0);
-          Player other = Player.setAttributeFor(name, "banned", "true", player.getActionSender());
+          Player other = Player.getPlayer(name, player.getActionSender());
 
           if (other != null) {
             other.AFK = true;

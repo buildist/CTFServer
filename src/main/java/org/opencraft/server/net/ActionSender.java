@@ -959,7 +959,7 @@ public class ActionSender {
     bldr.putString("message", message);
     session.send(bldr.toPacket());
     if (!message2.equals("")) {
-      sendChatMessage("> " + message2, messageType);
+      sendChatMessage("> " + message2.stripLeading(), messageType);
     }
   }
 }

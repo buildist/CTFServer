@@ -107,13 +107,14 @@ public class RocketCommand implements Command {
                       .explodeTNT(
                           player,
                           World.getWorld().getLevel(),
-                          bx,
-                          by,
-                          bz,
+                          (int) Math.round(lastX),
+                          (int) Math.round(lastY),
+                          (int) Math.round(lastZ),
                           2,
                           true,
                           false,
                           false,
+                          true,
                           "rocket");
                   break;
                 } else {

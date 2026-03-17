@@ -366,7 +366,7 @@ public abstract class GameMode {
                 player.team = -1;
                 player.hasVoted = false;
                 player.hasNominated = false;
-		player.isCreepering = false;
+		            player.isCreepering = false;
                 player.currentRoundPointsEarned = 0;
                 player.setPoints(GameSettings.getInt("InitialPoints"));
                 player.kills = 0;

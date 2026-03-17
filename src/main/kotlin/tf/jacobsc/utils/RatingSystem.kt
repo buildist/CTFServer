@@ -57,7 +57,7 @@ class RatingSystem(private val ratingType: RatingType) {
 
 
         // the initial mean of ratings.
-        const val initialMean = 1000.0
+        const val initialMean = 500.0
 
         // the initial standard deviation of ratings. The recommended value is a third of initialMean
         const val initialStandardDevation = initialMean / 3.0
@@ -73,7 +73,7 @@ class RatingSystem(private val ratingType: RatingType) {
 
         // Default distance that guarantees about 76% chance of winning.
         // The recommended value is a half of sigma.
-        const val beta = initialStandardDevation / 2.0
+        const val beta = 11.35
 
         // Without τ, the TrueSkill algorithm would always cause the player’s standard deviation ( ) term to shrink
         //and therefore become more certain about a player. Before skill updates are calculated, we add in to
@@ -82,10 +82,10 @@ class RatingSystem(private val ratingType: RatingType) {
         //determines how easy it will be for a player to move up and down a leaderboard. A larger τ will tend to
         //cause more volatility of player positions
         // the dynamic factor which restrains a fixation of rating. The recommended value is sigma per cent
-        const val dynamicFactor = 10.0
+        const val dynamicFactor = 2.05
 
         // cannot draw in CTF, either win or lose
-        const val drawProbability = 0.0
+        const val drawProbability = 0.097
 
         val defaultRating = Rating(initialMean, initialStandardDevation)
 
