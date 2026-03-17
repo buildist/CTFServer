@@ -1217,6 +1217,40 @@ Z        <field>
           </fields>
       </packet>
       <packet>
+          <opcode>54</opcode>
+          <name>ext_entity_teleport</name>
+          <fields>
+              <field>
+                  <name>id</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>behaviour</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>x</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>y</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>z</name>
+                  <type>SHORT</type>
+              </field>
+              <field>
+                  <name>yaw</name>
+                  <type>BYTE</type>
+              </field>
+              <field>
+                  <name>pitch</name>
+                  <type>BYTE</type>
+              </field>
+          </fields>
+      </packet>
+      <packet>
           <opcode>56</opcode>
           <name>cinematic_gui</name>
           <fields>
