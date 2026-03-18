@@ -214,6 +214,20 @@ public class CTFGameMode extends GameMode {
           }
           if (t.hasFlag) {
             dropFlag(t.team);
+
+            // Follow the player who killed flag carriers in auto mode, if they are still alive
+            if (!blueFlagTaken && !redFlagTaken && !p.isSafe()) {
+              for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+                if (pl.followMode != "auto")
+                  continue;
+
+                if (pl.following != null) {
+                  pl.getActionSender().sendAddPlayer(pl.following, false);
+                }
+                pl.following = p;
+                pl.getActionSender().sendRemoveEntity(p);
+              }
+            }
           }
         }
       }
@@ -982,6 +996,31 @@ public class CTFGameMode extends GameMode {
                   });
           placeRedFlag();
           redFlagDroppedThread.start();
+        }
+      }
+
+      // If it's stalemate, switch auto POV to enemy flag carrier if still alive
+      if (p.team == 0 && redFlagTaken) {
+        for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+          if (pl.followMode != "auto") continue;
+
+          if (pl.following != null) {
+            pl.getActionSender().sendAddPlayer(pl.following, false);
+          }
+          pl.following = redFlagTakenBy;
+          pl.getActionSender().sendRemoveEntity(redFlagTakenBy);
+        }
+      }
+
+      else if (p.team == 1 && blueFlagTaken) {
+        for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+          if (pl.followMode != "auto") continue;
+
+          if (pl.following != null) {
+            pl.getActionSender().sendAddPlayer(pl.following, false);
+          }
+          pl.following = blueFlagTakenBy;
+          pl.getActionSender().sendRemoveEntity(blueFlagTakenBy);
         }
       }
     }

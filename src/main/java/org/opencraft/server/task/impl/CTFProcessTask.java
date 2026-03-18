@@ -60,7 +60,6 @@ public class CTFProcessTask extends ScheduledTask {
         player.getActionSender().sendExtEntityTeleport(player.following.getPosition(), player.following.getRotation());
         player.setPosition(player.following.getPosition());
         player.setRotation(player.following.getRotation());
-        break;
       }
     }
     gameMode.step();
