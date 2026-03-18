@@ -682,6 +682,16 @@ public class Player extends Entity implements IPlayer {
       getActionSender().sendChatMessage("- &eYou are now visible");
       isHidden = false;
     }
+
+    if (this.following != null) {
+      this.getActionSender().sendAddPlayer(this.following, false); // Show the previous followed player if the follower switches targets
+    }
+
+    this.following = null;
+    this.followMode = "none";
+    this.followingIndex = -1;
+    this.makeVisible();
+
     Level l = World.getWorld().getLevel();
     GameMode gameMode = World.getWorld().getGameMode();
     if (gameMode.voting) {
