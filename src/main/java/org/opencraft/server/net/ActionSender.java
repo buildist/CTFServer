@@ -206,12 +206,12 @@ public class ActionSender {
             new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(54));
 
     bldr.putByte("id", 255);
-    bldr.putByte("behaviour", 0b00000111);
+    bldr.putByte("behaviour", 0b00110011);
     bldr.putShort("x", position.getX());
-    bldr.putShort("y", position.getY());
-    bldr.putShort("z", position.getZ());
-    bldr.putByte("rotation", rotation.getRotation());
-    bldr.putByte("look", rotation.getLook());
+    bldr.putShort("y", position.getZ() - 22);
+    bldr.putShort("z", position.getY());
+    bldr.putByte("yaw", rotation.getRotation());
+    bldr.putByte("pitch", rotation.getLook());
     session.send(bldr.toPacket());
   }
 
