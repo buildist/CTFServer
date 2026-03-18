@@ -130,6 +130,8 @@ public final class Server {
       whitelist.add(l);
     }
 
+    GameSettings.load();
+
     MapController.create();
     log("Creating world...");
     World.getWorld();
