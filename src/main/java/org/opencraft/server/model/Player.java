@@ -149,6 +149,7 @@ public class Player extends Entity implements IPlayer {
   public boolean streamerMode = false;
   public Player following = null;
   public int followingIndex = -1;
+  public String followMode = "none";
   public volatile boolean watchingReplay;
   public boolean requestedToLeaveReplay;
 
@@ -651,7 +652,7 @@ public class Player extends Entity implements IPlayer {
 
   public void makeVisible() {
     for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
-      if (this != p) {
+      if (this != p && p.team == -1) {
         p.getActionSender().sendExtSpawn(instance);
       }
     }
@@ -695,6 +696,16 @@ public class Player extends Entity implements IPlayer {
       getActionSender().sendChatMessage("- &eYou are now visible");
       isHidden = false;
     }
+
+    if (this.following != null) {
+      this.getActionSender().sendAddPlayer(this.following, false); // Show the previous followed player if the follower switches targets
+    }
+
+    this.following = null;
+    this.followMode = "none";
+    this.followingIndex = -1;
+    this.makeVisible();
+
     Level l = World.getWorld().getLevel();
     GameMode gameMode = World.getWorld().getGameMode();
     if (gameMode.voting) {

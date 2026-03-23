@@ -112,6 +112,8 @@ public final class Server {
     fill(whitelist, "whitelist.txt");
     ReplayFile.checkReplayDirectory();
 
+    GameSettings.load();
+
     MapController.create();
     log("Creating world...");
     World.getWorld();

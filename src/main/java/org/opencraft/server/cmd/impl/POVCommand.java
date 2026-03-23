@@ -46,6 +46,7 @@ import tf.jacobsc.utils.RatingType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class POVCommand implements Command {
 
@@ -66,12 +67,45 @@ public class POVCommand implements Command {
     // Check if player using command is a spectator
     if (player.team == -1) {
       if (params.getArgumentCount() == 1) {
+        if (params.getStringArgument(0).equals("-auto")) {
+          player.followMode = "auto";
+
+          // Follow a random player to start with
+          List<Player> validPlayers = new ArrayList<>();
+
+          for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+            if (pl.team == 0 || pl.team == 1) {
+              validPlayers.add(pl);
+            }
+          }
+
+          if (!validPlayers.isEmpty()) {
+            Random rand = new Random();
+            Player randomPlayer = validPlayers.get(rand.nextInt(validPlayers.size()));
+            player.following = randomPlayer;
+            player.makeInvisible();
+            hidePlayerFromPlayer(randomPlayer, player); // Hide the followed player from the player following them
+          } else {
+            player.getActionSender().sendChatMessage("No players who are on teams to spectate.");
+            return;
+          }
+          return;
+        }
+
         if (params.getStringArgument(0).equals("-reset")) {
+          if (player.following != null) {
+            unhidePlayerForPlayer(player.following, player); // Show the previous followed player if the follower switches targets
+          }
+
           player.following = null;
+          player.followMode = "none";
+          player.followingIndex = -1;
+          player.makeVisible();
           return;
         }
 
         if (params.getStringArgument(0).equals("-next")) {
+          if (player.followMode == "auto") return;
           List<Player> players = new ArrayList<>();
 
           for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
@@ -81,6 +115,7 @@ public class POVCommand implements Command {
           }
 
           if (players.size() == 0) {
+            player.getActionSender().sendChatMessage("No players who are on teams to spectate.");
             return;
           }
 
@@ -90,9 +125,15 @@ public class POVCommand implements Command {
 
           player.followingIndex++;
 
+          if (player.following != null) {
+            unhidePlayerForPlayer(player.following, player); // Show the previous followed player if the follower switches targets
+          }
+
           Player other = players.get(player.followingIndex);
 
           if (other != null) {
+            player.following = other;
+            hidePlayerFromPlayer(other, player); // Hide the followed player from the player following them
             player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
             player.setPosition(other.getPosition());
             player.setRotation(other.getRotation());
@@ -102,6 +143,8 @@ public class POVCommand implements Command {
         }
 
         if (params.getStringArgument(0).equals("-back")) {
+          if (player.followMode == "auto") return;
+
           List<Player> players = new ArrayList<>();
 
           for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
@@ -111,6 +154,7 @@ public class POVCommand implements Command {
           }
 
           if (players.size() == 0) {
+            player.getActionSender().sendChatMessage("No players who are on teams to spectate.");
             return;
           }
 
@@ -120,9 +164,15 @@ public class POVCommand implements Command {
 
           player.followingIndex--;
 
+          if (player.following != null) {
+            unhidePlayerForPlayer(player.following, player); // Show the previous followed player if the follower switches targets
+          }
+
           Player other = players.get(player.followingIndex);
 
           if (other != null) {
+            player.following = other;
+            hidePlayerFromPlayer(other, player); // Hide the followed player from the player following them
             player.getActionSender().sendTeleport(other.getPosition(), other.getRotation());
             player.setPosition(other.getPosition());
             player.setRotation(other.getRotation());
@@ -134,7 +184,14 @@ public class POVCommand implements Command {
         Player other = Player.getPlayer(params.getStringArgument(0), player.getActionSender());
 
         if (other != null) {
+          if (other.team == -1) {
+            player.getActionSender().sendChatMessage("You may only spectate players!");
+            return;
+          }
+
           player.following = other;
+          player.makeInvisible();
+          hidePlayerFromPlayer(other, player); // Hide the followed player from the player following them
           return;
         }
 
@@ -149,6 +206,18 @@ public class POVCommand implements Command {
       }
     } else {
       player.getActionSender().sendChatMessage("You must be a spectator to do that!");
+    }
+  }
+
+  public void unhidePlayerForPlayer(Player toUnhide, Player toUnhideFrom) {
+    if (toUnhideFrom != toUnhide) {
+      toUnhideFrom.getActionSender().sendAddPlayer(toUnhide, false);
+    }
+  }
+
+  public void hidePlayerFromPlayer(Player toHide, Player hiddenFrom) {
+    if (hiddenFrom != toHide) {
+      hiddenFrom.getActionSender().sendRemoveEntity(toHide);
     }
   }
 }

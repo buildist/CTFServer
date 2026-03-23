@@ -36,7 +36,6 @@
  */
 package org.opencraft.server.game.impl;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import kotlin.Pair;
 import org.opencraft.server.Configuration;
@@ -46,7 +45,6 @@ import org.opencraft.server.WebServer;
 import org.opencraft.server.cmd.impl.DefuseCommand;
 import org.opencraft.server.cmd.impl.DefuseTNTCommand;
 import org.opencraft.server.cmd.impl.FlagDropCommand;
-import org.opencraft.server.cmd.impl.FlamethrowerCommand;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.*;
 import org.opencraft.server.model.BlockLog.BlockInfo;
@@ -55,7 +53,6 @@ import java.util.ArrayList;
 
 import org.opencraft.server.replay.ReplayManager;
 import org.opencraft.server.task.TaskQueue;
-import org.opencraft.server.task.impl.CreeperTask;
 import org.opencraft.server.task.impl.TNTTask;
 import tf.jacobsc.ctf.server.FlameTickRecord;
 import tf.jacobsc.ctf.server.StalemateKt;
@@ -218,23 +215,35 @@ public class CTFGameMode extends GameMode {
           }
           if (t.hasFlag) {
             dropFlag(t.team);
+
+            // Follow the player who killed flag carriers in auto mode, if they are still alive
+            if (!blueFlagTaken && !redFlagTaken && !p.isSafe()) {
+              for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+                if (pl.followMode != "auto")
+                  continue;
+
+                if (pl.following != null) {
+                  pl.getActionSender().sendAddPlayer(pl.following, false);
+                }
+                pl.following = p;
+                pl.getActionSender().sendRemoveEntity(p);
+              }
+            }
           }
         }
       }
     }
 
-    ImmutableList.Builder<BlockChange> blockChanges = ImmutableList.builder();
     for (int cx = x - r; cx <= x + r; cx++) {
       for (int cy = y - r; cy <= y + r; cy++) {
         for (int cz = z - r; cz <= z + r; cz++) {
           if (!isSolidBlock(level, cx, cy, cz)) {
-            blockChanges.add(new BlockChange(cx, cy, cz, 0));
+            level.setBlock(cx, cy, cz, 0);
           }
           defuseMineIfCan(p, cx, cy, cz);
         }
       }
     }
-    World.getWorld().getLevel().setBlocks(blockChanges.build());
 
     if (killed.size() == 2) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &bDouble Kill");
@@ -992,6 +1001,31 @@ public class CTFGameMode extends GameMode {
           redFlagDroppedThread.start();
         }
       }
+
+      // If it's stalemate, switch auto POV to enemy flag carrier if still alive
+      if (p.team == 0 && redFlagTaken) {
+        for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+          if (pl.followMode != "auto") continue;
+
+          if (pl.following != null) {
+            pl.getActionSender().sendAddPlayer(pl.following, false);
+          }
+          pl.following = redFlagTakenBy;
+          pl.getActionSender().sendRemoveEntity(redFlagTakenBy);
+        }
+      }
+
+      else if (p.team == 1 && blueFlagTaken) {
+        for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+          if (pl.followMode != "auto") continue;
+
+          if (pl.following != null) {
+            pl.getActionSender().sendAddPlayer(pl.following, false);
+          }
+          pl.following = blueFlagTakenBy;
+          pl.getActionSender().sendRemoveEntity(blueFlagTakenBy);
+        }
+      }
     }
   }
 
@@ -1023,6 +1057,19 @@ public class CTFGameMode extends GameMode {
             blockSpawnZones(p);
             checkForStalemate();
             resetRedFlagPos();
+
+            // Follow the flag carrier in auto mode
+            for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+              if (pl.followMode != "auto") continue;
+
+              if (pl.following != null) {
+                pl.getActionSender().sendAddPlayer(pl.following, false);
+              }
+
+              pl.following = p;
+              pl.getActionSender().sendRemoveEntity(p);
+            }
+
             if (redFlagDroppedThread != null) {
               redFlagDroppedThread.interrupt();
             }
@@ -1082,6 +1129,18 @@ public class CTFGameMode extends GameMode {
             blockSpawnZones(p);
             checkForStalemate();
             resetBlueFlagPos();
+
+            // Follow the flag carrier in auto mode
+            for (Player pl : World.getWorld().getPlayerList().getPlayers()) {
+              if (pl.followMode != "auto") continue;
+
+              if (pl.following != null) {
+                pl.getActionSender().sendAddPlayer(pl.following, false);
+              }
+              pl.following = p;
+              pl.getActionSender().sendRemoveEntity(p);
+            }
+
             if (blueFlagDroppedThread != null) {
               blueFlagDroppedThread.interrupt();
             }

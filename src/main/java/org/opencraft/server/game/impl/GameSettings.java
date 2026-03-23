@@ -1,6 +1,11 @@
 package org.opencraft.server.game.impl;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.Properties;
 import org.opencraft.server.Constants;
 
 public class GameSettings {
@@ -111,6 +116,48 @@ public class GameSettings {
       return true;
     }
   }
+
+  public static void save() {
+    synchronized (settings) {
+      Properties props = new Properties();
+
+      for (GameSetting s : settings.values()) {
+        props.setProperty(s.name, String.valueOf(s.value));
+      }
+
+      try (FileOutputStream out = new FileOutputStream("./gamesettings.properties")) {
+        props.store(out, "OpenCraft Game Settings");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+  }
+
+  public static void load() {
+    File file = new File("./gamesettings.properties");
+    if (!file.exists()) {
+      save();
+      return;
+    }
+
+    Properties props = new Properties();
+
+    try (FileInputStream in = new FileInputStream(file)) {
+      props.load(in);
+    } catch (IOException e) {
+      e.printStackTrace();
+      return;
+    }
+
+    synchronized (settings) {
+      for (String key : props.stringPropertyNames()) {
+        if (settings.containsKey(key)) {
+          set(key, props.getProperty(key));
+        }
+      }
+    }
+  }
+
 
   public static void add(String name, int type, Object value) {
     settings.put(name, new GameSetting(name, type, value));

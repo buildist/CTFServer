@@ -43,7 +43,6 @@ import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.game.impl.GameSettings.GameSetting;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
-import org.opencraft.server.model.impl.SimpleItem;
 
 import java.util.Arrays;
 
@@ -113,6 +112,7 @@ public class SetCommand implements Command {
         if (GameSettings.set(params.getStringArgument(0), args)) {
           World.getWorld().broadcast("- &7Server setting " + params.getStringArgument(0) + " set to " + args);
           Server.log(player.getName() + " " + params.getStringArgument(0) + " set to " + args);
+          GameSettings.save();
         }
       } else {
         if (params.getStringArgument(0).equals("default")) {
