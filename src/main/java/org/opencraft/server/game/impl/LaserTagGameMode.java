@@ -58,6 +58,7 @@ import org.opencraft.server.persistence.SavePersistenceRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import org.opencraft.server.replay.ReplayManager;
 import tf.jacobsc.utils.TopPlayersKt;
 
 public class LaserTagGameMode extends GameMode {
@@ -154,7 +155,7 @@ public class LaserTagGameMode extends GameMode {
         killFeed.remove(killFeed.get(killFeed.size() - 1));
       }
 
-      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
         sendKillFeed(p);
       }
     }
@@ -217,6 +218,7 @@ public class LaserTagGameMode extends GameMode {
                 World.getWorld()
                     .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned);
               }
+              ReplayManager.getInstance().roundEnded();
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
                 player.sendToTeamSpawn();
@@ -474,7 +476,7 @@ public class LaserTagGameMode extends GameMode {
     synchronized (entities) {
       entities.add(entity);
     }
-    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player player : World.getWorld().getPlayerList().getPlayers(true)) {
       player.getActionSender().sendExtSpawn(
           (byte) entity.id, "", "",
           (int) (x * 32), (int) (y * 32), (int) (z * 32),
@@ -493,7 +495,7 @@ public class LaserTagGameMode extends GameMode {
         }
       }
       if (updated) {
-        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+        for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
           sendKillFeed(p);
         }
       }
@@ -506,7 +508,7 @@ public class LaserTagGameMode extends GameMode {
           entities.remove(i);
           EntityID.release(e.id);
           i--;
-          for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+          for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
             p.getActionSender().sendRemoveEntity(e.id);
           }
         }

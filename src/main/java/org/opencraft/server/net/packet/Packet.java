@@ -36,6 +36,10 @@
  */
 package org.opencraft.server.net.packet;
 
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +49,7 @@ import java.util.Map;
  *
  * @author Graham Edgecombe
  */
-public final class Packet {
+public class Packet {
 
   /** The packet definition. */
   public final PacketDefinition definition;
@@ -101,6 +105,67 @@ public final class Packet {
    */
   public byte[] getByteArrayField(String fieldName) {
     return (byte[]) fields.get(fieldName);
+  }
+
+  public int getLength() {
+    return definition.getLength() + 1;
+  }
+
+  public byte[] toByteArray() {
+    byte[] result;
+    try (ByteArrayOutputStream stream0 = new ByteArrayOutputStream(getLength())) {
+      DataOutputStream stream = new DataOutputStream(stream0);
+
+      PacketDefinition def = getDefinition();
+      stream.write(def.getOpcode());
+      for (PacketField field : def.getFields()) {
+        switch (field.getType()) {
+          case BYTE:
+            stream.write(getNumericField(field.getName()).byteValue());
+            break;
+          case SHORT:
+            stream.writeShort(getNumericField(field.getName()).shortValue());
+            break;
+          case INT:
+            stream.writeInt(getNumericField(field.getName()).intValue());
+            break;
+          case LONG:
+            stream.writeLong(getNumericField(field.getName()).longValue());
+            break;
+          case BYTE_ARRAY_256:
+            byte[] data2 = getByteArrayField(field.getName());
+            byte[] resized2 = Arrays.copyOf(data2, 256);
+            stream.write(resized2);
+            break;
+          case BYTE_ARRAY_320:
+            byte[] data3 = getByteArrayField(field.getName());
+            byte[] resized3 = Arrays.copyOf(data3, 320);
+            stream.write(resized3);
+            break;
+          case BYTE_ARRAY:
+            byte[] data = getByteArrayField(field.getName());
+            byte[] resized = Arrays.copyOf(data, 1024);
+            stream.write(resized);
+            break;
+          case STRING:
+            String str = getStringField(field.getName());
+            byte[] bytes = str.getBytes("Cp437");
+            for (int i = 0; i < 64; i++) {
+              if (i >= bytes.length) {
+                stream.write(0x20);
+              } else {
+                stream.write(bytes[i]);
+              }
+            }
+            break;
+        }
+      }
+      result = stream0.toByteArray();
+    } catch (IOException e) { // should never happen
+      throw new RuntimeException(e);
+    }
+
+    return result;
   }
 
   @Override
