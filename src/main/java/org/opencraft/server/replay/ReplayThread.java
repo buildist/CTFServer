@@ -70,6 +70,7 @@ public class ReplayThread extends Thread {
       ReplayFile.ReplayChunk chunk = file.readNextChunk();
       chunk.sleepUntilSendingThisChunk(player, started);
       if (player.requestedToLeaveReplay) return;
+      checkAttemptedToChat();
 
       for (Packet packet : chunk.packets()) {
         player.getSession().send(packet);
@@ -123,7 +124,9 @@ public class ReplayThread extends Thread {
       if (!onlyViewMetadata) {
         synchronized (player) {
           while (!player.requestedToLeaveReplay && World.getWorld().getPlayerList().contains(player)) {
-            player.wait();
+            checkAttemptedToChat();
+
+            player.wait(100L);
           }
 
           if (player.requestedToLeaveReplay) {
@@ -153,10 +156,21 @@ public class ReplayThread extends Thread {
 
         synchronized (player) {
           player.watchingReplay = false;
+          player.attemptedToChatWhileWatchingReplay = false;
         }
 
         player.getUI().invalidateHUD();
       }
+    }
+  }
+
+  private void checkAttemptedToChat() {
+    if (player.attemptedToChatWhileWatchingReplay) {
+      player.sendMessage("- &eUnfortunately, you cannot type messages or use any");
+      player.sendMessage("- &ecommands except /leave while watching a replay. This");
+      player.sendMessage("- &emight be a temporary limitation");
+
+      player.attemptedToChatWhileWatchingReplay = false;
     }
   }
 }
