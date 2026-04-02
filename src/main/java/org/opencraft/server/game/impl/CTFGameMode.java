@@ -650,8 +650,6 @@ public class CTFGameMode extends GameMode {
                     .broadcast("- " + (j + 1) + ". &2" + p.getName() + " - " + p.currentRoundPointsEarned + " (&a" + p.kills + "&2/&c" + p.deaths + "&2/&e" + p.captures + "&2)");
               }
 
-              ReplayManager.getInstance().roundEnded();
-
               for (Player p : World.getWorld().getPlayerList().getPlayers()) {
                 int placement = TopPlayersKt.playerPlacement(World.getWorld(), p);
                 if (placement <= 0) {
@@ -693,6 +691,7 @@ public class CTFGameMode extends GameMode {
                 unblockSpawnZones(player);
                 player.sendToTeamSpawn();
               }
+              ReplayManager.getInstance().roundEnded();
               rtvVotes = 0;
               rtvYesPlayers.clear();
               rtvNoPlayers.clear();

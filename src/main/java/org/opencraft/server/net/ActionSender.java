@@ -932,7 +932,9 @@ public class ActionSender {
       return;
     }
     Player player = session.getPlayer();
-    if (messageType == 0 && player != null && ReplayThread.isUnsafe(player)) {
+    if (player != null && ReplayThread.isUnsafe(player)) {
+      if (messageType != 0) return;
+
       message = "&a[Live]&f " + message;
     }
     PacketBuilder bldr =
