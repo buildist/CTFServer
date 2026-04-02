@@ -51,6 +51,7 @@ import org.opencraft.server.model.BlockLog.BlockInfo;
 
 import java.util.ArrayList;
 
+import org.opencraft.server.replay.ReplayManager;
 import org.opencraft.server.task.TaskQueue;
 import org.opencraft.server.task.impl.TNTTask;
 import tf.jacobsc.ctf.server.FlameTickRecord;
@@ -263,7 +264,7 @@ public class CTFGameMode extends GameMode {
       }
     }
 
-    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player player : World.getWorld().getPlayerList().getPlayers(true)) {
       int ex = x  * 32 + 16;
       int ez = y  * 32 + 16;
       int ey = z  * 32 + 16;
@@ -548,7 +549,7 @@ public class CTFGameMode extends GameMode {
         killFeed.remove(killFeed.get(killFeed.size() - 1));
       }
 
-      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+      for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
         sendKillFeed(p);
       }
     }
@@ -690,6 +691,7 @@ public class CTFGameMode extends GameMode {
                 unblockSpawnZones(player);
                 player.sendToTeamSpawn();
               }
+              ReplayManager.getInstance().roundEnded();
               rtvVotes = 0;
               rtvYesPlayers.clear();
               rtvNoPlayers.clear();

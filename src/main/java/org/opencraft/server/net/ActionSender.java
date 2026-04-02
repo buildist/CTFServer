@@ -49,14 +49,13 @@ import org.opencraft.server.model.Position;
 import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.TexturePackHandler;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.FakePlayerBase.FakeMinecraftSession;
 import org.opencraft.server.net.packet.PacketBuilder;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavedGameManager;
+import org.opencraft.server.replay.ReplayThread;
 import org.opencraft.server.task.Task;
 import org.opencraft.server.task.TaskQueue;
-
-import java.nio.ByteBuffer;
-import java.util.List;
 
 /**
  * A utility class for sending packets.
@@ -170,11 +169,14 @@ public class ActionSender {
                   // now load the player's game (TODO in the future do this in parallel with loading
                   // the
                   // level)
-                  SavedGameManager.getSavedGameManager()
-                      .queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
+                  boolean bot = (session instanceof FakeMinecraftSession);
+                  if (!bot) {
+                    SavedGameManager.getSavedGameManager()
+                        .queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
+                  }
 
                   session.setReady();
-                  World.getWorld().completeRegistration(session);
+                  if (!bot) World.getWorld().completeRegistration(session);
                 } catch (Exception ex) {
                   Server.log(ex);
                 }
@@ -928,6 +930,12 @@ public class ActionSender {
   public void sendChatMessage(String message, int messageType) {
     if (messageType != 0 && !session.ccUser) {
       return;
+    }
+    Player player = session.getPlayer();
+    if (player != null && ReplayThread.isUnsafe(player)) {
+      if (messageType != 0) return;
+
+      message = "&a[Live]&f " + message;
     }
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(13));
