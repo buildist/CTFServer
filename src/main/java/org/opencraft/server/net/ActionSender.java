@@ -53,11 +53,9 @@ import org.opencraft.server.net.FakePlayerBase.FakeMinecraftSession;
 import org.opencraft.server.net.packet.PacketBuilder;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavedGameManager;
+import org.opencraft.server.replay.ReplayThread;
 import org.opencraft.server.task.Task;
 import org.opencraft.server.task.TaskQueue;
-
-import java.nio.ByteBuffer;
-import java.util.List;
 
 /**
  * A utility class for sending packets.
@@ -932,6 +930,10 @@ public class ActionSender {
   public void sendChatMessage(String message, int messageType) {
     if (messageType != 0 && !session.ccUser) {
       return;
+    }
+    Player player = session.getPlayer();
+    if (messageType == 0 && player != null && ReplayThread.isUnmanaged(player)) {
+      message = "&a[Live]&f " + message;
     }
     PacketBuilder bldr =
         new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(13));

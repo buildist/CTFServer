@@ -152,7 +152,7 @@ public class Player extends Entity implements IPlayer {
   public String followMode = "none";
   public volatile boolean watchingReplay;
   public volatile boolean requestedToLeaveReplay;
-  public volatile boolean attemptedToChatWhileWatchingReplay;
+  public volatile boolean usedCommandDuringReplay;
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();

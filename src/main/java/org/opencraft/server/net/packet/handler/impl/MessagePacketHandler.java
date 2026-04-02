@@ -102,7 +102,6 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
       String[] parts = tokens.split(" ");
       final Map<String, Command> commands = World.getWorld().getGameMode().getCommands();
       Command c = commands.get(parts[0].toLowerCase());
-      if (!checkAllowed(player, c)) return;
       if (c != null) {
         parts[0] = null;
         List<String> partsList = new ArrayList<String>();
@@ -112,6 +111,11 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
           }
         }
         parts = partsList.toArray(new String[0]);
+        if (player.watchingReplay && c != LeaveCommand.getCommand()) {
+          player.usedCommandDuringReplay = true;
+
+          return;
+        }
         try {
           c.execute(player, new CommandParameters(parts));
         } catch (Exception e) {
@@ -127,18 +131,7 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
         session.getActionSender().sendChatMessage("Invalid command /" + parts[0] + ".");
       }
     } else {
-      if (!checkAllowed(player, null)) return;
       World.getWorld().getGameMode().broadcastChatMessage(player, message);
-    }
-  }
-
-  private boolean checkAllowed(Player player, Command c) {
-    //noinspection SynchronizationOnLocalVariableOrMethodParameter
-    synchronized (player) {
-      boolean allowed = (!player.watchingReplay || c == LeaveCommand.getCommand());
-      if (!allowed) player.attemptedToChatWhileWatchingReplay = true;
-
-      return allowed;
     }
   }
 }

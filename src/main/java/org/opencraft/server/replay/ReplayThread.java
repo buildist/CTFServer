@@ -10,7 +10,6 @@ import org.opencraft.server.io.LevelGzipper;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
-import org.opencraft.server.net.ActionSender;
 import org.opencraft.server.net.packet.Packet;
 
 public class ReplayThread extends Thread {
@@ -34,6 +33,19 @@ public class ReplayThread extends Thread {
 
     setName(player.getName() + "'s replay thread");
     setDaemon(true);
+  }
+
+  /*
+   * Returns true if the given player is currently watching a replay
+   * and the current code is executed by any thread other than ReplayThread.
+   *
+   * False is returned in two cases:
+   * 1) The player is watching a replay and the current action is triggered
+   *    by ReplayThread;
+   * 2) The player is not watching a replay at all.
+   */
+  public static boolean isUnmanaged(Player player) {
+    return player.watchingReplay && !(Thread.currentThread() instanceof ReplayThread);
   }
 
   private void clearLocalEntities() { // partially a copy-paste from UpdateTask.java
@@ -70,7 +82,7 @@ public class ReplayThread extends Thread {
       ReplayFile.ReplayChunk chunk = file.readNextChunk();
       chunk.sleepUntilSendingThisChunk(player, started);
       if (player.requestedToLeaveReplay) return;
-      checkAttemptedToChat();
+      checkUsedCommand();
 
       for (Packet packet : chunk.packets()) {
         player.getSession().send(packet);
@@ -90,6 +102,7 @@ public class ReplayThread extends Thread {
         }
 
         player.watchingReplay = true;
+        player.usedCommandDuringReplay = false;
       }
     }
 
@@ -124,7 +137,7 @@ public class ReplayThread extends Thread {
       if (!onlyViewMetadata) {
         synchronized (player) {
           while (!player.requestedToLeaveReplay && World.getWorld().getPlayerList().contains(player)) {
-            checkAttemptedToChat();
+            checkUsedCommand();
 
             player.wait(100L);
           }
@@ -156,7 +169,7 @@ public class ReplayThread extends Thread {
 
         synchronized (player) {
           player.watchingReplay = false;
-          player.attemptedToChatWhileWatchingReplay = false;
+          player.usedCommandDuringReplay = false;
         }
 
         player.getUI().invalidateHUD();
@@ -164,13 +177,12 @@ public class ReplayThread extends Thread {
     }
   }
 
-  private void checkAttemptedToChat() {
-    if (player.attemptedToChatWhileWatchingReplay) {
-      player.sendMessage("- &eUnfortunately, you cannot type messages or use any");
-      player.sendMessage("- &ecommands except /leave while watching a replay. This");
-      player.sendMessage("- &emight be a temporary limitation");
+  private void checkUsedCommand() {
+    if (player.usedCommandDuringReplay) {
+      player.sendMessage("- &eUnfortunately, you cannot use any commands except /leave");
+      player.sendMessage("- &ewhile watching a replay. This may be a temporary limitation");
 
-      player.attemptedToChatWhileWatchingReplay = false;
+      player.usedCommandDuringReplay = false;
     }
   }
 }
