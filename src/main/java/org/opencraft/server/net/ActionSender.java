@@ -932,7 +932,7 @@ public class ActionSender {
       return;
     }
     Player player = session.getPlayer();
-    if (messageType == 0 && player != null && ReplayThread.isUnmanaged(player)) {
+    if (messageType == 0 && player != null && ReplayThread.isUnsafe(player)) {
       message = "&a[Live]&f " + message;
     }
     PacketBuilder bldr =

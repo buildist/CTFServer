@@ -36,15 +36,10 @@ public class ReplayThread extends Thread {
   }
 
   /*
-   * Returns true if the given player is currently watching a replay
-   * and the current code is executed by any thread other than ReplayThread.
-   *
-   * False is returned in two cases:
-   * 1) The player is watching a replay and the current action is triggered
-   *    by ReplayThread;
-   * 2) The player is not watching a replay at all.
+   * Returns true if (and only if) the given player is watching a replay and
+   * the current operation over this player is executed by any thread other than ReplayThread.
    */
-  public static boolean isUnmanaged(Player player) {
+  public static boolean isUnsafe(Player player) {
     return player.watchingReplay && !(Thread.currentThread() instanceof ReplayThread);
   }
 
@@ -75,7 +70,7 @@ public class ReplayThread extends Thread {
     player.sendMessage("- &eRecording started: " + (new Date(file.getRecordingStartTimestamp())));
     if (onlyViewMetadata) return;
 
-    player.sendMessage("- &eUse /leave command to quit viewer mode");
+    player.sendMessage("- &eUse '/leave' or '/replay stop' commands to quit viewer mode");
 
     long started = System.currentTimeMillis();
     while (file.isNextChunkAvailable()) {
@@ -111,7 +106,7 @@ public class ReplayThread extends Thread {
       file.setReading(true);
 
       if (!file.canRead()) {
-        player.sendMessage("- &eCould not find such replay");
+        player.sendMessage("- &eCould not find such a replay");
 
         return;
       }

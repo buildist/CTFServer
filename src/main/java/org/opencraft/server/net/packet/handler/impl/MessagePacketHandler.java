@@ -40,6 +40,7 @@ import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.cmd.impl.LeaveCommand;
+import org.opencraft.server.cmd.impl.ReplayCommand;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
@@ -111,7 +112,7 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
           }
         }
         parts = partsList.toArray(new String[0]);
-        if (player.watchingReplay && c != LeaveCommand.getCommand()) {
+        if (player.watchingReplay && c != LeaveCommand.getCommand() && c != ReplayCommand.getCommand()) {
           player.usedCommandDuringReplay = true;
 
           return;

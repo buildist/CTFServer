@@ -305,14 +305,14 @@ public class ReplayFile implements Closeable {
 
   /* ======== Util methods ======== */
 
-  public static String adjust(int dateElement, int count) {
-    return dateElementToString(String.valueOf(dateElement), count, '0');
+  public static String adjust(int i, int count) {
+    return adjust(String.valueOf(i), count, '0');
   }
 
-  public static String dateElementToString(String element, int minLength, char padding) {
-    int length = element.length();
+  public static String adjust(String str, int minLength, char padding) {
+    int length = str.length();
     if (length >= minLength) {
-      return element;
+      return str;
     }
     int delta = minLength - length;
     char[] chars = new char[minLength];
@@ -320,7 +320,7 @@ public class ReplayFile implements Closeable {
       if (i < delta) {
         chars[i] = padding;
       } else {
-        chars[i] = element.charAt(i - delta);
+        chars[i] = str.charAt(i - delta);
       }
     }
 

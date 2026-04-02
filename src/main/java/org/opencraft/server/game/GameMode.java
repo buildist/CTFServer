@@ -186,6 +186,7 @@ public abstract class GameMode {
     registerCommand("lb", LeaderBoardCommand.getCommand());
     registerCommand("replay", ReplayCommand.getCommand());
     registerCommand("replaymeta", ReplayMetaCommand.getCommand());
+    registerCommand("replays", AvailableReplaysCommand.getCommand());
     registerCommand("availablereplays", AvailableReplaysCommand.getCommand());
     registerCommand("leave", LeaveCommand.getCommand());
     registerCommand("markreplay", MarkReplayCommand.getCommand());

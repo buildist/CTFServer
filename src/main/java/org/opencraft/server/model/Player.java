@@ -1187,6 +1187,17 @@ public class Player extends Entity implements IPlayer {
     return (getSession() instanceof FakeMinecraftSession);
   }
 
+  public synchronized void stopWatchingReplay() {
+    if (!watchingReplay) {
+      sendMessage("- &eYou are not currently watching any replay");
+
+      return;
+    }
+    requestedToLeaveReplay = true;
+
+    notifyAll();
+  }
+
   public PlayerUI getUI() {
     return ui;
   }

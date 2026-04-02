@@ -13,17 +13,7 @@ public class LeaveCommand implements Command {
   }
 
   @Override
-  @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
   public void execute(Player player, CommandParameters params) {
-    synchronized (player) {
-      if (!player.watchingReplay) {
-        player.sendMessage("- &eYou are not currently watching any replay");
-
-        return;
-      }
-      player.requestedToLeaveReplay = true;
-
-      player.notifyAll();
-    }
+    player.stopWatchingReplay();
   }
 }

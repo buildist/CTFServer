@@ -65,7 +65,7 @@ public abstract class Connectable {
       final String name = (definition == null ? "unparsed" : definition.getName());
       final Player player = getPlayer();
       final boolean allowedPacketDuringReplay = name.equals("disconnect") || name.equals("message");
-      if (player != null && !allowedPacketDuringReplay && ReplayThread.isUnmanaged(player)) return;
+      if (player != null && !allowedPacketDuringReplay && ReplayThread.isUnsafe(player)) return;
 
       final boolean unqueuedPacket =
           name.equals("authentication_response")
