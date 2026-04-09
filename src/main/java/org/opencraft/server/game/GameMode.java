@@ -47,6 +47,7 @@ import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.ChatMode;
 import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.DropItem;
+import org.opencraft.server.model.Killstats;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.MoveLog;
@@ -362,6 +363,7 @@ public abstract class GameMode {
               gameStartTime = System.currentTimeMillis();
               tournamentGameStarted = !GameSettings.getBoolean("Tournament");
               startCommandExecuted = false;
+              Killstats.killRecords.clear();
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
                 player.hasVoted = false;
