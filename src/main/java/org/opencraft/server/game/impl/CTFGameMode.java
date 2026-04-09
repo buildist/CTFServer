@@ -679,6 +679,8 @@ public class CTFGameMode extends GameMode {
                 player.kills = 0;
                 player.deaths = 0;
                 player.captures = 0;
+                player.bigTNTRemaining = 0;
+                player.killstreak = 0;
                 if (player.isFlamethrowerEnabled()) {
                   World.getWorld()
                       .getLevel()
