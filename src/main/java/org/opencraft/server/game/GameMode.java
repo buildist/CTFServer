@@ -152,6 +152,7 @@ public abstract class GameMode {
     registerCommand("ragequit", RagequitCommand.getCommand());
     registerCommand("removespawn", RemoveSpawnCommand.getCommand());
     registerCommand("quote", QuoteCommand.getCommand());
+    registerCommand("randomplayer", RandomPlayerCommand.getCommand());
     registerCommand("red", RedCommand.getCommand());
     registerCommand("reload", ReloadCommand.getCommand());
     registerCommand("restart", RestartCommand.getCommand());
