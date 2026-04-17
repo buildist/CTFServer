@@ -1326,6 +1326,10 @@ public class CTFGameMode extends GameMode {
 
   @Override
   public void setBlock(Player player, Level level, int x, int y, int z, int mode, int type) {
+    if (player.AFK) {
+      player.AFK = false;
+      World.getWorld().broadcast("- " + player.parseName() + " is no longer AFK");
+    }
     int oldType = level.getBlock(x, y, z);
     int playerX = (player.getPosition().getX() - 16) / 32;
     int playerY = (player.getPosition().getY() - 16) / 32;
