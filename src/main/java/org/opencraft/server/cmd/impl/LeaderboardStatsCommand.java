@@ -42,15 +42,15 @@ import org.opencraft.server.model.Player;
 import tf.jacobsc.utils.RatingKt;
 import tf.jacobsc.utils.RatingType;
 
-public class StatsCommand implements Command {
-  private static final StatsCommand INSTANCE = new StatsCommand();
+public class LeaderboardStatsCommand implements Command {
+  private static final LeaderboardStatsCommand INSTANCE = new LeaderboardStatsCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static StatsCommand getCommand() {
+  public static LeaderboardStatsCommand getCommand() {
     return INSTANCE;
   }
 

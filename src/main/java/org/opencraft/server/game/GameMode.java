@@ -171,7 +171,7 @@ public abstract class GameMode {
     registerCommand("start", StartCommand.INSTANCE);
     registerCommand("quality", QualityCommand.INSTANCE);
     registerCommand("teams", TeamsCommand.INSTANCE);
-    registerCommand("stats", StatsCommand.getCommand());
+    registerCommand("lbstats", LeaderboardStatsCommand.getCommand());
     registerCommand("status", StatusCommand.getCommand());
     registerCommand("store", StoreCommand.getCommand());
     registerCommand("streamermode", StreamerModeCommand.getCommand());
