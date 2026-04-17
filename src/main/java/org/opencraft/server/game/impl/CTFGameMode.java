@@ -170,6 +170,11 @@ public class CTFGameMode extends GameMode {
       }
     }
 
+    float dx = x - p.rocketStartPosition.getX();
+    float dy = y - p.rocketStartPosition.getY();
+    float dz = z - p.rocketStartPosition.getZ();
+    int distance = (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
+
     ArrayList<Player> killed = new ArrayList<>();
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
@@ -198,13 +203,13 @@ public class CTFGameMode extends GameMode {
           p.gotKill(t);
           t.sendToTeamSpawn();
           t.died(p);
-          updateKillFeed(
-              p,
-              t,
-              p.parseName()
-                  + " exploded "
-                  + t.getColoredName()
-                  + (type == null ? "" : " &f(" + type + ")"));
+
+          if (type == "rocket") {
+            updateKillFeed(p, t, p.parseName() + " rocketed " + t.getColoredName() + " &f(" + distance + ")");
+          } else {
+            updateKillFeed(p, t,
+                p.parseName() + " exploded " + t.getColoredName() + (type == null ? "" : " &f(" + type + ")"));
+          }
           if (!tk) {
             checkFirstBlood(p, t);
           }
@@ -251,15 +256,14 @@ public class CTFGameMode extends GameMode {
     } else if (killed.size() > 3) {
       World.getWorld().broadcast("- " + p.parseName() + " &egot a &b" + killed.size() + "x Kill");
       for (Player t : killed) {
-        // Brodcast multi kills greater than 3 here because they won't all show up
+        // Broadcast multi kills greater than 3 here because they won't all show up
         // in the kill feed.
-        World.getWorld()
-            .broadcast(
-                "- "
-                    + p.parseName()
-                    + " exploded "
-                    + t.getColoredName()
-                    + (type == null ? "" : " &f(" + type + ")"));
+
+        if (type == "rocket") {
+          World.getWorld().broadcast(p.parseName() + " rocketed " + t.getColoredName() + " &f(" + distance + ")");
+        } else {
+          World.getWorld().broadcast(p.parseName() + " exploded " + t.getColoredName() + (type == null ? "" : " &f(" + type + ")"));
+        }
       }
     }
 
@@ -274,6 +278,8 @@ public class CTFGameMode extends GameMode {
         player.getActionSender().sendSpawnEffect(Constants.EFFECT_TNT_2, ex, ey, ez, ex, ey, ez);
       }
     }
+
+    p.rocketStartPosition = null;
   }
 
   @Override
@@ -679,6 +685,8 @@ public class CTFGameMode extends GameMode {
                 player.kills = 0;
                 player.deaths = 0;
                 player.captures = 0;
+                player.bigTNTRemaining = 0;
+                player.killstreak = 0;
                 if (player.isFlamethrowerEnabled()) {
                   World.getWorld()
                       .getLevel()
@@ -1318,6 +1326,10 @@ public class CTFGameMode extends GameMode {
 
   @Override
   public void setBlock(Player player, Level level, int x, int y, int z, int mode, int type) {
+    if (player.AFK) {
+      player.AFK = false;
+      World.getWorld().broadcast("- " + player.parseName() + " is no longer AFK");
+    }
     int oldType = level.getBlock(x, y, z);
     int playerX = (player.getPosition().getX() - 16) / 32;
     int playerY = (player.getPosition().getY() - 16) / 32;

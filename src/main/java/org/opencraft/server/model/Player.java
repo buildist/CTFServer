@@ -112,6 +112,7 @@ public class Player extends Entity implements IPlayer {
   public long grenadeTime;
   public long lineTime;
   public long rocketTime;
+  public Position rocketStartPosition;
   public long smokeGrenadeTime;
   public int headBlockType = 0;
   public Position headBlockPosition = null;
@@ -1029,14 +1030,16 @@ public class Player extends Entity implements IPlayer {
         AFK = false;
       }
       // TODO: Find a way to check if player is still AFK after changing levels
-      if (System.currentTimeMillis() - moveTime > 10 * 60000 && !AFK && moveTime != 0) {
-        World.getWorld().broadcast("- " + parseName() + " is auto-AFK (Not moved in 10 minutes)");
-        AFK = true;
-      } else if (System.currentTimeMillis() - moveTime > 60 * 60000 && AFK && moveTime != 0) {
+      if (System.currentTimeMillis() - moveTime > 60 * 60000 && AFK && moveTime != 0) {
         World.getWorld().broadcast("- " + parseName() + " was auto-kicked (AFK for 60 minutes)");
         getActionSender().sendLoginFailure("You were auto-kicked for being AFK for 60+ minutes.");
         getSession().close();
       }
+    }
+
+    if (System.currentTimeMillis() - moveTime > 3 * 60000 && !AFK && moveTime != 0) {
+      World.getWorld().broadcast("- " + parseName() + " is auto-AFK (Not moved in 3 minutes)");
+      AFK = true;
     }
 
     // Reset lag TNT checker

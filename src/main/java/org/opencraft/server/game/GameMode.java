@@ -47,6 +47,7 @@ import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.ChatMode;
 import org.opencraft.server.model.CustomBlockDefinition;
 import org.opencraft.server.model.DropItem;
+import org.opencraft.server.model.Killstats;
 import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.MoveLog;
@@ -85,6 +86,8 @@ public abstract class GameMode {
   public boolean ready = false;
   public int bluePlayers = 0;
   public int redPlayers = 0;
+  public Player blueCaptain = null;
+  public Player redCaptain = null;
   public ArrayList<String> rtvYesPlayers = new ArrayList<>();
   public ArrayList<String> rtvNoPlayers = new ArrayList<>();
   public int rtvVotes = 0;
@@ -105,6 +108,7 @@ public abstract class GameMode {
     registerCommand("blue", BlueCommand.getCommand());
     registerCommand("bounty", BountyCommand.getCommand());
     registerCommand("c", ChatCommand.getCommand());
+    registerCommand("captain", CaptainCommand.getCommand());
     registerCommand("clients", ClientsCommand.getCommand());
     registerCommand("coinflip", CoinFlipCommand.getCommand());
     registerCommand("commands", CommandsCommand.getCommand());
@@ -151,6 +155,7 @@ public abstract class GameMode {
     registerCommand("ragequit", RagequitCommand.getCommand());
     registerCommand("removespawn", RemoveSpawnCommand.getCommand());
     registerCommand("quote", QuoteCommand.getCommand());
+    registerCommand("randomplayer", RandomPlayerCommand.getCommand());
     registerCommand("red", RedCommand.getCommand());
     registerCommand("reload", ReloadCommand.getCommand());
     registerCommand("restart", RestartCommand.getCommand());
@@ -362,6 +367,7 @@ public abstract class GameMode {
               gameStartTime = System.currentTimeMillis();
               tournamentGameStarted = !GameSettings.getBoolean("Tournament");
               startCommandExecuted = false;
+              Killstats.killRecords.clear();
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
                 player.hasVoted = false;
@@ -397,6 +403,8 @@ public abstract class GameMode {
               blockSpawnZ = (map.getSpawnPosition().getZ() - 16) / 32;
               redPlayers = 0;
               bluePlayers = 0;
+              redCaptain = null;
+              blueCaptain = null;
               World.getWorld().setLevel(map);
               clearKillFeed();
               voting = false;

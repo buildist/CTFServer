@@ -68,6 +68,7 @@ public class RocketCommand implements Command {
             () -> {
               player.rocketTime = System.currentTimeMillis();
               Position pos = player.getPosition().toBlockPos();
+              player.rocketStartPosition = pos;
               Rotation r = player.getRotation();
 
               double heading =

@@ -39,19 +39,20 @@ package org.opencraft.server.cmd.impl;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
-public class ForceCommand implements Command {
+public class CaptainCommand implements Command {
 
-  private static final ForceCommand INSTANCE = new ForceCommand();
+  private static final CaptainCommand INSTANCE = new CaptainCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static ForceCommand getCommand() {
+  public static CaptainCommand getCommand() {
     return INSTANCE;
   }
 
@@ -64,42 +65,25 @@ public class ForceCommand implements Command {
         Player other = Player.getPlayer(name, player.getActionSender());
 
         if (other != null) {
-          if (!player.isOp() && other.isOp()) {
-            player.getActionSender().sendChatMessage("You cannot force an OP.");
+          if (team.equalsIgnoreCase("red")) {
+            other.joinTeam("red");
+            World.getWorld().getGameMode().redCaptain = other;
+            World.getWorld().broadcast("&f- " + other.getColoredName() + " &eis now the captain for &cbred team&e.");
+          } else if (team.equalsIgnoreCase("blue")) {
+            other.joinTeam("blue");
+            World.getWorld().getGameMode().blueCaptain = other;
+            World.getWorld().broadcast("&f- " + other.getColoredName() + " &eis now the captain for &bblue team&e.");
           } else {
-            Server.log(player.getName() + " forced " + other.getName() + " to " + team);
-            other.joinTeam(team);
+            player.getActionSender().sendChatMessage("Invalid team specified.");
+            return;
           }
         }
       } else {
         player.getActionSender().sendChatMessage("Wrong number of arguments");
-        player.getActionSender().sendChatMessage("/force <name> <team>");
+        player.getActionSender().sendChatMessage("/captain <name> <team>");
       }
     } else {
-      if (player == World.getWorld().getGameMode().blueCaptain ||
-          player == World.getWorld().getGameMode().redCaptain) {
-        if (params.getArgumentCount() >= 1) {
-          String name = params.getStringArgument(0);
-          Player other = Player.getPlayer(name, player.getActionSender());
-
-          if (other != null) {
-            String team = null;
-            if (player.team == 0) team = "red";
-            else if (player.team == 1) team = "blue";
-            if (team == null) {
-              player.getActionSender().sendChatMessage("You must be on a team to force if you are not an OP.");
-              return;
-            }
-            Server.log(player.getName() + " forced " + other.getName() + " to " + team);
-            other.joinTeam(team);
-          }
-        } else {
-          player.getActionSender().sendChatMessage("Wrong number of arguments");
-          player.getActionSender().sendChatMessage("/force <name>");
-        }
-      } else {
-        player.getActionSender().sendChatMessage("You must be OP or a team captain to do that!");
-      }
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }
