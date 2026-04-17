@@ -86,6 +86,8 @@ public abstract class GameMode {
   public boolean ready = false;
   public int bluePlayers = 0;
   public int redPlayers = 0;
+  public Player blueCaptain = null;
+  public Player redCaptain = null;
   public ArrayList<String> rtvYesPlayers = new ArrayList<>();
   public ArrayList<String> rtvNoPlayers = new ArrayList<>();
   public int rtvVotes = 0;
@@ -106,6 +108,7 @@ public abstract class GameMode {
     registerCommand("blue", BlueCommand.getCommand());
     registerCommand("bounty", BountyCommand.getCommand());
     registerCommand("c", ChatCommand.getCommand());
+    registerCommand("captain", CaptainCommand.getCommand());
     registerCommand("clients", ClientsCommand.getCommand());
     registerCommand("coinflip", CoinFlipCommand.getCommand());
     registerCommand("commands", CommandsCommand.getCommand());
@@ -400,6 +403,8 @@ public abstract class GameMode {
               blockSpawnZ = (map.getSpawnPosition().getZ() - 16) / 32;
               redPlayers = 0;
               bluePlayers = 0;
+              redCaptain = null;
+              blueCaptain = null;
               World.getWorld().setLevel(map);
               clearKillFeed();
               voting = false;
