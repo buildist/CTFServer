@@ -206,7 +206,15 @@ public class CTFGameMode extends GameMode {
 
           if (type == "rocket") {
             updateKillFeed(p, t, p.parseName() + " rocketed " + t.getColoredName() + " &f(" + distance + ")");
+            p.rocketKills++;
+            t.rocketDeaths++;
+          } if (type == "grenade") {
+            updateKillFeed(p, t, p.parseName() + " grenaded " + t.getColoredName() + " &f(" + distance + ")");
+            p.grenadeKills++;
+            t.grenadeDeaths++;
           } else {
+            p.tntKills++;
+            t.tntDeaths++;
             updateKillFeed(p, t,
                 p.parseName() + " exploded " + t.getColoredName() + (type == null ? "" : " &f(" + type + ")"));
           }
@@ -261,6 +269,8 @@ public class CTFGameMode extends GameMode {
 
         if (type == "rocket") {
           World.getWorld().broadcast(p.parseName() + " rocketed " + t.getColoredName() + " &f(" + distance + ")");
+        } else if (type == "grenade") {
+          World.getWorld().broadcast(p.parseName() + " grenaded " + t.getColoredName() + " &f(" + distance + ")");
         } else {
           World.getWorld().broadcast(p.parseName() + " exploded " + t.getColoredName() + (type == null ? "" : " &f(" + type + ")"));
         }
@@ -682,11 +692,9 @@ public class CTFGameMode extends GameMode {
                 player.hasFlag = false;
                 player.hasTNT = false;
                 player.isCreepering = false;
-                player.kills = 0;
-                player.deaths = 0;
-                player.captures = 0;
                 player.bigTNTRemaining = 0;
                 player.killstreak = 0;
+                player.deathstreak = 0;
                 if (player.isFlamethrowerEnabled()) {
                   World.getWorld()
                       .getLevel()
@@ -1059,6 +1067,7 @@ public class CTFGameMode extends GameMode {
             p.hasFlag = true;
             redFlagTaken = true;
             redFlagTakenBy = p;
+            p.flagsTaken++;
             blockSpawnZones(p);
             checkForStalemate();
             resetRedFlagPos();
@@ -1131,6 +1140,7 @@ public class CTFGameMode extends GameMode {
             p.hasFlag = true;
             blueFlagTaken = true;
             blueFlagTakenBy = p;
+            p.flagsTaken++;
             blockSpawnZones(p);
             checkForStalemate();
             resetBlueFlagPos();
@@ -1236,6 +1246,8 @@ public class CTFGameMode extends GameMode {
               dropFlag(p.team);
             }
             p.died(m.owner);
+            p.mineDeaths++;
+            m.owner.mineKills++;
             updateKillFeed(m.owner, p, m.owner.parseName() + " mined " + p.parseName() + ".");
             m.owner.addPoints(GameSettings.getInt("MinePoints"));
           }
@@ -1299,6 +1311,8 @@ public class CTFGameMode extends GameMode {
           dropFlag(tagged.team);
         }
         tagged.died(tagger);
+        tagger.tagKills++;
+        tagged.tagDeaths++;
         tagger.incIntAttribute("tags");
         tagger.addPoints(15);
         updateKillFeed(tagger, tagged, tagger.parseName() + " tagged " + tagged.parseName() + ".");

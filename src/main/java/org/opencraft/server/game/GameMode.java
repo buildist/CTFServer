@@ -132,6 +132,8 @@ public abstract class GameMode {
     registerCommand("k", KickCommand.getCommand());
     registerCommand("kick", KickCommand.getCommand());
     registerCommand("lava", LavaCommand.getCommand());
+    registerCommand("lb", LeaderBoardCommand.getCommand());
+    registerCommand("lbstats", LeaderboardStatsCommand.getCommand());
     registerCommand("log", LogCommand.getCommand());
     registerCommand("mapenvironment", MapEnvironmentCommand.getCommand());
     registerCommand("maps", MapListCommand.getCommand());
@@ -140,9 +142,9 @@ public abstract class GameMode {
     registerCommand("mute", MuteCommand.getCommand());
     registerCommand("newgame", NewGameCommand.getCommand());
     registerCommand("no", NoCommand.getCommand());
+    registerCommand("nominate", NominateCommand.getCommand());
     registerCommand("note", NoteCommand.getCommand());
     registerCommand("notes", NotesCommand.getCommand());
-    registerCommand("nominate", NominateCommand.getCommand());
     registerCommand("op", OperatorCommand.getCommand());
     registerCommand("opchat", OpChatCommand.getCommand());
     registerCommand("pay", PayCommand.getCommand());
@@ -152,10 +154,11 @@ public abstract class GameMode {
     registerCommand("points", PointsCommand.getCommand());
     registerCommand("pov", POVCommand.getCommand());
     registerCommand("pstats", PInfoCommand.getCommand());
-    registerCommand("ragequit", RagequitCommand.getCommand());
-    registerCommand("removespawn", RemoveSpawnCommand.getCommand());
+    registerCommand("quality", QualityCommand.INSTANCE);
     registerCommand("quote", QuoteCommand.getCommand());
+    registerCommand("ragequit", RagequitCommand.getCommand());
     registerCommand("randomplayer", RandomPlayerCommand.getCommand());
+    registerCommand("removespawn", RemoveSpawnCommand.getCommand());
     registerCommand("red", RedCommand.getCommand());
     registerCommand("reload", ReloadCommand.getCommand());
     registerCommand("restart", RestartCommand.getCommand());
@@ -169,13 +172,12 @@ public abstract class GameMode {
     registerCommand("solid", SolidCommand.getCommand());
     registerCommand("spec", SpecCommand.getCommand());
     registerCommand("start", StartCommand.INSTANCE);
-    registerCommand("quality", QualityCommand.INSTANCE);
-    registerCommand("teams", TeamsCommand.INSTANCE);
-    registerCommand("lbstats", LeaderboardStatsCommand.getCommand());
+    registerCommand("stats", GameStatsCommand.getCommand());
     registerCommand("status", StatusCommand.getCommand());
     registerCommand("store", StoreCommand.getCommand());
     registerCommand("streamermode", StreamerModeCommand.getCommand());
     registerCommand("team", TeamCommand.getCommand());
+    registerCommand("teams", TeamsCommand.INSTANCE);
     registerCommand("tnt", TNTCommand.getCommand());
     registerCommand("tp", TeleportCommand.getCommand());
     registerCommand("unban", UnbanCommand.getCommand());
@@ -187,7 +189,6 @@ public abstract class GameMode {
     registerCommand("who", StatusCommand.getCommand());
     registerCommand("whitelist", WhitelistCommand.getCommand());
     registerCommand("yes", YesCommand.getCommand());
-    registerCommand("lb", LeaderBoardCommand.getCommand());
   }
 
   public void registerCommand(String name, Command command) {
@@ -346,6 +347,35 @@ public abstract class GameMode {
     }
   }
 
+  private void ResetStats(Player player) {
+    player.team = -1;
+    player.hasVoted = false;
+    player.hasNominated = false;
+    player.isCreepering = false;
+    player.currentRoundPointsEarned = 0;
+    player.setPoints(GameSettings.getInt("InitialPoints"));
+    player.kills = 0;
+    player.highestKillStreak = 0;
+    player.mineKills = 0;
+    player.tntKills = 0;
+    player.tagKills = 0;
+    player.deaths = 0;
+    player.highestDeathStreak = 0;
+    player.mineDeaths = 0;
+    player.tntDeaths = 0;
+    player.tagDeaths = 0;
+    player.grenadeKills = 0;
+    player.grenadeDeaths = 0;
+    player.grenadesThrown = 0;
+    player.rocketKills = 0;
+    player.rocketDeaths = 0;
+    player.rocketsShot = 0;
+    player.flagsTaken = 0;
+    player.linesUsed = 0;
+    player.pointsSpent = 0;
+    player.captures = 0;
+  }
+
   public void startGame(Level newMap) {
     final Level oldMap = map;
     if (newMap == null) {
@@ -369,15 +399,7 @@ public abstract class GameMode {
               startCommandExecuted = false;
               Killstats.killRecords.clear();
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-                player.team = -1;
-                player.hasVoted = false;
-                player.hasNominated = false;
-		            player.isCreepering = false;
-                player.currentRoundPointsEarned = 0;
-                player.setPoints(GameSettings.getInt("InitialPoints"));
-                player.kills = 0;
-                player.deaths = 0;
-                player.captures = 0;
+                ResetStats(player);
 
                 // Remove custom blocks
                 for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {

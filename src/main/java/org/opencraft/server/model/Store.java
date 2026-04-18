@@ -152,6 +152,8 @@ public class Store {
       p.subtractPoints(item.price);
       p.getActionSender().sendChatMessage("- &eYou have " + p.getPoints() + " points left");
     }
+
+    p.pointsSpent += item.price;
     return true;
   }
 

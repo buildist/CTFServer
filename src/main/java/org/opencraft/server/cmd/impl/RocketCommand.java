@@ -62,6 +62,8 @@ public class RocketCommand implements Command {
   }
 
   public void execute(final Player player, CommandParameters params) {
+    player.rocketsShot++;
+
     Thread rocketThread;
     rocketThread =
         new Thread(

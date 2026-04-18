@@ -119,10 +119,30 @@ public class Player extends Entity implements IPlayer {
   public int currentRoundPointsEarned = 0;
   public Player duelChallengedBy = null;
   public Player duelPlayer = null;
+
+  // Stats
   public int kills = 0;
+  public int highestKillStreak = 0;
+  public int highestDeathStreak = 0;
+  public int mineKills = 0;
+  public int tntKills = 0;
+  public int tagKills = 0;
   public int deaths = 0;
+  public int mineDeaths = 0;
+  public int tntDeaths = 0;
+  public int tagDeaths = 0;
+  public int grenadeKills = 0;
+  public int grenadeDeaths = 0;
+  public int grenadesThrown = 0;
+  public int rocketKills = 0;
+  public int rocketDeaths = 0;
+  public int rocketsShot = 0;
+  public int flagsTaken = 0;
+  public int linesUsed = 0;
+  public int pointsSpent = 0;
   public int captures = 0;
   public int duelKills = 0;
+
   public int bountySet = 0;
   public Player bountied = null;
   public Player bountiedBy = null;
@@ -151,6 +171,7 @@ public class Player extends Entity implements IPlayer {
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();
   public int killstreak = 0;
+  public int deathstreak = 0;
   private long safeTime = 0;
   public boolean hasTNT = false;
   public int tntX;
@@ -467,7 +488,11 @@ public class Player extends Entity implements IPlayer {
     }
 
     kills++;
+    deathstreak = 0;
     killstreak++;
+    if (killstreak > highestKillStreak) {
+      highestKillStreak = killstreak;
+    }
     Killstats.kill(this, defender);
     if (killstreak % 5 == 0) {
       World.getWorld()
@@ -547,7 +572,13 @@ public class Player extends Entity implements IPlayer {
                   + "&b's killstreak of "
                   + killstreak);
     }
+
     killstreak = 0;
+    deathstreak++;
+    if (deathstreak > highestDeathStreak) {
+      highestDeathStreak = deathStreak;
+    }
+
     attacker.setIfMax("maxKillstreakEnded", killstreak);
     incStat("deaths");
     World.getWorld().getGameMode().checkForUnbalance(this);
