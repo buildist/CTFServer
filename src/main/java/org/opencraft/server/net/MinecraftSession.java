@@ -50,7 +50,7 @@ import java.util.HashMap;
  *
  * @author Graham Edgecombe
  */
-public final class MinecraftSession extends OCSession {
+public class MinecraftSession extends OCSession {
 
   private final ActionSender actionSender = new ActionSender(this);
   /** The action sender associated with this session. */
@@ -73,6 +73,11 @@ public final class MinecraftSession extends OCSession {
 
   public MinecraftSession(IoSession sess) {
     super(sess);
+    if (nullMode) {
+      ip = "";
+
+      return;
+    }
     sess.getConfig().setBothIdleTime(10);
     sess.getConfig().setWriteTimeout(5);
     ip = ((InetSocketAddress) sess.getRemoteAddress()).getAddress().getHostAddress();
@@ -96,6 +101,7 @@ public final class MinecraftSession extends OCSession {
    *
    * @return The player.
    */
+  @Override
   public Player getPlayer() {
     return player;
   }

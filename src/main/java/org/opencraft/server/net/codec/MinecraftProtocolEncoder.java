@@ -57,54 +57,10 @@ import java.util.Arrays;
 public final class MinecraftProtocolEncoder extends ProtocolEncoderAdapter {
 
   @Override
-  public void encode(IoSession session, Object message, ProtocolEncoderOutput out)
-      throws Exception {
+  public void encode(IoSession session, Object message, ProtocolEncoderOutput out) {
     Packet packet = (Packet) message;
-    PacketDefinition def = packet.getDefinition();
-    IoBuffer buf = IoBuffer.allocate(def.getLength() + 1);
-    buf.put((byte) def.getOpcode());
-    for (PacketField field : def.getFields()) {
-      switch (field.getType()) {
-        case BYTE:
-          buf.put(packet.getNumericField(field.getName()).byteValue());
-          break;
-        case SHORT:
-          buf.putShort(packet.getNumericField(field.getName()).shortValue());
-          break;
-        case INT:
-          buf.putInt(packet.getNumericField(field.getName()).intValue());
-          break;
-        case LONG:
-          buf.putLong(packet.getNumericField(field.getName()).longValue());
-          break;
-        case BYTE_ARRAY:
-          byte[] data = packet.getByteArrayField(field.getName());
-          byte[] resized = Arrays.copyOf(data, 1024);
-          buf.put(resized);
-          break;
-        case BYTE_ARRAY_256:
-          byte[] data2 = packet.getByteArrayField(field.getName());
-          byte[] resized2 = Arrays.copyOf(data2, 256);
-          buf.put(resized2);
-          break;
-        case BYTE_ARRAY_320:
-          byte[] data3 = packet.getByteArrayField(field.getName());
-          byte[] resized3 = Arrays.copyOf(data3, 320);
-          buf.put(resized3);
-          break;
-        case STRING:
-          String str = packet.getStringField(field.getName());
-          byte[] bytes = str.getBytes("Cp437");
-          for (int i = 0; i < 64; i++) {
-            if (i >= bytes.length) {
-              buf.put((byte) 0x20);
-            } else {
-              buf.put(bytes[i]);
-            }
-          }
-          break;
-      }
-    }
+    IoBuffer buf = IoBuffer.allocate(packet.getLength());
+    buf.put(packet.toByteArray());
     buf.flip();
     out.write(buf);
   }

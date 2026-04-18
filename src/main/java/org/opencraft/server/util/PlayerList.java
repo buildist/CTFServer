@@ -36,12 +36,12 @@
  */
 package org.opencraft.server.util;
 
-import org.opencraft.server.Configuration;
 import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
+import org.opencraft.server.net.FakePlayerBase;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -62,12 +62,18 @@ public class PlayerList {
    * @return A list of online players.
    */
   public List<Player> getPlayers() {
-    List<Player> playerList = new LinkedList<>();
+    return getPlayers(false);
+  }
+
+  public synchronized List<Player> getPlayers(boolean includeCameraMan) {
+    List<Player> playerList = new ArrayList<>();
     for (Player p : players) {
       if (p != null) {
         playerList.add(p);
       }
     }
+    if (includeCameraMan) playerList.add(FakePlayerBase.CAMERA_MAN);
+
     return Collections.unmodifiableList(playerList);
   }
 
@@ -77,7 +83,7 @@ public class PlayerList {
    * @param player The new player.
    * @return <code>true</code> if they could be added, <code>false</code> if not.
    */
-  public boolean add(Player player) {
+  public synchronized boolean add(Player player) {
     if (size == GameSettings.getMaxPlayers()) {
       return false;
     }
@@ -98,7 +104,7 @@ public class PlayerList {
    *
    * @param player The player to remove.
    */
-  public void remove(Player player) {
+  public synchronized void remove(Player player) {
     int id = player.getId();
     if (id != -1 && players[id] == player) {
       players[id] = null;
@@ -107,17 +113,25 @@ public class PlayerList {
     player.setId(-1);
   }
 
+  public synchronized boolean contains(Player player) {
+    for (Player p : players) {
+      if (p != null && p == player) return true;
+    }
+
+    return false;
+  }
+
   /**
    * Gets the number of online players.
    *
    * @return The player list size.
    */
-  public int size() {
+  public synchronized int size() {
     return size;
   }
 
   @Override
-  public String toString() {
+  public synchronized String toString() {
     String m = "";
     for (Player p : getPlayers()) {
       m += p + ", ";
