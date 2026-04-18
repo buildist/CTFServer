@@ -39,6 +39,8 @@ package org.opencraft.server.net.packet.handler.impl;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.cmd.impl.LeaveCommand;
+import org.opencraft.server.cmd.impl.ReplayCommand;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
@@ -61,9 +63,10 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
     if (!session.isAuthenticated()) {
       return;
     }
+    Player player = session.getPlayer();
     String message = packet.getStringField("message");
     if (message.contains("&")) {
-      session.getPlayer().kickForHacking();
+      player.kickForHacking();
       return;
     }
 
@@ -75,17 +78,17 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
     if (message.charAt(message.length() - 1) == '>'
         || message.charAt(message.length() - 1) == '<') {
       message = message.substring(0, message.length() - 1);
-      session.getPlayer().appendingChat = true;
-      session.getPlayer().partialChatMessage += message + " ";
+      player.appendingChat = true;
+      player.partialChatMessage += message + " ";
       session.getActionSender().sendChatMessage("&7" + message);
       return;
     } else if(id == 1) {
-      session.getPlayer().appendingChat = true;
-      session.getPlayer().partialChatMessage += message;
+      player.appendingChat = true;
+      player.partialChatMessage += message;
       return;
-    } else if (session.getPlayer().appendingChat) {
-      message = session.getPlayer().partialChatMessage + message;
-      session.getPlayer().partialChatMessage = "";
+    } else if (player.appendingChat) {
+      message = player.partialChatMessage + message;
+      player.partialChatMessage = "";
     }
 
     message = Server.cleanColorCodes(message);
@@ -109,22 +112,27 @@ public class MessagePacketHandler implements PacketHandler<MinecraftSession> {
           }
         }
         parts = partsList.toArray(new String[0]);
+        if (player.watchingReplay && c != LeaveCommand.getCommand() && c != ReplayCommand.getCommand()) {
+          player.usedCommandDuringReplay = true;
+
+          return;
+        }
         try {
-          c.execute(session.getPlayer(), new CommandParameters(parts));
+          c.execute(player, new CommandParameters(parts));
         } catch (Exception e) {
           session.getActionSender().sendChatMessage(e.getMessage());
         }
         for (Player p : World.getWorld().getPlayerList().getPlayers()) {
           if (p.sendCommandLog && !message.startsWith("/pm")) {
             p.getActionSender()
-                .sendChatMessage("&2" + session.getPlayer().getName() + " issued " + message);
+                .sendChatMessage("&2" + player.getName() + " issued " + message);
           }
         }
       } else {
         session.getActionSender().sendChatMessage("Invalid command /" + parts[0] + ".");
       }
     } else {
-      World.getWorld().getGameMode().broadcastChatMessage(session.getPlayer(), message);
+      World.getWorld().getGameMode().broadcastChatMessage(player, message);
     }
   }
 }

@@ -63,6 +63,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeSet;
+import org.opencraft.server.replay.ReplayManager;
 import tf.jacobsc.ctf.server.commands.QualityCommand;
 import tf.jacobsc.ctf.server.commands.StartCommand;
 import tf.jacobsc.ctf.server.commands.TeamsCommand;
@@ -189,6 +190,12 @@ public abstract class GameMode {
     registerCommand("who", StatusCommand.getCommand());
     registerCommand("whitelist", WhitelistCommand.getCommand());
     registerCommand("yes", YesCommand.getCommand());
+    registerCommand("replay", ReplayCommand.getCommand());
+    registerCommand("replaymeta", ReplayMetaCommand.getCommand());
+    registerCommand("replays", AvailableReplaysCommand.getCommand());
+    registerCommand("availablereplays", AvailableReplaysCommand.getCommand());
+    registerCommand("leave", LeaveCommand.getCommand());
+    registerCommand("markreplay", MarkReplayCommand.getCommand());
   }
 
   public void registerCommand(String name, Command command) {
@@ -220,7 +227,7 @@ public abstract class GameMode {
   }
 
   public void sendAnnouncement(String message) {
-    for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+    for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
       if (p.getSession().ccUser) {
         sendAnnouncement(p, message);
       }
@@ -467,12 +474,16 @@ public abstract class GameMode {
   private void clearKillFeed() {
     synchronized (killFeed) {
       killFeed.clear();
-      for (Player p : World.getWorld().getPlayerList().getPlayers()) {
-        if (p.getSession().isExtensionSupported("MessageTypes")) {
-          for (int i = 0; i < 3; i++) {
-            p.getActionSender().sendChatMessage("", 11 + i);
-          }
-        }
+      for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
+        clearKillFeedFor(p);
+      }
+    }
+  }
+
+  public void clearKillFeedFor(Player p) {
+    if (p.getSession().isExtensionSupported("MessageTypes")) {
+      for (int i = 0; i < 3; i++) {
+        p.getActionSender().sendChatMessage("", 11 + i);
       }
     }
   }
@@ -502,7 +513,7 @@ public abstract class GameMode {
         }
       }
       if (updated) {
-        for (Player p : World.getWorld().getPlayerList().getPlayers()) {
+        for (Player p : World.getWorld().getPlayerList().getPlayers(true)) {
           sendKillFeed(p);
         }
       }
@@ -513,11 +524,11 @@ public abstract class GameMode {
     if (!GameSettings.getBoolean("Tournament")) {
       if (redPlayers < bluePlayers - 2 && p.team == 1) {
         World.getWorld()
-            .broadcast("- " + p.parseName() + " was moved to red team for game " + "balance.");
+            .broadcast("- " + p.parseName() + " was moved to red team for game balance.");
         p.joinTeam("red");
       } else if (bluePlayers < redPlayers - 2 && p.team == 0) {
         World.getWorld()
-            .broadcast("- " + p.parseName() + " was moved to blue team for game " + "balance.");
+            .broadcast("- " + p.parseName() + " was moved to blue team for game balance.");
         p.joinTeam("blue");
       }
     }
@@ -667,6 +678,19 @@ public abstract class GameMode {
 
   public void step() {
     pruneKillFeed();
+
+    if (ReplayManager.getInstance().isRecording()) return;
+
+    int nonSpectators = 0;
+    int required = 2;
+    for (Player player : World.getWorld().getPlayerList().getPlayers()) {
+      if (player.team != -1 && ++nonSpectators == required) break;
+    }
+    long elapsedTime = System.currentTimeMillis() - gameStartTime;
+    long timeLimit = GameSettings.getInt("TimeLimit") * 60000L;
+    if (nonSpectators >= required && (timeLimit - elapsedTime >= 5000L)) {
+      ReplayManager.getInstance().startRecording();
+    }
   }
 
   private void clearDropItems() {
