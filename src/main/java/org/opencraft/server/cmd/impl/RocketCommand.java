@@ -62,12 +62,15 @@ public class RocketCommand implements Command {
   }
 
   public void execute(final Player player, CommandParameters params) {
+    player.rocketsShot++;
+
     Thread rocketThread;
     rocketThread =
         new Thread(
             () -> {
               player.rocketTime = System.currentTimeMillis();
               Position pos = player.getPosition().toBlockPos();
+              player.rocketStartPosition = pos;
               Rotation r = player.getRotation();
 
               double heading =

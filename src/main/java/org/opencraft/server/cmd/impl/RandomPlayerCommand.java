@@ -36,60 +36,28 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.Position;
-import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.World;
+import java.util.List;
+import java.util.Random;
 
-public class LineCommand implements Command {
-  private static final LineCommand INSTANCE = new LineCommand();
+public class RandomPlayerCommand implements Command {
+  private static final RandomPlayerCommand INSTANCE = new RandomPlayerCommand();
 
-  /**
-   * Gets the singleton instance of this command.
-   *
-   * @return The singleton instance of this command.
-   */
-  public static LineCommand getCommand() {
+  public static RandomPlayerCommand getCommand() {
     return INSTANCE;
   }
 
+  @Override
   public void execute(Player player, CommandParameters params) {
-    Position pos = player.getPosition().toBlockPos();
-    Rotation r = player.getRotation();
-
-    player.lineTime = System.currentTimeMillis();
-    player.linesUsed++;
-
-    double heading =
-        Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-    double pitch =
-        Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
-
-    double px = pos.getX();
-    double py = pos.getY();
-    double pz = pos.getZ();
-
-    double vx = Math.cos(heading) * Math.cos(pitch);
-    double vy = Math.sin(heading) * Math.cos(pitch);
-    double vz = Math.sin(pitch);
-    double x = px;
-    double y = py;
-    double z = pz;
-    for (int i = 0; i < 256; i++) {
-      int bx = (int) Math.round(x);
-      int by = (int) Math.round(y);
-      int bz = (int) Math.round(z);
-      int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-      if ((block != 0 && block != 20) || World.getWorld().getLevel().ceiling < bz) return;
-      else if (i > 0) World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
-      x += vx;
-      y += vy;
-      z += vz;
-      i++;
+    if (player.isOp()) {
+      List<Player> players = World.getWorld().getPlayerList().getPlayers();
+      Player randomPlayer = players.get(new Random().nextInt(players.size()));
+      World.getWorld().broadcast("&f- Chosen player: &7" + randomPlayer.getName());
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
     }
   }
 }

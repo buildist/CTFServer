@@ -36,59 +36,54 @@
  */
 package org.opencraft.server.cmd.impl;
 
+import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.Player;
-import tf.jacobsc.utils.RatingKt;
-import tf.jacobsc.utils.RatingType;
+import org.opencraft.server.model.World;
 
-public class StatsCommand implements Command {
-  private static final StatsCommand INSTANCE = new StatsCommand();
+public class CaptainCommand implements Command {
+
+  private static final CaptainCommand INSTANCE = new CaptainCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static StatsCommand getCommand() {
+  public static CaptainCommand getCommand() {
     return INSTANCE;
   }
 
   public void execute(Player player, CommandParameters params) {
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eWins: "
-                + player.getIntAttribute("wins")
-                + " - "
-                + "Games Played: "
-                + player.getIntAttribute("games")
-                + " ");
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eTags: "
-                + player.getIntAttribute("tags")
-                + " - "
-                + "Captures: "
-                + player.getIntAttribute("captures")
-                + " ");
-    player
-        .getActionSender()
-        .sendChatMessage(
-            "- &eExplodes: "
-                + player.getIntAttribute("explodes")
-                + " - "
-                + "Mines: "
-                + player.getIntAttribute("mines")
-                + " ");
-    player.getActionSender().sendChatMessage("- &eRagequits: " + player.getIntAttribute("ragequits"));
+    if (player.isOp()) {
+      if (params.getArgumentCount() >= 2) {
+        String name = params.getStringArgument(0);
+        String team = params.getStringArgument(1);
 
-    Integer trGames = player.getRatedGamesFor(RatingType.Team);
-    Integer drGames = player.getRatedGamesFor(RatingType.Duel);
-    Integer crGames = player.getRatedGamesFor(RatingType.Casual);
-    player.getActionSender().sendChatMessage("- &eTR: " + RatingKt.showFullRatingWithGames(player.getTeamRating(), trGames));
-    player.getActionSender().sendChatMessage("- &eDR: " + RatingKt.showFullRatingWithGames(player.getDuelRating(), drGames));
-//    player.getActionSender().sendChatMessage("- &eCasual: " + RatingKt.showFullRatingWithGames(player.getCasualRating(), crGames));
+        Player other = Player.getPlayer(name, player.getActionSender());
+
+        if (other != null) {
+          if (team.equalsIgnoreCase("red")) {
+            other.joinTeam("red");
+            World.getWorld().getGameMode().redCaptain = other;
+            World.getWorld().broadcast("&f- " + other.getColoredName() + " &eis now the captain for &cbred team&e.");
+          } else if (team.equalsIgnoreCase("blue")) {
+            other.joinTeam("blue");
+            World.getWorld().getGameMode().blueCaptain = other;
+            World.getWorld().broadcast("&f- " + other.getColoredName() + " &eis now the captain for &bblue team&e.");
+          } else {
+            player.getActionSender().sendChatMessage("Invalid team specified.");
+            return;
+          }
+        }
+      } else {
+        player.getActionSender().sendChatMessage("Wrong number of arguments");
+        player.getActionSender().sendChatMessage("/captain <name> <team>");
+      }
+    } else {
+      player.getActionSender().sendChatMessage("You must be OP to do that!");
+    }
   }
 }

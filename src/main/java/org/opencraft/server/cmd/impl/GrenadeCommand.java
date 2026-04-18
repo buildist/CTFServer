@@ -57,6 +57,8 @@ public class GrenadeCommand implements Command {
   }
 
   public void execute(final Player player, CommandParameters params) {
+    player.grenadesThrown++;
+
     Thread grenadeThread;
     grenadeThread =
         new Thread(

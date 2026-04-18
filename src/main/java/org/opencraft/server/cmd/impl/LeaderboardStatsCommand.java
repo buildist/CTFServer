@@ -36,60 +36,59 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.Position;
-import org.opencraft.server.model.Rotation;
-import org.opencraft.server.model.World;
+import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.RatingType;
 
-public class LineCommand implements Command {
-  private static final LineCommand INSTANCE = new LineCommand();
+public class LeaderboardStatsCommand implements Command {
+  private static final LeaderboardStatsCommand INSTANCE = new LeaderboardStatsCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static LineCommand getCommand() {
+  public static LeaderboardStatsCommand getCommand() {
     return INSTANCE;
   }
 
   public void execute(Player player, CommandParameters params) {
-    Position pos = player.getPosition().toBlockPos();
-    Rotation r = player.getRotation();
+    player
+        .getActionSender()
+        .sendChatMessage(
+            "- &eWins: "
+                + player.getIntAttribute("wins")
+                + " - "
+                + "Games Played: "
+                + player.getIntAttribute("games")
+                + " ");
+    player
+        .getActionSender()
+        .sendChatMessage(
+            "- &eTags: "
+                + player.getIntAttribute("tags")
+                + " - "
+                + "Captures: "
+                + player.getIntAttribute("captures")
+                + " ");
+    player
+        .getActionSender()
+        .sendChatMessage(
+            "- &eExplodes: "
+                + player.getIntAttribute("explodes")
+                + " - "
+                + "Mines: "
+                + player.getIntAttribute("mines")
+                + " ");
+    player.getActionSender().sendChatMessage("- &eRagequits: " + player.getIntAttribute("ragequits"));
 
-    player.lineTime = System.currentTimeMillis();
-    player.linesUsed++;
-
-    double heading =
-        Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-    double pitch =
-        Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
-
-    double px = pos.getX();
-    double py = pos.getY();
-    double pz = pos.getZ();
-
-    double vx = Math.cos(heading) * Math.cos(pitch);
-    double vy = Math.sin(heading) * Math.cos(pitch);
-    double vz = Math.sin(pitch);
-    double x = px;
-    double y = py;
-    double z = pz;
-    for (int i = 0; i < 256; i++) {
-      int bx = (int) Math.round(x);
-      int by = (int) Math.round(y);
-      int bz = (int) Math.round(z);
-      int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-      if ((block != 0 && block != 20) || World.getWorld().getLevel().ceiling < bz) return;
-      else if (i > 0) World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
-      x += vx;
-      y += vy;
-      z += vz;
-      i++;
-    }
+    Integer trGames = player.getRatedGamesFor(RatingType.Team);
+    Integer drGames = player.getRatedGamesFor(RatingType.Duel);
+    Integer crGames = player.getRatedGamesFor(RatingType.Casual);
+    player.getActionSender().sendChatMessage("- &eTR: " + RatingKt.showFullRatingWithGames(player.getTeamRating(), trGames));
+    player.getActionSender().sendChatMessage("- &eDR: " + RatingKt.showFullRatingWithGames(player.getDuelRating(), drGames));
+//    player.getActionSender().sendChatMessage("- &eCasual: " + RatingKt.showFullRatingWithGames(player.getCasualRating(), crGames));
   }
 }

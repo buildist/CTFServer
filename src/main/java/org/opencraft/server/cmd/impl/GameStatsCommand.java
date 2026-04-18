@@ -36,60 +36,38 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
-import org.opencraft.server.model.Position;
-import org.opencraft.server.model.Rotation;
-import org.opencraft.server.model.World;
+import tf.jacobsc.utils.RatingKt;
+import tf.jacobsc.utils.RatingType;
 
-public class LineCommand implements Command {
-  private static final LineCommand INSTANCE = new LineCommand();
+public class GameStatsCommand implements Command {
+  private static final GameStatsCommand INSTANCE = new GameStatsCommand();
 
   /**
    * Gets the singleton instance of this command.
    *
    * @return The singleton instance of this command.
    */
-  public static LineCommand getCommand() {
+  public static GameStatsCommand getCommand() {
     return INSTANCE;
   }
 
   public void execute(Player player, CommandParameters params) {
-    Position pos = player.getPosition().toBlockPos();
-    Rotation r = player.getRotation();
-
-    player.lineTime = System.currentTimeMillis();
-    player.linesUsed++;
-
-    double heading =
-        Math.toRadians((int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-    double pitch =
-        Math.toRadians((int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
-
-    double px = pos.getX();
-    double py = pos.getY();
-    double pz = pos.getZ();
-
-    double vx = Math.cos(heading) * Math.cos(pitch);
-    double vy = Math.sin(heading) * Math.cos(pitch);
-    double vz = Math.sin(pitch);
-    double x = px;
-    double y = py;
-    double z = pz;
-    for (int i = 0; i < 256; i++) {
-      int bx = (int) Math.round(x);
-      int by = (int) Math.round(y);
-      int bz = (int) Math.round(z);
-      int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-      if ((block != 0 && block != 20) || World.getWorld().getLevel().ceiling < bz) return;
-      else if (i > 0) World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.GLASS);
-      x += vx;
-      y += vy;
-      z += vz;
-      i++;
-    }
+    //player.getActionSender().sendChatMessage("- &eDef kills: " + player.defenseKills + ", mid kills: " + player.midKills + ", atk kills: " + player.attackKills);
+    player.getActionSender().sendChatMessage("- &eTotal kills: " + player.kills + " vs Total deaths: " + player.deaths + " (" + player.kills / player.deaths + ")");
+    player.getActionSender().sendChatMessage("- &eTNT kills: " + player.tntKills + " vs TNT deaths " + player.tntDeaths + " (0.33)");
+    player.getActionSender().sendChatMessage("- &eTag kills: " + player.tagKills + " vs Tag deaths " + player.tagDeaths + " (0.33)");
+    player.getActionSender().sendChatMessage("- &eMine kills: " + player.mineKills + " vs Mine deaths " + player.mineDeaths + " (0.33)");
+    player.getActionSender().sendChatMessage("- &eGrenades thrown: " + player.grenadesThrown + " -> Grenades landed " + player.grenadeKills + " (0.33)");
+    player.getActionSender().sendChatMessage("- &eGrenade deaths: " + player.grenadeDeaths + " vs Rocket deaths: " + player.rocketDeaths + " (0.33)");
+    player.getActionSender().sendChatMessage("- &eRockets shot: " + player.rocketsShot + " -> Rockets landed: " + player.rocketKills + " (0.33)");
+    player.getActionSender().sendChatMessage("- &eLines used: " + player.linesUsed);
+    player.getActionSender().sendChatMessage("- &ePoints earned: " + player.currentRoundPointsEarned + " -> Points spent" + player.pointsSpent + " (0.8)");
+    player.getActionSender().sendChatMessage("- &eFlags taken: " + player.flagsTaken + " -> Flags captured: " + player.captures + " (0.42)");
+    player.getActionSender().sendChatMessage("- &eHighest kill streak: " + player.highestKillStreak + " vs Highest death streak: " + player.highestDeathStreak + " (0.88)");
+    //player.getActionSender().sendChatMessage("- &eOverall performance: " + performanceRating);
+    player.getActionSender().sendChatMessage("&a* You may need to scroll up to see all stats *");
   }
 }
