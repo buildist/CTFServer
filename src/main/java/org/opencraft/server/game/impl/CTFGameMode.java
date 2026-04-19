@@ -171,11 +171,6 @@ public class CTFGameMode extends GameMode {
       }
     }
 
-    float dx = x - p.rocketStartPosition.getX();
-    float dy = y - p.rocketStartPosition.getY();
-    float dz = z - p.rocketStartPosition.getZ();
-    int distance = (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
-
     ArrayList<Player> killed = new ArrayList<>();
     if (lethal) {
       float px = x + 0.5f, py = y + 0.5f, pz = z + 0.5f;
@@ -206,11 +201,16 @@ public class CTFGameMode extends GameMode {
           t.died(p);
 
           if (type == "rocket") {
+            float dx = x - p.rocketStartPosition.getX();
+            float dy = y - p.rocketStartPosition.getY();
+            float dz = z - p.rocketStartPosition.getZ();
+            int distance = (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
+
             updateKillFeed(p, t, p.parseName() + " rocketed " + t.getColoredName() + " &f(" + distance + ")");
             p.rocketKills++;
             t.rocketDeaths++;
           } if (type == "grenade") {
-            updateKillFeed(p, t, p.parseName() + " grenaded " + t.getColoredName() + " &f(" + distance + ")");
+            updateKillFeed(p, t, p.parseName() + " grenaded " + t.getColoredName());
             p.grenadeKills++;
             t.grenadeDeaths++;
           } else {
@@ -269,9 +269,13 @@ public class CTFGameMode extends GameMode {
         // in the kill feed.
 
         if (type == "rocket") {
+          float dx = x - p.rocketStartPosition.getX();
+          float dy = y - p.rocketStartPosition.getY();
+          float dz = z - p.rocketStartPosition.getZ();
+          int distance = (int) Math.sqrt(dx * dx + dy * dy + dz * dz);
           World.getWorld().broadcast(p.parseName() + " rocketed " + t.getColoredName() + " &f(" + distance + ")");
         } else if (type == "grenade") {
-          World.getWorld().broadcast(p.parseName() + " grenaded " + t.getColoredName() + " &f(" + distance + ")");
+          World.getWorld().broadcast(p.parseName() + " grenaded " + t.getColoredName());
         } else {
           World.getWorld().broadcast(p.parseName() + " exploded " + t.getColoredName() + (type == null ? "" : " &f(" + type + ")"));
         }
