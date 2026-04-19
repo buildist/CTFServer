@@ -591,7 +591,7 @@ public class Player extends Entity implements IPlayer {
     killstreak = 0;
     deathstreak++;
     if (deathstreak > highestDeathStreak) {
-      highestDeathStreak = deathStreak;
+      highestDeathStreak = deathstreak;
     }
 
     attacker.setIfMax("maxKillstreakEnded", killstreak);
