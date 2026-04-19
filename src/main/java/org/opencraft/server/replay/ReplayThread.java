@@ -101,6 +101,7 @@ public class ReplayThread extends Thread {
       }
     }
 
+    boolean connected = true;
     boolean finishedLogic = false;
     try (ReplayFile file = new ReplayFile(day, month, year, id)) {
       file.setReading(true);
@@ -124,14 +125,16 @@ public class ReplayThread extends Thread {
         return;
       }
 
-      clearLocalEntities();
-      clearAnnouncementAndKillFeed();
+      if (!onlyViewMetadata) {
+        clearLocalEntities();
+        clearAnnouncementAndKillFeed();
+      }
       doLogic(file);
       finishedLogic = true;
 
       if (!onlyViewMetadata) {
         synchronized (player) {
-          while (!player.requestedToLeaveReplay && World.getWorld().getPlayerList().contains(player)) {
+          while (!player.requestedToLeaveReplay && (connected = World.getWorld().getPlayerList().contains(player))) {
             checkUsedCommand();
 
             player.wait(100L);
@@ -154,13 +157,15 @@ public class ReplayThread extends Thread {
       if (!finishedLogic) player.sendMessage("- &eAn error occurred while reading the replay");
     } finally {
       if (!onlyViewMetadata) {
-        clearAnnouncementAndKillFeed();
+        if (connected) {
+          clearAnnouncementAndKillFeed();
 
-        for (short id = 0; id < 255; id++) { // do not remove -1 (255)
-          player.getActionSender().sendRemovePlayerName(id);
-          player.getActionSender().sendRemoveEntity(id);
+          for (short id = 0; id < 255; id++) { // do not remove -1 (255)
+            player.getActionSender().sendRemovePlayerName(id);
+            player.getActionSender().sendRemoveEntity(id);
+          }
+          LevelGzipper.getLevelGzipper().gzipLevel(player.getSession());
         }
-        LevelGzipper.getLevelGzipper().gzipLevel(player.getSession());
 
         synchronized (player) {
           player.watchingReplay = false;
