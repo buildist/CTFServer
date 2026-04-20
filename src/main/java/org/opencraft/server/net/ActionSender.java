@@ -135,53 +135,54 @@ public class ActionSender {
 
   /** Sends the level finish packet. */
   public void sendLevelFinish() {
-    TaskQueue.getTaskQueue()
-        .push(
-            new Task() {
-              public void execute() {
-                try {
-                  // for thread safety
-                  final Level level = World.getWorld().getLevel();
-                  PacketBuilder bldr =
-                      new PacketBuilder(
-                          PersistingPacketManager.getPacketManager().getOutgoingPacket(4));
-                  bldr.putShort("width", level.getWidth());
-                  bldr.putShort("height", level.getHeight());
-                  bldr.putShort("depth", level.getDepth());
-                  session.send(bldr.toPacket());
-                  Position spawn = level.getSpawnPosition();
-                  Rotation r = level.getSpawnRotation();
-                  sendSpawn(
-                      (byte) -1,
-                      session.getPlayer().nameId,
-                      session.getPlayer().getColoredName(),
-                      session.getPlayer().getTeamName(),
-                      session.getPlayer().getName(),
-                      session.getPlayer().getListName(),
-                      session.getPlayer().getSkinUrl(),
-                      spawn.getX(),
-                      spawn.getY(),
-                      spawn.getZ(),
-                      (byte) r.getRotation(),
-                      (byte) r.getLook(),
-                      false,
-                      true);
-                  // now load the player's game (TODO in the future do this in parallel with loading
-                  // the
-                  // level)
-                  boolean bot = (session instanceof FakeMinecraftSession);
-                  if (!bot) {
-                    SavedGameManager.getSavedGameManager()
-                        .queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
-                  }
+    Task job = () -> {
+      try {
+        // for thread safety
+        final Level level = World.getWorld().getLevel();
+        PacketBuilder bldr =
+            new PacketBuilder(
+                PersistingPacketManager.getPacketManager().getOutgoingPacket(4));
+        bldr.putShort("width", level.getWidth());
+        bldr.putShort("height", level.getHeight());
+        bldr.putShort("depth", level.getDepth());
+        session.send(bldr.toPacket());
+        Position spawn = level.getSpawnPosition();
+        Rotation r = level.getSpawnRotation();
+        sendSpawn(
+            (byte) -1,
+            session.getPlayer().nameId,
+            session.getPlayer().getColoredName(),
+            session.getPlayer().getTeamName(),
+            session.getPlayer().getName(),
+            session.getPlayer().getListName(),
+            session.getPlayer().getSkinUrl(),
+            spawn.getX(),
+            spawn.getY(),
+            spawn.getZ(),
+            (byte) r.getRotation(),
+            (byte) r.getLook(),
+            false,
+            true);
+        // now load the player's game (TODO in the future do this in parallel with loading
+        // the
+        // level)
+        boolean bot = (session instanceof FakeMinecraftSession);
+        if (!bot) {
+          SavedGameManager.getSavedGameManager()
+              .queuePersistenceRequest(new LoadPersistenceRequest(session.getPlayer()));
+        }
 
-                  session.setReady();
-                  if (!bot) World.getWorld().completeRegistration(session);
-                } catch (Exception ex) {
-                  Server.log(ex);
-                }
-              }
-            });
+        session.setReady();
+        if (!bot) World.getWorld().completeRegistration(session);
+      } catch (Exception ex) {
+        Server.log(ex);
+      }
+    };
+    if (Thread.currentThread() instanceof ReplayThread) {
+      job.execute();
+    } else {
+      TaskQueue.getTaskQueue().push(job);
+    }
   }
 
   /**
