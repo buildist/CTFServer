@@ -408,20 +408,7 @@ public abstract class GameMode {
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 ResetStats(player);
 
-                // Remove custom blocks
-                for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
-                  player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
-                }
-
-                // Remove red spawn zone, if applicable
-                if (oldMap.redSpawnZoneMin != null && oldMap.redSpawnZoneMax != null) {
-                  player.getActionSender().sendRemoveSelectionCuboid(0);
-                }
-
-                // Remove blue spawn zone, if applicable
-                if (oldMap.blueSpawnZoneMin != null && oldMap.blueSpawnZoneMax != null) {
-                  player.getActionSender().sendRemoveSelectionCuboid(1); // Blue spawn zone
-                }
+                removeBlockDefAndZones(player, oldMap);
               }
               clearDropItems();
               World.getWorld().clearMines();
@@ -461,6 +448,23 @@ public abstract class GameMode {
         })
         .start();
     Server.saveLog();
+  }
+
+  public static void removeBlockDefAndZones(Player player, Level oldMap) {
+    // Remove custom blocks
+    for (CustomBlockDefinition blockDef : oldMap.customBlockDefinitions) {
+      player.getActionSender().sendRemoveBlockDefinition(blockDef.id);
+    }
+
+    // Remove red spawn zone, if applicable
+    if (oldMap.redSpawnZoneMin != null && oldMap.redSpawnZoneMax != null) {
+      player.getActionSender().sendRemoveSelectionCuboid(0);
+    }
+
+    // Remove blue spawn zone, if applicable
+    if (oldMap.blueSpawnZoneMin != null && oldMap.blueSpawnZoneMax != null) {
+      player.getActionSender().sendRemoveSelectionCuboid(1); // Blue spawn zone
+    }
   }
 
   protected void checkFirstBlood(Player attacker, Player defender) {

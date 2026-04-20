@@ -128,6 +128,8 @@ public class ReplayThread extends Thread {
       if (!onlyViewMetadata) {
         clearLocalEntities();
         clearAnnouncementAndKillFeed();
+
+        GameMode.removeBlockDefAndZones(player, World.getWorld().getLevel());
       }
       doLogic(file);
       finishedLogic = true;
