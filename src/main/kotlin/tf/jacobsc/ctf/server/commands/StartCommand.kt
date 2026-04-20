@@ -6,6 +6,7 @@ import org.opencraft.server.cmd.CommandParameters
 import org.opencraft.server.game.impl.GameSettings
 import org.opencraft.server.model.Player
 import org.opencraft.server.model.World
+import org.opencraft.server.replay.ReplayManager
 import tf.jacobsc.ctf.server.timedAnnouncer
 import tf.jacobsc.utils.matchQuality
 
@@ -73,6 +74,7 @@ object StartCommand : Command {
             Thread.sleep(250)
             world.gameMode.tournamentGameStarted = true
             world.gameMode.gameStartTime = System.currentTimeMillis()
+            ReplayManager.getInstance().startRecording()
             world.broadcast("- &aThe game has started!")
         }
         World.getWorld().broadcast("- &aGame is rated. Game quality is $quality%")

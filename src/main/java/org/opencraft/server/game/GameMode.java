@@ -683,7 +683,7 @@ public abstract class GameMode {
   public void step() {
     pruneKillFeed();
 
-    if (ReplayManager.getInstance().isRecording()) return;
+    if (ReplayManager.getInstance().isRecording() || GameSettings.getBoolean("Tournament")) return;
 
     int nonSpectators = 0;
     int required = 2;
