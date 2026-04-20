@@ -1,10 +1,11 @@
 package org.opencraft.server.cmd.impl;
 
+import static org.opencraft.server.replay.ReplayFile.adjust;
+
 import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
@@ -14,8 +15,6 @@ import org.opencraft.server.replay.ReplayFile;
 import org.opencraft.server.replay.ReplayManager;
 import org.opencraft.server.replay.ReplayThread;
 import org.opencraft.server.util.Pair;
-
-import static org.opencraft.server.replay.ReplayFile.adjust;
 
 public class ReplayCommand implements Command {
 
@@ -39,8 +38,8 @@ public class ReplayCommand implements Command {
       "info", MODE_ONLY_VIEW_METADATA,
       "list", MODE_VIEW_IDS
   );
-  private static final Set<String> VIEWER_ONLY_SUBCOMMANDS =
-      Set.of("stop", "speed", "time");
+  private static final List<String> VIEWER_ONLY_SUBCOMMANDS =
+      List.of("stop", "speed", "time", "pause", "resume");
 
   private final byte mode;
   private final boolean spectatorModeRequired;
@@ -218,7 +217,7 @@ public class ReplayCommand implements Command {
             break;
           }
           case "speed": {
-            double min = 0.2D;
+            double min = 0.5D;
             double max = 4.0D;
             String badSpeedMessage = "- &ePlease specify a decimal from " + min + " to " + max;
             if (params.getArgumentCount() < 2) {
@@ -249,7 +248,35 @@ public class ReplayCommand implements Command {
             break;
           }
           case "time": {
-            player.sendMessage("- &eTODO!");
+            if (params.getArgumentCount() < 2) {
+              player.askedReplayTimestamp = true;
+
+              return;
+            }
+            int timestamp = mmSsToTimestamp(params.getStringArgument(1));
+            if (timestamp < 0) {
+              player.sendMessage("- &eExpected a timestamp in mm:ss format");
+
+              return;
+            }
+            synchronized (player) {
+              player.replayTimestamp = timestamp;
+              player.replayTimestampChanged = true;
+            }
+
+            break;
+          }
+          case "pause": {
+            player.askedToPauseReplay = true;
+
+            break;
+          }
+          case "resume": {
+            synchronized (player) {
+              player.askedToResumeReplay = true;
+
+              player.notifyAll();
+            }
 
             break;
           }
@@ -376,5 +403,16 @@ public class ReplayCommand implements Command {
 
       player.sendMessage("- &eAvailable IDs: " + answer);
     }
+  }
+
+  private int mmSsToTimestamp(String time) {
+    String[] parts = time.split(":");
+    if (parts.length != 2) return BAD;
+
+    int minutes = nonNegativeInteger(null, parts[0]);
+    int seconds = nonNegativeInteger(null, parts[1]);
+    if (minutes < 0 || minutes > 59 || seconds < 0 || seconds > 59) return BAD;
+
+    return (minutes * 60_000) + seconds * 1_000;
   }
 }
