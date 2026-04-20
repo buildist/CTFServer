@@ -60,6 +60,17 @@ public abstract class Connectable {
    * @param packet The packet to send.
    */
   protected void send(Packet packet, IoSession session) {
+    if (ReplayThread.thisThread()) {
+      /*
+       * Don't allow ReplayThread to lock this Connectable instance.
+       * At this time it might hold a lock on a Player that owns this session,
+       * nested synchronization is a dangerous practice.
+       */
+      session.write(packet);
+
+      return;
+    }
+
     synchronized (this) {
       final PacketDefinition definition = packet.getDefinition();
       final String name = (definition == null ? "unparsed" : definition.getName());

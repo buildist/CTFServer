@@ -42,12 +42,16 @@ public class ReplayThread extends Thread {
     setDaemon(true);
   }
 
+  public static boolean thisThread() {
+    return (Thread.currentThread() instanceof ReplayThread);
+  }
+
   /*
    * Returns true if (and only if) the given player is watching a replay and
    * the current operation over this player is executed by any thread other than ReplayThread.
    */
   public static boolean isUnsafe(Player player) {
-    return player.watchingReplay && !(Thread.currentThread() instanceof ReplayThread);
+    return player.watchingReplay && !thisThread();
   }
 
   private void clearLocalEntities() { // partially a copy-paste from UpdateTask.java

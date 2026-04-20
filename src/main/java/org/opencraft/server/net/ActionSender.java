@@ -178,7 +178,7 @@ public class ActionSender {
         Server.log(ex);
       }
     };
-    if (Thread.currentThread() instanceof ReplayThread) {
+    if (ReplayThread.thisThread()) {
       job.execute();
     } else {
       TaskQueue.getTaskQueue().push(job);

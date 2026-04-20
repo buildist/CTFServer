@@ -171,7 +171,7 @@ public final class LevelGzipper {
         session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");
       }
     };
-    if (Thread.currentThread() instanceof ReplayThread) {
+    if (ReplayThread.thisThread()) {
       job.run();
     } else {
       service.submit(job);
