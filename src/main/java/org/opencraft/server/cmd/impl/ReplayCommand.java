@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
@@ -38,6 +39,8 @@ public class ReplayCommand implements Command {
       "info", MODE_ONLY_VIEW_METADATA,
       "list", MODE_VIEW_IDS
   );
+  private static final Set<String> VIEWER_ONLY_SUBCOMMANDS =
+      Set.of("stop", "speed", "time");
 
   private final byte mode;
   private final boolean spectatorModeRequired;
@@ -195,6 +198,7 @@ public class ReplayCommand implements Command {
   }
 
   @Override
+  @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
   public void execute(Player player, CommandParameters params) {
     if (player.team != -1 && spectatorModeRequired) {
       player.sendMessage("- &ePlease join the spectator team to use this command");
@@ -203,14 +207,62 @@ public class ReplayCommand implements Command {
     }
     String firstParameter =
         (params.getArgumentCount() == 0 ? null : params.getStringArgument(0).toLowerCase());
+    String firstParameterLc = (firstParameter != null ? firstParameter.toLowerCase() : null);
     boolean typedReplayAndHasParameter = (mode == MODE_REPLAY && firstParameter != null);
     if (player.watchingReplay) {
-      if (typedReplayAndHasParameter && firstParameter.equalsIgnoreCase("stop")) {
-        player.stopWatchingReplay();
+      if (typedReplayAndHasParameter) {
+        switch (firstParameterLc) {
+          case "stop": {
+            player.stopWatchingReplay();
+
+            break;
+          }
+          case "speed": {
+            double min = 0.2D;
+            double max = 4.0D;
+            String badSpeedMessage = "- &ePlease specify a decimal from " + min + " to " + max;
+            if (params.getArgumentCount() < 2) {
+              player.sendMessage(badSpeedMessage);
+
+              return;
+            }
+            String unparsedSpeed = params.getStringArgument(1);
+            double speed;
+            try {
+              speed = Double.parseDouble(unparsedSpeed);
+            } catch (NumberFormatException e) {
+              player.sendMessage(badSpeedMessage);
+
+              return;
+            }
+            if (Double.isNaN(speed)) {
+              player.sendMessage(badSpeedMessage);
+
+              return;
+            }
+            synchronized (player) {
+              double oldSpeed = player.replaySpeed;
+              player.replaySpeed = Math.clamp(speed, min, max);
+              player.replaySpeedChanged = (oldSpeed != player.replaySpeed);
+            }
+
+            break;
+          }
+          case "time": {
+            player.sendMessage("- &eTODO!");
+
+            break;
+          }
+        }
 
         return;
       }
       player.usedCommandDuringReplay = true;
+
+      return;
+    }
+    if (typedReplayAndHasParameter && VIEWER_ONLY_SUBCOMMANDS.contains(firstParameterLc)) {
+      player.sendMessage("- &eThis subcommand is available only in viewer mode");
 
       return;
     }

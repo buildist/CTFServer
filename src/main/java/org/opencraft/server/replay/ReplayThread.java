@@ -1,6 +1,8 @@
 package org.opencraft.server.replay;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.Date;
 import java.util.Objects;
 import java.util.Set;
@@ -12,8 +14,12 @@ import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
+import org.opencraft.server.replay.ReplayFile.ReplayChunk;
 
 public class ReplayThread extends Thread {
+
+  private static final ThreadLocal<NumberFormat> NUMBER_FORMATTER =
+      ThreadLocal.withInitial(() -> new DecimalFormat("#.##"));
 
   private final Player player;
   private final int day;
@@ -73,15 +79,25 @@ public class ReplayThread extends Thread {
 
     player.sendMessage("- &eUse '/leave' or '/replay stop' commands to quit viewer mode");
 
-    long started = System.currentTimeMillis();
+    ReplayChunk previous = null;
     while (file.isNextChunkAvailable()) {
       ReplayFile.ReplayChunk chunk = file.readNextChunk();
-      chunk.sleepUntilSendingThisChunk(player, started);
+      chunk.sleepUntilSendingThisChunk(player, previous);
       if (player.requestedToLeaveReplay) return;
       checkUsedCommand();
 
       for (Packet packet : chunk.packets()) {
         player.getSession().send(packet);
+      }
+      previous = chunk;
+
+      synchronized (player) {
+        if (player.replaySpeedChanged) {
+          player.sendMessage("- &eThe replay speed is now &f" +
+              NUMBER_FORMATTER.get().format(player.replaySpeed) + "x");
+
+          player.replaySpeedChanged = false;
+        }
       }
     }
     player.sendMessage("- &eFinished reading the replay, type /leave to quit the viewer");
@@ -96,9 +112,10 @@ public class ReplayThread extends Thread {
 
           return;
         }
-
         player.watchingReplay = true;
         player.usedCommandDuringReplay = false;
+        player.replaySpeed = 1.0D;
+        player.replaySpeedChanged = false;
       }
     }
 

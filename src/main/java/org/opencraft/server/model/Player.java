@@ -174,6 +174,10 @@ public class Player extends Entity implements IPlayer {
   public volatile boolean watchingReplay;
   public volatile boolean requestedToLeaveReplay;
   public volatile boolean usedCommandDuringReplay;
+  public volatile double replaySpeed;
+  public boolean replaySpeedChanged;
+  public int replayTimestamp;
+  public boolean replayTimestampChanged;
 
   // CTF
   public final LinkedList<Mine> mines = new LinkedList<Mine>();

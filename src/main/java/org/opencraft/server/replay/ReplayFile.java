@@ -25,16 +25,17 @@ public class ReplayFile implements Closeable {
 
     @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     public void sleepUntilSendingThisChunk(
-        Player watcher, long timestampWhenReplayStarted
+        Player watcher, ReplayChunk previousChunk
     ) throws InterruptedException {
-      long delta = System.currentTimeMillis() - timestampWhenReplayStarted;
-      long timeToSleep = Math.max(deltaMillis - delta, 0);
+      int previousDeltaMillis = (previousChunk != null ? previousChunk.deltaMillis : 0);
+      long timeToSleep = (long) (Math.max(deltaMillis - previousDeltaMillis, 0) / watcher.replaySpeed);
       long count100 = timeToSleep / 100L; // actually should never be >0
       long finalTimeToSleep = timeToSleep - (count100 * 100L);
 
       long syncLatency = 0L;
       while (count100-- > 0) {
-        Thread.sleep(100L - syncLatency);
+        long tts = 100L - syncLatency;
+        if (tts >= 0L) Thread.sleep(tts);
 
         long timestamp = System.currentTimeMillis();
         synchronized (watcher) {
