@@ -338,11 +338,13 @@ public final class World {
    */
   public void unregister(MinecraftSession session) {
     if (session.isAuthenticated()) {
-      playerList.remove(session.getPlayer());
-      World.getWorld().getGameMode().playerDisconnected(session.getPlayer());
+      Player player = session.getPlayer();
+      playerList.remove(player);
+      World.getWorld().getGameMode().playerDisconnected(player);
       SavedGameManager.getSavedGameManager()
-          .queuePersistenceRequest(new SavePersistenceRequest(session.getPlayer()));
+          .queuePersistenceRequest(new SavePersistenceRequest(player));
       session.setPlayer(null);
+      player.stopWatchingReplay();
     }
   }
 
