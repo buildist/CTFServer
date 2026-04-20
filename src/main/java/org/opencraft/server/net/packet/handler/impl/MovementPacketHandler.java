@@ -73,16 +73,19 @@ public class MovementPacketHandler implements PacketHandler<MinecraftSession> {
     int dx = Math.abs(x - oldX);
     int dy = Math.abs(y - oldY);
     int dz = Math.abs(z - oldZ);
+
+    if (dx != 0 || dy != 0 || dz != 0) { // for AFK kick
+      player.moveTime = System.currentTimeMillis();
+    }
+
+    if (player.watchingReplay) return;
+
     if ((dx > 400 || dy > 400 || dz > 400)) // respawning
     {
       World.getWorld().getGameMode().playerRespawn(player);
     } else if (player.frozen) { // frozen
       player.getActionSender().sendTeleport(player.getPosition(), player.getRotation());
       return;
-    }
-
-    if (dx != 0 || dy != 0 || dz != 0) { // for AFK kick
-      player.moveTime = System.currentTimeMillis();
     }
 
     for (SmokeZone zone : World.getWorld().getAllSmokeZones()) {
