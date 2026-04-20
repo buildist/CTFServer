@@ -344,7 +344,7 @@ public final class World {
       SavedGameManager.getSavedGameManager()
           .queuePersistenceRequest(new SavePersistenceRequest(player));
       session.setPlayer(null);
-      player.stopWatchingReplay();
+      player.requestedToLeaveReplay = true;
     }
   }
 

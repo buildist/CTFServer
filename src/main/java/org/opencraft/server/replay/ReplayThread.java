@@ -10,6 +10,7 @@ import org.opencraft.server.io.LevelGzipper;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
 
 public class ReplayThread extends Thread {
@@ -158,14 +159,15 @@ public class ReplayThread extends Thread {
       if (!finishedLogic) player.sendMessage("- &eAn error occurred while reading the replay");
     } finally {
       if (!onlyViewMetadata) {
-        if (player.getSession().getPlayer() != null) { // disconnected?
+        MinecraftSession session = player.getSession();
+        if (session.getPlayer() != null) { // still connected?
           clearAnnouncementAndKillFeed();
 
           for (short id = 0; id < 255; id++) { // do not remove -1 (255)
             player.getActionSender().sendRemovePlayerName(id);
             player.getActionSender().sendRemoveEntity(id);
           }
-          LevelGzipper.getLevelGzipper().gzipLevel(player.getSession());
+          LevelGzipper.getLevelGzipper().gzipLevel(session);
         }
 
         synchronized (player) {
