@@ -1433,7 +1433,9 @@ public class CTFGameMode extends GameMode {
       player.getActionSender().sendBlock(x, y, z, (short) oldType);
       player.buildMode = BuildMode.NORMAL;
     } else {
-      if (player.team == -1 && !(player.isOp()) && !player.isVIP()) {
+      if (player.watchingReplay) {
+        ignore = true;
+      } else if (player.team == -1 && !(player.isOp()) && !player.isVIP()) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &eYou must join a team to build!");
         if (mode == 0) {
