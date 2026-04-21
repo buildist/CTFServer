@@ -232,6 +232,26 @@ public class ReplayThread extends Thread {
         synchronized (player) {
           while (shouldWait()) {
             checkUsedCommand();
+            boolean usedSubcommand = false;
+            if (player.replaySpeedChanged) {
+              usedSubcommand = true;
+              player.replaySpeedChanged = false;
+            } else if (player.replayTimestampChanged) {
+              usedSubcommand = true;
+              player.replayTimestampChanged = false;
+            } else if (player.askedReplayTimestamp) {
+              usedSubcommand = true;
+              player.askedReplayTimestamp = false;
+            } else if (player.askedToPauseReplay) {
+              usedSubcommand = true;
+              player.askedToPauseReplay = false;
+            } else if (player.askedToResumeReplay) {
+              usedSubcommand = true;
+              player.askedToResumeReplay = false;
+            }
+            if (usedSubcommand) {
+              player.sendMessage("- &ePlease start the replay again to use this command");
+            }
 
             player.wait(100L);
           }
