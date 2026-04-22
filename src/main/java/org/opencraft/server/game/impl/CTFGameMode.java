@@ -711,7 +711,7 @@ public class CTFGameMode extends GameMode {
                 unblockSpawnZones(player);
                 player.sendToTeamSpawn();
               }
-              ReplayManager.getInstance().roundEnded();
+              ReplayManager.getInstance().stopRecording();
               rtvVotes = 0;
               rtvYesPlayers.clear();
               rtvNoPlayers.clear();
@@ -1285,6 +1285,11 @@ public class CTFGameMode extends GameMode {
     if (player.team > -1) {
       if (player.hasFlag) dropFlag(player, true, false);
     }
+  }
+
+  @Override
+  public boolean isSuddenDeath() {
+    return suddenDeath;
   }
 
   public void processTag(Player p1, Player p2, int x, int y, int z) {

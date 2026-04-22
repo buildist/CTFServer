@@ -73,7 +73,7 @@ public class ReplayManager {
 
   private static final ReplayManager INSTANCE = new ReplayManager();
 
-  private long recordingStartTimestamp;
+  private volatile long recordingStartTimestamp;
   private boolean recording;
   private ReplayFile replayFile;
 
@@ -91,7 +91,7 @@ public class ReplayManager {
     return INSTANCE;
   }
 
-  public synchronized void roundEnded() {
+  public synchronized void stopRecording() {
     if (recording) {
       recording = false;
 
@@ -208,5 +208,9 @@ public class ReplayManager {
       Server.log(e);
     }
     packetsCollected = null;
+  }
+
+  public long getRecordingStartTimestamp() {
+    return recordingStartTimestamp;
   }
 }
