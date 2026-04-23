@@ -419,6 +419,7 @@ public abstract class GameMode {
               redCaptain = null;
               blueCaptain = null;
               World.getWorld().setLevel(map);
+              ReplayManager.getInstance().stopRecording();
               clearKillFeed();
               voting = false;
               rtvVotes = 0;
