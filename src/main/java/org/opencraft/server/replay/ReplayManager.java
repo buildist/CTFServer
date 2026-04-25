@@ -91,7 +91,7 @@ public class ReplayManager {
     return INSTANCE;
   }
 
-  public synchronized void roundEnded() {
+  public synchronized void stopRecording() {
     if (recording) {
       recording = false;
 

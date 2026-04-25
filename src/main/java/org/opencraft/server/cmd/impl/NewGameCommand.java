@@ -43,6 +43,7 @@ import org.opencraft.server.model.Level;
 import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.FakePlayerBase;
 import tf.jacobsc.ctf.server.StatsKt;
 
 public class NewGameCommand implements Command {
@@ -82,6 +83,7 @@ public class NewGameCommand implements Command {
           p.incIntAttribute("games");
         }
       }
+      FakePlayerBase.CAMERA_MAN.sendMessage("- &e/newgame was called");
       StatsKt.savePlayerStats(World.getWorld());
       World.getWorld().getGameMode().startGame(newMap);
     } else {

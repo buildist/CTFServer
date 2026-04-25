@@ -59,10 +59,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.NavigableSet;
-import java.util.TreeSet;
 import org.opencraft.server.replay.ReplayManager;
 import tf.jacobsc.ctf.server.commands.QualityCommand;
 import tf.jacobsc.ctf.server.commands.StartCommand;
@@ -422,6 +419,7 @@ public abstract class GameMode {
               redCaptain = null;
               blueCaptain = null;
               World.getWorld().setLevel(map);
+              ReplayManager.getInstance().stopRecording();
               clearKillFeed();
               voting = false;
               rtvVotes = 0;
@@ -683,17 +681,23 @@ public abstract class GameMode {
   public void step() {
     pruneKillFeed();
 
-    if (ReplayManager.getInstance().isRecording() || GameSettings.getBoolean("Tournament")) return;
-
-    int nonSpectators = 0;
+    int activeNonSpectators = 0;
     int required = 2;
     for (Player player : World.getWorld().getPlayerList().getPlayers()) {
-      if (player.team != -1 && ++nonSpectators == required) break;
+      if (player.team != -1 && !player.AFK && ++activeNonSpectators == required) break;
     }
-    long elapsedTime = System.currentTimeMillis() - gameStartTime;
-    long timeLimit = GameSettings.getInt("TimeLimit") * 60000L;
-    if (nonSpectators >= required && (timeLimit - elapsedTime >= 5000L)) {
-      ReplayManager.getInstance().startRecording();
+
+    ReplayManager manager = ReplayManager.getInstance();
+    if (manager.isRecording()) {
+      if (isSuddenDeath() && activeNonSpectators < required) {
+        ReplayManager.getInstance().stopRecording();
+      }
+
+      return;
+    }
+
+    if (activeNonSpectators >= required && !GameSettings.getBoolean("Tournament")) {
+      manager.startRecording();
     }
   }
 
@@ -737,6 +741,10 @@ public abstract class GameMode {
 
   public void playerRespawn(Player p) {
 
+  }
+
+  protected boolean isSuddenDeath() {
+    return false;
   }
 
   public static class KillFeedItem {

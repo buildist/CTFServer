@@ -218,7 +218,7 @@ public class LaserTagGameMode extends GameMode {
                 World.getWorld()
                     .broadcast("- &2" + p.getName() + " - " + p.currentRoundPointsEarned);
               }
-              ReplayManager.getInstance().roundEnded();
+              ReplayManager.getInstance().stopRecording();
               for (Player player : World.getWorld().getPlayerList().getPlayers()) {
                 player.team = -1;
                 player.sendToTeamSpawn();
