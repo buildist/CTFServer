@@ -683,18 +683,20 @@ public final class Level implements Cloneable {
   }
 
   private void loadBlocks(byte[] blockArray, byte[] blockArray2) {
-    for (int x = 0; x < width; x++) {
+    boolean isChaos = GameSettings.getBoolean("Chaos");
+    int offset = 0;
+    for (int z = 0; z < depth; z++) {
       for (int y = 0; y < height; y++) {
-        for (int z = 0; z < depth; z++) {
-          int type0 = Server.getUnsigned(blockArray[(z * height + y) * width + x]);
+        for (int x = 0; x < width; x++, offset++) {
+          int type0 = blockArray[offset] & 0xff;
           int type1 = 0;
           if (blockArray2 != null) {
-            type1 = Server.getUnsigned(blockArray2[(z * height + y) * width + x]);
+            type1 = blockArray2[offset] & 0xff;
           }
           int type = type0 | (type1 << 8);
           blockTypes.add(type);
 
-          if (GameSettings.getBoolean("Chaos")) {
+          if (isChaos) {
             if (type == 7) {
               type = 1;
             } else if (type == 8) {
@@ -716,8 +718,8 @@ public final class Level implements Cloneable {
             usedBreakableTypes.add(type);
           }
           blocks[x][y][z] = (short) type;
-          blocks0[(z * height + y) * width + x] = (byte) type0;
-          blocks1[(z * height + y) * width + x] = (byte) type1;
+          blocks0[offset] = (byte) type0;
+          blocks1[offset] = (byte) type1;
         }
       }
     }
