@@ -68,6 +68,7 @@ import java.util.TreeSet;
 import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 import org.opencraft.server.Constants;
+import org.opencraft.server.replay.ReplayThread;
 
 /**
  * Represents the actual level.
@@ -153,6 +154,7 @@ public final class Level implements Cloneable {
 
   private final Queue<UpdateBlock> iceBlocks = new LinkedList<>();
   private final Queue<UpdateBlock> vineBlocks = new LinkedList<>();
+  private final boolean metadataOnly = ReplayThread.thisThread();
 
   /** Generates a level. */
   public Level() {
@@ -643,14 +645,18 @@ public final class Level implements Cloneable {
       width = ((ShortTag) classicWorld.get("X")).getValue();
       height = ((ShortTag) classicWorld.get("Z")).getValue();
       depth = ((ShortTag) classicWorld.get("Y")).getValue();
-      blocks = new short[width][height][depth];
-      this.solidBlocks = new boolean[width][height][depth];
-      blocks0 = new byte[width * height * depth];
-      blocks1 = new byte[width * height * depth];
-      byte[] tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
-      byte[] tmpBlocks2 = classicWorld.containsKey("BlockArray2")
-          ? ((ByteArrayTag) classicWorld.get("BlockArray2")).getValue()
-          : null;
+      byte[] tmpBlocks = null;
+      byte[] tmpBlocks2 = null;
+      if (!metadataOnly) {
+        blocks = new short[width][height][depth];
+        this.solidBlocks = new boolean[width][height][depth];
+        blocks0 = new byte[width * height * depth];
+        blocks1 = new byte[width * height * depth];
+        tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
+        tmpBlocks2 = classicWorld.containsKey("BlockArray2")
+            ? ((ByteArrayTag) classicWorld.get("BlockArray2")).getValue()
+            : null;
+      }
 
       boolean hasMetadata =
           ((CompoundTag) classicWorld.get("Metadata")).getValue().containsKey("CPE");
@@ -668,7 +674,7 @@ public final class Level implements Cloneable {
       }
       this.spawnRotation = new Rotation(spawnH, spawnP);
 
-      Server.log("Loading map: " + id);
+      if (!metadataOnly) Server.log("Loading map: " + id);
       loadProps();
 
       loadBlocks(tmpBlocks, tmpBlocks2);
@@ -683,18 +689,22 @@ public final class Level implements Cloneable {
   }
 
   private void loadBlocks(byte[] blockArray, byte[] blockArray2) {
-    for (int x = 0; x < width; x++) {
+    if (metadataOnly) return;
+    
+    boolean isChaos = GameSettings.getBoolean("Chaos");
+    int offset = 0;
+    for (int z = 0; z < depth; z++) {
       for (int y = 0; y < height; y++) {
-        for (int z = 0; z < depth; z++) {
-          int type0 = Server.getUnsigned(blockArray[(z * height + y) * width + x]);
+        for (int x = 0; x < width; x++, offset++) {
+          int type0 = blockArray[offset] & 0xff;
           int type1 = 0;
           if (blockArray2 != null) {
-            type1 = Server.getUnsigned(blockArray2[(z * height + y) * width + x]);
+            type1 = blockArray2[offset] & 0xff;
           }
           int type = type0 | (type1 << 8);
           blockTypes.add(type);
 
-          if (GameSettings.getBoolean("Chaos")) {
+          if (isChaos) {
             if (type == 7) {
               type = 1;
             } else if (type == 8) {
@@ -716,8 +726,8 @@ public final class Level implements Cloneable {
             usedBreakableTypes.add(type);
           }
           blocks[x][y][z] = (short) type;
-          blocks0[(z * height + y) * width + x] = (byte) type0;
-          blocks1[(z * height + y) * width + x] = (byte) type1;
+          blocks0[offset] = (byte) type0;
+          blocks1[offset] = (byte) type1;
         }
       }
     }
@@ -795,7 +805,7 @@ public final class Level implements Cloneable {
                 fog[3],
                 -1);
         customBlockDefinitions.add(blockDef);
-        BlockManager.getBlockManager().addCustomBlock(blockDef);
+        if (!metadataOnly) BlockManager.getBlockManager().addCustomBlock(blockDef);
       }
     }
 

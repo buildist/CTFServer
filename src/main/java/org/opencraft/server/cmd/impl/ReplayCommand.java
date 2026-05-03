@@ -241,7 +241,7 @@ public class ReplayCommand implements Command {
             }
             synchronized (player) {
               double oldSpeed = player.replaySpeed;
-              player.replaySpeed = Math.clamp(speed, min, max);
+              player.replaySpeed = Math.max(Math.min(speed, max), min);
               player.replaySpeedChanged = (oldSpeed != player.replaySpeed);
             }
 
