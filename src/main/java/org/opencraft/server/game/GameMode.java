@@ -258,6 +258,7 @@ public abstract class GameMode {
   }
 
   public void playerConnected(Player player) {
+    player.getSession().notifyDisconnected = true;
     Server.log(player.getName() + " (" + player.getSession().getIP() + ") joined the game");
     if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
       WebServer.run(
@@ -314,8 +315,10 @@ public abstract class GameMode {
   }
 
   public void playerDisconnected(final Player p) {
+    boolean notify = p.getSession().notifyDisconnected;
+
     Server.log(p.getName() + " left the game");
-    if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
+    if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament") && notify) {
       WebServer.run(
           new Runnable() {
             @Override
@@ -336,7 +339,7 @@ public abstract class GameMode {
     p.clearTnt();
     p.clearMines();
 
-    WebServer.sendDiscordMessage(p.getName() + " left the game", null);
+    if (notify) WebServer.sendDiscordMessage(p.getName() + " left the game", null);
 
     if (p.team == 0) {
       redPlayers--;
@@ -344,7 +347,7 @@ public abstract class GameMode {
       bluePlayers--;
     }
     DuelKt.abandonDuel(p);
-    World.getWorld().broadcast("&a" + p.getName() + " left the game");
+    if (notify) World.getWorld().broadcast("&a" + p.getName() + " left the game");
 
     if (World.getWorld().getPlayerList().size() == 0) {
       rtvVotes = 0;

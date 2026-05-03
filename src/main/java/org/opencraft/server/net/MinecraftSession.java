@@ -66,6 +66,7 @@ public class MinecraftSession extends OCSession {
   public int receivedExtEntries = 0;
   public boolean receivedAllExtEntries = false;
   public int customBlockLevel = 0;
+  public boolean notifyDisconnected;
   private String ip;
 
   /** The player associated with this session. */
