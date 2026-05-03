@@ -48,6 +48,7 @@ import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 import org.opencraft.server.persistence.SavedGameManager;
+import org.opencraft.server.replay.ReplayThread;
 import org.opencraft.server.util.PlayerList;
 
 import java.io.IOException;

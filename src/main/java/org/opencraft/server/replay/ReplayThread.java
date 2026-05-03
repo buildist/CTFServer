@@ -10,6 +10,8 @@ import org.opencraft.server.Server;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.io.LevelGzipper;
 import org.opencraft.server.model.Entity;
+import org.opencraft.server.model.Level;
+import org.opencraft.server.model.MapController;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 import org.opencraft.server.net.MinecraftSession;
@@ -196,6 +198,7 @@ public class ReplayThread extends Thread {
       }
     }
 
+    String mapName = null;
     boolean finishedLogic = false;
     try (ReplayFile file = new ReplayFile(day, month, year, id)) {
       file.setReading(true);
@@ -218,6 +221,7 @@ public class ReplayThread extends Thread {
 
         return;
       }
+      mapName = file.getMap();
 
       if (!onlyViewMetadata) {
         clearLocalEntities();
@@ -280,6 +284,12 @@ public class ReplayThread extends Thread {
           for (short id = 0; id < 255; id++) { // do not remove -1 (255)
             player.getActionSender().sendRemovePlayerName(id);
             player.getActionSender().sendRemoveEntity(id);
+          }
+          if (mapName != null) {
+            Level mapFromReplay = MapController.getLevel(mapName);
+            if (mapFromReplay != null) {
+              GameMode.removeBlockDefAndZones(player, mapFromReplay);
+            }
           }
           LevelGzipper.getLevelGzipper().gzipLevel(session);
         }

@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.opencraft.server.replay.ReplayManager;
+import org.opencraft.server.replay.ReplayThread;
 import tf.jacobsc.ctf.server.commands.QualityCommand;
 import tf.jacobsc.ctf.server.commands.StartCommand;
 import tf.jacobsc.ctf.server.commands.TeamsCommand;
@@ -258,8 +259,11 @@ public abstract class GameMode {
   }
 
   public void playerConnected(Player player) {
+    boolean notify = !ReplayThread.thisThread();
+    player.getSession().notifyDisconnected = true;
+
     Server.log(player.getName() + " (" + player.getSession().getIP() + ") joined the game");
-    if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
+    if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament") && notify) {
       WebServer.run(
           new Runnable() {
             @Override
@@ -278,7 +282,7 @@ public abstract class GameMode {
             }
           });
     }
-    WebServer.sendDiscordMessage(player.getName() + " joined the game", null);
+    if (notify) WebServer.sendDiscordMessage(player.getName() + " joined the game", null);
 
     player.setAttribute("ip", player.getSession().getIP());
     player.muted = Server.isMuted(player.getName());
@@ -298,7 +302,7 @@ public abstract class GameMode {
       rank += " (TR:" + RatingKt.displayRating(player.getTeamRating()) + ")";
     }
 
-    World.getWorld().broadcast("&a" + player.getName() + " joined the game" + rank);
+    if (notify) World.getWorld().broadcast("&a" + player.getName() + " joined the game" + rank);
     if (!player.getSession().ccUser) {
       player
           .getActionSender()
@@ -314,8 +318,10 @@ public abstract class GameMode {
   }
 
   public void playerDisconnected(final Player p) {
+    boolean notify = p.getSession().notifyDisconnected;
+
     Server.log(p.getName() + " left the game");
-    if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament")) {
+    if (!Configuration.getConfiguration().isTest() && !GameSettings.getBoolean("Tournament") && notify) {
       WebServer.run(
           new Runnable() {
             @Override
@@ -336,7 +342,7 @@ public abstract class GameMode {
     p.clearTnt();
     p.clearMines();
 
-    WebServer.sendDiscordMessage(p.getName() + " left the game", null);
+    if (notify) WebServer.sendDiscordMessage(p.getName() + " left the game", null);
 
     if (p.team == 0) {
       redPlayers--;
@@ -344,7 +350,7 @@ public abstract class GameMode {
       bluePlayers--;
     }
     DuelKt.abandonDuel(p);
-    World.getWorld().broadcast("&a" + p.getName() + " left the game");
+    if (notify) World.getWorld().broadcast("&a" + p.getName() + " left the game");
 
     if (World.getWorld().getPlayerList().size() == 0) {
       rtvVotes = 0;

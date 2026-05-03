@@ -1443,11 +1443,7 @@ public class CTFGameMode extends GameMode {
       } else if (player.team == -1 && !(player.isOp()) && !player.isVIP()) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &eYou must join a team to build!");
-        if (mode == 0) {
-          player.getActionSender().sendBlock(x, y, z, (short) oldType);
-        } else {
-          player.getActionSender().sendBlock(x, y, z, (short) 0);
-        }
+        player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if (!tournamentGameStarted) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &aThe game has not started yet.");
@@ -1596,7 +1592,7 @@ public class CTFGameMode extends GameMode {
 
         if (player.team == -1) {
           player.getActionSender().sendChatMessage("- &eYou must join a team to place TNT!");
-          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
         } else {
           if (mode == 1) {
             if (!player.hasTNT
@@ -1630,7 +1626,7 @@ public class CTFGameMode extends GameMode {
       } else if (type == Constants.BLOCK_MINE && mode == 1 && !ignore) { // Placing mines
         if (player.team == -1) {
           player.getActionSender().sendChatMessage("- &eYou must join a team to place mines!");
-          player.getActionSender().sendBlock(x, y, z, (short) 0x00);
+          player.getActionSender().sendBlock(x, y, z, (short) oldType);
         } else {
           if (player.mines.size() < GameSettings.getInt("MaxMines")
               && !(x == redFlagX && z == redFlagY && y == redFlagZ)
