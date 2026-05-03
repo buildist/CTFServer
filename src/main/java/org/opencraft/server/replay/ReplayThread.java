@@ -12,6 +12,7 @@ import org.opencraft.server.io.LevelGzipper;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import org.opencraft.server.net.ActionSender;
 import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.replay.ReplayFile.ReplayChunk;
@@ -196,6 +197,7 @@ public class ReplayThread extends Thread {
       }
     }
 
+    ReplayFile file_ = null;
     boolean finishedLogic = false;
     try (ReplayFile file = new ReplayFile(day, month, year, id)) {
       file.setReading(true);
@@ -218,6 +220,7 @@ public class ReplayThread extends Thread {
 
         return;
       }
+      file_ = file; // intentionally assigning at the point the header was read
 
       if (!onlyViewMetadata) {
         clearLocalEntities();
@@ -277,9 +280,22 @@ public class ReplayThread extends Thread {
         if (session.getPlayer() != null) { // still connected?
           clearAnnouncementAndKillFeed();
 
+          ActionSender actionSender = player.getActionSender();
           for (short id = 0; id < 255; id++) { // do not remove -1 (255)
-            player.getActionSender().sendRemovePlayerName(id);
-            player.getActionSender().sendRemoveEntity(id);
+            actionSender.sendRemovePlayerName(id);
+            actionSender.sendRemoveEntity(id);
+          }
+          if (file_ != null && file_.getFileVersion() >= 2) {
+            // manually doing GameMode#removeBlockDefAndZones without loading the level
+            for (short id : file_.getCustomBlockIds()) {
+              actionSender.sendRemoveBlockDefinition(id);
+            }
+            if (file_.hasRedSpawnSelectionCuboid()) {
+              actionSender.sendRemoveSelectionCuboid(0);
+            }
+            if (file_.hasBlueSpawnSelectionCuboid()) {
+              actionSender.sendRemoveSelectionCuboid(1);
+            }
           }
           LevelGzipper.getLevelGzipper().gzipLevel(session);
         }
