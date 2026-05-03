@@ -347,11 +347,7 @@ public class LaserTagGameMode extends GameMode {
       if (player.team == -1 && !(player.isOp()) && !player.isVIP()) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &eYou must join a team to build!");
-        if (mode == 0) {
-          player.getActionSender().sendBlock(x, y, z, (short) oldType);
-        } else {
-          player.getActionSender().sendBlock(x, y, z, (short) 0);
-        }
+        player.getActionSender().sendBlock(x, y, z, (short) oldType);
       } else if (!tournamentGameStarted) {
         ignore = true;
         player.getActionSender().sendChatMessage("- &aThe game has not started yet.");
