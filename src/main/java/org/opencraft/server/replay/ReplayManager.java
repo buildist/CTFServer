@@ -128,12 +128,11 @@ public class ReplayManager {
     Level level = World.getWorld().getLevel();
     try {
       replayFile.open();
-      replayFile.setMap(level.id);
       replayFile.setRoundStartTimestamp(World.getWorld().getGameMode().gameStartTime);
       recordingStartTimestamp = System.currentTimeMillis();
       replayFile.setRecordingStartTimestamp(recordingStartTimestamp);
 
-      replayFile.writeHeader();
+      replayFile.writeHeader(level);
     } catch (IOException e) {
       Server.log("Failed to start recording");
       Server.log(e);

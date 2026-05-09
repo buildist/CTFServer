@@ -154,7 +154,6 @@ public final class Level implements Cloneable {
 
   private final Queue<UpdateBlock> iceBlocks = new LinkedList<>();
   private final Queue<UpdateBlock> vineBlocks = new LinkedList<>();
-  private final boolean metadataOnly = ReplayThread.thisThread();
 
   /** Generates a level. */
   public Level() {
@@ -645,18 +644,14 @@ public final class Level implements Cloneable {
       width = ((ShortTag) classicWorld.get("X")).getValue();
       height = ((ShortTag) classicWorld.get("Z")).getValue();
       depth = ((ShortTag) classicWorld.get("Y")).getValue();
-      byte[] tmpBlocks = null;
-      byte[] tmpBlocks2 = null;
-      if (!metadataOnly) {
-        blocks = new short[width][height][depth];
-        this.solidBlocks = new boolean[width][height][depth];
-        blocks0 = new byte[width * height * depth];
-        blocks1 = new byte[width * height * depth];
-        tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
-        tmpBlocks2 = classicWorld.containsKey("BlockArray2")
-            ? ((ByteArrayTag) classicWorld.get("BlockArray2")).getValue()
-            : null;
-      }
+      blocks = new short[width][height][depth];
+      this.solidBlocks = new boolean[width][height][depth];
+      blocks0 = new byte[width * height * depth];
+      blocks1 = new byte[width * height * depth];
+      byte[] tmpBlocks = ((ByteArrayTag) classicWorld.get("BlockArray")).getValue();
+      byte[] tmpBlocks2 = classicWorld.containsKey("BlockArray2")
+          ? ((ByteArrayTag) classicWorld.get("BlockArray2")).getValue()
+          : null;
 
       boolean hasMetadata =
           ((CompoundTag) classicWorld.get("Metadata")).getValue().containsKey("CPE");
@@ -674,7 +669,7 @@ public final class Level implements Cloneable {
       }
       this.spawnRotation = new Rotation(spawnH, spawnP);
 
-      if (!metadataOnly) Server.log("Loading map: " + id);
+      Server.log("Loading map: " + id);
       loadProps();
 
       loadBlocks(tmpBlocks, tmpBlocks2);
@@ -689,8 +684,6 @@ public final class Level implements Cloneable {
   }
 
   private void loadBlocks(byte[] blockArray, byte[] blockArray2) {
-    if (metadataOnly) return;
-    
     boolean isChaos = GameSettings.getBoolean("Chaos");
     int offset = 0;
     for (int z = 0; z < depth; z++) {
@@ -805,7 +798,7 @@ public final class Level implements Cloneable {
                 fog[3],
                 -1);
         customBlockDefinitions.add(blockDef);
-        if (!metadataOnly) BlockManager.getBlockManager().addCustomBlock(blockDef);
+        BlockManager.getBlockManager().addCustomBlock(blockDef);
       }
     }
 

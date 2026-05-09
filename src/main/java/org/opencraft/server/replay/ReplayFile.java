@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.opencraft.server.Server;
+import org.opencraft.server.model.CustomBlockDefinition;
+import org.opencraft.server.model.Level;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.net.packet.Packet;
 import org.opencraft.server.net.packet.UnparsedPacket;
@@ -51,7 +53,7 @@ public class ReplayFile implements Closeable {
   }
 
   public static final int MAGIC = 0x8A82F239;
-  public static final int CURRENT_FILE_VERSION = 1;
+  public static final int CURRENT_FILE_VERSION = 2;
   public static final int FAILED_TO_LOCATE_FREE_ID = 0;
   public static final int MIN_ID = 1;
   public static final int MAX_ID = 200;
@@ -68,6 +70,9 @@ public class ReplayFile implements Closeable {
   private String map;
   private long roundStartTimestamp;
   private long recordingStartTimestamp;
+  private short[] customBlockIds;
+  private boolean hasRedSpawnSelectionCuboid;
+  private boolean hasBlueSpawnSelectionCuboid;
 
   public ReplayFile(int day, int month, int year, int id) {
     Pair<String, String> possibleFilenames = getFilenames(day, month, year, id);
@@ -193,6 +198,16 @@ public class ReplayFile implements Closeable {
     map = new String(mapName, StandardCharsets.US_ASCII);
     roundStartTimestamp = stream.readLong();
     recordingStartTimestamp = stream.readLong();
+    if (fileVersion >= 2) {
+      int customBlockCount = stream.readShort();
+      if (customBlockCount < 0) return;
+      customBlockIds = new short[customBlockCount];
+      for (int i = 0; i < customBlockCount; i++) {
+        customBlockIds[i] = stream.readShort();
+      }
+      hasRedSpawnSelectionCuboid = stream.readBoolean();
+      hasBlueSpawnSelectionCuboid = stream.readBoolean();
+    }
 
     headerRead = true;
   }
@@ -225,19 +240,26 @@ public class ReplayFile implements Closeable {
   }
 
   @SuppressWarnings("resource")
-  public void writeHeader() throws IOException {
+  public void writeHeader(Level level) throws IOException {
     checkWriting();
 
     DataOutputStream stream = castStream();
     stream.writeInt(MAGIC);
     stream.writeInt(CURRENT_FILE_VERSION);
 
-    byte[] mapName = map.getBytes(StandardCharsets.US_ASCII);
+    byte[] mapName = level.id.getBytes(StandardCharsets.US_ASCII);
     stream.writeByte(mapName.length);
     stream.write(mapName, 0, mapName.length);
 
     stream.writeLong(roundStartTimestamp);
     stream.writeLong(recordingStartTimestamp);
+
+    stream.writeShort(level.customBlockDefinitions.size());
+    for (CustomBlockDefinition blockDefinition : level.customBlockDefinitions) {
+      stream.writeShort(blockDefinition.id);
+    }
+    stream.writeBoolean(level.redSpawnZoneMin != null);
+    stream.writeBoolean(level.blueSpawnZoneMin != null);
   }
 
   @SuppressWarnings("resource")
@@ -281,10 +303,16 @@ public class ReplayFile implements Closeable {
     return recordingStartTimestamp;
   }
 
-  public void setMap(String map) {
-    checkWriting();
+  public short[] getCustomBlockIds() {
+    return customBlockIds;
+  }
 
-    this.map = map;
+  public boolean hasRedSpawnSelectionCuboid() {
+    return hasRedSpawnSelectionCuboid;
+  }
+
+  public boolean hasBlueSpawnSelectionCuboid() {
+    return hasBlueSpawnSelectionCuboid;
   }
 
   public void setRoundStartTimestamp(long roundStartTimestamp) {
