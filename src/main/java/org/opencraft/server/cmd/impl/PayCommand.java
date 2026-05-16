@@ -38,6 +38,7 @@ package org.opencraft.server.cmd.impl;
 
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.Player;
 
 public class PayCommand implements Command {
@@ -54,6 +55,17 @@ public class PayCommand implements Command {
       if (other != null
           && params.getIntegerArgument(1) >= 0
           && params.getIntegerArgument(1) <= player.getPoints()) {
+
+        if (player.team == -1) {
+          player.getActionSender().sendChatMessage("You must be on a team to use /pay.");
+          return;
+        }
+
+        if (GameSettings.getBoolean("Tournament")) {
+          player.getActionSender().sendChatMessage("You cannot /pay in tournament mode.");
+          return;
+        }
+
         other.addPoints(params.getIntegerArgument(1));
         player.addPoints(-params.getIntegerArgument(1));
         player
