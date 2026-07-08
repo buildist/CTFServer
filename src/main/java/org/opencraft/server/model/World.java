@@ -48,7 +48,6 @@ import org.opencraft.server.net.MinecraftSession;
 import org.opencraft.server.persistence.LoadPersistenceRequest;
 import org.opencraft.server.persistence.SavePersistenceRequest;
 import org.opencraft.server.persistence.SavedGameManager;
-import org.opencraft.server.replay.ReplayThread;
 import org.opencraft.server.util.PlayerList;
 
 import java.io.IOException;
@@ -56,6 +55,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Manages the in-game world.
@@ -386,6 +386,23 @@ public final class World {
     // Min must start be the lowest coords (e.g, 0,0,0) and max must be the highest coords (e.g, 128,128,128)
     // End result as sourced from wiki: { EndX-StartX+1, EndY-StartY+1, EndZ-StartZ+1 }
 
+    String team1Color = GameSettings.getString("Team1Color").toLowerCase();
+    String team2Color = GameSettings.getString("Team2Color").toLowerCase();
+
+    Map<String, short[]> colorMap = Map.of(
+        "red",    new short[]{255, 0, 0},
+        "orange", new short[]{255, 165, 0},
+        "yellow", new short[]{255, 255, 0},
+        "lime",   new short[]{0, 255, 0},
+        "cyan",   new short[]{0, 255, 255},
+        "blue",   new short[]{0, 0, 255},
+        "purple", new short[]{128, 0, 128},
+        "pink",   new short[]{255, 9, 157}
+    );
+
+    short[] team1Rgb = colorMap.getOrDefault(team1Color, new short[]{255, 0, 0}); // Red by default
+    short[] team2Rgb = colorMap.getOrDefault(team2Color, new short[]{0, 0, 255}); // Blue by default
+
     if (level.redSpawnZoneMin != null && level.redSpawnZoneMax != null) {
       session.getActionSender().sendSelectionCuboid(
               127,
@@ -396,9 +413,9 @@ public final class World {
               (short) ((level.redSpawnZoneMax.getX() / 32) + 1),
               (short) (level.redSpawnZoneMax.getZ() / 32),
               (short) ((level.redSpawnZoneMax.getY() / 32) + 1),
-              (short) 255,
-              (short) 0,
-              (short) 0,
+              team1Rgb[0],
+              team1Rgb[1],
+              team1Rgb[2],
               (short) 30
       );
     }
@@ -413,9 +430,9 @@ public final class World {
               (short) ((level.blueSpawnZoneMax.getX() / 32) + 1),
               (short) (level.blueSpawnZoneMax.getZ() / 32),
               (short) ((level.blueSpawnZoneMax.getY() / 32) + 1),
-              (short) 0,
-              (short) 0,
-              (short) 255,
+              team2Rgb[0],
+              team2Rgb[1],
+              team2Rgb[2],
               (short) 30
       );
     }

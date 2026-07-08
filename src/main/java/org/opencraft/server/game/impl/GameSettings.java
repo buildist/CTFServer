@@ -73,6 +73,8 @@ public class GameSettings {
     add("ShrinkingZonesDeathTime", TYPE_INT, 3000);
     add("ShrinkingZonesKillEveryone", TYPE_BOOLEAN, false);
     add("CanGrabWithZeroEnemies", TYPE_BOOLEAN, false);
+    add("Team1Color", TYPE_STRING, "red");
+    add("Team2Color", TYPE_STRING, "blue");
   }
 
   public static Object get(String k) {

@@ -1021,6 +1021,32 @@ POSSIBILITY OF SUCH DAMAGE.
             </fields>
         </packet>
         <packet>
+            <opcode>39</opcode>
+            <name>text_colors</name>
+            <fields>
+                <field>
+                    <name>r</name>
+                    <type>BYTE</type>
+                </field>
+                <field>
+                    <name>g</name>
+                    <type>BYTE</type>
+                </field>
+                <field>
+                    <name>b</name>
+                    <type>BYTE</type>
+                </field>
+                <field>
+                    <name>alpha</name>
+                    <type>BYTE</type>
+                </field>
+                <field>
+                    <name>code</name>
+                    <type>BYTE</type>
+                </field>
+            </fields>
+        </packet>
+        <packet>
             <opcode>28</opcode>
             <name>block_permissions</name>
             <fields>

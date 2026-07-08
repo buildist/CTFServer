@@ -1,5 +1,6 @@
 package org.opencraft.server.model;
 
+import org.opencraft.server.util.TeamUtils;
 import java.util.HashMap;
 
 public abstract class PlayerUI {
@@ -221,7 +222,7 @@ public abstract class PlayerUI {
           playerListName.put(p, listName);
           short id = (p == this.player ? -1 : p.nameId);
           player.getActionSender().sendAddPlayerName(
-              id, p.getName(), p.getListName(), p.getTeamName(), (byte) 1);
+              id, p.getName(), p.getListName(), TeamUtils.getTeamName(p.team), (byte) 1);
         }
       }
     }

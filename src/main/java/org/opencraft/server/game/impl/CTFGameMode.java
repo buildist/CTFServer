@@ -48,19 +48,16 @@ import org.opencraft.server.cmd.impl.FlagDropCommand;
 import org.opencraft.server.game.GameMode;
 import org.opencraft.server.model.*;
 import org.opencraft.server.model.BlockLog.BlockInfo;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.opencraft.server.replay.ReplayManager;
 import org.opencraft.server.task.TaskQueue;
 import org.opencraft.server.task.impl.TNTTask;
+import org.opencraft.server.util.TeamUtils;
 import tf.jacobsc.ctf.server.FlameTickRecord;
 import tf.jacobsc.ctf.server.StalemateKt;
 import tf.jacobsc.ctf.server.StatsKt;
 import tf.jacobsc.utils.RatingKt;
 import tf.jacobsc.utils.TopPlayersKt;
+import java.util.ArrayList;
 
 public class CTFGameMode extends GameMode {
 
@@ -414,21 +411,20 @@ public class CTFGameMode extends GameMode {
     if (getMode() == Level.TDM) {
       World.getWorld()
           .broadcast(
-              "- Current score: Red has "
+              "- Current score: " + TeamUtils.getTeamName(0) + " &f("
                   + redCaptures
-                  + " kills; blue has "
+                  + ") &7: " + TeamUtils.getTeamName(1) + " &f("
                   + blueCaptures
-                  + " kills");
+                  + ")");
 
     } else if (getMode() == Level.CTF) {
       World.getWorld()
           .broadcast(
-              "- Current score: Red has "
+              "- Current score: " + TeamUtils.getTeamName(0) + " &f("
                   + redCaptures
-                  + " captures; blue has"
-                  + " "
+                  + ") &7: " + TeamUtils.getTeamName(1) + " &f("
                   + blueCaptures
-                  + " captures");
+                  + ")");
     }
   }
 
@@ -623,46 +619,42 @@ public class CTFGameMode extends GameMode {
         new Runnable() {
           public void run() {
             try {
-              String winner = null;
               int winnerID = -2;
               if (redCaptures > blueCaptures) {
-                winner = "red";
                 winnerID = 0;
               } else if (blueCaptures > redCaptures) {
-                winner = "blue";
                 winnerID = 1;
               }
 
               if (GameSettings.getBoolean("Elimination")) {
                 if (redPlayers == 0) {
-                  winner = "blue";
                   winnerID = 1;
                 } else if (bluePlayers == 0) {
-                  winner = "red";
                   winnerID = 0;
                 }
               }
 
-              if (winner == null) {
+              if (winnerID == -2) {
                 World.getWorld().broadcast("- &6The game ended in a tie!");
               } else {
+                String team = TeamUtils.getTeamName(winnerID);
                 World.getWorld()
-                    .broadcast("- &6The game has ended; the " + winner + " team wins!");
+                    .broadcast("- &6The game has ended; the " + team + " team wins!");
               }
               if (getMode() == Level.CTF) {
                 World.getWorld()
                     .broadcast(
-                        "- &6Red had "
+                        "- " + TeamUtils.getTeamName(0) + " &6had "
                             + redCaptures
-                            + " captures, blue had "
+                            + " captures, " + TeamUtils.getTeamName(1) + " &6had "
                             + blueCaptures
                             + ".");
               } else {
                 World.getWorld()
                     .broadcast(
-                        "- &6Red had "
+                        "- " + TeamUtils.getTeamName(0) + " &6had "
                             + redCaptures
-                            + " kills, blue had "
+                            + " kills, " + TeamUtils.getTeamName(1) + " &6had "
                             + blueCaptures
                             + ".");
               }
@@ -1020,7 +1012,7 @@ public class CTFGameMode extends GameMode {
       World.getWorld().getLevel().setBlock(blueFlagX, blueFlagZ, blueFlagY, 0);
       resetBlueFlagPos();
       placeBlueFlag();
-      World.getWorld().broadcast("- &eThe blue flag has been returned!");
+      World.getWorld().broadcast("- &eThe " + TeamUtils.getTeamName(1) + " flag has been returned!");
       blueFlagTakenBy = null;
     }
 
@@ -1036,7 +1028,7 @@ public class CTFGameMode extends GameMode {
       World.getWorld().getLevel().setBlock(redFlagX, redFlagZ, redFlagY, 0);
       resetRedFlagPos();
       placeRedFlag();
-      World.getWorld().broadcast("- &eThe red flag has been returned!");
+      World.getWorld().broadcast("- &eThe " + TeamUtils.getTeamName(0) + " &eflag has been returned!");
       redFlagTakenBy = null;
     }
 
@@ -1162,8 +1154,8 @@ public class CTFGameMode extends GameMode {
             placeRedFlag();
             p.getActionSender().sendChatMessage("- &eYou cannot pick up the flag after dropping");
           } else {
-            World.getWorld().broadcast("- &eRed flag taken by " + p.parseName() + "!");
-            sendAnnouncement("&eRed flag taken by " + p.parseName() + "!");
+            World.getWorld().broadcast("- &e" + TeamUtils.getTeamName(0) + " &eflag taken by " + p.parseName() + "!");
+            sendAnnouncement(TeamUtils.getTeamName(0) + " &eflag taken by " + p.parseName() + "!");
             p.getActionSender()
                 .sendChatMessage(
                     "- &eClick your own flag to capture, or use /fd "
@@ -1197,8 +1189,8 @@ public class CTFGameMode extends GameMode {
         // blue flag returned
         if (p.hasFlag && !redFlagTaken && !redFlagDropped) {
           World.getWorld()
-              .broadcast("- &eBlue flag captured by " + p.parseName() + " for the red" + " team!");
-          sendAnnouncement("&eBlue flag captured by " + p.parseName() + "!");
+              .broadcast("- " + TeamUtils.getTeamName(1) + " &eflag captured by " + p.parseName() + " for the " + TeamUtils.getTeamName(0) + " &eteam!");
+          sendAnnouncement(TeamUtils.getTeamName(1) + " &eflag captured by " + p.parseName() + "!");
           redCaptures++;
           p.captures++;
           p.hasFlag = false;
@@ -1235,8 +1227,8 @@ public class CTFGameMode extends GameMode {
             placeBlueFlag();
             p.getActionSender().sendChatMessage("- &eYou cannot pick up the flag after dropping");
           }  else {
-            World.getWorld().broadcast("- &eBlue flag taken by " + p.parseName() + "!");
-            sendAnnouncement("&eBlue flag taken by " + p.parseName() + "!");
+            World.getWorld().broadcast("- &e" + TeamUtils.getTeamName(1) + " &eflag taken by " + p.parseName() + "!");
+            sendAnnouncement(TeamUtils.getTeamName(1) + " &eflag taken by " + p.parseName() + "!");
             p.getActionSender()
                 .sendChatMessage(
                     "- &eClick your own flag to capture, or use /fd "
@@ -1269,8 +1261,8 @@ public class CTFGameMode extends GameMode {
         // red flag returned
         if (p.hasFlag && !blueFlagTaken && !blueFlagDropped) {
           World.getWorld()
-              .broadcast("- &eRed flag captured by " + p.parseName() + " for the blue" + " team!");
-          sendAnnouncement("&eRed flag captured by " + p.parseName() + "!");
+              .broadcast("- " + TeamUtils.getTeamName(0) + " &eflag captured by " + p.parseName() + " for the " + TeamUtils.getTeamName(1) + " &eteam!");
+          sendAnnouncement(TeamUtils.getTeamName(0) + " &eflag captured by " + p.parseName() + "!");
           blueCaptures++;
           p.captures++;
           p.hasFlag = false;

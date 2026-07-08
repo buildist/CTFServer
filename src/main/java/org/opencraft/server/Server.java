@@ -376,7 +376,7 @@ public final class Server {
         } else if (i == msg.length() - 2) {
           msg2 += c;
         } else if (!((msg.charAt(i + 1) >= '0' && msg.charAt(i + 1) <= '9')
-            || (msg.charAt(i + 1) >= 'a' && msg.charAt(i + 1) <= 'f'))) {
+            || (msg.charAt(i + 1) >= 'a' && msg.charAt(i + 1) <= 'j'))) {
           msg2 += c;
         } else {
           msg2 += '&';

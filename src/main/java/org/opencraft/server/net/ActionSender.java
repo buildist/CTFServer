@@ -56,6 +56,7 @@ import org.opencraft.server.persistence.SavedGameManager;
 import org.opencraft.server.replay.ReplayThread;
 import org.opencraft.server.task.Task;
 import org.opencraft.server.task.TaskQueue;
+import org.opencraft.server.util.TeamUtils;
 
 /**
  * A utility class for sending packets.
@@ -159,7 +160,7 @@ public class ActionSender {
             (byte) -1,
             session.getPlayer().nameId,
             session.getPlayer().getColoredName(),
-            session.getPlayer().getTeamName(),
+            TeamUtils.getTeamName(session.getPlayer().team),
             session.getPlayer().getName(),
             session.getPlayer().getListName(),
             session.getPlayer().getSkinUrl(),
@@ -234,7 +235,7 @@ public class ActionSender {
         (byte) player.getId(),
         (byte) player.nameId,
         player.getColoredName(),
-        player.getTeamName(),
+        TeamUtils.getTeamName(player.team),
         player.getName(),
         player.getListName(),
         player.getSkinUrl(),
@@ -299,7 +300,7 @@ public class ActionSender {
         (byte) player.getId(),
         player.nameId,
         player.getColoredName(),
-        player.getTeamName(),
+        TeamUtils.getTeamName(player.team),
         player.getName(),
         player.getListName(),
         player.getSkinUrl(),
@@ -500,7 +501,7 @@ public class ActionSender {
   public void sendMapAspect() {
     Level level = World.getWorld().getLevel();
     String texturePack;
-    String server = Configuration.getConfiguration().isTest() ? "http://127.0.0.1:"+Constants.WEB_PORT : "https://buildism.net/ctf";
+    String server = Constants.WEB_SERVER;
     if (level.props.getProperty("texturepack") != null) {
       texturePack = server + "/texturepack.zip?map=" + level.props.getProperty("texturepack");
     } else if (TexturePackHandler.hasCustomTexturePack(level.id)) {
@@ -807,6 +808,26 @@ public class ActionSender {
       bldr.putByte("type", type);
       session.send(bldr.toPacket());
     }
+  }
+
+  public void sendTextColor(
+      int r,
+      int g,
+      int b,
+      int alpha,
+      int code
+) {
+    if (!session.isExtensionSupported("TextColors")) {
+      return;
+    }
+    PacketBuilder bldr =
+        new PacketBuilder(PersistingPacketManager.getPacketManager().getOutgoingPacket(39));
+    bldr.putByte("r", r);
+    bldr.putByte("g", g);
+    bldr.putByte("b", b);
+    bldr.putByte("alpha", alpha);
+    bldr.putByte("code", code);
+    session.send(bldr.toPacket());
   }
 
   public void sendDefineEffect(

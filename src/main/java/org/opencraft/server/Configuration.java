@@ -94,6 +94,7 @@ public class Configuration {
     discordToken = props.getProperty("discordToken");
     welcomeMessage = props.getProperty("welcomeMessage");
     Constants.PORT = Integer.valueOf(props.getProperty("port"));
+    Constants.WEB_SERVER = props.getProperty("webServer");
     Constants.WEB_PORT = Integer.valueOf(props.getProperty("webPort"));
     GameSettings.add("MaxPlayers", GameSettings.TYPE_INT, Integer.valueOf(props.getProperty("max_players", "16")));
   }

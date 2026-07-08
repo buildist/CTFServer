@@ -44,7 +44,9 @@ import org.opencraft.server.game.impl.GameSettings.GameSetting;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.Set;
 
 public class SetCommand implements Command {
 
@@ -94,6 +96,42 @@ public class SetCommand implements Command {
         } else if (params.getStringArgument(0).equals("SmokeGrenadePrice")) {
           int price = Integer.parseInt(params.getStringArgument(1));
           Server.getStore().updateItem("SmokeGrenade", price);
+        }
+
+        else if (params.getStringArgument(0).equals("Team1Color") || params.getStringArgument(0).equals("Team2Color")) {
+          String color = params.getStringArgument(1);
+
+          /*Set<String> validColorsFull = Set.of(
+              "maroon", "red", "orange", "gold",
+              "yellow", "lime", "green", "turquoise",
+              "cyan", "blue", "navy", "purple",
+              "pink", "white", "silver", "gray",
+              "black"
+          );*/
+
+          // Operator names are made darker (blue -> navy; red > maroon). As such, we should only
+          // allow bright colors for now unless there is a way to distinguish OPs in the future.
+          // Maybe an [OP] tag?
+          Set<String> validColors = Set.of(
+              "red", "orange", "yellow", "lime", "cyan", "blue", "purple", "pink"
+          );
+
+          if (!validColors.contains(color)) {
+            player.getActionSender().sendChatMessage("Invalid color!");
+            return;
+          }
+
+          // Delete all texture packs in the cache folder
+          File dir = new File("texturepacks_cache");
+
+          File[] files = dir.listFiles();
+          if (files != null) {
+            for (File file : files) {
+              if (file.isFile()) {
+                file.delete();
+              }
+            }
+          }
         }
 
         String args = params.getStringArgument(1);

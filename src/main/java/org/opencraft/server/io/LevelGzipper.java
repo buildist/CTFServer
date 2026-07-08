@@ -166,6 +166,14 @@ public final class LevelGzipper {
             1
         );
 
+        // Custom color codes
+        session.getActionSender().sendTextColor(156, 52, 247, 128, 103); // Purple = &g
+        session.getActionSender().sendTextColor(107, 11, 191, 128, 104); // Dark purple = &h
+        session.getActionSender().sendTextColor(255, 145, 36, 128, 105); // Orange = &i
+        session.getActionSender().sendTextColor(191, 96, 0, 128, 106); // Dark orange = &j
+        session.getActionSender().sendTextColor(255, 208, 5, 128, 107); // Banana = &k
+        session.getActionSender().sendTextColor(255, 5, 5, 128, 108); // Crimson = &l
+
         session.getPlayer().getLocalEntities().clear();
       } catch (IOException ex) {
         session.getActionSender().sendLoginFailure("Failed to gzip level. Please try again.");

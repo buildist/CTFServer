@@ -41,6 +41,7 @@ import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.World;
+import org.opencraft.server.util.TeamUtils;
 
 public class StatusCommand implements Command {
 
@@ -56,6 +57,9 @@ public class StatusCommand implements Command {
   }
 
   public void execute(Player player, CommandParameters params) {
+    String team1Name = TeamUtils.getTeamName(0);
+    String team2Name = TeamUtils.getTeamName(1);
+
     int redPlayers = 0;
     int bluePlayers = 0;
     String hasRedFlag = null;
@@ -75,7 +79,7 @@ public class StatusCommand implements Command {
     if (hasRedFlag == null) hasRedFlag = "No one";
     if (hasBlueFlag == null) hasBlueFlag = "No one";
 
-    player.getActionSender().sendChatMessage("- &d" + redPlayers + " players on red:");
+    player.getActionSender().sendChatMessage("- &d" + redPlayers + " players on " + team1Name + ":");
     Player[] names = World.getWorld().getPlayerList().getPlayers().toArray(new Player[0]);
     String msg = "";
     for (Player other : names) {
@@ -83,7 +87,7 @@ public class StatusCommand implements Command {
     }
     if (!msg.isEmpty()) player.getActionSender().sendChatMessage("- &c" + msg);
 
-    player.getActionSender().sendChatMessage("- &d" + bluePlayers + " players on blue:");
+    player.getActionSender().sendChatMessage("- &d" + bluePlayers + " players on " + team2Name + ":");
     String bluemsg = "";
     for (Player other : names) {
       if (other.team == 1) bluemsg += other.getName() + ", ";
@@ -91,8 +95,8 @@ public class StatusCommand implements Command {
     if (!bluemsg.isEmpty()) player.getActionSender().sendChatMessage("- &c" + bluemsg);
 
     if (player.team == -1) {
-      player.getActionSender().sendChatMessage("&a" + hasRedFlag + " has the red flag.");
-      player.getActionSender().sendChatMessage("&a" + hasBlueFlag + " has the blue flag.");
+      player.getActionSender().sendChatMessage("&a" + hasRedFlag + " has the " + team1Name + " flag.");
+      player.getActionSender().sendChatMessage("&a" + hasBlueFlag + " has the " + team2Name + " flag.");
     } else {
       player.getActionSender().sendChatMessage(
           "&a" + (player.team == 0 ? hasRedFlag : hasBlueFlag) + " has your flag.");
@@ -102,9 +106,9 @@ public class StatusCommand implements Command {
     player
         .getActionSender()
         .sendChatMessage(
-            "&cRed: "
+            team1Name + ": "
                 + ((CTFGameMode)World.getWorld().getGameMode()).getRedCaptures()
-                + " -- Blue: "
+                + " -- " + team2Name + ": "
                 + ((CTFGameMode)World.getWorld().getGameMode()).getBlueCaptures());
   }
 }

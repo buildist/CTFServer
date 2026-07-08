@@ -60,6 +60,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
+import org.opencraft.server.util.TeamUtils;
 import tf.jacobsc.utils.DuelKt;
 import tf.jacobsc.utils.RatingKt;
 import tf.jacobsc.utils.RatingSystem;
@@ -685,17 +686,17 @@ public class Player extends Entity implements IPlayer {
   public String getNameChar() {
     if (isOp()) {
       if (team == 0) {
-        return "&4";
+        return TeamUtils.getDarkerColorCode(GameSettings.getString("Team1Color"));
       } else if (team == 1) {
-        return "&1";
+        return TeamUtils.getDarkerColorCode(GameSettings.getString("Team2Color"));
       } else {
         return "&8";
       }
     } else {
       if (team == 0) {
-        return "&c";
+        return TeamUtils.getColorCode(GameSettings.getString("Team1Color"));
       } else if (team == 1) {
-        return "&9";
+        return TeamUtils.getColorCode(GameSettings.getString("Team2Color"));
       } else {
         return "&7";
       }
@@ -1066,7 +1067,7 @@ public class Player extends Entity implements IPlayer {
   }
 
   public String getListName() {
-    String playerHasFlag = hasFlag ? "&6[!] " : "";
+    String playerHasFlag = hasFlag ? "&l[!] " : "";
 
     List<String> characteristics = new ArrayList<>();
     if (AFK) characteristics.add("AFK");
@@ -1080,16 +1081,6 @@ public class Player extends Entity implements IPlayer {
     String listName =
         playerHasFlag + getColoredName() + "    &f" + currentRoundPoints + playerSuffix;
     return listName.substring(0, Math.min(64, listName.length()));
-  }
-
-  public String getTeamName() {
-    if (team == 0) {
-      return "&cRed";
-    } else if (team == 1) {
-      return "&9Blue";
-    } else {
-      return "&7Spectators";
-    }
   }
 
   /**
