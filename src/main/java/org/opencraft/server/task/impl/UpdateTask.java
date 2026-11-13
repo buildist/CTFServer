@@ -67,40 +67,43 @@ public class UpdateTask extends ScheduledTask {
   public void execute() {
     final World world = World.getWorld();
     world.getGameMode().tick();
-    List<Player> players = world.getPlayerList().getPlayers(true);
-    for (Player player : players) {
-      Set<Entity> le = player.getLocalEntities();
-      Object[] localEntities = le.toArray();
-      for (Object object : localEntities) {
-        Entity localEntity = (Entity) object;
-        if (localEntity.getId() == -1) {
-          le.remove(localEntity);
-          if (localEntity instanceof Player)
-            player.getSession().getActionSender().sendRemovePlayer((Player) localEntity);
-          else player.getSession().getActionSender().sendRemoveEntity(localEntity);
-          Server.d("Removing " + localEntity.getName() + " from " + player.getName());
-        } else {
-          player.getSession().getActionSender().sendUpdateEntity(localEntity);
-        }
-      }
-      Player camera = FakePlayerBase.CAMERA_MAN;
-      if (player != camera || ReplayManager.getInstance().isRecording()) {
-        for (Player otherEntity : players) {
-          if (otherEntity != camera && !le.contains(otherEntity) && otherEntity != player) {
-            le.add(otherEntity);
-            player.getSession().getActionSender().sendAddPlayer(otherEntity, false);
-            Server.d("Adding " + otherEntity.getName() + " to " + player.getName());
+    synchronized (world.getPlayerList()) {
+      List<Player> players = world.getPlayerList().getPlayers(true);
+      for (Player player : players) {
+        Set<Entity> le = player.getLocalEntities();
+        Object[] localEntities = le.toArray();
+        for (Object object : localEntities) {
+          Entity localEntity = (Entity) object;
+          if (localEntity.getId() == -1) {
+            le.remove(localEntity);
+            if (localEntity instanceof Player)
+              player.getSession().getActionSender().sendRemovePlayer((Player) localEntity);
+            else
+              player.getSession().getActionSender().sendRemoveEntity(localEntity);
+            Server.d("Removing " + localEntity.getName() + " from " + player.getName());
+          } else {
+            player.getSession().getActionSender().sendUpdateEntity(localEntity);
           }
         }
+        Player camera = FakePlayerBase.CAMERA_MAN;
+        if (player != camera || ReplayManager.getInstance().isRecording()) {
+          for (Player otherEntity : players) {
+            if (otherEntity != camera && !le.contains(otherEntity) && otherEntity != player) {
+              le.add(otherEntity);
+              player.getSession().getActionSender().sendAddPlayer(otherEntity, false);
+              Server.d("Adding " + otherEntity.getName() + " to " + player.getName());
+            }
+          }
+        }
+        if (player.lastPacketTime != 0
+            && System.currentTimeMillis() - player.lastPacketTime > 30000) {
+          player.getActionSender().sendLoginFailure("Too much lag");
+          player.getSession().close();
+        }
       }
-      if (player.lastPacketTime != 0
-          && System.currentTimeMillis() - player.lastPacketTime > 30000) {
-        player.getActionSender().sendLoginFailure("Too much lag");
-        player.getSession().close();
+      for (Player player : world.getPlayerList().getPlayers()) {
+        player.resetOldPositionAndRotation();
       }
-    }
-    for (Player player : world.getPlayerList().getPlayers()) {
-      player.resetOldPositionAndRotation();
     }
     try {
       world.getLevel().applyBlockBehaviour();

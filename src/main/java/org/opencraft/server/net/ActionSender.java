@@ -227,7 +227,7 @@ public class ActionSender {
   }
 
   public void sendAddPlayer(Player player, boolean isSelf) {
-    if (player == null) {
+    if (player == null || player.getId() < 0) {
       return;
     }
 
