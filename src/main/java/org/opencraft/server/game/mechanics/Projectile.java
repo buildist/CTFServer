@@ -1,10 +1,12 @@
 package org.opencraft.server.game.mechanics;
 
 import org.opencraft.server.game.impl.CTFGameMode;
+import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Entity;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
+import org.opencraft.server.model.SmokeZone;
 import org.opencraft.server.model.World;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -93,6 +95,7 @@ public class Projectile extends Entity {
       String model = "607";
       if (owner.team == 1) model = "611";
       if (this.type.equalsIgnoreCase("rocket")) model = "49";
+      if (this.type.equalsIgnoreCase("smokegrenade")) model = "34";
 
       player.getActionSender().sendChangeModel((byte) getId(), model);
     }
@@ -115,20 +118,47 @@ public class Projectile extends Entity {
 
     int block = World.getWorld().getLevel().getBlock(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
     if (block != BlockConstants.AIR) {
-      ((CTFGameMode)World.getWorld()
-          .getGameMode())
-          .explodeTNT(
-              owner,
-              World.getWorld().getLevel(),
-              blockPosition.getX(),
-              blockPosition.getY(),
-              blockPosition.getZ(),
-              2,
-              true,
-              false,
-              false,
-              false,
-              type);
+      if (type.equalsIgnoreCase("smokegrenade")) {
+        int zones = World.getWorld().getNumberOfSmokeZones();
+        int id = zones + 1;
+        int radius = GameSettings.getInt("SmokeGrenadeRadius");
+        int delay = GameSettings.getInt("SmokeGrenadeDelay");
+        final SmokeZone zone = new SmokeZone(blockPosition.getX() - radius, blockPosition.getY() - radius,
+            blockPosition.getZ(), blockPosition.getX() + radius, blockPosition.getY() + radius,
+            blockPosition.getZ() + radius, id);
+
+        try {
+          World.getWorld().addSmokeZone(zone);
+          zone.updateDensity(255);
+          Thread.sleep(delay);
+          zone.updateDensity(191);
+          Thread.sleep(delay);
+          zone.updateDensity(127);
+          Thread.sleep(delay);
+          zone.updateDensity(64);
+          Thread.sleep(delay);
+          World.getWorld().removeSmokeZone(zone);
+        } catch (InterruptedException ex) {
+          World.getWorld().removeSmokeZone(zone);
+        }
+      }
+
+      else {
+        ((CTFGameMode) World.getWorld()
+            .getGameMode())
+            .explodeTNT(
+                owner,
+                World.getWorld().getLevel(),
+                blockPosition.getX(),
+                blockPosition.getY(),
+                blockPosition.getZ(),
+                2,
+                true,
+                false,
+                false,
+                false,
+                type);
+      }
       finish();
       return;
     }

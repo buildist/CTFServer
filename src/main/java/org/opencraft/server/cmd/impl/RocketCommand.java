@@ -36,17 +36,12 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
-import org.opencraft.server.game.impl.GameSettings;
 import org.opencraft.server.game.mechanics.Projectile;
-import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
-import org.opencraft.server.model.Rotation;
 import org.opencraft.server.model.World;
 
 public class RocketCommand implements Command {
