@@ -84,7 +84,8 @@ public class GrenadeCommand implements Command {
         velocityY,
         velocityZ,
         400,
-        0.60
+        0.60,
+        "grenade"
     );
 
     grenade.setId(calculateEntities() + 1);

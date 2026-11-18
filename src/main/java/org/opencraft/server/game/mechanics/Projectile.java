@@ -17,6 +17,7 @@ public class Projectile extends Entity {
   private double velocityX;
   private double velocityY;
   private double velocityZ;
+  private String type = null;
 
   private final double gravity;
   private final double friction;
@@ -35,7 +36,8 @@ public class Projectile extends Entity {
       double velocityY,
       double velocityZ,
       double gravity,
-      double friction) {
+      double friction,
+      String type) {
     owner = player;
     setPosition(position);
 
@@ -45,6 +47,7 @@ public class Projectile extends Entity {
 
     this.gravity = gravity;
     this.friction = friction;
+    this.type = type;
   }
 
   @Override
@@ -89,6 +92,7 @@ public class Projectile extends Entity {
 
       String model = "607";
       if (owner.team == 1) model = "611";
+      if (this.type.equalsIgnoreCase("rocket")) model = "49";
 
       player.getActionSender().sendChangeModel((byte) getId(), model);
     }
@@ -124,7 +128,7 @@ public class Projectile extends Entity {
               false,
               false,
               false,
-              "grenade");
+              type);
       finish();
       return;
     }
@@ -148,7 +152,10 @@ public class Projectile extends Entity {
     }
 
     // Fell out of map
-    if (z <= 32) {
+    int width = World.getWorld().getLevel().getWidth();
+    int length = World.getWorld().getLevel().getHeight();
+    int height = World.getWorld().getLevel().getDepth();
+    if ((x/32) < 0 || (x/32) >= width || (z/32) < 0 || (z/32) >= height || (y/32) < 0 || (y/32) >= length) {
       finish();
     }
   }

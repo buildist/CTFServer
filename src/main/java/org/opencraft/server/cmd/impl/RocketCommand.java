@@ -42,6 +42,7 @@ import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
 import org.opencraft.server.game.impl.CTFGameMode;
 import org.opencraft.server.game.impl.GameSettings;
+import org.opencraft.server.game.mechanics.Projectile;
 import org.opencraft.server.model.BlockConstants;
 import org.opencraft.server.model.Player;
 import org.opencraft.server.model.Position;
@@ -63,92 +64,45 @@ public class RocketCommand implements Command {
 
   public void execute(final Player player, CommandParameters params) {
     player.rocketsShot++;
+    player.rocketTime = System.currentTimeMillis();
 
-    Thread rocketThread;
-    rocketThread =
-        new Thread(
-            () -> {
-              player.rocketTime = System.currentTimeMillis();
-              Position pos = player.getPosition().toBlockPos();
-              player.rocketStartPosition = pos;
-              Rotation r = player.getRotation();
+    Position pos = player.getPosition();
+    Position start = new Position(pos.getX(), pos.getY(), pos.getZ() + 32);
 
-              double heading =
-                  Math.toRadians(
-                      (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-              double pitch =
-                  Math.toRadians(
-                      (int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
+    double heading = Math.toRadians(
+        (int) (Server.getUnsigned(player.getRotation().getRotation())
+            * ((float) 360 / 256) - 90)
+    );
 
-              double px = pos.getX();
-              double py = pos.getY();
-              double pz = pos.getZ();
+    double pitch = Math.toRadians(
+        (int) (360 - Server.getUnsigned(player.getRotation().getLook())
+            * ((float) 360 / 256))
+    );
 
-              double vx = Math.cos(heading) * Math.cos(pitch);
-              double vy = Math.sin(heading) * Math.cos(pitch);
-              double vz = Math.sin(pitch);
-              double x = px;
-              double y = py;
-              double z = pz;
-              double lastX = px;
-              double lastY = py;
-              double lastZ = pz;
+    double speed = 1000.0;
 
-              for (int i = 0; i < 256; i++) {
-                x += vx;
-                y += vy;
-                z += vz;
-                int bx = (int) Math.round(x);
-                int by = (int) Math.round(y);
-                int bz = (int) Math.round(z);
+    double velocityX = Math.cos(pitch) * Math.cos(heading) * speed;
+    double velocityY = Math.cos(pitch) * Math.sin(heading) * speed;
+    double velocityZ = Math.sin(pitch) * speed;
 
-                int block = World.getWorld().getLevel().getBlock(bx, by, bz);
+    Projectile rocket = new Projectile(
+        player,
+        start,
+        velocityX,
+        velocityY,
+        velocityZ,
+        0,
+        1.0,
+        "rocket"
+    );
 
-                if (block != BlockConstants.AIR && block != Constants.BLOCK_ROCKET && block != Constants.BLOCK_INVISIBLE) {
-                  ((CTFGameMode)World.getWorld()
-                      .getGameMode())
-                      .explodeTNT(
-                          player,
-                          World.getWorld().getLevel(),
-                          (int) Math.round(lastX),
-                          (int) Math.round(lastY),
-                          (int) Math.round(lastZ),
-                          2,
-                          true,
-                          false,
-                          false,
-                          true,
-                          "rocket");
-                  break;
-                } else {
-                  World.getWorld()
-                      .getLevel()
-                      .setBlock(
-                          (int) Math.round(lastX),
-                          (int) Math.round(lastY),
-                          (int) Math.round(lastZ),
-                          block);
-                  World.getWorld().getLevel().setBlock(bx, by, bz, Constants.BLOCK_ROCKET);
-                }
+    rocket.setId(calculateEntities() + 1);
+    rocket.launch();
+  }
 
-                lastX = x;
-                lastY = y;
-                lastZ = z;
-                i++;
-                try {
-                  Thread.sleep(25);
-                } catch (InterruptedException ex) {
-                  World.getWorld()
-                      .getLevel()
-                      .setBlock(
-                          (int) Math.round(lastX),
-                          (int) Math.round(lastY),
-                          (int) Math.round(lastZ),
-                          0);
-                  return;
-                }
-              }
-            });
-    rocketThread.start();
+  public int calculateEntities() {
+    int players = World.getWorld().getPlayerList().size();
+    int entities = World.getWorld().getEntityList().size();
+    return players + entities;
   }
 }
