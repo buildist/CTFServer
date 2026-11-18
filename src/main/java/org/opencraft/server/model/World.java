@@ -55,6 +55,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -81,6 +82,7 @@ public final class World {
 
   /** The player list. */
   private final PlayerList playerList = new PlayerList();
+  private final List<Entity> entityList = new ArrayList<>();
 
   private ArrayList<Mine> mines = new ArrayList<>(64);
   private ArrayList<SmokeZone> smokeZones = new ArrayList<>(64);
@@ -198,6 +200,15 @@ public final class World {
    */
   public PlayerList getPlayerList() {
     return playerList;
+  }
+
+  /**
+   * Gets a list of non-player entities.
+   *
+   * @return The non-player entity list.
+   */
+  public List<Entity> getEntityList() {
+    return entityList;
   }
 
   /**
