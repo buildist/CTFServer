@@ -116,8 +116,7 @@ public class Projectile extends Entity {
     Position position = getPosition();
     Position blockPosition = position.toBlockPos();
 
-    int block = World.getWorld().getLevel().getBlock(blockPosition.getX(), blockPosition.getY(), blockPosition.getZ());
-    if (block != BlockConstants.AIR) {
+    if (hasBlockCollision(position, GameSettings.getInt("ProjectileAimAssist"))) {
       if (type.equalsIgnoreCase("smokegrenade")) {
         int zones = World.getWorld().getNumberOfSmokeZones();
         int id = zones + 1;
@@ -188,6 +187,34 @@ public class Projectile extends Entity {
     if ((x/32) < 0 || (x/32) >= width || (z/32) < 0 || (z/32) >= height || (y/32) < 0 || (y/32) >= length) {
       finish();
     }
+  }
+
+  private boolean hasBlockCollision(Position position, int radius) {
+    World world = World.getWorld();
+
+    int minX = (int) Math.floor((position.getX() - radius) / 32.0);
+    int maxX = (int) Math.floor((position.getX() + radius) / 32.0);
+
+    int minY = (int) Math.floor((position.getY() - radius) / 32.0);
+    int maxY = (int) Math.floor((position.getY() + radius) / 32.0);
+
+    int minZ = (int) Math.floor((position.getZ() - radius) / 32.0);
+    int maxZ = (int) Math.floor((position.getZ() + radius) / 32.0);
+
+    for (int x = minX; x <= maxX; x++) {
+      for (int y = minY; y <= maxY; y++) {
+        for (int z = minZ; z <= maxZ; z++) {
+
+          int block = world.getLevel().getBlock(x, y, z);
+
+          if (block != BlockConstants.AIR) {
+            return true;
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   private void finish() {
