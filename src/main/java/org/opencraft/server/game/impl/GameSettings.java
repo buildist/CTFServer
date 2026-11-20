@@ -63,7 +63,7 @@ public class GameSettings {
     add("RocketSpeed", TYPE_INT, 25);
     add("IceMeltTime", TYPE_INT, 60000);
     add("VineDecayTime", TYPE_INT, 30000);
-    add("TNTTime", TYPE_FLOAT, 1.0f);
+    add("TNTTime", TYPE_FLOAT, 0.5f);
     add("QuoteCooldown", TYPE_INT, 10);
     add("Elimination", TYPE_BOOLEAN, false);
     add("EliminationLives", TYPE_INT, 1);
@@ -75,6 +75,7 @@ public class GameSettings {
     add("CanGrabWithZeroEnemies", TYPE_BOOLEAN, false);
     add("Team1Color", TYPE_STRING, "red");
     add("Team2Color", TYPE_STRING, "blue");
+    add("ProjectileAimAssist", TYPE_INT, 8);
   }
 
   public static Object get(String k) {

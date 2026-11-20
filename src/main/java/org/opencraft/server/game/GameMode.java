@@ -421,6 +421,7 @@ public abstract class GameMode {
                 removeBlockDefAndZones(player, oldMap);
               }
               clearDropItems();
+              World.getWorld().getEntityList().clear();
               World.getWorld().clearMines();
               World.getWorld().clearSmokeZones();
               startNewMap = null;

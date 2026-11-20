@@ -36,12 +36,10 @@
  */
 package org.opencraft.server.cmd.impl;
 
-import org.opencraft.server.Constants;
 import org.opencraft.server.Server;
 import org.opencraft.server.cmd.Command;
 import org.opencraft.server.cmd.CommandParameters;
-import org.opencraft.server.game.impl.CTFGameMode;
-import org.opencraft.server.game.impl.GameSettings;
+import org.opencraft.server.game.mechanics.Projectile;
 import org.opencraft.server.model.*;
 
 public class SmokeGrenadeCommand implements Command {
@@ -57,112 +55,45 @@ public class SmokeGrenadeCommand implements Command {
   }
 
   public void execute(final Player player, CommandParameters params) {
-    Thread smokeGrenadeThread;
-    smokeGrenadeThread =
-        new Thread(
-            () -> {
-              player.smokeGrenadeTime = System.currentTimeMillis();
+    player.smokeGrenadeTime = System.currentTimeMillis();
 
-              Position pos = player.getPosition().toBlockPos();
-              Rotation r = player.getRotation();
+    Position pos = player.getPosition();
+    Position start = new Position(pos.getX(), pos.getY(), pos.getZ() + 32);
 
-              double heading =
-                  Math.toRadians(
-                      (int) (Server.getUnsigned(r.getRotation()) * ((float) 360 / 256) - 90));
-              double pitch =
-                  Math.toRadians(
-                      (int) (360 - Server.getUnsigned(r.getLook()) * ((float) 360 / 256)));
+    double heading = Math.toRadians(
+        (int) (Server.getUnsigned(player.getRotation().getRotation())
+            * ((float) 360 / 256) - 90)
+    );
 
-              double px = pos.getX();
-              double py = pos.getY();
-              double pz = pos.getZ();
+    double pitch = Math.toRadians(
+        (int) (360 - Server.getUnsigned(player.getRotation().getLook())
+            * ((float) 360 / 256))
+    );
 
-              double vx = Math.cos(heading) * Math.cos(pitch);
-              double vy = Math.sin(heading) * Math.cos(pitch);
-              double vz = Math.sin(pitch);
-              double length = Math.sqrt(vx * vx + vy * vy + vz * vz) / 1.25;
+    double speed = 400.0;
 
-              vx /= length;
-              vz /= length;
-              vy /= length;
+    double velocityX = Math.cos(pitch) * Math.cos(heading) * speed;
+    double velocityY = Math.cos(pitch) * Math.sin(heading) * speed;
+    double velocityZ = Math.sin(pitch) * speed;
 
-              double x = px;
-              double y = py;
-              double z = pz;
+    Projectile smokeGrenade = new Projectile(
+        player,
+        start,
+        velocityX,
+        velocityY,
+        velocityZ,
+        400,
+        0.60,
+        "smokegrenade"
+    );
 
-              double lastX = px;
-              double lastY = py;
-              double lastZ = pz;
+    smokeGrenade.setId(calculateEntities() + 1);
+    smokeGrenade.launch();
+  }
 
-              int lastBlock = 0;
-
-              for (int i = 0; i < 256; i++) {
-                x += vx;
-                y += vy;
-                z += vz;
-
-                int bx = (int) Math.round(x);
-                int by = (int) Math.round(y);
-                int bz = (int) Math.round(z);
-
-                int block = World.getWorld().getLevel().getBlock(bx, by, bz);
-
-                if (block != 0 && block != BlockConstants.CLOTH_DARKGRAY && block != Constants.BLOCK_INVISIBLE) {
-                    int zones = World.getWorld().getNumberOfSmokeZones();
-                    int id = zones + 1;
-                    int radius = GameSettings.getInt("SmokeGrenadeRadius");
-                    int delay = GameSettings.getInt("SmokeGrenadeDelay");
-                    final SmokeZone zone = new SmokeZone(bx - radius, by - radius, bz, bx + radius, by + radius, bz + radius, id);
-
-                    try {
-                        World.getWorld().addSmokeZone(zone);
-                        zone.updateDensity(255);
-                        Thread.sleep(delay);
-                        zone.updateDensity(191);
-                        Thread.sleep(delay);
-                        zone.updateDensity(127);
-                        Thread.sleep(delay);
-                        zone.updateDensity(64);
-                        Thread.sleep(delay);
-                        World.getWorld().removeSmokeZone(zone);
-                    } catch (InterruptedException ex) {
-                        World.getWorld().removeSmokeZone(zone);
-                    }
-                  break;
-                } else {
-                  World.getWorld()
-                      .getLevel()
-                      .setBlock(
-                          (int) Math.round(lastX),
-                          (int) Math.round(lastY),
-                          (int) Math.round(lastZ),
-                          0);
-                  if (block == 0) {
-                      World.getWorld().getLevel().setBlock(bx, by, bz, BlockConstants.CLOTH_DARKGRAY);
-                  }
-                }
-                lastX = x;
-                lastY = y;
-                lastZ = z;
-                lastBlock = block;
-                i++;
-                if (vz > (double) -2) vz -= 0.15;
-                vx *= 0.95;
-                vy *= 0.95;
-                try {
-                  Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                  World.getWorld()
-                      .getLevel()
-                      .setBlock(
-                          (int) Math.round(lastX),
-                          (int) Math.round(lastY),
-                          (int) Math.round(lastZ),
-                          0);
-                  return;
-                }
-              }
-            });
-    smokeGrenadeThread.start();
+  public int calculateEntities() {
+    int players = World.getWorld().getPlayerList().size();
+    int entities = World.getWorld().getEntityList().size();
+    return players + entities;
   }
 }
