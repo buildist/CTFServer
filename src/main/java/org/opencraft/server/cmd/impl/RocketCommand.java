@@ -60,9 +60,10 @@ public class RocketCommand implements Command {
   public void execute(final Player player, CommandParameters params) {
     player.rocketsShot++;
     player.rocketTime = System.currentTimeMillis();
+    player.rocketStartPosition = player.getPosition().toBlockPos();
 
     Position pos = player.getPosition();
-    Position start = new Position(pos.getX(), pos.getY(), pos.getZ() + 32);
+    Position start = new Position(pos.getX(), pos.getY(), pos.getZ() + 24);
 
     double heading = Math.toRadians(
         (int) (Server.getUnsigned(player.getRotation().getRotation())
@@ -91,13 +92,15 @@ public class RocketCommand implements Command {
         "rocket"
     );
 
-    rocket.setId(calculateEntities() + 1);
+    rocket.setId(calculateEntityId());
     rocket.launch();
   }
 
-  public int calculateEntities() {
+  public int calculateEntityId() {
     int players = World.getWorld().getPlayerList().size();
     int entities = World.getWorld().getEntityList().size();
-    return players + entities;
+    int newId = (254 - players - entities);
+    if (newId <= players) return -2; // -1 = self, so we use -2 for invalid
+    return newId;
   }
 }

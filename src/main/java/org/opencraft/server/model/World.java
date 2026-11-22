@@ -211,6 +211,10 @@ public final class World {
     return entityList;
   }
 
+  public void clearEntities() {
+    entityList.clear();
+  }
+
   /**
    * Gets the level.
    *

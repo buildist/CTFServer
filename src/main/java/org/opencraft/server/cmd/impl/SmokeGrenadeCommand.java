@@ -87,13 +87,15 @@ public class SmokeGrenadeCommand implements Command {
         "smokegrenade"
     );
 
-    smokeGrenade.setId(calculateEntities() + 1);
+    smokeGrenade.setId(calculateEntityId());
     smokeGrenade.launch();
   }
 
-  public int calculateEntities() {
+  public int calculateEntityId() {
     int players = World.getWorld().getPlayerList().size();
     int entities = World.getWorld().getEntityList().size();
-    return players + entities;
+    int newId = (254 - players - entities);
+    if (newId <= players) return -2; // -1 = self, so we use -2 for invalid
+    return newId;
   }
 }

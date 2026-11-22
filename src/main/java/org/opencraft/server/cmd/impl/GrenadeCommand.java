@@ -88,13 +88,15 @@ public class GrenadeCommand implements Command {
         "grenade"
     );
 
-    grenade.setId(calculateEntities() + 1);
+    grenade.setId(calculateEntityId());
     grenade.launch();
   }
 
-  public int calculateEntities() {
+  public int calculateEntityId() {
     int players = World.getWorld().getPlayerList().size();
     int entities = World.getWorld().getEntityList().size();
-    return players + entities;
+    int newId = (254 - players - entities);
+    if (newId <= players) return -2; // -1 = self, so we use -2 for invalid
+    return newId;
   }
 }
