@@ -381,11 +381,15 @@ public abstract class GameMode {
     player.tntDeaths = 0;
     player.tagDeaths = 0;
     player.grenadeKills = 0;
+    player.bigTNTRemaining = 0;
     player.grenadeDeaths = 0;
     player.grenadesThrown = 0;
+    player.grenadeTime = 0;
     player.rocketKills = 0;
     player.rocketDeaths = 0;
+    player.rocketTime = 0;
     player.rocketsShot = 0;
+    player.rocketStartPosition = null;
     player.flagsTaken = 0;
     player.flagsLost = 0;
     player.linesUsed = 0;
@@ -421,7 +425,7 @@ public abstract class GameMode {
                 removeBlockDefAndZones(player, oldMap);
               }
               clearDropItems();
-              World.getWorld().getEntityList().clear();
+              World.getWorld().clearEntities();
               World.getWorld().clearMines();
               World.getWorld().clearSmokeZones();
               startNewMap = null;

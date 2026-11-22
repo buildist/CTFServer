@@ -69,10 +69,13 @@ public class Projectile extends Entity {
     World.getWorld().getEntityList().add(this);
     spawn();
 
+    int period = 25;
+    if (type == "rocket") period = 10;
+
     task = scheduler.scheduleAtFixedRate(
         this::update,
         0,
-        25,
+        period,
         TimeUnit.MILLISECONDS
     );
   }
@@ -94,8 +97,8 @@ public class Projectile extends Entity {
 
       String model = "607";
       if (owner.team == 1) model = "611";
-      if (this.type.equalsIgnoreCase("rocket")) model = "49";
-      if (this.type.equalsIgnoreCase("smokegrenade")) model = "34";
+      if (this.type == "rocket") model = "49";
+      if (this.type == "smokegrenade") model = "34";
 
       player.getActionSender().sendChangeModel((byte) getId(), model);
     }
